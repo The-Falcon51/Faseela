@@ -1,0 +1,41 @@
+{
+  "name": "faseela-app",
+  "version": "1.0.0",
+  "description": "Faseela - Fractional Syrian Olive Tree Stewardship Mobile App for iOS & Android",
+  "main": "public/index.html",
+  "scripts": {
+    "build": "echo 'Faseela production web assets ready in public/'",
+    "cap:sync": "npx cap sync",
+    "cap:open:ios": "npx cap open ios",
+    "cap:open:android": "npx cap open android",
+    "cap:run:android": "npx cap run android",
+    "cap:run:ios": "npx cap run ios"
+  },
+  "keywords": [
+    "faseela",
+    "olive-tree",
+    "agriculture",
+    "fractional-ownership",
+    "syria",
+    "olive-oil",
+    "evoo",
+    "capacitor",
+    "ios",
+    "android"
+  ],
+  "author": "Faseela Agritech",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "@capacitor/app": "^6.0.1",
+    "@capacitor/core": "^6.1.2",
+    "@capacitor/haptics": "^6.0.1",
+    "@capacitor/keyboard": "^6.0.2",
+    "@capacitor/splash-screen": "^6.0.2",
+    "@capacitor/status-bar": "^6.0.1"
+  },
+  "devDependencies": {
+    "@capacitor/android": "^6.1.2",
+    "@capacitor/cli": "^6.1.2",
+    "@capacitor/ios": "^6.1.2"
+  }
+}

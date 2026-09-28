@@ -1,0 +1,11 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 54;
+	objects = {
+		244438D224856AD6007A23A3 /* Faseela */ = {isa = PBXFileReference; lastKnownFileType = wrapper.application; path = Faseela.app; sourceTree = BUILT_PRODUCTS_DIR; };
+	};
+	rootObject = 244438CC24856AD6007A23A3 /* Project object */;
+}

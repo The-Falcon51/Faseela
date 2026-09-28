@@ -1,0 +1,292 @@
+{
+  "users": [
+    {
+      "id": "usr_01",
+      "name": "كريم العبدالله",
+      "email": "karim@example.com",
+      "phone": "+971501234567",
+      "country": "الإمارات / دبي",
+      "wallet_balance": 180.0,
+      "role": "investor"
+    },
+    {
+      "id": "usr_02",
+      "name": "أبو أحمد الطرطوسي",
+      "email": "farmer.ahmad@example.com",
+      "phone": "+963944112233",
+      "country": "سوريا / طرطوس",
+      "wallet_balance": 450.0,
+      "role": "farmer"
+    },
+    {
+      "id": "usr_03",
+      "name": "المهندس سمير الدريكيشي",
+      "email": "mill.samir@example.com",
+      "phone": "+963988776655",
+      "country": "سوريا / طرطوس",
+      "wallet_balance": 920.0,
+      "role": "mill_owner"
+    }
+  ],
+  "mills": [
+    {
+      "id": "mill_01",
+      "name": "معصرة الدريكيش الإيطالية الحديثة",
+      "owner_name": "المهندس سمير الدريكيشي",
+      "region": "طرطوس - الدريكيش",
+      "technology_type": "طرد مركزي مرحلتين (Two-Phase Continuous Cold Press)",
+      "capacity_kg_per_hour": 4000,
+      "gps_lat": 34.8942,
+      "gps_lng": 36.1405,
+      "contact": "+963988776655",
+      "certification": "معتمدة مخبرياً لإنتاج البكر الممتاز (ISO-22000)",
+      "description": "خط إنتاج أوتوماتيكي متكامل يعمل بتقنية العصر البارد الفوري (حرارة أقل من 25° مئوية) مع نظام فلترة دقيق لحفظ مضادات الأكسدة والبوليفينول."
+    },
+    {
+      "id": "mill_02",
+      "name": "معصرة بساتين جبل الزاوية المتطورة",
+      "owner_name": "الأستاذ عبد القادر إدلب",
+      "region": "إدلب - جبل الزاوية",
+      "technology_type": "خط إيكولوجي صديق للبيئة موفر للمياه",
+      "capacity_kg_per_hour": 3500,
+      "gps_lat": 35.731,
+      "gps_lng": 36.562,
+      "contact": "+963933221144",
+      "certification": "معتمدة لفرز أصناف الصوراني البكر الممتاز",
+      "description": "معصرة حديثة مجهزة بمختبر كيميائي فوري لقياس نسبة الأسيد والبيروكسيد لكل دفعة زيتون فور انتهاء العصر."
+    }
+  ],
+  "farms": [
+    {
+      "id": "farm_01",
+      "name": "مزرعة كروم الكردي العريقة",
+      "owner_name": "أبو أحمد الطرطوسي",
+      "region": "طرطوس - الدريكيش",
+      "gps_lat": 34.8967,
+      "gps_lng": 36.1432,
+      "contact": "+963944112233",
+      "certification_status": "عضوي موثق",
+      "description": "واحدة من أقدم مزارع الزيتون الجبلية على سفوح جبال الساحل السوري، ري طبيعي بمياه الأمطار والينابيع وتربة كلسية غنية."
+    },
+    {
+      "id": "farm_02",
+      "name": "بساتين جبل الزاوية المباركة",
+      "owner_name": "الحاج مصطفى الإدلبي",
+      "region": "إدلب - جبل الزاوية",
+      "gps_lat": 35.7333,
+      "gps_lng": 36.5667,
+      "contact": "+963933556677",
+      "certification_status": "زراعة تقليدية مستدامة",
+      "description": "مزرعة لأشجار الزيتون الصوراني المشهورة عالمياً بنقاوة زيتها الأخضر وكثافة ثماره ونكهته العطرية المميزة."
+    },
+    {
+      "id": "farm_03",
+      "name": "حقول سهل حوران الخصبة",
+      "owner_name": "أبو عمر الحوراني",
+      "region": "درعا - نوى",
+      "gps_lat": 32.8833,
+      "gps_lng": 36.0333,
+      "contact": "+963955889900",
+      "certification_status": "عضوي تحت المتابعة",
+      "description": "تربة بركانية حمراء غنية بالمعادن تنتج أصناف زيتون القيسي والجلط المقاومة للجفاف."
+    }
+  ],
+  "trees": [
+    {
+      "id": "tree_01",
+      "farm_id": "farm_01",
+      "mill_id": "mill_01",
+      "tree_name": "الشجرة المعمرة - حارسة الجبل",
+      "planted_year": 1948,
+      "tree_type": "زيتون خضيري ساحلي",
+      "health_status": "ممتازة",
+      "total_shares_available": 50,
+      "price_per_share": 35.0,
+      "estimated_annual_yield_kg": 65.0,
+      "carbon_offset_kg_year": 28.5,
+      "gps_lat": 34.8971,
+      "gps_lng": 36.1438,
+      "images": [
+        "images/tree_ancient_khodairi.jpg",
+        "images/olive_branches_macro.jpg"
+      ],
+      "land_parcel": {
+        "has_land_option": true,
+        "land_area_sqm": 5.0,
+        "cadastral_zone": "طرطوس - منطقة الدريكيش العقارية - حوض 14 الكروم",
+        "parcel_number": "عقار 412 / مقسم A-5",
+        "soil_type": "تربة كلسية حمراء (Terra Rossa) غنية بالمعادن",
+        "land_addon_price_usd": 15.0,
+        "polygon_corners": [
+          {
+            "point": "N",
+            "lat": 34.897112,
+            "lng": 36.143788
+          },
+          {
+            "point": "E",
+            "lat": 34.897108,
+            "lng": 36.14382
+          },
+          {
+            "point": "S",
+            "lat": 34.897085,
+            "lng": 36.143815
+          },
+          {
+            "point": "W",
+            "lat": 34.897089,
+            "lng": 36.143782
+          }
+        ]
+      }
+    },
+    {
+      "id": "tree_02",
+      "farm_id": "farm_02",
+      "mill_id": "mill_02",
+      "tree_name": "الصورانية الذهبية - قطاع 4",
+      "planted_year": 1985,
+      "tree_type": "زيتون صوراني أصيل",
+      "health_status": "ممتازة",
+      "total_shares_available": 75,
+      "price_per_share": 28.0,
+      "estimated_annual_yield_kg": 50.0,
+      "carbon_offset_kg_year": 21.0,
+      "gps_lat": 35.7341,
+      "gps_lng": 36.5672,
+      "images": [
+        "images/tree_sourani_idlib.jpg",
+        "images/olive_harvest_festival.jpg"
+      ],
+      "land_parcel": {
+        "has_land_option": true,
+        "land_area_sqm": 5.0,
+        "cadastral_zone": "إدلب - منطقة جبل الزاوية العقارية - حوض 8 بساتين",
+        "parcel_number": "عقار 1089 / مقسم Z-2",
+        "soil_type": "تربة جبلية بيضاء كلسية مثالية للصوراني",
+        "land_addon_price_usd": 15.0,
+        "polygon_corners": [
+          {
+            "point": "N",
+            "lat": 35.73412,
+            "lng": 36.56718
+          },
+          {
+            "point": "E",
+            "lat": 35.734115,
+            "lng": 36.567225
+          },
+          {
+            "point": "S",
+            "lat": 35.734085,
+            "lng": 36.56722
+          },
+          {
+            "point": "W",
+            "lat": 35.73409,
+            "lng": 36.567175
+          }
+        ]
+      }
+    },
+    {
+      "id": "tree_03",
+      "farm_id": "farm_03",
+      "mill_id": null,
+      "tree_name": "قيسية حوران - الياقوتة الحمراء",
+      "planted_year": 2005,
+      "tree_type": "زيتون قيسي مروي",
+      "health_status": "جيدة جداً",
+      "total_shares_available": 100,
+      "price_per_share": 22.0,
+      "estimated_annual_yield_kg": 40.0,
+      "carbon_offset_kg_year": 16.5,
+      "gps_lat": 32.8841,
+      "gps_lng": 36.0345,
+      "images": [
+        "images/tree_qaisi_daraa.jpg"
+      ],
+      "land_parcel": {
+        "has_land_option": true,
+        "land_area_sqm": 5.0,
+        "cadastral_zone": "درعا - منطقة نوى العقارية - حوض 3 السهل الغربي",
+        "parcel_number": "عقار 724 / مقسم H-9",
+        "soil_type": "تربة بركانية بازلتية داكنة عالية الخصوبة",
+        "land_addon_price_usd": 15.0,
+        "polygon_corners": [
+          {
+            "point": "N",
+            "lat": 32.884115,
+            "lng": 36.03388
+          },
+          {
+            "point": "E",
+            "lat": 32.88411,
+            "lng": 36.033925
+          },
+          {
+            "point": "S",
+            "lat": 32.88408,
+            "lng": 36.03392
+          },
+          {
+            "point": "W",
+            "lat": 32.884085,
+            "lng": 36.033875
+          }
+        ]
+      }
+    }
+  ],
+  "pressing_batches": [
+    {
+      "id": "batch_981",
+      "mill_id": "mill_01",
+      "mill_name": "معصرة الدريكيش الإيطالية الحديثة",
+      "tree_id": "tree_01",
+      "tree_name": "الشجرة المعمرة - حارسة الجبل",
+      "farm_name": "مزرعة كروم الكردي",
+      "season_year": 2025,
+      "pressing_date": "2025-11-04T11:30:00Z",
+      "olives_weight_kg": 68.5,
+      "oil_yield_liters": 14.8,
+      "extraction_rate_pct": 21.6,
+      "temperature_celsius": 23.8,
+      "acidity_pct": 0.32,
+      "peroxide_value": 5.4,
+      "quality_grade": "بكر ممتاز فائق النقاء (Ultra-Premium Extra Virgin)",
+      "lab_certificate_serial": "SYR-MILL-2025-0981",
+      "certified_by": "مختبر ضبط الجودة والرقابة التموينية - طرطوس",
+      "status": "معتمد وموثق رقمياً"
+    }
+  ],
+  "shares": [
+    {
+      "id": "shr_01",
+      "tree_id": "tree_01",
+      "user_id": "usr_01",
+      "percentage": 50.0,
+      "purchase_price": 70.0,
+      "certificate_number": "FAS-2026-TR01-50PCT",
+      "purchase_date": "2026-03-15T10:00:00Z",
+      "status": "active",
+      "includes_land": true,
+      "land_parcel_sqm": 5.0,
+      "land_deed_serial": "SYR-LAND-DEED-2026-0042",
+      "land_cadastral_number": "عقار 412 / مقسم A-5"
+    }
+  ],
+  "transactions": [
+    {
+      "id": "txn_01",
+      "user_id": "usr_01",
+      "amount": 70.0,
+      "currency": "USD",
+      "type": "share_purchase",
+      "status": "completed",
+      "payment_method": "credit_card",
+      "reference": "TXN-8849201"
+    }
+  ]
+}
