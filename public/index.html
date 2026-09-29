@@ -7660,6 +7660,27 @@
 
   <!-- ================= MODALS ================= -->
 
+  <!-- ADMIN PASSWORD PROTECTION MODAL -->
+  <div id="modal-admin-password" role="dialog" aria-modal="true" class="fixed inset-0 z-[999] bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-stone-900 rounded-3xl p-8 shadow-2xl border-2 border-purple-500/40 max-w-sm w-full text-center space-y-6">
+      <div class="space-y-2">
+        <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-600 to-purple-900 text-white flex items-center justify-center mx-auto shadow-lg">
+          <i data-lucide="shield-lock" class="w-8 h-8"></i>
+        </div>
+        <h2 class="text-2xl font-black text-purple-950 dark:text-purple-300" data-i18n="admin_pwd_title">Admin Access Required</h2>
+        <p class="text-sm text-stone-600 dark:text-stone-400" data-i18n="admin_pwd_desc">Enter admin password to access Founder Control Panel</p>
+      </div>
+      
+      <div class="space-y-3">
+        <input type="password" id="admin-password-input" placeholder="Enter password" class="w-full bg-stone-50 dark:bg-stone-800 border-2 border-stone-200 dark:border-stone-700 rounded-xl px-4 py-3 text-center text-lg tracking-widest font-mono focus:outline-none focus:border-purple-500 dark:focus:border-purple-400">
+        <button onclick="verifyAdminPassword()" class="w-full bg-gradient-to-r from-purple-600 to-purple-900 hover:from-purple-700 hover:to-purple-950 text-white font-black py-3 rounded-xl transition-all cursor-pointer shadow-lg">Unlock</button>
+        <button onclick="closeModal('modal-admin-password')" class="w-full bg-stone-100 dark:bg-stone-800 hover:bg-stone-200 dark:hover:bg-stone-700 text-stone-700 dark:text-stone-300 font-bold py-2 rounded-xl transition-all cursor-pointer">Cancel</button>
+      </div>
+      
+      <p id="admin-pwd-error" class="hidden text-red-600 dark:text-red-400 text-sm font-bold"></p>
+    </div>
+  </div>
+
   <!-- 1. Digital Stewardship Certificate Modal -->
   <div id="modal-certificate" role="dialog" aria-modal="true" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4">
     <div class="bg-white dark:bg-stone-900 dark:border-stone-800 dark:text-stone-100 w-full max-w-2xl rounded-3xl p-6 sm:p-10 shadow-2xl border-4 border-olive-600/30 max-h-[95vh] overflow-y-auto relative">
@@ -20270,6 +20291,7 @@
       } else if (pageId === 'mill-portal') {
         renderMillPortal();
       } else if (pageId === 'founder-control') {
+        if (!checkAdminAccess()) return;
         renderFounderControl();
       }
 
@@ -27520,7 +27542,43 @@ function setMarketplaceViewMode(mode) {
       }
     }
 
-    function handleChatScroll() {
+    // ================= ADMIN PASSWORD PROTECTION =================
+    const ADMIN_PASSWORD = 'Faseela2024!'; // CHANGE THIS!
+    let adminAuthenticated = false;
+
+    function checkAdminAccess() {
+      if (adminAuthenticated) return true;
+      
+      // Check localStorage
+      const stored = localStorage.getItem('faseela_admin_auth');
+      if (stored === ADMIN_PASSWORD) {
+        adminAuthenticated = true;
+        return true;
+      }
+      
+      openModal('modal-admin-password');
+      document.getElementById('admin-password-input').focus();
+      return false;
+    }
+
+    function verifyAdminPassword() {
+      const input = document.getElementById('admin-password-input');
+      const pwd = input.value;
+      const errorEl = document.getElementById('admin-pwd-error');
+      
+      if (pwd === ADMIN_PASSWORD) {
+        adminAuthenticated = true;
+        localStorage.setItem('faseela_admin_auth', pwd);
+        closeModal('modal-admin-password');
+        input.value = '';
+        errorEl.classList.add('hidden');
+        showToast('✅ Admin access granted');
+      } else {
+        errorEl.classList.remove('hidden');
+        errorEl.innerText = '❌ Wrong password';
+        input.value = '';
+      }
+    }
       const container = document.getElementById('faseela-chat-messages');
       const btn = document.getElementById('chat-scroll-bottom-btn');
       if (!container || !btn) return;
