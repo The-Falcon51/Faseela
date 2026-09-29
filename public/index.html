@@ -709,7 +709,7 @@
     html.dark .bg-blue-100 { background-color: #172433 !important; border-color: #243a52 !important; color: #bfdbfe !important; }
     html.dark .bg-red-50, html.dark .bg-rose-50 { background-color: #261114 !important; border-color: #462025 !important; color: #fecdd3 !important; }
     html.dark .bg-red-100, html.dark .bg-rose-100 { background-color: #33161a !important; border-color: #54252b !important; color: #fecdd3 !important; }
-    html.dark .bg-\\[#faf9f5\\] { background-color: #141a12 !important; border-color: #2f3c2b !important; }
+    html.dark .bg-\[\#faf9f5\] { background-color: #141a12 !important; border-color: #2f3c2b !important; }
 
     /* Chat Bubble Faseela & User Dark Mode */
     html.dark .chat-bubble-faseela {
@@ -7531,7 +7531,7 @@
 
   <!-- ================= FASEELA CHAT WIDGET (PURE FASEELA BRANDING - ENHANCED) ================= -->
   <!-- Floating Launcher Button -->
-  <div id="faseela-chat-launcher" class="fixed bottom-24 md:bottom-5 left-5 z-50">
+  <div id="faseela-chat-launcher" class="fixed bottom-28 md:bottom-5 left-5 z-40">
     <button onclick="toggleFaseelaChat()" class="group relative flex items-center gap-2.5 bg-gradient-to-r from-olive-800 to-olive-950 text-white px-4 py-3 rounded-full shadow-2xl hover:shadow-olive-900/50 border border-olive-400/30 transition-all hover:scale-105">
       <div class="w-7 h-7 rounded-full bg-olive-700 flex items-center justify-center text-white shadow-inner">
         <i data-lucide="sprout" class="w-4 h-4 text-amber-300"></i>
@@ -7671,12 +7671,12 @@
         <p class="text-sm text-stone-600 dark:text-stone-400">Founder Control Panel Login</p>
       </div>
       
-      <div class="space-y-3">
-        <input type="text" id="admin-username-input" placeholder="Username" class="w-full bg-stone-50 dark:bg-stone-800 border-2 border-stone-200 dark:border-stone-700 rounded-xl px-4 py-3 text-center font-mono focus:outline-none focus:border-purple-500 dark:focus:border-purple-400">
-        <input type="password" id="admin-password-input" placeholder="Password" class="w-full bg-stone-50 dark:bg-stone-800 border-2 border-stone-200 dark:border-stone-700 rounded-xl px-4 py-3 text-center tracking-widest font-mono focus:outline-none focus:border-purple-500 dark:focus:border-purple-400">
-        <button onclick="verifyAdminPassword()" class="w-full bg-gradient-to-r from-purple-600 to-purple-900 hover:from-purple-700 hover:to-purple-950 text-white font-black py-3 rounded-xl transition-all cursor-pointer shadow-lg">Unlock</button>
-        <button onclick="closeModal('modal-admin-password')" class="w-full bg-stone-100 dark:bg-stone-800 hover:bg-stone-200 dark:hover:bg-stone-700 text-stone-700 dark:text-stone-300 font-bold py-2 rounded-xl transition-all cursor-pointer">Cancel</button>
-      </div>
+      <form onsubmit="verifyAdminPassword(event)" class="space-y-3">
+        <input type="email" id="admin-email-input" placeholder="Admin Email" required class="w-full bg-stone-50 dark:bg-stone-800 border-2 border-stone-200 dark:border-stone-700 rounded-xl px-4 py-3 text-center font-mono focus:outline-none focus:border-purple-500 dark:focus:border-purple-400">
+        <input type="password" id="admin-password-input" placeholder="Password" required class="w-full bg-stone-50 dark:bg-stone-800 border-2 border-stone-200 dark:border-stone-700 rounded-xl px-4 py-3 text-center tracking-widest font-mono focus:outline-none focus:border-purple-500 dark:focus:border-purple-400">
+        <button type="submit" class="w-full bg-gradient-to-r from-purple-600 to-purple-900 hover:from-purple-700 hover:to-purple-950 text-white font-black py-3 rounded-xl transition-all cursor-pointer shadow-lg">Login</button>
+        <button type="button" onclick="closeModal('modal-admin-password')" class="w-full bg-stone-100 dark:bg-stone-800 hover:bg-stone-200 dark:hover:bg-stone-700 text-stone-700 dark:text-stone-300 font-bold py-2 rounded-xl transition-all cursor-pointer">Cancel</button>
+      </form>
       
       <p id="admin-pwd-error" class="hidden text-red-600 dark:text-red-400 text-sm font-bold"></p>
     </div>
@@ -8825,7 +8825,7 @@
   </footer>
 
   <!-- Mobile Bottom Navigation Bar (iOS & Android) -->
-  <nav id="mobile-bottom-nav" class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-stone-950/95 backdrop-blur-lg border-t border-stone-200/90 dark:border-stone-800 shadow-[0_-4px_20px_rgba(0,0,0,0.06)] px-2 pt-2 pb-[max(env(safe-area-inset-bottom,8px),8px)] transition-all">
+  <nav id="mobile-bottom-nav" class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-lg border-t border-stone-200/90 shadow-[0_-4px_20px_rgba(0,0,0,0.06)] px-2 pt-2 pb-[max(env(safe-area-inset-bottom,8px),8px)] transition-all">
     <div class="flex items-center justify-around">
       <button onclick="triggerHaptic('light'); navigateTo('home')" id="mob-nav-home" class="flex flex-col items-center gap-1 py-1 px-3 rounded-xl transition-all text-olive-800 font-black scale-105 cursor-pointer">
         <i data-lucide="home" class="w-5 h-5"></i>
@@ -20292,7 +20292,6 @@
       } else if (pageId === 'mill-portal') {
         renderMillPortal();
       } else if (pageId === 'founder-control') {
-        if (!checkAdminAccess()) return;
         renderFounderControl();
       }
 
@@ -27543,12 +27542,11 @@ function setMarketplaceViewMode(mode) {
       }
     }
 
-    // ================= ADMIN PASSWORD PROTECTION WITH BACKEND =================
+    // ================= ADMIN AUTHENTICATION WITH BACKEND =================
     let adminToken = null;
     const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:5000' : window.location.origin;
 
     function checkAdminAccess() {
-      // Check if token exists in localStorage
       const stored = localStorage.getItem('faseela_admin_token');
       if (stored) {
         adminToken = stored;
@@ -27556,30 +27554,33 @@ function setMarketplaceViewMode(mode) {
       }
       
       openModal('modal-admin-password');
-      document.getElementById('admin-username-input').focus();
+      document.getElementById('admin-email-input').focus();
       return false;
     }
 
-    async function verifyAdminPassword() {
-      const username = document.getElementById('admin-username-input').value;
+    async function verifyAdminPassword(event) {
+      event.preventDefault();
+      const email = document.getElementById('admin-email-input').value;
       const password = document.getElementById('admin-password-input').value;
       const errorEl = document.getElementById('admin-pwd-error');
-      const btn = document.querySelector('#modal-admin-password button[onclick="verifyAdminPassword()"]');
+      const form = event.target;
+      const btn = form.querySelector('button[type="submit"]');
       
-      if (!username || !password) {
+      if (!email || !password) {
         errorEl.classList.remove('hidden');
-        errorEl.innerText = '❌ Username and password required';
+        errorEl.innerText = '✖ Email and password required';
         return;
       }
 
       btn.disabled = true;
+      const originalText = btn.innerText;
       btn.innerText = '⏳ Verifying...';
 
       try {
         const response = await fetch(`${API_BASE}/api/auth/admin-login`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username, password })
+          body: JSON.stringify({ email, password })
         });
 
         const data = await response.json();
@@ -27588,22 +27589,21 @@ function setMarketplaceViewMode(mode) {
           adminToken = data.token;
           localStorage.setItem('faseela_admin_token', data.token);
           closeModal('modal-admin-password');
-          document.getElementById('admin-username-input').value = '';
-          document.getElementById('admin-password-input').value = '';
+          form.reset();
           errorEl.classList.add('hidden');
           showToast('✅ Admin access granted');
           navigateTo('founder-control');
         } else {
           errorEl.classList.remove('hidden');
-          errorEl.innerText = '❌ ' + (data.error || 'Invalid credentials');
+          errorEl.innerText = '✖ ' + (data.error || 'Invalid credentials');
         }
       } catch (error) {
         console.error('Auth error:', error);
         errorEl.classList.remove('hidden');
-        errorEl.innerText = '❌ Server error: ' + error.message;
+        errorEl.innerText = '✖ Connection error';
       } finally {
         btn.disabled = false;
-        btn.innerText = 'Unlock';
+        btn.innerText = originalText;
       }
     }
 
@@ -27613,6 +27613,8 @@ function setMarketplaceViewMode(mode) {
       navigateTo('home');
       showToast('✅ Admin logged out');
     }
+
+    function handleChatScroll() {
       const container = document.getElementById('faseela-chat-messages');
       const btn = document.getElementById('chat-scroll-bottom-btn');
       if (!container || !btn) return;
@@ -27632,29 +27634,22 @@ function setMarketplaceViewMode(mode) {
       }
       if (btn) btn.classList.add('hidden');
     }
-    // Faseela Chat History Persistence & Real-time State Binding with Privacy Control
+    // Faseela Chat History Persistence & Real-time State Binding
     let faseelaChatHistory = [];
 
     function saveChatHistory() {
       try {
-        // Store chat history with user ID for privacy
-        const historyWithUser = faseelaChatHistory.map(msg => ({
-          ...msg,
-          userId: state.currentUser ? state.currentUser.id : 'guest'
-        }));
-        localStorage.setItem('faseela_chat_history_' + (state.currentUser ? state.currentUser.id : 'guest'), JSON.stringify(historyWithUser.slice(-40)));
+        localStorage.setItem('faseela_chat_history', JSON.stringify(faseelaChatHistory.slice(-40)));
       } catch(e) {}
     }
 
     function loadChatHistory() {
       try {
-        const userId = state.currentUser ? state.currentUser.id : 'guest';
-        const raw = localStorage.getItem('faseela_chat_history_' + userId);
+        const raw = localStorage.getItem('faseela_chat_history');
         if (raw) {
           const parsed = JSON.parse(raw);
           if (Array.isArray(parsed) && parsed.length > 0) {
-            // Filter: only show messages from current user
-            faseelaChatHistory = parsed.filter(msg => msg.userId === userId);
+            faseelaChatHistory = parsed;
             renderChatHistory();
             return true;
           }
