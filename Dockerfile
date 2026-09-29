@@ -1,10 +1,13 @@
-FROM nginx:alpine
+FROM node:20-alpine
 
-# Copy public files to nginx
-COPY public/ /usr/share/nginx/html/
+WORKDIR /app
 
-# Expose port 80
-EXPOSE 80
+COPY package*.json ./
 
-# Start nginx
-CMD ["nginx", "-g", "daemon off;"]
+RUN npm ci --only=production
+
+COPY server.js .
+
+EXPOSE 5000
+
+CMD ["npm", "start"]
