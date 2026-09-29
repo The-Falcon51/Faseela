@@ -31,9 +31,7 @@
     "@capacitor/haptics": "^6.0.1",
     "@capacitor/keyboard": "^6.0.2",
     "@capacitor/splash-screen": "^6.0.2",
-    "@capacitor/status-bar": "^6.0.1",
-    "express-rate-limit": "^8.7.0",
-    "helmet": "^8.3.0"
+    "@capacitor/status-bar": "^6.0.1"
   },
   "devDependencies": {
     "@capacitor/android": "^6.1.2",

@@ -1,0 +1,33 @@
+{
+	"appId": "com.faseela.app",
+	"appName": "Faseela",
+	"webDir": "public",
+	"bundledWebRuntime": false,
+	"server": {
+		"androidScheme": "https",
+		"iosScheme": "faseela",
+		"cleartext": false
+	},
+	"plugins": {
+		"SplashScreen": {
+			"launchShowDuration": 1800,
+			"launchAutoHide": true,
+			"backgroundColor": "#2c3e2d",
+			"androidSplashResourceName": "splash",
+			"androidScaleType": "CENTER_CROP",
+			"showSpinner": false,
+			"splashFullScreen": true,
+			"splashImmersive": true
+		},
+		"StatusBar": {
+			"style": "DARK",
+			"overlaysWebView": false,
+			"backgroundColor": "#2c3e2d"
+		},
+		"Keyboard": {
+			"resize": "body",
+			"style": "DARK",
+			"resizeOnFullScreen": true
+		}
+	}
+}

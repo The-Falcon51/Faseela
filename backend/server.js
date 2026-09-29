@@ -5,14 +5,46 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-const JWT_SECRET = process.env.JWT_SECRET || 'faseela-secret-key-change-in-production';
+const isProduction = process.env.NODE_ENV === 'production';
+const JWT_SECRET = process.env.JWT_SECRET;
+const ADMIN_PASSWORD_HASH = process.env.ADMIN_PASSWORD_HASH;
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@faseela.sy';
+const ADMIN_USERNAME = process.env.ADMIN_USERNAME || 'admin';
+
+if (!JWT_SECRET || (isProduction && !ADMIN_PASSWORD_HASH)) {
+  throw new Error('JWT_SECRET and ADMIN_PASSWORD_HASH are required');
+}
 
 // Middleware
-app.use(cors());
+app.disable('x-powered-by');
+app.set('trust proxy', 1);
+app.use(helmet());
+const allowedOrigins = (process.env.CORS_ORIGIN || '')
+  .split(',')
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+app.use(cors({
+  origin(origin, callback) {
+    if (!origin || !isProduction || allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    return callback(new Error('Origin is not allowed'));
+  }
+}));
 app.use(express.json());
+
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 10,
+  standardHeaders: 'draft-8',
+  legacyHeaders: false,
+  message: { error: 'Too many authentication attempts. Please try again later.' }
+});
 
 // SQLite Database Setup
 const dbPath = path.join(__dirname, 'faseela.db');
@@ -72,20 +104,23 @@ function initializeDatabase() {
 }
 
 function createDefaultAdmin() {
-  const hashedPassword = bcrypt.hashSync('Faseela2024!', 10);
+  if (!ADMIN_PASSWORD_HASH) {
+    console.warn('ADMIN_PASSWORD_HASH is not configured; no default admin will be created.');
+    return;
+  }
   
   db.get(
     'SELECT * FROM admin_users WHERE email = ?',
-    ['admin@faseela.sy'],
+    [ADMIN_EMAIL],
     (err, row) => {
       if (!row) {
         db.run(
           `INSERT INTO admin_users (email, username, password_hash, role) 
            VALUES (?, ?, ?, ?)`,
-          ['admin@faseela.sy', 'admin', hashedPassword, 'admin'],
+          [ADMIN_EMAIL, ADMIN_USERNAME, ADMIN_PASSWORD_HASH, 'admin'],
           (err) => {
             if (!err) {
-              console.log('✅ Default admin created: admin@faseela.sy / Faseela2024!');
+              console.log(`✅ Admin account initialized: ${ADMIN_EMAIL}`);
             }
           }
         );
@@ -100,7 +135,7 @@ app.get('/api/health', (req, res) => {
 });
 
 // ================= ADMIN LOGIN =================
-app.post('/api/auth/admin-login', (req, res) => {
+app.post('/api/auth/admin-login', authLimiter, (req, res) => {
   try {
     const { email, password } = req.body;
 
@@ -245,7 +280,7 @@ app.post('/api/admin/change-password', verifyAdminToken, (req, res) => {
   try {
     const { currentPassword, newPassword } = req.body;
 
-    if (!currentPassword || !newPassword) {
+    if (!currentPassword || !newPassword || newPassword.length < 12) {
       return res.status(400).json({ error: 'Missing required fields' });
     }
 
@@ -297,8 +332,6 @@ app.use((req, res) => {
 app.listen(PORT, () => {
   console.log(`
 🚀 Faseela Admin API v2 running on port ${PORT}
-📝 Default admin email: admin@faseela.sy
-🔐 Default password: Faseela2024!
 💾 Database: ${dbPath}
   `);
 });

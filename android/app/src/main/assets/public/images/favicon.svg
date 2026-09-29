@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1f2d20"/>
+      <stop offset="50%" stop-color="#2c3e2d"/>
+      <stop offset="100%" stop-color="#172218"/>
+    </linearGradient>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f5d77f"/>
+      <stop offset="50%" stop-color="#d4af37"/>
+      <stop offset="100%" stop-color="#aa821c"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="115" fill="url(#bgGrad)"/>
+  <rect x="12" y="12" width="488" height="488" rx="103" fill="none" stroke="url(#goldGrad)" stroke-width="4" opacity="0.65"/>
+  <g transform="translate(256, 256)" stroke="url(#goldGrad)" stroke-linecap="round" fill="none">
+    <!-- Trunk -->
+    <path d="M 0 120 L 0 -80" stroke-width="14"/>
+    <!-- Left Branch -->
+    <path d="M 0 -20 Q -70 -30 -110 30" stroke-width="10"/>
+    <!-- Right Branch -->
+    <path d="M 0 -20 Q 70 -30 110 30" stroke-width="10"/>
+    <!-- Soil base -->
+    <path d="M -90 125 Q 0 145 90 125" stroke-width="8"/>
+    <!-- Leaves -->
+    <ellipse cx="0" cy="-115" rx="18" ry="40" fill="url(#goldGrad)" stroke="none"/>
+    <g transform="translate(-70, -55) rotate(-40)">
+      <ellipse cx="0" cy="0" rx="14" ry="34" fill="url(#goldGrad)" stroke="none"/>
+    </g>
+    <g transform="translate(70, -55) rotate(40)">
+      <ellipse cx="0" cy="0" rx="14" ry="34" fill="url(#goldGrad)" stroke="none"/>
+    </g>
+    <!-- Olives -->
+    <ellipse cx="-45" cy="5" rx="16" ry="22" fill="#e8c050" stroke="none"/>
+    <ellipse cx="45" cy="5" rx="16" ry="22" fill="#e8c050" stroke="none"/>
+  </g>
+</svg>

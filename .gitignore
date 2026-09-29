@@ -13,4 +13,12 @@ build/
 local.properties
 .firebase/
 .firebase/**
+backend/.env
+backend/*.db
+backend/*.db-*
+.agents/
+.claude/
+skills-lock.json
+053500
+053500.pub
 
