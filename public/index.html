@@ -7531,7 +7531,7 @@
 
   <!-- ================= FASEELA CHAT WIDGET (PURE FASEELA BRANDING - ENHANCED) ================= -->
   <!-- Floating Launcher Button -->
-  <div id="faseela-chat-launcher" class="fixed bottom-5 left-5 z-50">
+  <div id="faseela-chat-launcher" class="fixed bottom-24 md:bottom-5 left-5 z-50">
     <button onclick="toggleFaseelaChat()" class="group relative flex items-center gap-2.5 bg-gradient-to-r from-olive-800 to-olive-950 text-white px-4 py-3 rounded-full shadow-2xl hover:shadow-olive-900/50 border border-olive-400/30 transition-all hover:scale-105">
       <div class="w-7 h-7 rounded-full bg-olive-700 flex items-center justify-center text-white shadow-inner">
         <i data-lucide="sprout" class="w-4 h-4 text-amber-300"></i>
@@ -8803,7 +8803,7 @@
   </footer>
 
   <!-- Mobile Bottom Navigation Bar (iOS & Android) -->
-  <nav id="mobile-bottom-nav" class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-lg border-t border-stone-200/90 shadow-[0_-4px_20px_rgba(0,0,0,0.06)] px-2 pt-2 pb-[max(env(safe-area-inset-bottom,8px),8px)] transition-all">
+  <nav id="mobile-bottom-nav" class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-stone-950/95 backdrop-blur-lg border-t border-stone-200/90 dark:border-stone-800 shadow-[0_-4px_20px_rgba(0,0,0,0.06)] px-2 pt-2 pb-[max(env(safe-area-inset-bottom,8px),8px)] transition-all">
     <div class="flex items-center justify-around">
       <button onclick="triggerHaptic('light'); navigateTo('home')" id="mob-nav-home" class="flex flex-col items-center gap-1 py-1 px-3 rounded-xl transition-all text-olive-800 font-black scale-105 cursor-pointer">
         <i data-lucide="home" class="w-5 h-5"></i>
@@ -27540,22 +27540,29 @@ function setMarketplaceViewMode(mode) {
       }
       if (btn) btn.classList.add('hidden');
     }
-    // Faseela Chat History Persistence & Real-time State Binding
+    // Faseela Chat History Persistence & Real-time State Binding with Privacy Control
     let faseelaChatHistory = [];
 
     function saveChatHistory() {
       try {
-        localStorage.setItem('faseela_chat_history', JSON.stringify(faseelaChatHistory.slice(-40)));
+        // Store chat history with user ID for privacy
+        const historyWithUser = faseelaChatHistory.map(msg => ({
+          ...msg,
+          userId: state.currentUser ? state.currentUser.id : 'guest'
+        }));
+        localStorage.setItem('faseela_chat_history_' + (state.currentUser ? state.currentUser.id : 'guest'), JSON.stringify(historyWithUser.slice(-40)));
       } catch(e) {}
     }
 
     function loadChatHistory() {
       try {
-        const raw = localStorage.getItem('faseela_chat_history');
+        const userId = state.currentUser ? state.currentUser.id : 'guest';
+        const raw = localStorage.getItem('faseela_chat_history_' + userId);
         if (raw) {
           const parsed = JSON.parse(raw);
           if (Array.isArray(parsed) && parsed.length > 0) {
-            faseelaChatHistory = parsed;
+            // Filter: only show messages from current user
+            faseelaChatHistory = parsed.filter(msg => msg.userId === userId);
             renderChatHistory();
             return true;
           }
