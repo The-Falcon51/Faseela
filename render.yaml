@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: faseela
+    runtime: docker
+    region: frankfurt
+    plan: free
+    healthCheckPath: /
+    healthCheckInterval: 30000
+    autoDeploy: true
