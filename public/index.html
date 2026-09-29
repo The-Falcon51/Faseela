@@ -7667,12 +7667,13 @@
         <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-600 to-purple-900 text-white flex items-center justify-center mx-auto shadow-lg">
           <i data-lucide="shield-lock" class="w-8 h-8"></i>
         </div>
-        <h2 class="text-2xl font-black text-purple-950 dark:text-purple-300" data-i18n="admin_pwd_title">Admin Access Required</h2>
-        <p class="text-sm text-stone-600 dark:text-stone-400" data-i18n="admin_pwd_desc">Enter admin password to access Founder Control Panel</p>
+        <h2 class="text-2xl font-black text-purple-950 dark:text-purple-300">Admin Access</h2>
+        <p class="text-sm text-stone-600 dark:text-stone-400">Founder Control Panel Login</p>
       </div>
       
       <div class="space-y-3">
-        <input type="password" id="admin-password-input" placeholder="Enter password" class="w-full bg-stone-50 dark:bg-stone-800 border-2 border-stone-200 dark:border-stone-700 rounded-xl px-4 py-3 text-center text-lg tracking-widest font-mono focus:outline-none focus:border-purple-500 dark:focus:border-purple-400">
+        <input type="text" id="admin-username-input" placeholder="Username" class="w-full bg-stone-50 dark:bg-stone-800 border-2 border-stone-200 dark:border-stone-700 rounded-xl px-4 py-3 text-center font-mono focus:outline-none focus:border-purple-500 dark:focus:border-purple-400">
+        <input type="password" id="admin-password-input" placeholder="Password" class="w-full bg-stone-50 dark:bg-stone-800 border-2 border-stone-200 dark:border-stone-700 rounded-xl px-4 py-3 text-center tracking-widest font-mono focus:outline-none focus:border-purple-500 dark:focus:border-purple-400">
         <button onclick="verifyAdminPassword()" class="w-full bg-gradient-to-r from-purple-600 to-purple-900 hover:from-purple-700 hover:to-purple-950 text-white font-black py-3 rounded-xl transition-all cursor-pointer shadow-lg">Unlock</button>
         <button onclick="closeModal('modal-admin-password')" class="w-full bg-stone-100 dark:bg-stone-800 hover:bg-stone-200 dark:hover:bg-stone-700 text-stone-700 dark:text-stone-300 font-bold py-2 rounded-xl transition-all cursor-pointer">Cancel</button>
       </div>
@@ -27542,42 +27543,75 @@ function setMarketplaceViewMode(mode) {
       }
     }
 
-    // ================= ADMIN PASSWORD PROTECTION =================
-    const ADMIN_PASSWORD = 'Faseela2024!'; // CHANGE THIS!
-    let adminAuthenticated = false;
+    // ================= ADMIN PASSWORD PROTECTION WITH BACKEND =================
+    let adminToken = null;
+    const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:5000' : window.location.origin;
 
     function checkAdminAccess() {
-      if (adminAuthenticated) return true;
-      
-      // Check localStorage
-      const stored = localStorage.getItem('faseela_admin_auth');
-      if (stored === ADMIN_PASSWORD) {
-        adminAuthenticated = true;
+      // Check if token exists in localStorage
+      const stored = localStorage.getItem('faseela_admin_token');
+      if (stored) {
+        adminToken = stored;
         return true;
       }
       
       openModal('modal-admin-password');
-      document.getElementById('admin-password-input').focus();
+      document.getElementById('admin-username-input').focus();
       return false;
     }
 
-    function verifyAdminPassword() {
-      const input = document.getElementById('admin-password-input');
-      const pwd = input.value;
+    async function verifyAdminPassword() {
+      const username = document.getElementById('admin-username-input').value;
+      const password = document.getElementById('admin-password-input').value;
       const errorEl = document.getElementById('admin-pwd-error');
+      const btn = document.querySelector('#modal-admin-password button[onclick="verifyAdminPassword()"]');
       
-      if (pwd === ADMIN_PASSWORD) {
-        adminAuthenticated = true;
-        localStorage.setItem('faseela_admin_auth', pwd);
-        closeModal('modal-admin-password');
-        input.value = '';
-        errorEl.classList.add('hidden');
-        showToast('✅ Admin access granted');
-      } else {
+      if (!username || !password) {
         errorEl.classList.remove('hidden');
-        errorEl.innerText = '❌ Wrong password';
-        input.value = '';
+        errorEl.innerText = '❌ Username and password required';
+        return;
       }
+
+      btn.disabled = true;
+      btn.innerText = '⏳ Verifying...';
+
+      try {
+        const response = await fetch(`${API_BASE}/api/auth/admin-login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
+        });
+
+        const data = await response.json();
+
+        if (data.success && data.token) {
+          adminToken = data.token;
+          localStorage.setItem('faseela_admin_token', data.token);
+          closeModal('modal-admin-password');
+          document.getElementById('admin-username-input').value = '';
+          document.getElementById('admin-password-input').value = '';
+          errorEl.classList.add('hidden');
+          showToast('✅ Admin access granted');
+          navigateTo('founder-control');
+        } else {
+          errorEl.classList.remove('hidden');
+          errorEl.innerText = '❌ ' + (data.error || 'Invalid credentials');
+        }
+      } catch (error) {
+        console.error('Auth error:', error);
+        errorEl.classList.remove('hidden');
+        errorEl.innerText = '❌ Server error: ' + error.message;
+      } finally {
+        btn.disabled = false;
+        btn.innerText = 'Unlock';
+      }
+    }
+
+    function logoutAdmin() {
+      adminToken = null;
+      localStorage.removeItem('faseela_admin_token');
+      navigateTo('home');
+      showToast('✅ Admin logged out');
     }
       const container = document.getElementById('faseela-chat-messages');
       const btn = document.getElementById('chat-scroll-bottom-btn');
