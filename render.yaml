@@ -4,6 +4,16 @@ services:
     runtime: docker
     region: frankfurt
     plan: free
-    healthCheckPath: /
-    healthCheckInterval: 30000
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: JWT_SECRET
+        generateValue: true
+      - key: ADMIN_PASSWORD_HASH
+        sync: false
+      - key: CORS_ORIGIN
+        sync: false
     autoDeploy: true

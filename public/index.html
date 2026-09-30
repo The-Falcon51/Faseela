@@ -89,8 +89,8 @@
     }
     body {
       font-family: 'Cairo', sans-serif;
-      padding-top: var(--sat);
-      padding-bottom: calc(var(--sab) + 72px);
+      padding-block-start: var(--sat);
+      padding-block-end: calc(var(--sab) + 72px);
       -webkit-tap-highlight-color: transparent;
       -webkit-touch-callout: none;
       overflow-y: auto;
@@ -98,7 +98,7 @@
     }
     @media (min-width: 768px) {
       body {
-        padding-bottom: 0;
+        padding-block-end: 0;
       }
     }
     /* iOS Safari WKWebView 16px Font Auto-Zoom Prevention */
