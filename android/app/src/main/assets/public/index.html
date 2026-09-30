@@ -129,6 +129,11 @@
         -webkit-overflow-scrolling: touch !important;
       }
     }
+    @media (max-width: 639px) {
+      #btn-navbar-prefs {
+        display: none !important;
+      }
+    }
     .scroll-touch {
       -webkit-overflow-scrolling: touch;
     }
@@ -787,7 +792,7 @@
           </div>
           <div>
             <span class="text-xl sm:text-2xl font-black text-olive-950 tracking-tight leading-none block" data-i18n="brand_title">فَسِيلَة</span>
-            <span class="text-[10px] sm:text-[11px] font-semibold text-olive-700/90 tracking-wide mt-0.5 block" data-i18n="brand_subtitle">المنصة التشاركية لزيتون سوريا</span>
+            <span class="hidden text-[10px] sm:text-[11px] font-semibold text-olive-700/90 tracking-wide mt-0.5 sm:block" data-i18n="brand_subtitle">المنصة التشاركية لزيتون سوريا</span>
           </div>
         </div>
 
@@ -830,65 +835,69 @@
           </button>
 
           <!-- Notification Center Bell Trigger Button -->
-          <button onclick="openNotificationCenter(); if (typeof triggerHaptic==='function') triggerHaptic('light');" id="btn-notifications-bell" data-i18n-title="nav_notifications_title" title="مركز الإشعارات والتنبيهات" class="relative w-9 h-9 rounded-2xl border border-stone-200/90 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 hover:bg-stone-100 dark:hover:bg-stone-700 text-stone-600 dark:text-stone-300 flex items-center justify-center transition-all shadow-2xs hover:shadow-xs cursor-pointer">
+          <button onclick="openNotificationCenter(); if (typeof triggerHaptic==='function') triggerHaptic('light');" id="btn-notifications-bell" data-i18n-title="nav_notifications_title" title="مركز الإشعارات والتنبيهات" class="hidden sm:flex relative w-9 h-9 rounded-2xl border border-stone-200/90 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 hover:bg-stone-100 dark:hover:bg-stone-700 text-stone-600 dark:text-stone-300 items-center justify-center transition-all shadow-2xs hover:shadow-xs cursor-pointer">
             <i data-lucide="bell" class="w-4 h-4 text-stone-600 dark:text-stone-300"></i>
             <!-- Unread Badge Counter -->
             <span id="notifications-badge" class="hidden absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-red-500 text-white text-[10px] font-black rounded-full flex items-center justify-center shadow-xs border-2 border-white dark:border-stone-900 animate-pulse">0</span>
           </button>
 
-          <!-- Multi-Currency Switcher Dropdown -->
-          <div class="relative inline-block">
-            <button type="button" onclick="toggleCurrencyDropdown(); if (typeof triggerHaptic==='function') triggerHaptic('light');" id="btn-currency-selector" data-i18n-title="curr_btn_title" title="تغيير العملة المعروضة" class="h-9 px-2.5 rounded-2xl border border-stone-200/90 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 hover:bg-stone-100 dark:hover:bg-stone-700 text-stone-700 dark:text-stone-200 font-bold text-xs flex items-center gap-1 shadow-2xs transition-all cursor-pointer">
-              <span id="active-currency-symbol" class="text-olive-700 dark:text-olive-400 font-black">$</span>
-              <span id="active-currency-code" class="font-mono text-[11px]">USD</span>
-              <i data-lucide="chevron-down" class="w-3 h-3 text-stone-400"></i>
-            </button>
-            <div id="currency-dropdown-menu" class="hidden absolute end-0 mt-1.5 w-40 bg-white dark:bg-stone-900 rounded-2xl shadow-xl border border-stone-200 dark:border-stone-800 py-1 z-50 text-xs text-start">
-              <button type="button" onclick="setCurrency('USD'); toggleCurrencyDropdown();" class="w-full px-3 py-2 text-start hover:bg-stone-100 dark:hover:bg-stone-800 font-bold flex items-center justify-between text-stone-900 dark:text-white cursor-pointer">
-                <span>💵 USD ($)</span><span class="text-[10px] text-stone-400 font-mono" data-i18n="curr_base_lbl">أساسي</span>
-              </button>
-              <button type="button" onclick="setCurrency('SYP'); toggleCurrencyDropdown();" class="w-full px-3 py-2 text-start hover:bg-stone-100 dark:hover:bg-stone-800 font-bold flex items-center justify-between text-stone-900 dark:text-white cursor-pointer">
-                <span>🇸🇾 SYP (ل.س)</span><span class="text-[10px] text-stone-400 font-mono">14,800</span>
-              </button>
-              <button type="button" onclick="setCurrency('EUR'); toggleCurrencyDropdown();" class="w-full px-3 py-2 text-start hover:bg-stone-100 dark:hover:bg-stone-800 font-bold flex items-center justify-between text-stone-900 dark:text-white cursor-pointer">
-                <span>🇪🇺 EUR (€)</span><span class="text-[10px] text-stone-400 font-mono">0.92</span>
-              </button>
-              <button type="button" onclick="setCurrency('AED'); toggleCurrencyDropdown();" class="w-full px-3 py-2 text-start hover:bg-stone-100 dark:hover:bg-stone-800 font-bold flex items-center justify-between text-stone-900 dark:text-white cursor-pointer">
-                <span>🇦🇪 AED (د.إ)</span><span class="text-[10px] text-stone-400 font-mono">3.67</span>
-              </button>
-            </div>
-          </div>
-
           <!-- Sleek Quick Preferences Trigger Icon Button (Visible for guest/non-admin; integrated inside Profile Pill for manager) -->
-          <button onclick="openAuthModal('prefs'); if (typeof triggerHaptic==='function') triggerHaptic('light');" id="btn-navbar-prefs" data-i18n-title="nav_prefs_title" title="تفضيلات العرض والمنظومة" class="w-9 h-9 rounded-2xl border border-stone-200/90 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 hover:bg-stone-100 dark:hover:bg-stone-700 text-stone-600 dark:text-stone-300 flex items-center justify-center transition-all shadow-2xs hover:shadow-xs cursor-pointer">
+          <button onclick="openAuthModal('prefs'); if (typeof triggerHaptic==='function') triggerHaptic('light');" id="btn-navbar-prefs" data-i18n-title="nav_prefs_title" title="تفضيلات العرض والمنظومة" class="hidden sm:flex w-9 h-9 rounded-2xl border border-stone-200/90 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 hover:bg-stone-100 dark:hover:bg-stone-700 text-stone-600 dark:text-stone-300 items-center justify-center transition-all shadow-2xs hover:shadow-xs cursor-pointer">
             <i data-lucide="sliders" class="w-4 h-4 text-stone-600 dark:text-stone-300"></i>
           </button>
 
           <!-- Active User Session & Security Profile Pill -->
-          <div onclick="openAuthModal()" id="btn-user-session" data-i18n-title="session_btn_title" title="تصريح الدخول والمصادقة على الهوية (RBAC)" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ') { openAuthModal(); event.preventDefault(); }" class="bg-stone-50 dark:bg-stone-800/90 hover:bg-stone-100 dark:hover:bg-stone-750 border border-stone-200/90 dark:border-stone-700 px-2 sm:px-2.5 py-1.5 rounded-2xl text-xs font-bold flex items-center gap-2 transition-all shadow-2xs hover:shadow-xs text-stone-800 dark:text-stone-200 flex-shrink-0 cursor-pointer select-none">
-            <div class="w-6 h-6 rounded-xl bg-gradient-to-br from-olive-700 to-olive-900 text-white text-[11px] flex items-center justify-center font-black shadow-inner flex-shrink-0" id="session-user-avatar">
-              ؟
-            </div>
-            <div class="text-start leading-tight hidden sm:block">
-              <span id="session-user-name" class="font-bold text-stone-900 dark:text-white text-xs block truncate max-w-[110px]" data-i18n="header_session_user_title">تصريح الدخول</span>
-              <span id="session-user-role-badge" class="bg-stone-200 dark:bg-stone-700 text-stone-700 dark:text-stone-300 text-[9px] px-1.5 py-0.2 rounded-md font-semibold inline-block" data-i18n="header_session_unregistered_role">غير مسجل</span>
+          <div class="flex items-center gap-1 p-1 rounded-2xl border border-stone-200/90 dark:border-stone-700 bg-stone-50 dark:bg-stone-800/90 shadow-2xs flex-shrink-0">
+            <div onclick="openAuthModal()" id="btn-user-session" data-i18n-title="session_btn_title" title="تصريح الدخول والمصادقة على الهوية (RBAC)" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ') { openAuthModal(); event.preventDefault(); }" class="px-1 sm:px-2 py-1 rounded-xl text-xs font-bold flex items-center gap-2 transition-all hover:bg-stone-100 dark:hover:bg-stone-700 text-stone-800 dark:text-stone-200 cursor-pointer select-none">
+              <div class="w-6 h-6 rounded-xl bg-gradient-to-br from-olive-700 to-olive-900 text-white text-[11px] flex items-center justify-center font-black shadow-inner flex-shrink-0" id="session-user-avatar">
+                ؟
+              </div>
+              <div class="text-start leading-tight hidden sm:block">
+                <span id="session-user-name" class="font-bold text-stone-900 dark:text-white text-xs block truncate max-w-[110px]" data-i18n="header_session_user_title">تصريح الدخول</span>
+                <span id="session-user-role-badge" class="bg-stone-200 dark:bg-stone-700 text-stone-700 dark:text-stone-300 text-[9px] px-1.5 py-0.2 rounded-md font-semibold inline-block" data-i18n="header_session_unregistered_role">غير مسجل</span>
+              </div>
+
+              <!-- Integrated Executive Controls Trigger (Merged for Manager to the left of identity info) -->
+              <div id="session-manager-controls" class="hidden flex items-center ps-1 sm:ps-1.5 border-s border-stone-200/80 dark:border-stone-700/80">
+                <span id="btn-session-prefs"
+                      role="button"
+                      tabindex="0"
+                      class="w-7 h-7 rounded-xl bg-stone-100/90 dark:bg-stone-700/70 hover:bg-purple-100 dark:hover:bg-purple-950/70 text-stone-600 dark:text-stone-300 hover:text-purple-700 dark:hover:text-purple-300 border border-stone-200/80 dark:border-stone-600/80 hover:border-purple-300/80 dark:hover:border-purple-700/80 flex items-center justify-center transition-all shadow-2xs hover:scale-105 active:scale-95 cursor-pointer"
+                      title="تفضيلات المنظومة وغرفة العمليات الإدارية"
+                      data-i18n-title="nav_prefs_title"
+                      onclick="event.stopPropagation(); openAuthModal('prefs'); if (typeof triggerHaptic==='function') triggerHaptic('light');"
+                      onkeydown="if(event.key==='Enter'||event.key===' '){event.stopPropagation(); openAuthModal('prefs'); event.preventDefault();}">
+                  <i data-lucide="sliders" class="w-3.5 h-3.5"></i>
+                </span>
+              </div>
+
+              <div class="w-2 h-2 rounded-full bg-emerald-500 ring-2 ring-white dark:ring-stone-900 flex-shrink-0" data-i18n-title="auth_session_active" title="جلسة موثقة ونشطة"></div>
             </div>
 
-            <!-- Integrated Executive Controls Trigger (Merged for Manager to the left of identity info) -->
-            <div id="session-manager-controls" class="hidden flex items-center ps-1 sm:ps-1.5 border-s border-stone-200/80 dark:border-stone-700/80">
-              <span id="btn-session-prefs"
-                    role="button"
-                    tabindex="0"
-                    class="w-7 h-7 rounded-xl bg-stone-100/90 dark:bg-stone-700/70 hover:bg-purple-100 dark:hover:bg-purple-950/70 text-stone-600 dark:text-stone-300 hover:text-purple-700 dark:hover:text-purple-300 border border-stone-200/80 dark:border-stone-600/80 hover:border-purple-300/80 dark:hover:border-purple-700/80 flex items-center justify-center transition-all shadow-2xs hover:scale-105 active:scale-95 cursor-pointer"
-                    title="تفضيلات المنظومة وغرفة العمليات الإدارية"
-                    data-i18n-title="nav_prefs_title"
-                    onclick="event.stopPropagation(); openAuthModal('prefs'); if (typeof triggerHaptic==='function') triggerHaptic('light');"
-                    onkeydown="if(event.key==='Enter'||event.key===' '){event.stopPropagation(); openAuthModal('prefs'); event.preventDefault();}">
-                <i data-lucide="sliders" class="w-3.5 h-3.5"></i>
-              </span>
-            </div>
+            <span aria-hidden="true" class="w-px h-6 bg-stone-200 dark:bg-stone-700"></span>
 
-            <div class="w-2 h-2 rounded-full bg-emerald-500 ring-2 ring-white dark:ring-stone-900 flex-shrink-0" data-i18n-title="auth_session_active" title="جلسة موثقة ونشطة"></div>
+            <!-- Multi-Currency Switcher Dropdown -->
+            <div class="relative inline-block">
+              <button type="button" onclick="toggleCurrencyDropdown(); if (typeof triggerHaptic==='function') triggerHaptic('light');" id="btn-currency-selector" data-i18n-title="curr_btn_title" title="تغيير العملة المعروضة" class="h-9 px-2 rounded-xl border border-transparent hover:border-stone-200 dark:hover:border-stone-600 bg-transparent hover:bg-white dark:hover:bg-stone-900 text-stone-700 dark:text-stone-200 font-bold text-xs flex items-center gap-1 transition-all cursor-pointer">
+                <span id="active-currency-symbol" class="text-olive-700 dark:text-olive-400 font-black">$</span>
+                <span id="active-currency-code" class="font-mono text-[11px]">USD</span>
+                <i data-lucide="chevron-down" class="w-3 h-3 text-stone-400"></i>
+              </button>
+              <div id="currency-dropdown-menu" class="hidden absolute end-0 mt-1.5 w-40 bg-white dark:bg-stone-900 rounded-2xl shadow-xl border border-stone-200 dark:border-stone-800 py-1 z-50 text-xs text-start">
+                <button type="button" onclick="setCurrency('USD'); toggleCurrencyDropdown();" class="w-full px-3 py-2 text-start hover:bg-stone-100 dark:hover:bg-stone-800 font-bold flex items-center justify-between text-stone-900 dark:text-white cursor-pointer">
+                  <span>💵 USD ($)</span><span class="text-[10px] text-stone-400 font-mono" data-i18n="curr_base_lbl">أساسي</span>
+                </button>
+                <button type="button" onclick="setCurrency('SYP'); toggleCurrencyDropdown();" class="w-full px-3 py-2 text-start hover:bg-stone-100 dark:hover:bg-stone-800 font-bold flex items-center justify-between text-stone-900 dark:text-white cursor-pointer">
+                  <span>🇸🇾 SYP (ل.س)</span><span class="text-[10px] text-stone-400 font-mono">14,800</span>
+                </button>
+                <button type="button" onclick="setCurrency('EUR'); toggleCurrencyDropdown();" class="w-full px-3 py-2 text-start hover:bg-stone-100 dark:hover:bg-stone-800 font-bold flex items-center justify-between text-stone-900 dark:text-white cursor-pointer">
+                  <span>🇪🇺 EUR (€)</span><span class="text-[10px] text-stone-400 font-mono">0.92</span>
+                </button>
+                <button type="button" onclick="setCurrency('AED'); toggleCurrencyDropdown();" class="w-full px-3 py-2 text-start hover:bg-stone-100 dark:hover:bg-stone-800 font-bold flex items-center justify-between text-stone-900 dark:text-white cursor-pointer">
+                  <span>🇦🇪 AED (د.إ)</span><span class="text-[10px] text-stone-400 font-mono">3.67</span>
+                </button>
+              </div>
+            </div>
           </div>
 
           <!-- Mobile Hamburger Toggle Button (< lg) -->
