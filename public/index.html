@@ -147,13 +147,9 @@
     /* ================= HIGH-PERFORMANCE RENDERING ACCELERATION ================= */
     .page-content.hidden {
       display: none !important;
-      content-visibility: hidden;
     }
     .page-content:not(.hidden) {
-      content-visibility: auto;
-      contain-intrinsic-size: auto 900px;
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
+      display: block;
     }
     /* Halt heavy continuous animations inside hidden modals & tabs to save battery & compositor CPU */
     .hidden *, [aria-hidden="true"] * {
@@ -565,6 +561,13 @@
       background-color: #0e130d !important;
       color: #f5f5f4 !important;
     }
+    #syrian-groves-map {
+      background: linear-gradient(to bottom, #e8ecdf, #dfe5d3 50%, #e8ecdf) !important;
+    }
+    html.dark #syrian-groves-map {
+      background: linear-gradient(to bottom, #0e130d, #151b14 50%, #0e130d) !important;
+      border-color: #283425 !important;
+    }
     
     /* Navigation Bars and Overlays */
     html.dark header,
@@ -826,12 +829,10 @@
         <div class="flex items-center gap-1.5 sm:gap-2.5">
           
           <!-- Ask Faseela Button (Compact Advisor Badge) -->
-          <button onclick="toggleFaseelaChat()" id="btn-ask-faseela" class="hidden md:flex items-center gap-2 bg-gradient-to-r from-olive-50 to-emerald-50 hover:from-olive-100 hover:to-emerald-100 text-olive-950 border border-olive-300/80 px-3 py-2 rounded-2xl text-xs font-bold shadow-2xs hover:shadow-xs transition-all">
-            <div class="relative flex items-center justify-center">
-              <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-              <span class="absolute w-2 h-2 rounded-full bg-emerald-400 animate-ping opacity-75"></span>
-            </div>
-            <span data-i18n="nav_chat">تحدث مع فسيلة</span>
+          <button onclick="toggleFaseelaChat()" id="btn-ask-faseela" class="hidden md:flex relative w-9 h-9 flex-shrink-0 items-center justify-center rounded-2xl bg-gradient-to-r from-olive-50 to-emerald-50 hover:from-olive-100 hover:to-emerald-100 text-olive-950 border border-olive-300/80 shadow-2xs hover:shadow-xs transition-all">
+            <i data-lucide="message-circle" aria-hidden="true" class="w-4 h-4 text-olive-800 dark:text-emerald-300"></i>
+            <span aria-hidden="true" class="absolute -top-0.5 -end-0.5 w-2 h-2 rounded-full bg-emerald-500 ring-2 ring-white dark:ring-stone-900"></span>
+            <span class="sr-only" data-i18n="nav_chat">تحدث مع فسيلة</span>
           </button>
 
           <!-- Notification Center Bell Trigger Button -->
@@ -855,20 +856,6 @@
               <div class="text-start leading-tight hidden sm:block">
                 <span id="session-user-name" class="font-bold text-stone-900 dark:text-white text-xs block truncate max-w-[110px]" data-i18n="header_session_user_title">تصريح الدخول</span>
                 <span id="session-user-role-badge" class="bg-stone-200 dark:bg-stone-700 text-stone-700 dark:text-stone-300 text-[9px] px-1.5 py-0.2 rounded-md font-semibold inline-block" data-i18n="header_session_unregistered_role">غير مسجل</span>
-              </div>
-
-              <!-- Integrated Executive Controls Trigger (Merged for Manager to the left of identity info) -->
-              <div id="session-manager-controls" class="hidden flex items-center ps-1 sm:ps-1.5 border-s border-stone-200/80 dark:border-stone-700/80">
-                <span id="btn-session-prefs"
-                      role="button"
-                      tabindex="0"
-                      class="w-7 h-7 rounded-xl bg-stone-100/90 dark:bg-stone-700/70 hover:bg-purple-100 dark:hover:bg-purple-950/70 text-stone-600 dark:text-stone-300 hover:text-purple-700 dark:hover:text-purple-300 border border-stone-200/80 dark:border-stone-600/80 hover:border-purple-300/80 dark:hover:border-purple-700/80 flex items-center justify-center transition-all shadow-2xs hover:scale-105 active:scale-95 cursor-pointer"
-                      title="تفضيلات المنظومة وغرفة العمليات الإدارية"
-                      data-i18n-title="nav_prefs_title"
-                      onclick="event.stopPropagation(); openAuthModal('prefs'); if (typeof triggerHaptic==='function') triggerHaptic('light');"
-                      onkeydown="if(event.key==='Enter'||event.key===' '){event.stopPropagation(); openAuthModal('prefs'); event.preventDefault();}">
-                  <i data-lucide="sliders" class="w-3.5 h-3.5"></i>
-                </span>
               </div>
 
               <div class="w-2 h-2 rounded-full bg-emerald-500 ring-2 ring-white dark:ring-stone-900 flex-shrink-0" data-i18n-title="auth_session_active" title="جلسة موثقة ونشطة"></div>
@@ -1430,7 +1417,7 @@
         </div>
       </section>
 
-      <section id="syrian-groves-map" class="py-14 bg-gradient-to-b from-stone-100 via-stone-50 to-white border-b border-stone-200">
+      <section id="syrian-groves-map" class="py-14 bg-gradient-to-b from-olive-50 via-stone-100 to-olive-50 dark:from-stone-950 dark:via-stone-900 dark:to-stone-950 border-b border-stone-200 dark:border-stone-800">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-start">
           <div class="text-center max-w-2xl mx-auto mb-10">
             <span class="bg-olive-200 text-olive-900 text-xs font-bold px-3.5 py-1 rounded-full uppercase tracking-wider" data-i18n="map_section_badge">مستكشف البساتين السورية الحي</span>
@@ -7541,12 +7528,10 @@
   <!-- ================= FASEELA CHAT WIDGET (PURE FASEELA BRANDING - ENHANCED) ================= -->
   <!-- Floating Launcher Button -->
   <div id="faseela-chat-launcher" class="fixed bottom-28 md:bottom-5 left-5 z-40">
-    <button onclick="toggleFaseelaChat()" class="group relative flex items-center gap-2.5 bg-gradient-to-r from-olive-800 to-olive-950 text-white px-4 py-3 rounded-full shadow-2xl hover:shadow-olive-900/50 border border-olive-400/30 transition-all hover:scale-105">
-      <div class="w-7 h-7 rounded-full bg-olive-700 flex items-center justify-center text-white shadow-inner">
-        <i data-lucide="sprout" class="w-4 h-4 text-amber-300"></i>
-      </div>
-      <span class="text-xs font-black tracking-wide" data-i18n="chat_launcher_text">تحدث مع فسيلة</span>
-      <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 ring-2 ring-white animate-pulse"></span>
+    <button onclick="toggleFaseelaChat()" class="group relative flex w-12 h-12 items-center justify-center bg-gradient-to-r from-olive-800 to-olive-950 text-white rounded-full shadow-lg hover:shadow-olive-900/50 border border-olive-400/30 transition-all hover:scale-105">
+      <i data-lucide="sprout" aria-hidden="true" class="w-5 h-5 text-amber-300"></i>
+      <span aria-hidden="true" class="absolute top-0 end-0 w-2.5 h-2.5 rounded-full bg-emerald-400 ring-2 ring-white animate-pulse"></span>
+      <span class="sr-only" data-i18n="chat_launcher_text">تحدث مع فسيلة</span>
     </button>
   </div>
 
@@ -14972,7 +14957,7 @@
       const modal = document.getElementById('modal-notification-center');
       if (modal) {
         modal.classList.remove('hidden');
-        if (document.body && document.body.style) document.body.style.overflow = "scroll";
+        if (document.body && document.body.style) document.body.style.overflow = "hidden";
       }
       if (window.lucide) window.lucide.createIcons();
     }
@@ -18494,9 +18479,7 @@
       const sessName = document.getElementById('session-user-name');
       const sessRole = document.getElementById('session-user-role-badge');
       const sessBtn = document.getElementById('btn-user-session');
-      const managerControls = document.getElementById('session-manager-controls');
       const navbarPrefsBtn = document.getElementById('btn-navbar-prefs');
-      const sessionPrefsBtn = document.getElementById('btn-session-prefs');
 
       if (sessBtn) {
         sessBtn.title = isEn ? "Identity Verification & Role Authorization (RBAC)" : "تصريح الدخول والمصادقة على الهوية (RBAC)";
@@ -18518,23 +18501,17 @@
         }
       }
 
-      // Merge & integrate preferences & executive controls inside Manager Profile Pill
+      // Keep preferences in the shared header control beside notifications.
       if (isAdmin) {
-        if (managerControls) managerControls.classList.remove('hidden');
-        if (navbarPrefsBtn) navbarPrefsBtn.classList.add('hidden');
         if (sessBtn) {
           sessBtn.classList.add('border-purple-300/80', 'dark:border-purple-700/80');
         }
-        if (sessionPrefsBtn) {
-          sessionPrefsBtn.title = isEn ? "System Preferences & Executive Controls" : "تفضيلات المنظومة وغرفة العمليات الإدارية";
-        }
       } else {
-        if (managerControls) managerControls.classList.add('hidden');
-        if (navbarPrefsBtn) navbarPrefsBtn.classList.remove('hidden');
         if (sessBtn) {
           sessBtn.classList.remove('border-purple-300/80', 'dark:border-purple-700/80');
         }
       }
+      if (navbarPrefsBtn) navbarPrefsBtn.classList.remove('hidden');
 
       // Update Currency switcher button text based on language and active currency
       const btnUsd = document.getElementById('btn-curr-usd');
@@ -20256,6 +20233,9 @@
 
     // Navigation System
     function navigateTo(pageId) {
+      // Safety: Reset body overflow in case a modal left it locked
+      if (document.body) document.body.style.overflow = '';
+
       if (!checkRouteAccess(pageId)) {
         return;
       }
@@ -20629,7 +20609,15 @@
     // ================= MOBILE NATIVE & PWA BRIDGES (iOS & Android) =================
     
     // Native Haptic Feedback Bridge (Capacitor & Web Fallback)
+    let lastUserActivation = 0;
+    document.addEventListener('pointerdown', () => { lastUserActivation = Date.now(); }, { passive: true });
+    document.addEventListener('keydown', () => { lastUserActivation = Date.now(); }, { passive: true });
+    document.addEventListener('touchstart', () => { lastUserActivation = Date.now(); }, { passive: true });
+
     function triggerHaptic(type = 'light') {
+      const now = Date.now();
+      const hasRecentUserGesture = now - lastUserActivation < 1500;
+
       try {
         if (window.Capacitor && window.Capacitor.isPluginAvailable && window.Capacitor.isPluginAvailable('Haptics')) {
           const Haptics = window.Capacitor.Plugins.Haptics;
@@ -20641,10 +20629,13 @@
           return;
         }
       } catch (e) {}
-      if (typeof navigator !== 'undefined' && navigator.vibrate) {
-        if (type === 'heavy') navigator.vibrate([35]);
-        else if (type === 'medium') navigator.vibrate([22]);
-        else navigator.vibrate([12]);
+
+      if (typeof navigator !== 'undefined' && typeof navigator.vibrate === 'function' && hasRecentUserGesture) {
+        try {
+          if (type === 'heavy') navigator.vibrate([35]);
+          else if (type === 'medium') navigator.vibrate([22]);
+          else navigator.vibrate([12]);
+        } catch (e) {}
       }
     }
 
@@ -20653,7 +20644,7 @@
       const el = document.getElementById(modalId);
       if (el) {
         el.classList.remove('hidden');
-        if (document.body && document.body.style) document.body.style.overflow = "scroll";
+        if (document.body && document.body.style) document.body.style.overflow = "hidden";
         // Focus trap: focus first focusable element
         const _raf = typeof requestAnimationFrame === 'function' ? requestAnimationFrame : function(fn) { setTimeout(fn, 0); };
         _raf(() => {
@@ -30164,12 +30155,24 @@ function setMarketplaceViewMode(mode) {
 
     // Initialize Page
     window.addEventListener('DOMContentLoaded', () => {
+      // Ensure body is scrollable on load (safety net)
+      document.body.style.overflow = '';
       lucide.createIcons();
       setLanguage(state.currentLang);
       renderHeroFeaturedTree();
       applyTheme(state.currentTheme || 'light');
       loadChatHistory();
       if (typeof loadSelectedContractForEditing === 'function') loadSelectedContractForEditing('charter');
+
+      // Global safety: Periodically check if overflow is stuck while no modal is open
+      setInterval(() => {
+        const anyModalVisible = Array.from(document.querySelectorAll('[id^="modal-"]')).some(m => !m.classList.contains('hidden'));
+        const harvestNotice = document.getElementById('harvest-notice-wrapper');
+        const harvestVisible = harvestNotice && harvestNotice.innerHTML.trim().length > 0;
+        if (!anyModalVisible && !harvestVisible && document.body.style.overflow === 'hidden') {
+          document.body.style.overflow = '';
+        }
+      }, 2000);
     });
   
     // Missing Interactive Handlers (Payment, Voice Logs, Subsidies, Orders)
@@ -30377,6 +30380,8 @@ function setMarketplaceViewMode(mode) {
     function closeHarvestMaturingNotice() {
       const noticeEl = document.getElementById('harvest-notice-wrapper');
       if (noticeEl) noticeEl.innerHTML = '';
+      // Reset body overflow since this modal is a full-screen overlay
+      if (document.body) document.body.style.overflow = '';
     }
 
     function populateHarvestModalWithEligibility(eligibility, targetTreeId = null) {
@@ -34794,4 +34799,3 @@ function approveFinancialRequest(reqId) {
 
 </body>
 </html>
-

@@ -17,5 +17,37 @@
         ]
       }
     ]
+  },
+  "firestore": {
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json",
+    "edition": "enterprise",
+    "database": "faseela-prod",
+    "location": "eur3"
+  },
+  "storage": {
+    "rules": "storage.rules"
+  },
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "faseela"
+    }
+  ],
+  "auth": {
+    "authorizedDomains": [
+      "localhost",
+      "gen-lang-client-0319369264.web.app"
+    ],
+    "providers": {
+      "emailPassword": true
+    }
+  },
+  "emulators": {
+    "auth": { "port": 9099 },
+    "firestore": { "port": 8080 },
+    "functions": { "port": 5001 },
+    "storage": { "port": 9199 },
+    "ui": { "enabled": true, "port": 4000 }
   }
 }

@@ -1,0 +1,59 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function hasRole(role) {
+      return signedIn() && request.auth.token.role == role;
+    }
+
+    function isAdmin() {
+      return signedIn() && (request.auth.token.admin == true || hasRole('admin'));
+    }
+
+    function ownsPendingRequest(userId, requestId) {
+      let requestDoc = firestore.get(
+        /databases/faseela-prod/documents/investment_requests/$(requestId)
+      );
+      return requestDoc.data.userId == userId
+        && requestDoc.data.status == 'awaiting_payment';
+    }
+
+    function isAssignedFarmer(userId, treeId) {
+      return hasRole('farmer')
+        && firestore.exists(
+          /databases/faseela-prod/documents/farmer_assignments/$(userId)/trees/$(treeId)
+        );
+    }
+
+    match /payment-proofs/{userId}/{requestId}/{fileName} {
+      allow read: if signedIn() && (request.auth.uid == userId || isAdmin() || hasRole('finance_admin'));
+      allow create: if signedIn()
+        && request.auth.uid == userId
+        && ownsPendingRequest(userId, requestId)
+        && request.resource.size > 0
+        && request.resource.size <= 5 * 1024 * 1024
+        && request.resource.contentType in ['image/jpeg', 'image/png', 'application/pdf'];
+      allow update, delete: if false;
+    }
+
+    match /field-media/{userId}/{treeId}/{fileName} {
+      allow read: if signedIn() && (request.auth.uid == userId || isAdmin() || hasRole('quality_auditor'));
+      allow create: if signedIn()
+        && request.auth.uid == userId
+        && isAssignedFarmer(userId, treeId)
+        && request.resource.size > 0
+        && request.resource.size <= 10 * 1024 * 1024
+        && request.resource.contentType in [
+          'image/jpeg', 'image/png', 'image/webp', 'audio/webm', 'audio/mp4'
+        ];
+      allow update, delete: if false;
+    }
+
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

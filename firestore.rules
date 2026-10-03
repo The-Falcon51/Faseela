@@ -1,0 +1,128 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function hasRole(role) {
+      return signedIn() && request.auth.token.role == role;
+    }
+
+    function isAdmin() {
+      return signedIn() && (request.auth.token.admin == true || hasRole('admin'));
+    }
+
+    function isFinance() {
+      return isAdmin() || hasRole('finance_admin');
+    }
+
+    function isReviewer() {
+      return isAdmin() || hasRole('quality_auditor');
+    }
+
+    function isAssignedFarmer(treeId) {
+      return hasRole('farmer') && exists(
+        /databases/$(database)/documents/farmer_assignments/$(request.auth.uid)/trees/$(treeId)
+      );
+    }
+
+    function isAssignedMill(millId) {
+      return hasRole('mill_operator') && exists(
+        /databases/$(database)/documents/mill_assignments/$(request.auth.uid)/mills/$(millId)
+      );
+    }
+
+    function validFarmerUpdate(data) {
+      return data.keys().hasOnly([
+          'farmerUid', 'treeId', 'eventType', 'notes', 'mediaPaths',
+          'gpsLat', 'gpsLng', 'status', 'createdAt'
+        ])
+        && data.keys().hasAll([
+          'farmerUid', 'treeId', 'eventType', 'notes', 'mediaPaths',
+          'status', 'createdAt'
+        ])
+        && data.farmerUid == request.auth.uid
+        && data.treeId is string
+        && data.treeId.size() > 0
+        && data.eventType in ['watering', 'pruning', 'fertilizing', 'pest_control', 'harvest', 'other']
+        && data.notes is string
+        && data.notes.size() <= 1200
+        && data.mediaPaths is list
+        && data.mediaPaths.size() <= 5
+        && data.status == 'pending_review'
+        && data.createdAt == request.time
+        && (!('gpsLat' in data) || (data.gpsLat is number && data.gpsLat >= -90 && data.gpsLat <= 90))
+        && (!('gpsLng' in data) || (data.gpsLng is number && data.gpsLng >= -180 && data.gpsLng <= 180));
+    }
+
+    match /users_private/{uid} {
+      allow get: if signedIn() && (request.auth.uid == uid || isAdmin());
+      allow list: if isAdmin();
+      allow create, update, delete: if false;
+    }
+
+    match /trees/{treeId} {
+      allow read, write: if false;
+    }
+
+    match /trees_public/{treeId} {
+      allow get, list: if resource.data.status == 'listed';
+      allow create, update, delete: if false;
+    }
+
+    match /tree_events_public/{eventId} {
+      allow get, list: if resource.data.status == 'published';
+      allow create, update, delete: if false;
+    }
+
+    match /investment_requests/{requestId} {
+      allow get, list: if signedIn() && (resource.data.userId == request.auth.uid || isFinance());
+      allow create, update, delete: if false;
+    }
+
+    match /transactions/{transactionId} {
+      allow get, list: if signedIn() && (resource.data.userId == request.auth.uid || isFinance());
+      allow create, update, delete: if false;
+    }
+
+    match /shares/{shareId} {
+      allow get, list: if signedIn() && (resource.data.userId == request.auth.uid || isFinance());
+      allow create, update, delete: if false;
+    }
+
+    match /farmer_assignments/{farmerUid}/trees/{treeId} {
+      allow read: if signedIn() && (request.auth.uid == farmerUid || isAdmin());
+      allow write: if false;
+    }
+
+    match /farmer_updates/{updateId} {
+      allow get, list: if signedIn() &&
+        (resource.data.farmerUid == request.auth.uid || isReviewer());
+      allow create: if signedIn()
+        && isAssignedFarmer(request.resource.data.treeId)
+        && validFarmerUpdate(request.resource.data);
+      allow update, delete: if false;
+    }
+
+    match /mill_assignments/{millUid}/mills/{millId} {
+      allow read: if signedIn() && (request.auth.uid == millUid || isAdmin());
+      allow write: if false;
+    }
+
+    match /pressing_batches/{batchId} {
+      allow get, list: if resource.data.status == 'certified'
+        || (signedIn() && (resource.data.submittedByUid == request.auth.uid || isReviewer()));
+      allow create, update, delete: if false;
+    }
+
+    match /audit_logs/{eventId} {
+      allow get, list: if isAdmin();
+      allow create, update, delete: if false;
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
