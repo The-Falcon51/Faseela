@@ -4,7 +4,9 @@
   "description": "Faseela - Fractional Syrian Olive Tree Stewardship Mobile App for iOS & Android",
   "main": "public/index.html",
   "scripts": {
-    "build": "echo 'Faseela production web assets ready in public/'",
+    "build": "node --check backend/server.js && node --check functions/index.js && node --check functions/domain.js && node --check public/firebase-client.mjs && node --check android/app/src/main/assets/public/firebase-client.mjs && node scripts/check-frontend.cjs",
+    "test": "npm --prefix functions test",
+    "test:rules": "npm --prefix functions run test:rules",
     "cap:sync": "npx cap sync",
     "cap:open:ios": "npx cap open ios",
     "cap:open:android": "npx cap open android",

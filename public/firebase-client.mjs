@@ -15,11 +15,7 @@ import {
 } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js';
 import {
   connectFirestoreEmulator,
-  doc,
-  getDoc,
-  getFirestore,
-  serverTimestamp,
-  setDoc
+  getFirestore
 } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';
 import {
   connectFunctionsEmulator,
@@ -43,9 +39,11 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app, databaseId);
 const functions = getFunctions(app, functionsRegion);
-const isLocalhost = ['localhost', '127.0.0.1'].includes(location.hostname);
+const useEmulators = new URLSearchParams(location.search).get('firebaseEmulator') === 'true'
+  && !window.Capacitor?.isNativePlatform?.();
+let registrationInProgress = false;
 
-if (isLocalhost) {
+if (useEmulators) {
   connectAuthEmulator(auth, 'http://127.0.0.1:9099', { disableWarnings: true });
   connectFirestoreEmulator(db, '127.0.0.1', 8080);
   connectFunctionsEmulator(functions, '127.0.0.1', 5001);
@@ -64,41 +62,30 @@ function dispatchAuthState(detail) {
   window.dispatchEvent(new CustomEvent('faseela-auth-state', { detail }));
 }
 
-async function ensurePrivateProfile(user, profileData = {}) {
-  const profileRef = doc(db, 'users_private', user.uid);
-  const existing = await getDoc(profileRef);
-  if (existing.exists()) return existing.data();
+const callable = (name) => httpsCallable(functions, name);
 
-  const profile = {
-    uid: user.uid,
-    email: user.email || '',
-    displayName: profileData.displayName || user.displayName || '',
-    phone: profileData.phone || '',
-    region: profileData.region || '',
-    requestedRole: profileData.requestedRole || 'investor',
-    createdAt: serverTimestamp(),
-    updatedAt: serverTimestamp()
+async function ensurePrivateProfile(user, profileData = {}) {
+  const displayName = profileData.displayName || user.displayName;
+  const phone = profileData.phone || user.phoneNumber;
+  const fields = {
+    ...(displayName ? { displayName } : {}),
+    ...(phone ? { phone } : {}),
+    ...(profileData.region === undefined ? {} : { region: profileData.region }),
+    ...(profileData.requestedRole === undefined ? {} : { requestedRole: profileData.requestedRole })
   };
-  await setDoc(profileRef, profile);
-  return profile;
+  const { data } = await callable('ensureInvestorProfile')({
+    ...fields
+  });
+  return data.profile;
 }
 
 async function createPendingRoleApplication(user, profile) {
   const role = profile?.requestedRole;
   if (!user.emailVerified || !['farmer', 'mill_operator'].includes(role)) return;
 
-  const applicationRef = doc(db, 'role_applications', user.uid);
-  const existing = await getDoc(applicationRef);
-  if (existing.exists()) return;
-
-  await setDoc(applicationRef, {
-    userId: user.uid,
+  await callable('submitRoleApplication')({
     requestedRole: role,
-    region: profile.region || '',
-    organizationName: '',
-    message: '',
-    status: 'pending',
-    submittedAt: serverTimestamp()
+    region: profile.region || ''
   });
 }
 
@@ -108,13 +95,13 @@ async function publishSession(user) {
     return;
   }
 
-  let profile = {};
-  try {
-    profile = await ensurePrivateProfile(user);
-    await createPendingRoleApplication(user, profile);
-  } catch (error) {
-    console.warn('Firebase profile data is not available yet:', error.code || error.message);
+  if (!user.emailVerified && user.providerData.some(({ providerId }) => providerId === 'password')) {
+    if (!registrationInProgress) await signOut(auth);
+    return;
   }
+
+  const profile = await ensurePrivateProfile(user);
+  await createPendingRoleApplication(user, profile);
 
   let claims = {};
   try {
@@ -170,30 +157,30 @@ async function signIn(email, password) {
 }
 
 async function register({ email, password, displayName, phone, requestedRole, region }) {
-  const credential = await createUserWithEmailAndPassword(auth, email.trim().toLowerCase(), password);
-  const user = credential.user;
-  await updateProfile(user, { displayName: displayName.trim() });
-
-  const profile = {
-    uid: user.uid,
-    email: user.email || email.trim().toLowerCase(),
-    displayName: displayName.trim(),
-    phone: phone.trim(),
-    region: region.trim(),
-    requestedRole: ['farmer', 'mill_operator'].includes(requestedRole) ? requestedRole : 'investor',
-    createdAt: serverTimestamp(),
-    updatedAt: serverTimestamp()
-  };
-
+  registrationInProgress = true;
+  let createdUser;
   try {
-    await setDoc(doc(db, 'users_private', user.uid), profile);
-  } catch (error) {
-    console.warn('Account created; private profile setup will retry after Firestore is enabled:', error.code || error.message);
-  }
+    const credential = await createUserWithEmailAndPassword(auth, email.trim().toLowerCase(), password);
+    const user = credential.user;
+    createdUser = user;
+    await updateProfile(user, { displayName: displayName.trim() });
+    await sendEmailVerification(user);
 
-  await sendEmailVerification(user);
-  await signOut(auth);
-  return { email: user.email, requestedRole: profile.requestedRole };
+    const profileData = {
+      displayName: displayName.trim(),
+      phone: phone.trim(),
+      region: region.trim(),
+      requestedRole: requestedRole === 'mill_owner' ? 'mill_operator'
+        : ['farmer', 'mill_operator'].includes(requestedRole) ? requestedRole : 'investor'
+    };
+    await ensurePrivateProfile(user, profileData);
+    return { email: user.email, requestedRole: profileData.requestedRole };
+  } finally {
+    registrationInProgress = false;
+    if (createdUser && auth.currentUser?.uid === createdUser.uid) {
+      await signOut(auth);
+    }
+  }
 }
 
 async function signInWithGoogle() {
@@ -214,8 +201,6 @@ async function requestPasswordReset(email) {
   await sendPasswordResetEmail(auth, email.trim().toLowerCase());
 }
 
-const callable = (name) => httpsCallable(functions, name);
-
 window.FaseelaFirebase = {
   auth,
   signIn,
@@ -223,6 +208,7 @@ window.FaseelaFirebase = {
   signInWithGoogle,
   signOut: () => signOut(auth),
   requestPasswordReset,
+  submitRoleApplication: (data) => callable('submitRoleApplication')(data),
   createInvestmentRequest: (data) => callable('createInvestmentRequest')(data),
   submitInvestmentPaymentProof: (data) => callable('submitInvestmentPaymentProof')(data),
   reviewInvestmentRequest: (data) => callable('reviewInvestmentRequest')(data),

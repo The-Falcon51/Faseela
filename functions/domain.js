@@ -39,11 +39,13 @@ function validateReservationInput(input) {
 function calculateReservationAmount(tree, reservation) {
   const totalShares = tree.totalShares;
   const pricePerShareMinor = tree.pricePerShareMinor;
-  const landPriceMinor = tree.landPriceMinor || 0;
+  const landPriceMinor = tree.landPriceMinor === undefined ? 0 : tree.landPriceMinor;
 
   if (!Number.isSafeInteger(totalShares) || totalShares < 1
     || !Number.isSafeInteger(pricePerShareMinor) || pricePerShareMinor < 1
-    || !Number.isSafeInteger(landPriceMinor) || landPriceMinor < 0) {
+    || !Number.isSafeInteger(landPriceMinor) || landPriceMinor < 0
+    || !Number.isSafeInteger(reservation.shareCount) || reservation.shareCount < 1
+    || typeof reservation.includesLand !== 'boolean') {
     throw new DomainError('failed-precondition', 'Tree pricing data is invalid.');
   }
   if (reservation.shareCount > totalShares) {
@@ -53,8 +55,12 @@ function calculateReservationAmount(tree, reservation) {
     throw new DomainError('failed-precondition', 'Land can currently be reserved only with a complete tree.');
   }
 
-  return reservation.shareCount * pricePerShareMinor
+  const amountMinor = reservation.shareCount * pricePerShareMinor
     + (reservation.includesLand ? landPriceMinor : 0);
+  if (!Number.isSafeInteger(amountMinor)) {
+    throw new DomainError('failed-precondition', 'Reservation amount exceeds the supported range.');
+  }
+  return amountMinor;
 }
 
 function nextInvestmentStatus(currentStatus, decision) {

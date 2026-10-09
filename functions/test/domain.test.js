@@ -36,6 +36,35 @@ test('reservation totals use integer minor units and land requires a whole tree'
   });
 });
 
+test('reservation totals reject values outside JavaScript safe integer precision', () => {
+  assert.throws(() => calculateReservationAmount({
+    totalShares: 1000,
+    pricePerShareMinor: Number.MAX_SAFE_INTEGER,
+    landPriceMinor: 0
+  }, {
+    shareCount: 2,
+    includesLand: false
+  }), { code: 'failed-precondition' });
+});
+
+test('reservation totals reject malformed prices and share quantities', () => {
+  assert.throws(() => calculateReservationAmount({
+    totalShares: 10,
+    pricePerShareMinor: 100,
+    landPriceMinor: Number.NaN
+  }, {
+    shareCount: 1,
+    includesLand: false
+  }), { code: 'failed-precondition' });
+  assert.throws(() => calculateReservationAmount({
+    totalShares: 10,
+    pricePerShareMinor: 100
+  }, {
+    shareCount: 1.5,
+    includesLand: false
+  }), { code: 'failed-precondition' });
+});
+
 test('investment review allows only pending review decisions', () => {
   assert.equal(nextInvestmentStatus('under_review', 'approve'), 'approved');
   assert.equal(nextInvestmentStatus('under_review', 'reject'), 'rejected');

@@ -147,13 +147,9 @@
     /* ================= HIGH-PERFORMANCE RENDERING ACCELERATION ================= */
     .page-content.hidden {
       display: none !important;
-      content-visibility: hidden;
     }
     .page-content:not(.hidden) {
-      content-visibility: auto;
-      contain-intrinsic-size: auto 900px;
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
+      display: block;
     }
     /* Halt heavy continuous animations inside hidden modals & tabs to save battery & compositor CPU */
     .hidden *, [aria-hidden="true"] * {
@@ -4227,7 +4223,7 @@
         <div class="bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 p-3 rounded-2xl flex items-center justify-between text-xs text-emerald-950 dark:text-emerald-200">
           <div class="flex items-center gap-2">
             <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
-            <span><span data-i18n="auth_otp_received">رمز المصادقة المرسل:</span> <strong class="font-mono text-sm" id="simulated-otp-code">4826</strong></span>
+            <span><span data-i18n="auth_otp_received">رمز التحقق المرسل إلى بريدك:</span> <strong class="font-mono text-sm" id="simulated-otp-code">—</strong></span>
           </div>
           <button type="button" onclick="autoFillOtp()" class="bg-emerald-700 hover:bg-emerald-800 text-white text-[10px] font-bold px-2.5 py-1 rounded-lg transition-all cursor-pointer" data-i18n="auth_otp_autofill">
             تعبئة تلقائية
@@ -7658,28 +7654,6 @@
 
   <!-- ================= MODALS ================= -->
 
-  <!-- ADMIN PASSWORD PROTECTION MODAL -->
-  <div id="modal-admin-password" role="dialog" aria-modal="true" class="fixed inset-0 z-[999] bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
-    <div class="bg-white dark:bg-stone-900 rounded-3xl p-8 shadow-2xl border-2 border-purple-500/40 max-w-sm w-full text-center space-y-6">
-      <div class="space-y-2">
-        <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-600 to-purple-900 text-white flex items-center justify-center mx-auto shadow-lg">
-          <i data-lucide="shield-lock" class="w-8 h-8"></i>
-        </div>
-        <h2 class="text-2xl font-black text-purple-950 dark:text-purple-300">Admin Access</h2>
-        <p class="text-sm text-stone-600 dark:text-stone-400">Founder Control Panel Login</p>
-      </div>
-      
-      <form onsubmit="verifyAdminPassword(event)" class="space-y-3">
-        <input type="email" id="admin-email-input" placeholder="Admin Email" required class="w-full bg-stone-50 dark:bg-stone-800 border-2 border-stone-200 dark:border-stone-700 rounded-xl px-4 py-3 text-center font-mono focus:outline-none focus:border-purple-500 dark:focus:border-purple-400">
-        <input type="password" id="admin-password-input" placeholder="Password" required class="w-full bg-stone-50 dark:bg-stone-800 border-2 border-stone-200 dark:border-stone-700 rounded-xl px-4 py-3 text-center tracking-widest font-mono focus:outline-none focus:border-purple-500 dark:focus:border-purple-400">
-        <button type="submit" class="w-full bg-gradient-to-r from-purple-600 to-purple-900 hover:from-purple-700 hover:to-purple-950 text-white font-black py-3 rounded-xl transition-all cursor-pointer shadow-lg">Login</button>
-        <button type="button" onclick="closeModal('modal-admin-password')" class="w-full bg-stone-100 dark:bg-stone-800 hover:bg-stone-200 dark:hover:bg-stone-700 text-stone-700 dark:text-stone-300 font-bold py-2 rounded-xl transition-all cursor-pointer">Cancel</button>
-      </form>
-      
-      <p id="admin-pwd-error" class="hidden text-red-600 dark:text-red-400 text-sm font-bold"></p>
-    </div>
-  </div>
-
   <!-- 1. Digital Stewardship Certificate Modal -->
   <div id="modal-certificate" role="dialog" aria-modal="true" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4">
     <div class="bg-white dark:bg-stone-900 dark:border-stone-800 dark:text-stone-100 w-full max-w-2xl rounded-3xl p-6 sm:p-10 shadow-2xl border-4 border-olive-600/30 max-h-[95vh] overflow-y-auto relative">
@@ -8124,6 +8098,10 @@
 
       <form onsubmit="submitMillBatch(event)" class="py-4 space-y-4 text-start text-xs">
         <div>
+          <label class="block font-bold text-stone-700 mb-1" data-i18n="mill_modal_mill_lbl">المعصرة المعتمدة:</label>
+          <select id="batch-mill-select" required class="w-full bg-stone-50 border border-stone-200 rounded-xl p-2.5 text-xs font-semibold"></select>
+        </div>
+        <div>
           <label class="block font-bold text-stone-700 mb-1" data-i18n="mill_modal_tree_lbl">المزرعة والشجرة المستهدفة:</label>
           <select id="batch-tree-select" class="w-full bg-stone-50 border border-stone-200 rounded-xl p-2.5 text-xs font-semibold">
             <option value="tree_01" data-i18n="mill_opt_tree1">الشجرة المعمرة - حارسة الجبل (طرطوس - مزرعة كروم الكردي)</option>
@@ -8152,7 +8130,12 @@
             <label class="block font-bold text-stone-700 mb-1" data-i18n="mill_modal_temp_lbl">حرارة العصر (مئوية):</label>
             <input type="number" step="0.1" id="batch-temp" value="23.5" required class="w-full bg-stone-50 border border-stone-200 rounded-xl p-2.5">
           </div>
+          <div>
+            <label class="block font-bold text-stone-700 mb-1" data-i18n="mill_modal_peroxide_lbl">رقم البيروكسيد:</label>
+            <input type="number" step="0.1" min="0" max="100" id="batch-peroxide" value="6.2" required class="w-full bg-stone-50 border border-stone-200 rounded-xl p-2.5">
+          </div>
         </div>
+        <p class="text-[10px] text-stone-500" data-i18n="mill_batch_review_notice">سيُتحقق الخادم من التكليف وتُرسل الدفعة لمراجعة الجودة قبل نشرها.</p>
 
         <button type="submit" class="w-full bg-amber-600 hover:bg-amber-700 text-white py-3 rounded-xl font-bold text-xs shadow-md transition-all" data-i18n="mill_modal_submit_btn">
           اعتماد الدفعة وإصدار الشهادة للمستثمرين
@@ -8555,7 +8538,7 @@
             <div class="flex items-center justify-between">
               <span class="text-[10px] font-bold text-stone-500 flex items-center gap-1">
                 <i data-lucide="file-text" class="w-3 h-3 text-olive-600"></i>
-                <span data-i18n="voice_stt_title">تحويل الصوت إلى نص تلقائياً (ليقرأه المستثمرون):</span>
+                <span data-i18n="voice_stt_title">التسجيل الصوتي للمعاينة فقط؛ أرسل التقرير النصي للمراجعة:</span>
               </span>
               <span id="transcription-badge" class="text-[9px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full font-bold hidden" data-i18n="voice_stt_ready_badge">
                 جاهز للإرسال
@@ -8587,14 +8570,14 @@
           <span class="block text-xs font-black text-stone-900 mb-1.5" data-i18n="voice_step4_title">
             4. صورة حية من الحقل (اختياري):
           </span>
-          <div onclick="simulateFarmerPhotoAttach()" class="border-2 border-dashed border-stone-300 hover:border-olive-600 rounded-2xl p-3 text-center bg-stone-50 hover:bg-white cursor-pointer transition-all">
+          <div class="border-2 border-dashed border-stone-300 rounded-2xl p-3 text-center bg-stone-50">
             <div id="farmer-photo-prompt" class="flex items-center justify-center gap-2 text-stone-600 text-xs font-bold">
               <i data-lucide="camera" class="w-4 h-4 text-olive-700"></i>
-              <span data-i18n="voice_photo_prompt">التقاط صورة من كاميرا الهاتف أو المعرض</span>
+              <span data-i18n="voice_photo_prompt">رفع الصور غير متاح حالياً</span>
             </div>
             <div id="farmer-photo-preview" class="hidden flex items-center justify-center gap-2 text-emerald-700 font-bold text-xs">
               <i data-lucide="check-circle" class="w-4 h-4"></i>
-              <span data-i18n="voice_photo_attached">تم إرفاق صورة ميدانية حية بنجاح (field_photo_kordi.jpg)</span>
+              <span data-i18n="voice_photo_attached">لم يتم رفع صورة</span>
             </div>
           </div>
         </div>
@@ -8604,7 +8587,7 @@
       <div class="pt-3 border-t border-stone-100 flex-shrink-0">
         <button type="button" onclick="submitFarmerVoiceLog()" class="w-full bg-gradient-to-r from-emerald-700 to-olive-800 hover:from-emerald-600 hover:to-olive-700 text-white py-3.5 rounded-2xl font-black text-xs sm:text-sm shadow-lg shadow-emerald-950/20 transition-all flex items-center justify-center gap-2">
           <i data-lucide="send" class="w-4 h-4 text-amber-300"></i>
-          <span data-i18n="voice_submit_btn">نشر التقرير الصوتي لجميع المستثمرين فورياً</span>
+          <span data-i18n="voice_submit_btn">إرسال التقرير النصي للمراجعة</span>
         </button>
       </div>
     </div>
@@ -9290,7 +9273,7 @@
         mill_opt_tree1: "الشجرة المعمرة - حارسة الجبل (طرطوس - مزرعة كروم الكردي)",
         mill_opt_tree2: "الصورانية الذهبية - قطاع 4 (إدلب - بساتين جبل الزاوية)",
         mill_opt_tree3: "قيسية حوران - الياقوتة الحمراء (درعا)",
-        mill_modal_submit_btn: "اعتماد الدفعة وإصدار الشهادة للمستثمرين",
+        mill_modal_submit_btn: "إرسال الدفعة لمراجعة الجودة",
         invest_preset_25: "1 حصة (25%)",
         invest_preset_50: "حصتان (50%)",
         invest_preset_100: "شجرة (100%)",
@@ -9330,15 +9313,15 @@
         act_transport: "نقل للمعصرة",
         voice_step3_title: "3. سجّل تفاصيل العمل بصوتك:",
         voice_status_ready: "اضغط على الميكروفون وتحدث بحرية",
-        voice_stt_title: "تحويل الصوت إلى نص تلقائياً (ليقرأه المستثمرون):",
+        voice_stt_title: "التسجيل الصوتي للمعاينة فقط؛ أرسل التقرير النصي للمراجعة:",
         voice_stt_ready_badge: "جاهز للإرسال",
         voice_playback_ready: "تسجيلك الصوتي جاهز",
         voice_playback_duration: "0:18 ثانية",
         voice_playback_retry: "إعادة التسجيل",
-        voice_step4_title: "4. صورة حية من الحقل (اختياري):",
-        voice_photo_prompt: "التقاط صورة من كاميرا الهاتف أو المعرض",
-        voice_photo_attached: "تم إرفاق صورة ميدانية حية بنجاح (field_photo_kordi.jpg)",
-        voice_submit_btn: "نشر التقرير الصوتي لجميع المستثمرين فورياً",
+        voice_step4_title: "4. مرفقات الصور غير متاحة بعد:",
+        voice_photo_prompt: "سيُتاح رفع الصور بعد تفعيل التخزين الآمن",
+        voice_photo_attached: "لم يتم رفع صورة",
+        voice_submit_btn: "إرسال التقرير النصي للمراجعة",
         payout_currency_equiv: "ليرة سورية ($42)",
         payout_trees_care_sub: "عن رعاية 3 أشجار معمرة (أعمال السقاية والتقليم)",
         payout_method_syriatel: "سيريتل كاش",
@@ -9570,7 +9553,7 @@
         mill_opt_tree1: "الشجرة المعمرة - حارسة الجبل (طرطوس - مزرعة كروم الكردي)",
         mill_opt_tree2: "الصورانية الذهبية - قطاع 4 (إدلب - بساتين جبل الزاوية)",
         mill_opt_tree3: "قيسية حوران - الياقوتة الحمراء (درعا)",
-        mill_modal_submit_btn: "اعتماد الدفعة وإصدار الشهادة للمستثمرين",
+        mill_modal_submit_btn: "إرسال الدفعة لمراجعة الجودة",
         invest_preset_25: "1 حصة (25%)",
         invest_preset_50: "حصتان (50%)",
         invest_preset_100: "شجرة (100%)",
@@ -9610,15 +9593,15 @@
         act_transport: "نقل للمعصرة",
         voice_step3_title: "3. سجّل تفاصيل العمل بصوتك:",
         voice_status_ready: "اضغط على الميكروفون وتحدث بحرية",
-        voice_stt_title: "تحويل الصوت إلى نص تلقائياً (ليقرأه المستثمرون):",
+        voice_stt_title: "التسجيل الصوتي للمعاينة فقط؛ أرسل التقرير النصي للمراجعة:",
         voice_stt_ready_badge: "جاهز للإرسال",
         voice_playback_ready: "تسجيلك الصوتي جاهز",
         voice_playback_duration: "0:18 ثانية",
         voice_playback_retry: "إعادة التسجيل",
-        voice_step4_title: "4. صورة حية من الحقل (اختياري):",
-        voice_photo_prompt: "التقاط صورة من كاميرا الهاتف أو المعرض",
-        voice_photo_attached: "تم إرفاق صورة ميدانية حية بنجاح (field_photo_kordi.jpg)",
-        voice_submit_btn: "نشر التقرير الصوتي لجميع المستثمرين فورياً",
+        voice_step4_title: "4. مرفقات الصور غير متاحة بعد:",
+        voice_photo_prompt: "سيُتاح رفع الصور بعد تفعيل التخزين الآمن",
+        voice_photo_attached: "لم يتم رفع صورة",
+        voice_submit_btn: "إرسال التقرير النصي للمراجعة",
         payout_currency_equiv: "ليرة سورية ($42)",
         payout_trees_care_sub: "عن رعاية 3 أشجار معمرة (أعمال السقاية والتقليم)",
         payout_method_syriatel: "سيريتل كاش",
@@ -9827,7 +9810,7 @@
         mill_opt_tree1: "الشجرة المعمرة - حارسة الجبل (طرطوس - مزرعة كروم الكردي)",
         mill_opt_tree2: "الصورانية الذهبية - قطاع 4 (إدلب - بساتين جبل الزاوية)",
         mill_opt_tree3: "قيسية حوران - الياقوتة الحمراء (درعا)",
-        mill_modal_submit_btn: "اعتماد الدفعة وإصدار الشهادة للمستثمرين",
+        mill_modal_submit_btn: "إرسال الدفعة لمراجعة الجودة",
         invest_preset_25: "1 حصة (25%)",
         invest_preset_50: "حصتان (50%)",
         invest_preset_100: "شجرة (100%)",
@@ -9867,15 +9850,15 @@
         act_transport: "نقل للمعصرة",
         voice_step3_title: "3. سجّل تفاصيل العمل بصوتك:",
         voice_status_ready: "اضغط على الميكروفون وتحدث بحرية",
-        voice_stt_title: "تحويل الصوت إلى نص تلقائياً (ليقرأه المستثمرون):",
+        voice_stt_title: "التسجيل الصوتي للمعاينة فقط؛ أرسل التقرير النصي للمراجعة:",
         voice_stt_ready_badge: "جاهز للإرسال",
         voice_playback_ready: "تسجيلك الصوتي جاهز",
         voice_playback_duration: "0:18 ثانية",
         voice_playback_retry: "إعادة التسجيل",
-        voice_step4_title: "4. صورة حية من الحقل (اختياري):",
-        voice_photo_prompt: "التقاط صورة من كاميرا الهاتف أو المعرض",
-        voice_photo_attached: "تم إرفاق صورة ميدانية حية بنجاح (field_photo_kordi.jpg)",
-        voice_submit_btn: "نشر التقرير الصوتي لجميع المستثمرين فورياً",
+        voice_step4_title: "4. مرفقات الصور غير متاحة بعد:",
+        voice_photo_prompt: "سيُتاح رفع الصور بعد تفعيل التخزين الآمن",
+        voice_photo_attached: "لم يتم رفع صورة",
+        voice_submit_btn: "إرسال التقرير النصي للمراجعة",
         payout_currency_equiv: "ليرة سورية ($42)",
         payout_trees_care_sub: "عن رعاية 3 أشجار معمرة (أعمال السقاية والتقليم)",
         payout_method_syriatel: "سيريتل كاش",
@@ -10239,7 +10222,7 @@
         mill_opt_tree1: "الشجرة المعمرة - حارسة الجبل (طرطوس - مزرعة كروم الكردي)",
         mill_opt_tree2: "الصورانية الذهبية - قطاع 4 (إدلب - بساتين جبل الزاوية)",
         mill_opt_tree3: "قيسية حوران - الياقوتة الحمراء (درعا)",
-        mill_modal_submit_btn: "اعتماد الدفعة وإصدار الشهادة للمستثمرين",
+        mill_modal_submit_btn: "إرسال الدفعة لمراجعة الجودة",
         invest_preset_25: "1 حصة (25%)",
         invest_preset_50: "حصتان (50%)",
         invest_preset_100: "شجرة (100%)",
@@ -10279,15 +10262,15 @@
         act_transport: "نقل للمعصرة",
         voice_step3_title: "3. سجّل تفاصيل العمل بصوتك:",
         voice_status_ready: "اضغط على الميكروفون وتحدث بحرية",
-        voice_stt_title: "تحويل الصوت إلى نص تلقائياً (ليقرأه المستثمرون):",
+        voice_stt_title: "التسجيل الصوتي للمعاينة فقط؛ أرسل التقرير النصي للمراجعة:",
         voice_stt_ready_badge: "جاهز للإرسال",
         voice_playback_ready: "تسجيلك الصوتي جاهز",
         voice_playback_duration: "0:18 ثانية",
         voice_playback_retry: "إعادة التسجيل",
-        voice_step4_title: "4. صورة حية من الحقل (اختياري):",
-        voice_photo_prompt: "التقاط صورة من كاميرا الهاتف أو المعرض",
-        voice_photo_attached: "تم إرفاق صورة ميدانية حية بنجاح (field_photo_kordi.jpg)",
-        voice_submit_btn: "نشر التقرير الصوتي لجميع المستثمرين فورياً",
+        voice_step4_title: "4. مرفقات الصور غير متاحة بعد:",
+        voice_photo_prompt: "سيُتاح رفع الصور بعد تفعيل التخزين الآمن",
+        voice_photo_attached: "لم يتم رفع صورة",
+        voice_submit_btn: "إرسال التقرير النصي للمراجعة",
         payout_currency_equiv: "ليرة سورية ($42)",
         payout_trees_care_sub: "عن رعاية 3 أشجار معمرة (أعمال السقاية والتقليم)",
         payout_method_syriatel: "سيريتل كاش",
@@ -10664,10 +10647,13 @@
         lab_modal_yield_lbl: "نسبة الاستخراج (السيولة):",
         mill_modal_title: "تسجيل دفعة عصر وإصدار شهادة",
         mill_modal_tree_lbl: "المزرعة والشجرة المستهدفة:",
+        mill_modal_mill_lbl: "المعصرة المعتمدة:",
         mill_modal_weight_lbl: "وزن الزيتون (كغ):",
         mill_modal_oil_lbl: "ناتج الزيت باللتر:",
         mill_modal_acidity_lbl: "نسبة الحموضة %:",
         mill_modal_temp_lbl: "حرارة العصر (مئوية):",
+        mill_modal_peroxide_lbl: "رقم البيروكسيد:",
+        mill_batch_review_notice: "سيُتحقق الخادم من التكليف وتُرسل الدفعة لمراجعة الجودة قبل نشرها.",
         invest_modal_title: "شراء حصة في شجرة زيتون",
         invest_modal_tree_lbl: "الشجرة المختارة:",
         invest_modal_share_lbl: "اختر نسبة الحصة المطلوبة:",
@@ -12641,7 +12627,7 @@
         mill_opt_tree1: "The Century Olive - Mountain Guardian (Tartus - Dreikish)",
         mill_opt_tree2: "Golden Sourani - Sector 4 (Idlib - Mount Zawiya)",
         mill_opt_tree3: "Houran Qaisi - Red Ruby (Daraa)",
-        mill_modal_submit_btn: "Approve Batch & Issue Certificate to Investors",
+        mill_modal_submit_btn: "Submit batch for quality review",
         invest_preset_25: "1 Share (25%)",
         invest_preset_50: "2 Shares (50%)",
         invest_preset_100: "Full Tree (100%)",
@@ -12681,15 +12667,15 @@
         act_transport: "Mill Transport",
         voice_step3_title: "3. Record Field Voice Notes:",
         voice_status_ready: "Click microphone to speak freely",
-        voice_stt_title: "Automatic Speech-to-Text Transcription:",
+        voice_stt_title: "Audio is for local preview; submit the written report for review:",
         voice_stt_ready_badge: "Ready to Publish",
         voice_playback_ready: "Your voice recording is ready",
         voice_playback_duration: "Voice duration: 0:42",
         voice_playback_retry: "Record Again",
-        voice_step4_title: "4. Attach Field Photo:",
-        voice_photo_prompt: "Click to attach live tree photo from the orchard",
-        voice_photo_attached: "Live field photo attached from orchard",
-        voice_submit_btn: "Publish Log to Tree Timeline & Investors",
+        voice_step4_title: "4. Photo attachments are not available yet:",
+        voice_photo_prompt: "Secure photo uploads will be enabled later",
+        voice_photo_attached: "No photo uploaded",
+        voice_submit_btn: "Submit written report for review",
         payout_currency_equiv: "Equivalent to SYP at official rate",
         payout_trees_care_sub: "Based on verified field care milestones",
         payout_method_syriatel: "Syriatel Cash Wallet",
@@ -13091,10 +13077,13 @@
         lab_modal_yield_lbl: "Oil Extraction Yield:",
         mill_modal_title: "Record Pressing Batch & Issue Lab Certificate",
         mill_modal_tree_lbl: "Target Grove & Olive Tree:",
+        mill_modal_mill_lbl: "Assigned mill:",
         mill_modal_weight_lbl: "Fruit Weight (kg):",
         mill_modal_oil_lbl: "Oil Output (Liters):",
         mill_modal_acidity_lbl: "Acidity Percentage %:",
         mill_modal_temp_lbl: "Pressing Temperature (°C):",
+        mill_modal_peroxide_lbl: "Peroxide value:",
+        mill_batch_review_notice: "The server verifies your assignment and sends the batch for quality review before publication.",
         invest_modal_title: "Purchase Share in Heritage Olive Tree",
         invest_modal_tree_lbl: "Selected Olive Tree:",
         invest_modal_share_lbl: "Choose Desired Share Size:",
@@ -14961,7 +14950,7 @@
       const modal = document.getElementById('modal-notification-center');
       if (modal) {
         modal.classList.remove('hidden');
-        if (document.body && document.body.style) document.body.style.overflow = "scroll";
+        if (document.body && document.body.style) document.body.style.overflow = "hidden";
       }
       if (window.lucide) window.lucide.createIcons();
     }
@@ -18098,7 +18087,6 @@
       users: [
         {
           id: "usr_founder_01",
-          password: "User7tech123",
           name: "م. وسام الحمدولي (المؤسس ورئيس العمليات)",
           name_en: "Eng. Wissam Al-Hamdoli (Founder & CEO)",
           role: "admin",
@@ -18114,7 +18102,6 @@
         },
         {
           id: "usr_investor_01",
-          password: "Faseela@2026!",
           name: "طارق السوري",
           name_en: "Tariq The Syrian",
           role: "investor",
@@ -18129,7 +18116,6 @@
         },
         {
           id: "usr_farmer_01",
-          password: "Faseela@2026!",
           name: "أبو أحمد الطرطوسي",
           name_en: "Abu Ahmad Al-Tartousi",
           role: "farmer",
@@ -18145,7 +18131,6 @@
         },
         {
           id: "usr_mill_01",
-          password: "Faseela@2026!",
           name: "المهندس سمير الدريكيشي",
           name_en: "Eng. Samir Al-Dreikishi",
           role: "mill_owner",
@@ -18286,25 +18271,63 @@
       ]
     };
 
-    // Initialize currentUser from local storage or null (guest) to enforce strict authentication
-    const savedUserId = localStorage.getItem('faseela_auth_user_id');
-    let matchedSaved = savedUserId ? state.users.find(u => u.id === savedUserId) : null;
+    // Authentication state is provided by Firebase; local storage is never an authority.
+    ['faseela_auth_user_id', 'faseela_oauth_token', 'faseela_session_user'].forEach(key => {
+      localStorage.removeItem(key);
+    });
+    state.users.forEach(user => { delete user.password; });
+    try {
+      const savedUsers = JSON.parse(localStorage.getItem('faseela_users') || 'null');
+      if (Array.isArray(savedUsers)) {
+        localStorage.setItem('faseela_users', JSON.stringify(savedUsers.map(user => {
+          if (!user || typeof user !== 'object') return user;
+          const sanitizedUser = { ...user };
+          delete sanitizedUser.password;
+          return sanitizedUser;
+        })));
+      }
+    } catch (error) {
+      console.warn('Could not migrate legacy locally stored user data:', error);
+      localStorage.removeItem('faseela_users');
+    }
+    state.currentUser = null;
 
-    // SECURITY: Auto-migration removed — only exact user ID match permitted
-    // Legacy sessions with invalid IDs are logged out for safety
-    if (savedUserId && !matchedSaved) {
+    window.addEventListener('faseela-auth-state', event => {
+      const user = event.detail;
+      if (!user) {
+        state.currentUser = null;
+        updateNavbarSecurityLocks();
+        const page = getCurrentVisiblePage();
+        if (['dashboard', 'farmer-portal', 'mill-portal', 'founder-control'].includes(page)) {
+          navigateTo('home');
+        }
+        return;
+      }
+
+      state.currentUser = {
+        id: user.uid,
+        uid: user.uid,
+        email: user.email,
+        phone: user.phone,
+        name: user.name,
+        name_en: user.name_en,
+        role: user.role,
+        roleName: user.roleName,
+        roleName_en: user.roleName_en,
+        avatar: user.avatar,
+        avatar_en: user.avatar_en,
+        badgeColor: user.badgeColor,
+        region: user.region,
+        email_verified: user.email_verified,
+        auth_provider: user.auth_provider,
+        permittedPages: user.permittedPages
+      };
       localStorage.removeItem('faseela_auth_user_id');
       localStorage.removeItem('faseela_oauth_token');
-    }
-
-    // Ensure usr_founder_01 email is strictly simooosy77@gmail.com
-    const founderAcc = state.users.find(u => u.id === 'usr_founder_01');
-    if (founderAcc) {
-      founderAcc.email = 'simooosy77@gmail.com';
-      founderAcc.password = 'User7tech123';
-    }
-
-    state.currentUser = matchedSaved || null;
+      updateNavbarSecurityLocks();
+      if (typeof renderAuthSessionModal === 'function') renderAuthSessionModal();
+      if (typeof renderDashboard === 'function' && state.currentPage === 'dashboard') renderDashboard();
+    });
 
     // Client-Side Sliding-Window Rate Limiter (Anti-DDoS / Anti-Brute-Force)
     // SECURITY: Persisted in localStorage to survive page refreshes
@@ -18375,7 +18398,7 @@
       }
 
       if (pageId === 'founder-control') {
-        if (!state.currentUser || (state.currentUser.role !== 'admin' && state.currentUser.id !== 'usr_founder_01')) {
+        if (!state.currentUser || (state.currentUser.role !== 'admin')) {
           const reqRole = state.currentLang === 'en' ? 'Founder & CEO' : 'مؤسس المنصة والإدارة العليا';
           const msg = state.currentLang === 'en'
             ? 'The Operations Command & Control Center is strictly restricted to the platform Founder.'
@@ -18448,7 +18471,7 @@
 
       const founderBtn = document.getElementById('nav-founder');
       const mobFounderBtn = document.getElementById('mob-drawer-founder');
-      const isAdmin = isAuth && (state.currentUser.role === 'admin' || state.currentUser.id === 'usr_founder_01');
+      const isAdmin = isAuth && (state.currentUser.role === 'admin');
       if (founderBtn) {
         if (isAdmin) {
           founderBtn.classList.remove('hidden');
@@ -18687,159 +18710,36 @@
       triggerHaptic('light');
     }
 
-    // Professional Audited RBAC Sandbox Persona Switcher with Cryptographic Handshake
-    function quickSwitchUser(userId) {
-      if (!state.currentUser || state.currentUser.role !== 'admin') {
-        showToast(state.currentLang === 'en' ? 'Unauthorized: Founder root clearance required' : 'غير مصرح: يتطلب صلاحيات المدير العام');
+    function quickSwitchUser() {
+      showToast(state.currentLang === 'en'
+        ? 'Persona switching is disabled. Sign in with the account you need.'
+        : 'تم تعطيل تبديل الشخصيات. سجّل الدخول بالحساب المطلوب.');
+    }
+
+    function initiateGoogleAuth() {
+      if (!window.FaseelaFirebase) {
+        showToast(state.currentLang === 'en' ? 'Google sign-in is unavailable right now.' : 'تسجيل الدخول عبر Google غير متاح حالياً.');
         return;
       }
-      const user = (state.users || []).find(u => u.id === userId);
-      if (!user) return;
-      
-      // 1. Generate Audited Nonce & Session Handshake
-      const nonce = 'AUDIT-' + Math.random().toString(36).substring(2, 7).toUpperCase() + '-' + Date.now().toString().slice(-4);
-      
-      // 2. Set Session State
-      state.currentUser = user;
-      try {
-        localStorage.setItem('faseela_auth_user_id', user.id);
-      } catch(e) {}
-
-      // 3. Log into Platform Security Audit Trail
-      if (!state.securityAuditTrail) state.securityAuditTrail = [];
-      state.securityAuditTrail.unshift({
-        id: nonce,
-        timestamp: new Date().toISOString(),
-        action: 'RBAC_PERSONA_SWITCH',
-        target_user_id: user.id,
-        target_name: user.name,
-        target_role: user.role,
-        auth_type: 'SANDBOX_AUDITED'
+      window.FaseelaFirebase.signInWithGoogle().then(() => {
+        closeModal('modal-google-sso');
+        closeModal('modal-auth-session');
+        const role = state.currentUser?.role;
+        const destination = role === 'admin' ? 'founder-control'
+          : role === 'farmer' ? 'farmer-portal'
+            : role === 'mill_owner' ? 'mill-portal'
+              : role === 'investor' ? 'dashboard' : 'marketplace';
+        navigateTo(destination);
+      }).catch(error => {
+        console.warn('Firebase Google sign-in failed:', error.code || error.message);
+        showToast(state.currentLang === 'en'
+          ? 'Google sign-in failed. Please try again.'
+          : 'تعذر تسجيل الدخول عبر Google. حاول مجدداً.');
       });
-
-      // 4. Update UI Locks and Refresh Modal
-      updateNavbarSecurityLocks();
-      openAuthModal();
-      triggerHaptic('medium');
-      playAcousticChime(680, 0.2);
-
-      const uName = state.currentLang === 'en' ? (user.name_en || user.name) : user.name;
-      const uRole = state.currentLang === 'en' ? (user.roleName_en || user.roleName) : user.roleName;
-      
-      showToast(state.currentLang === 'en' 
-        ? `🛡️ Audited Persona Handshake: Switched to ${uName} (${uRole}) • [${nonce}]` 
-        : `🛡️ مصادقة وتدقيق أمني: تم الانتقال إلى ${uName} (${uRole}) • [${nonce}]`);
     }
 
-    // Google OAuth 2.0 / OpenID Connect SSO Engine
-    function initiateGoogleAuth() {
-      playAcousticChime(600, 0.15);
-      openModal('modal-google-sso');
-      lucide.createIcons();
-    }
-
-    function selectGoogleAccount(email, name, role) {
-      if (!email) return;
-      const isEn = state.currentLang === 'en';
-
-      // 1. Lookup or register new Google user
-      let user = null;
-      if (email.toLowerCase() === 'simooosy77@gmail.com' || email.toLowerCase() === 'founder@faseela.sy' || role === 'admin') {
-        user = (state.users || []).find(u => u.id === 'usr_founder_01') || (state.users || [])[0];
-        if (user) {
-          user.email = 'simooosy77@gmail.com';
-          user.auth_provider = 'google';
-          user.email_verified = true;
-          user.two_factor_verified = true;
-        }
-      } else {
-        user = (state.users || []).find(u => 
-          (u.email && u.email.toLowerCase() === email.toLowerCase()) ||
-          (u.secondary_email && u.secondary_email.toLowerCase() === email.toLowerCase())
-        );
-      }
-
-      if (!user) {
-        // Create new Google SSO User
-        const roleProfiles = {
-          investor: { ar: "مستثمر زراعي", en: "Agricultural Investor", badge: "bg-olive-200 text-olive-900", pages: ['home', 'marketplace', 'dashboard'] },
-          farmer: { ar: "مزارع شريك", en: "Partner Farmer", badge: "bg-emerald-200 text-emerald-950", pages: ['home', 'marketplace', 'farmer-portal'], farm_id: "farm_01" },
-          mill_owner: { ar: "صاحب معصرة", en: "Mill Operator", badge: "bg-amber-200 text-amber-950", pages: ['home', 'marketplace', 'mill-portal'], mill_id: "mill_01" },
-          admin: { ar: "مؤسس المنصة والإدارة العليا", en: "Founder & Chief Executive", badge: "bg-purple-100 text-purple-950 border border-purple-300 ring-2 ring-purple-500/30", pages: ['home', 'marketplace', 'dashboard', 'farmer-portal', 'mill-portal', 'founder-control'] }
-        };
-
-        const prof = roleProfiles[role] || roleProfiles.investor;
-        const initialLetter = (name || email)[0].toUpperCase();
-
-        user = {
-          id: `usr_goog_${Math.random().toString(36).substring(2, 9)}`,
-          name: name || email.split('@')[0],
-          name_en: name || email.split('@')[0],
-          role: role || 'investor',
-          roleName: prof.ar,
-          roleName_en: prof.en,
-          email: email.toLowerCase(),
-          phone: `09${Math.floor(10000000 + Math.random() * 90000000)}`,
-          avatar: initialLetter,
-          avatar_en: initialLetter,
-          badgeColor: prof.badge,
-          permittedPages: prof.pages,
-          auth_provider: 'google',
-          email_verified: true,
-          two_factor_verified: true
-        };
-
-        if (prof.farm_id) user.farm_id = prof.farm_id;
-        if (prof.mill_id) user.mill_id = prof.mill_id;
-
-        if (!state.users) state.users = [];
-        state.users.push(user);
-      }
-
-      // 2. Complete Authentication & Token Exchange
-      const oauthSessionToken = `G-OAUTH-${Math.random().toString(36).substring(2, 10).toUpperCase()}`;
-      state.currentUser = user;
-      try {
-        localStorage.setItem('faseela_auth_user_id', user.id);
-        localStorage.setItem('faseela_oauth_token', oauthSessionToken);
-      } catch(e) {}
-
-      // 3. Log Audit Trail
-      if (!state.securityAuditTrail) state.securityAuditTrail = [];
-      state.securityAuditTrail.unshift({
-        id: oauthSessionToken,
-        timestamp: new Date().toISOString(),
-        action: 'GOOGLE_OAUTH_LOGIN',
-        target_user_id: user.id,
-        email: user.email,
-        auth_type: 'GOOGLE_ONE_TAP_SSO'
-      });
-
-      // 4. Close Modals & Refresh
-      closeModal('modal-google-sso');
-      closeModal('modal-auth-session');
-      updateNavbarSecurityLocks();
-      playAcousticChime(720, 0.25);
-
-      const uName = isEn ? (user.name_en || user.name) : user.name;
-      const uRole = isEn ? (user.roleName_en || user.roleName) : user.roleName;
-
-      showToast(isEn 
-        ? `🎉 Verified with Google! Welcome ${uName} (${uRole})` 
-        : `🎉 ${state.currentLang === 'en' ? `Google Sign-In Successful! Welcome ${uName} (${uRole})` : `تم تسجيل الدخول بنجاح عبر Google! مرحباً ${uName} (${uRole})`}`);
-
-      // Automatically route user to their authorized portal
-      if (user.role === 'admin' || user.id === 'usr_founder_01') {
-        navigateTo('founder-control');
-      } else if (user.role === 'farmer') {
-        navigateTo('farmer-portal');
-      } else if (user.role === 'mill_owner') {
-        navigateTo('mill-portal');
-      } else if (user.role === 'investor') {
-        navigateTo('dashboard');
-      } else {
-        navigateTo('marketplace');
-      }
+    function selectGoogleAccount() {
+      initiateGoogleAuth();
     }
 
     function handleCustomGoogleSignIn() {
@@ -19210,7 +19110,7 @@
         const avatar = document.getElementById('auth-profile-avatar');
         if (card && avatar) {
           avatar.innerText = isEn ? (u.avatar_en || u.avatar) : u.avatar;
-          if (u.role === 'admin' || u.id === 'usr_founder_01') {
+          if (u.role === 'admin') {
             card.className = "relative overflow-hidden rounded-3xl p-5 sm:p-6 text-white shadow-xl border border-purple-400/30 transition-all bg-gradient-to-br from-stone-950 via-purple-950 to-stone-900";
             avatar.className = "w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-700 to-purple-900 text-white font-black text-2xl flex items-center justify-center border-2 border-white/30 shadow-lg";
           } else if (u.role === 'farmer') {
@@ -19229,7 +19129,7 @@
         const scopeTitleEl = document.getElementById('auth-scope-title');
         const scopeDescEl = document.getElementById('auth-scope-desc');
         if (scopeTitleEl && scopeDescEl) {
-          if (u.role === 'admin' || u.id === 'usr_founder_01') {
+          if (u.role === 'admin') {
             scopeTitleEl.innerText = isEn 
               ? 'Authorized Scope: Executive Command & Full Root Governance' 
               : 'نطاق التصريح الممنوح لك: الإدارة العليا والرقابة السيادية الشاملة (Root Admin)';
@@ -19263,7 +19163,7 @@
         // Live Assets Stats Grid
         const assetsGrid = document.getElementById('auth-dynamic-assets-grid');
         if (assetsGrid) {
-          if (u.role === 'admin' || u.id === 'usr_founder_01') {
+          if (u.role === 'admin') {
             assetsGrid.innerHTML = `
               <div class="bg-stone-50 dark:bg-stone-800/80 p-3 rounded-2xl border border-stone-200 dark:border-stone-700">
                 <span class="text-[10px] text-stone-500 block font-bold">${isEn ? 'Escrow Vault Reserves' : 'أصول حساب الضمان (Escrow)'}</span>
@@ -19418,60 +19318,9 @@
 
     function submitWalletDeposit(e) {
       if (e) e.preventDefault();
-      const isEn = state.currentLang === 'en';
-      if (!state.currentUser) {
-        openAuthModal();
-        return;
-      }
-
-      const rawUsd = parseFloat(document.getElementById('deposit-amount-usd')?.value);
-      if (isNaN(rawUsd) || rawUsd <= 0) {
-        showToast(isEn ? 'Please enter a valid deposit amount (greater than $0)' : 'يرجى إدخال مبلغ إيداع صالح أكبر من الصفر');
-        return;
-      }
-      const usd = rawUsd;
-      const ref = document.getElementById('deposit-ref-no')?.value.trim() || `DEP-${Date.now()}`;
-      const channel = document.querySelector('input[name="deposit-channel"]:checked')?.value || 'syriatel';
-
-      const channelNames = {
-        syriatel: isEn ? 'Syriatel / MTN Cash' : 'سيريتل كاش',
-        haram: isEn ? 'Al-Haram Exchange' : 'الهرم للصرافة',
-        bank: isEn ? 'Official Bank Wire' : 'تحويل بنكي رسمي',
-        usdt: 'USDT (TRC-20)'
-      };
-
-      // Credit wallet
-      state.currentUser.wallet_usd = (state.currentUser.wallet_usd || 0) + usd;
-      state.currentUser.balance_usd = (state.currentUser.balance_usd || 0) + usd;
-
-      // Add to financial ledger
-      if (!state.financialLedger) state.financialLedger = [];
-      state.financialLedger.unshift({
-        id: `TX-DEP-${Math.floor(Math.random()*90000+10000)}`,
-        user_id: state.currentUser.id,
-        recipient: state.currentUser.name,
-        type: isEn ? 'Wallet Deposit' : 'إيداع رصيد بالمحفظة',
-        desc: `${isEn ? 'Deposit via' : 'إيداع عبر'} ${channelNames[channel]} (${ref})`,
-        amount: `+$${usd.toFixed(2)}`,
-        status: 'approved',
-        timestamp: new Date().toISOString().split('T')[0]
-      });
-
-      // Record in Audit Trail
-      if (typeof recordAuditEvent === 'function') {
-        recordAuditEvent('financial', isEn ? `Wallet deposit of $${usd} via ${channelNames[channel]}` : `إيداع رصيد بقيمة $${usd} عبر ${channelNames[channel]}`, state.currentUser.name, `+$${usd}`, 'success');
-      }
-
-      savePlatformState();
-      closeModal('modal-deposit');
-      playAcousticChime(750, 0.25);
-
-      showToast(isEn 
-        ? `✅ Successfully deposited $${usd.toFixed(2)} into your investment wallet!` 
-        : `✅ ${state.currentLang === 'en' ? `Successfully deposited $${usd.toFixed(2)} to your portfolio!` : `تم إيداع $${usd.toFixed(2)} بنجاح في محفظتك وقيد الرصيد فورياً!`}`);
-
-      if (typeof renderDashboard === 'function') renderDashboard();
-      if (typeof renderAuthSessionModal === 'function') renderAuthSessionModal();
+      showToast(state.currentLang === 'en'
+        ? 'Deposits are not connected to a verified payment service yet. No balance was changed.'
+        : 'خدمة الإيداع غير مرتبطة بعد ببوابة دفع موثقة؛ لم يتغير أي رصيد.');
     }
 
     function openAuthModal(defaultTab = 'identity') {
@@ -19636,127 +19485,42 @@
     }
 
     function fillDemoCredentials(role) {
-      const emailInput = document.getElementById('auth-login-email');
-      const pwdInput = document.getElementById('auth-login-password');
-      if (!emailInput) return;
-
-      const defaultPassword = 'Faseela@2026!';
-
-      if (role === 'investor') {
-        emailInput.value = 'tariq@faseela.sy';
-        if (pwdInput) pwdInput.value = defaultPassword;
-        showToast(state.currentLang === 'en' ? 'Filled: Tariq (Investor)' : 'تم إدراج بيانات: طارق (مستثمر زراعي)');
-      } else if (role === 'farmer') {
-        emailInput.value = 'abuahmad@faseela.sy';
-        if (pwdInput) pwdInput.value = defaultPassword;
-        showToast(state.currentLang === 'en' ? 'Filled: Abu Ahmad (Partner Farmer)' : 'تم إدراج بيانات: أبو أحمد (مزارع شريك)');
-      } else if (role === 'mill') {
-        emailInput.value = 'samir@faseela.sy';
-        if (pwdInput) pwdInput.value = defaultPassword;
-        showToast(state.currentLang === 'en' ? 'Filled: Eng. Samir (Mill Operator)' : 'تم إدراج بيانات: م. سمير (صاحب معصرة)');
-      } else if (role === 'founder') {
-        emailInput.value = 'simooosy77@gmail.com';
-        if (pwdInput) {
-          pwdInput.value = '';
-          pwdInput.focus();
-        }
-        showToast(state.currentLang === 'en' ? 'Founder account selected: Please enter your master password.' : 'تم تحديد حساب المؤسس: يرجى إدخال كلمة المرور المعتمدة.');
-      }
-      playAcousticChime(520, 0.15);
+      showToast(state.currentLang === 'en'
+        ? 'Demo accounts are disabled. Register or sign in with a Firebase account.'
+        : 'تم تعطيل الحسابات التجريبية. أنشئ حساباً أو سجّل الدخول بحساب Firebase.');
     }
 
-    // ================= SECURE FORGOT PASSWORD & 2FA RESET =================
+    // ================= FIREBASE PASSWORD RECOVERY =================
     function startForgotPasswordFlow() {
       const emailEl = document.getElementById('auth-login-email');
-      const raw = emailEl ? emailEl.value.trim() : '';
-      if (!raw || raw.length < 3) {
-        showToast(state.currentLang === 'en' ? 'Please enter your registered email or phone above first.' : 'يرجى إدخال بريدك أو رقم هاتفك المسجل في الحقل أعلاه أولاً لاستعادة الحساب.');
+      const email = emailEl ? emailEl.value.trim().toLowerCase() : '';
+      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        showToast(state.currentLang === 'en' ? 'Enter a valid account email first.' : 'أدخل البريد الإلكتروني المسجل بشكل صحيح أولاً.');
         if (emailEl) emailEl.focus();
         return;
       }
-
-      const cleanPhone = raw.replace(/[\s-]/g, '');
-      const cleanEmail = raw.toLowerCase();
-
-      const user = state.users.find(u => {
-        if (u.email && (u.email.toLowerCase() === cleanEmail || (u.secondary_email && u.secondary_email.toLowerCase() === cleanEmail))) return true;
-        if (u.phone && u.phone.replace(/[\s-]/g, '') === cleanPhone) return true;
-        return false;
-      });
-
-      if (!user) {
-        showToast(state.currentLang === 'en' ? 'No registered account found with this email or phone.' : 'لم يتم العثور على حساب مسجل بهذا المعرّف.');
+      if (!window.FaseelaFirebase) {
+        showToast(state.currentLang === 'en' ? 'Password recovery is unavailable right now.' : 'استعادة كلمة المرور غير متاحة حالياً.');
         return;
       }
 
-      const otpCode = Math.floor(1000 + Math.random() * 9000).toString();
-      state.pendingAuth = {
-        user: user,
-        email: user.email,
-        phone: user.phone || '09xxxxxxxx',
-        code: otpCode,
-        expiresAt: Date.now() + 60000,
-        attempts: 0,
-        isPasswordReset: true
-      };
-
-      startOtpScreen(user.email, user.phone, otpCode);
-      showToast(state.currentLang === 'en' ? 'Password reset OTP code sent!' : 'تم إرسال رمز استعادة كلمة المرور عبر المصادقة الثنائية.');
+      window.FaseelaFirebase.requestPasswordReset(email).then(() => {
+        showToast(state.currentLang === 'en'
+          ? 'If an account exists for this email, a password reset link has been sent.'
+          : 'إذا كان هناك حساب بهذا البريد، فسيصلك رابط استعادة كلمة المرور.');
+      }).catch(error => {
+        console.warn('Firebase password reset request failed:', error.code || error.message);
+        showToast(state.currentLang === 'en'
+          ? 'Could not send the reset email. Check the address and try again.'
+          : 'تعذر إرسال رسالة الاستعادة. تحقق من البريد وحاول مجدداً.');
+      });
     }
 
     function handleResetPasswordSubmit(e) {
       e.preventDefault();
-      if (!state.pendingResetUser) {
-        showToast(state.currentLang === 'en' ? 'Session expired. Please start again.' : 'انتهت صلاحية الجلسة، يرجى البدء من جديد.');
-        backToIdentifyView();
-        return;
-      }
-
-      const newPassEl = document.getElementById('reset-input-new-pass');
-      const confirmPassEl = document.getElementById('reset-input-confirm-pass');
-      const newPass = newPassEl ? newPassEl.value : '';
-      const confirmPass = confirmPassEl ? confirmPassEl.value : '';
-
-      if (!newPass || newPass.length < 8) {
-        showToast(state.currentLang === 'en' ? 'New password must be at least 8 characters.' : 'يجب ألا تقل كلمة المرور الجديدة عن 8 خانات.');
-        if (newPassEl) newPassEl.focus();
-        return;
-      }
-
-      if (newPass !== confirmPass) {
-        showToast(state.currentLang === 'en' ? 'Passwords do not match.' : 'كلمتا المرور غير متطابقتين.');
-        if (confirmPassEl) confirmPassEl.focus();
-        return;
-      }
-
-      // Update password in user profile and state.users
-      const targetUser = state.pendingResetUser;
-      targetUser.password = newPass;
-      const idx = state.users.findIndex(u => u.id === targetUser.id);
-      if (idx !== -1) {
-        state.users[idx].password = newPass;
-      }
-
-      // Log in user directly
-      state.currentUser = targetUser;
-      state.pendingResetUser = null;
-      try {
-        localStorage.setItem('faseela_session_user', JSON.stringify({
-          id: targetUser.id,
-          role: targetUser.role,
-          name: targetUser.name,
-          email: targetUser.email,
-          phone: targetUser.phone,
-          timestamp: Date.now()
-        }));
-      } catch (err) {}
-
-      playAcousticChime(640, 0.2);
-      showToast(state.currentLang === 'en' ? 'Password reset successfully! Welcome back.' : 'تم تعيين كلمة المرور الجديدة بنجاح! أهلاً بك.');
-      
-      closeModal('modal-auth-session');
-      if (typeof updateNavbarSecurityLocks === 'function') updateNavbarSecurityLocks();
-      goToUserAuthorizedSection();
+      showToast(state.currentLang === 'en'
+        ? 'Use the secure password reset link sent to your email.'
+        : 'استخدم رابط الاستعادة الآمن الذي أُرسل إلى بريدك الإلكتروني.');
     }
 
     function handleInitiateAuth(e) {
@@ -19783,90 +19547,37 @@
         return;
       }
 
-      // Clean email or phone input
-      const cleanInput = email.replace(/\s+/g, '');
-      const isPhoneInput = /^[0-9+]+$/.test(cleanInput.replace(/[\s-]/g, ''));
-      const cleanPhone = cleanInput.replace(/[\s-]/g, '');
-
-      // Account-level Brute Force Lockout Guard
-      state.loginFailures = state.loginFailures || {};
-      const failKey = cleanInput.toLowerCase();
-      if (state.loginFailures[failKey] && state.loginFailures[failKey].lockedUntil > Date.now()) {
-        const remainingSec = Math.ceil((state.loginFailures[failKey].lockedUntil - Date.now()) / 1000);
-        playAcousticChime(260, 0.3);
-        showToast(state.currentLang === 'en' 
-          ? `Account temporarily locked due to repeated failed attempts. Please wait ${remainingSec}s.` 
-          : `${state.currentLang === 'en' ? `Login temporarily locked for security. Please wait ${remainingSec} seconds.` : `تم قفل تسجيل الدخول مؤقتاً لهذا الحساب لدواعي الأمان. يرجى الانتظار ${remainingSec} ثانية.`}`);
+      if (!window.FaseelaFirebase) {
+        showToast(state.currentLang === 'en'
+          ? 'Secure sign-in is unavailable. Please check the connection and try again.'
+          : 'تسجيل الدخول الآمن غير متاح حالياً. تحقق من الاتصال ثم أعد المحاولة.');
         return;
       }
 
-      // Check if user exists in state.users by Email OR Phone
-      let user = state.users.find(u => {
-        if (u.email && (u.email.toLowerCase() === cleanInput.toLowerCase() || (u.secondary_email && u.secondary_email.toLowerCase() === cleanInput.toLowerCase()))) return true;
-        if (u.phone && u.phone.replace(/[\s-]/g, '') === cleanPhone) return true;
-        if (isPhoneInput && u.phone) {
-          const uPhone = u.phone.replace(/[\s-]/g, '');
-          if (uPhone.endsWith(cleanPhone) || cleanPhone.endsWith(uPhone)) return true;
-        }
-        return false;
-      });
-
-      if (!user) {
-        playAcousticChime(300, 0.25);
-        showToast(state.currentLang === 'en' 
-          ? 'No registered account found for this email or phone. Redirecting to registration...' 
-          : 'لم يتم العثور على حساب مسجل بهذا البريد أو الهاتف. تم تحويلك لتسجيل حساب جديد وتحديد عضويتك.');
-        switchAuthSubTab('register');
-        if (isPhoneInput) {
-          const regPhone = document.getElementById('reg-input-phone');
-          if (regPhone) regPhone.value = cleanPhone;
-        } else {
-          const regEmail = document.getElementById('reg-input-email');
-          if (regEmail) regEmail.value = cleanInput;
-        }
-        return;
-      }
-
-      // Strict Password Verification — no universal master passwords
-      const isValidPassword = (user.password && user.password === password);
-
-      if (!isValidPassword) {
-        state.loginFailures[failKey] = state.loginFailures[failKey] || { count: 0, lockedUntil: 0 };
-        state.loginFailures[failKey].count++;
-        if (state.loginFailures[failKey].count >= 5) {
-          state.loginFailures[failKey].lockedUntil = Date.now() + 120000; // Lock for 2 minutes
-          playAcousticChime(240, 0.35);
-          showToast(state.currentLang === 'en'
-            ? 'Account locked for 2 minutes after 5 failed password attempts for security.'
-            : 'تم قفل الحساب لمدة دقيقتين إثر تكرار 5 محاولات خاطئة لكلمة المرور لدواعي الأمان.');
-        } else {
-          playAcousticChime(280, 0.3);
-          showToast(state.currentLang === 'en' 
-            ? `Incorrect password. (${5 - state.loginFailures[failKey].count} attempts remaining)` 
-            : `${state.currentLang === 'en' ? `Incorrect password. (${5 - state.loginFailures[failKey].count} attempts remaining)` : `كلمة المرور غير صحيحة. (متبقي ${5 - state.loginFailures[failKey].count} محاولات)`}`);
-        }
+      window.FaseelaFirebase.signIn(email, password).then(() => {
+        closeModal('modal-auth-session');
+        playAcousticChime(660, 0.25);
+        const role = state.currentUser?.role;
+        const destination = role === 'admin' ? 'founder-control'
+          : role === 'farmer' ? 'farmer-portal'
+            : role === 'mill_owner' ? 'mill-portal'
+              : role === 'investor' ? 'dashboard' : 'marketplace';
+        navigateTo(destination);
+      }).catch(error => {
+        const message = error.code === 'auth/email-not-verified'
+          ? (state.currentLang === 'en'
+            ? 'Verify your email using the link we sent, then sign in again.'
+            : 'تحقق من بريدك عبر الرابط المرسل إليك ثم أعد تسجيل الدخول.')
+          : (state.currentLang === 'en'
+            ? 'Sign-in failed. Check your email and password and try again.'
+            : 'تعذر تسجيل الدخول. تحقق من البريد وكلمة المرور ثم حاول مجدداً.');
+        showToast(message);
         if (pwdEl) {
           pwdEl.value = '';
           pwdEl.focus();
         }
-        return;
-      }
-
-      // Successful password clear failures
-      delete state.loginFailures[failKey];
-
-      // Generate secure 4-digit 2FA OTP code
-      const otpCode = Math.floor(1000 + Math.random() * 9000).toString();
-      state.pendingAuth = {
-        user: user,
-        email: user.email,
-        phone: user.phone || '09xxxxxxxx',
-        code: otpCode,
-        expiresAt: Date.now() + 60000,
-        attempts: 0
-      };
-
-      startOtpScreen(user.email, user.phone, otpCode);
+        console.warn('Firebase sign-in failed:', error.code || error.message);
+      });
     }
 
     function handleRegisterNewUser(e) {
@@ -19931,92 +19642,48 @@
         return;
       }
 
-      // Check if email or phone already registered
-      const existing = state.users.find(u => 
-        (u.email && u.email.toLowerCase() === email) || 
-        (u.phone && u.phone.replace(/[\s-]/g, '') === phone)
-      );
-      if (existing) {
-        showToast(state.currentLang === 'en' 
-          ? 'An account with this email/phone already exists. Please sign in.' 
-          : 'هذا البريد أو الرقم مسجل مسبقاً. تم تحويلك لتسجيل الدخول.');
-        switchAuthSubTab('login');
-        const lEmail = document.getElementById('auth-login-email');
-        if (lEmail) lEmail.value = email;
+      const regionEl = document.getElementById('reg-input-region');
+      const region = regionEl ? regionEl.value : (state.currentLang === 'en' ? 'Syrian Coast - Tartous' : 'الساحل السوري - طرطوس');
+      if (!window.FaseelaFirebase) {
+        showToast(state.currentLang === 'en'
+          ? 'Secure registration is unavailable. Please check the connection and try again.'
+          : 'إنشاء الحساب الآمن غير متاح حالياً. تحقق من الاتصال ثم أعد المحاولة.');
         return;
       }
 
-      const roleProfiles = {
-        investor: { ar: "مستثمر زراعي", en: "Agricultural Investor", badge: "bg-olive-200 text-olive-900", pages: ['home', 'marketplace', 'dashboard'] },
-        farmer: { ar: "مزارع شريك", en: "Partner Farmer", badge: "bg-emerald-200 text-emerald-950", pages: ['home', 'marketplace', 'farmer-portal'], farm_id: "farm_01" },
-        mill_owner: { ar: "صاحب معصرة", en: "Mill Operator", badge: "bg-amber-200 text-amber-950", pages: ['home', 'marketplace', 'mill-portal'], mill_id: "mill_01" }
-      };
-
-      const regionEl = document.getElementById('reg-input-region');
-      const region = regionEl ? regionEl.value : (state.currentLang === 'en' ? 'Syrian Coast - Tartous' : 'الساحل السوري - طرطوس');
-
-      const prof = roleProfiles[role] || roleProfiles.investor;
-      const newUser = {
-        id: "usr_" + Date.now().toString(36),
-        password: password,
-        name: name,
-        name_en: name,
-        role: role,
-        roleName: prof.ar,
-        roleName_en: prof.en,
-        region: region,
-        region_en: region,
-        email: email,
-        phone: phone,
-        avatar: name.trim().charAt(0),
-        avatar_en: name.trim().charAt(0).toUpperCase(),
-        badgeColor: prof.badge,
-        permittedPages: prof.pages,
-        farm_id: prof.farm_id,
-        mill_id: prof.mill_id
-      };
-
-      state.users.push(newUser);
-
-      const otpCode = Math.floor(1000 + Math.random() * 9000).toString();
-      state.pendingAuth = {
-        user: newUser,
-        email: email,
-        phone: phone,
-        code: otpCode,
-        expiresAt: Date.now() + 60000,
-        attempts: 0
-      };
-
-      startOtpScreen(email, phone, otpCode);
+      window.FaseelaFirebase.register({
+        email,
+        password,
+        displayName: name,
+        phone,
+        requestedRole: role,
+        region
+      }).then(result => {
+        switchAuthSubTab('login');
+        const loginEmail = document.getElementById('auth-login-email');
+        if (loginEmail) loginEmail.value = result.email || email;
+        if (pwdEl) pwdEl.value = '';
+        if (pwdConfirmEl) pwdConfirmEl.value = '';
+        showToast(state.currentLang === 'en'
+          ? 'Account created. Verify your email using the link we sent before signing in.'
+          : 'تم إنشاء الحساب. تحقق من بريدك عبر الرابط المرسل قبل تسجيل الدخول.');
+      }).catch(error => {
+        console.warn('Firebase registration failed:', error.code || error.message);
+        const message = error.code === 'auth/email-already-in-use'
+          ? (state.currentLang === 'en'
+            ? 'An account with this email already exists. Please sign in.'
+            : 'هذا البريد مسجل مسبقاً. سجّل الدخول بدلاً من ذلك.')
+          : (state.currentLang === 'en'
+            ? 'Could not complete registration. Check your information and try again.'
+            : 'تعذر إكمال التسجيل. تحقق من البيانات وحاول مجدداً.');
+        showToast(message);
+      });
     }
 
-    function startOtpScreen(email, phone, code) {
-      const viewProfile = document.getElementById('auth-view-profile');
-      const viewIdentify = document.getElementById('auth-view-identify');
-      const viewOtp = document.getElementById('auth-view-otp');
-
-      if (viewProfile) viewProfile.classList.add('hidden');
-      if (viewIdentify) viewIdentify.classList.add('hidden');
-      if (viewOtp) viewOtp.classList.remove('hidden');
-
-      const targetEl = document.getElementById('otp-target-display');
-      if (targetEl) targetEl.innerText = `${email} • ${phone}`;
-
-      const simCodeEl = document.getElementById('simulated-otp-code');
-      if (simCodeEl) simCodeEl.innerText = code;
-
-      // Clear input fields
-      for (let i = 1; i <= 4; i++) {
-        const inp = document.getElementById(`otp-digit-${i}`);
-        if (inp) inp.value = '';
-      }
-      const firstInp = document.getElementById('otp-digit-1');
-      if (firstInp) setTimeout(() => firstInp.focus(), 100);
-
-      startOtpCountdown();
-      playAcousticChime(600, 0.2);
-      showToast(state.currentLang === 'en' ? `Verification code sent to ${phone} and ${email}` : `تم إرسال رمز التحقق إلى ${phone} والبريد الإلكتروني`);
+    function startOtpScreen() {
+      showToast(state.currentLang === 'en'
+        ? 'Verification codes are never displayed in the app. Use the secure email link.'
+        : 'لن يُعرض رمز التحقق داخل التطبيق. استخدم رابط التحقق الآمن المرسل إلى بريدك.');
     }
 
     function startOtpCountdown() {
@@ -20090,114 +19757,16 @@
     }
 
     function resendOtpCode() {
-      if (!rateLimiter.checkLimit('otp_resend', 4, 60000)) {
-        showToast(state.currentLang === 'en' ? 'Please wait before requesting a new code.' : 'يرجى الانتظار قبل طلب رمز جديد.');
-        return;
-      }
-      if (!state.pendingAuth) {
-        backToIdentifyView();
-        return;
-      }
-      const newCode = Math.floor(1000 + Math.random() * 9000).toString();
-      state.pendingAuth.code = newCode;
-      state.pendingAuth.expiresAt = Date.now() + 60000;
-      state.pendingAuth.attempts = 0;
-
-      const simCodeEl = document.getElementById('simulated-otp-code');
-      if (simCodeEl) simCodeEl.innerText = newCode;
-
-      for (let i = 1; i <= 4; i++) {
-        const inp = document.getElementById(`otp-digit-${i}`);
-        if (inp) inp.value = '';
-      }
-      const firstInp = document.getElementById('otp-digit-1');
-      if (firstInp) firstInp.focus();
-
-      startOtpCountdown();
-      playAcousticChime(620, 0.2);
-      showToast(state.currentLang === 'en' ? 'A new verification code has been dispatched.' : 'تم إرسال رمز أمني جديد بنجاح.');
+      showToast(state.currentLang === 'en'
+        ? 'Use the verification link sent to your email.'
+        : 'استخدم رابط التحقق المرسل إلى بريدك الإلكتروني.');
     }
 
     function handleVerifyOtp(e) {
       e.preventDefault();
-      if (!state.pendingAuth) {
-        showToast(state.currentLang === 'en' ? 'Session expired. Please start again.' : 'انتهت صلاحية الجلسة، يرجى البدء من جديد.');
-        backToIdentifyView();
-        return;
-      }
-
-      if (Date.now() > state.pendingAuth.expiresAt) {
-        showToast(state.currentLang === 'en' ? 'Verification code expired. Click resend code.' : 'انتهت مدة صلاحية الرمز، يرجى النقر على إعادة الإرسال.');
-        return;
-      }
-
-      if (state.pendingAuth.attempts >= 5) {
-        showToast(state.currentLang === 'en' ? 'Too many invalid attempts. Session locked.' : 'تم تجاوز الحد الأقصى للمحاولات الخاطئة. تم إيقاف الجلسة.');
-        return;
-      }
-
-      const digits = [1, 2, 3, 4].map(i => {
-        const el = document.getElementById(`otp-digit-${i}`);
-        return el ? el.value.trim() : '';
-      }).join('');
-
-      if (digits.length < 4) {
-        showToast(state.currentLang === 'en' ? 'Please enter all 4 digits.' : 'يرجى إدخال أرقام الرمز الأربعة كاملة.');
-        return;
-      }
-
-      if (digits !== state.pendingAuth.code) {
-        state.pendingAuth.attempts++;
-        playAcousticChime(320, 0.25);
-        showToast(state.currentLang === 'en' ? 'Invalid verification code. Please retry.' : 'رمز التحقق غير صحيح. يرجى إعادة المحاولة.');
-        return;
-      }
-
-      // Success: Authorize User or Transition to Password Reset
-      if (state.otpTimerInterval) clearInterval(state.otpTimerInterval);
-      const user = state.pendingAuth.user;
-      const isReset = state.pendingAuth.isPasswordReset;
-      state.pendingAuth = null;
-
-      if (isReset) {
-        state.pendingResetUser = user;
-        const viewOtp = document.getElementById('auth-view-otp');
-        const viewReset = document.getElementById('auth-view-reset-password');
-        if (viewOtp) viewOtp.classList.add('hidden');
-        if (viewReset) viewReset.classList.remove('hidden');
-        const targetNameEl = document.getElementById('reset-pwd-user-name');
-        if (targetNameEl) targetNameEl.innerText = `${user.name} (${user.email})`;
-        if (window.lucide) window.lucide.createIcons();
-        playAcousticChime(580, 0.15);
-        showToast(state.currentLang === 'en' ? 'Identity verified. Please set your new password.' : 'تم التحقق من هويتك بنجاح. يرجى إدخال كلمة المرور الجديدة.');
-        return;
-      }
-
-      state.currentUser = user;
-      localStorage.setItem('faseela_auth_user_id', user.id);
-
-      closeModal('modal-auth-session');
-      updateNavbarSecurityLocks();
-      playAcousticChime(660, 0.25);
-
-      const uName = state.currentLang === 'en' ? (user.name_en || user.name) : user.name;
-      const uRole = state.currentLang === 'en' ? (user.roleName_en || user.roleName) : user.roleName;
-      showToast(state.currentLang === 'en' 
-        ? `Identity verified successfully! Welcome ${uName} (${uRole})` 
-        : `${state.currentLang === 'en' ? `Identity verified successfully! Welcome ${uName} (${uRole})` : `تم التحقق بنجاح ومصادقة الهوية! مرحباً بك يا ${uName} (${uRole})`}`);
-
-      // Automatically route user to their authorized portal
-      if (user.role === 'admin' || user.id === 'usr_founder_01') {
-        navigateTo('founder-control');
-      } else if (user.role === 'farmer') {
-        navigateTo('farmer-portal');
-      } else if (user.role === 'mill_owner') {
-        navigateTo('mill-portal');
-      } else if (user.role === 'investor') {
-        navigateTo('dashboard');
-      } else {
-        navigateTo('marketplace');
-      }
+      showToast(state.currentLang === 'en'
+        ? 'Sign-in requires Firebase authentication and email verification.'
+        : 'يتطلب تسجيل الدخول مصادقة Firebase والتحقق من البريد الإلكتروني.');
     }
 
     function goToUserAuthorizedSection() {
@@ -20206,7 +19775,7 @@
         openAuthModal();
         return;
       }
-      if (state.currentUser.role === 'admin' || state.currentUser.id === 'usr_founder_01') {
+      if (state.currentUser.role === 'admin') {
         navigateTo('founder-control');
       } else if (state.currentUser.role === 'farmer') {
         navigateTo('farmer-portal');
@@ -20219,24 +19788,29 @@
       }
     }
 
-    function handleSignOut() {
-      state.currentUser = null;
-      localStorage.removeItem('faseela_auth_user_id');
-      closeModal('modal-auth-session');
-      updateNavbarSecurityLocks();
-      playAcousticChime(420, 0.2);
-      showToast(state.currentLang === 'en' 
-        ? 'Signed out successfully. Security session terminated.' 
-        : 'تم تسجيل الخروج وتأمين الجلسة بنجاح.');
-
-      const curPage = getCurrentVisiblePage();
-      if (curPage === 'dashboard' || curPage === 'farmer-portal' || curPage === 'mill-portal' || curPage === 'founder-control') {
-        navigateTo('home');
+    async function handleSignOut() {
+      if (!window.FaseelaFirebase) {
+        showToast(state.currentLang === 'en' ? 'Sign-out is unavailable right now.' : 'تسجيل الخروج غير متاح حالياً.');
+        return;
+      }
+      try {
+        await window.FaseelaFirebase.signOut();
+        closeModal('modal-auth-session');
+        playAcousticChime(420, 0.2);
+        showToast(state.currentLang === 'en'
+          ? 'Signed out successfully.'
+          : 'تم تسجيل الخروج بنجاح.');
+      } catch (error) {
+        console.error('Firebase sign-out failed:', error);
+        showToast(state.currentLang === 'en' ? 'Could not sign out. Please try again.' : 'تعذر تسجيل الخروج. حاول مجدداً.');
       }
     }
 
     // Navigation System
     function navigateTo(pageId) {
+      // Safety: Reset body overflow in case a modal left it locked
+      if (document.body) document.body.style.overflow = '';
+
       if (!checkRouteAccess(pageId)) {
         return;
       }
@@ -20645,7 +20219,7 @@
       const el = document.getElementById(modalId);
       if (el) {
         el.classList.remove('hidden');
-        if (document.body && document.body.style) document.body.style.overflow = "scroll";
+        if (document.body && document.body.style) document.body.style.overflow = "hidden";
         // Focus trap: focus first focusable element
         const _raf = typeof requestAnimationFrame === 'function' ? requestAnimationFrame : function(fn) { setTimeout(fn, 0); };
         _raf(() => {
@@ -22719,6 +22293,11 @@ function setMarketplaceViewMode(mode) {
     }
 
     function confirmPurchase() {
+      showToast(state.currentLang === 'en'
+        ? 'Investment processing is not connected to a verified backend yet. No purchase or ownership record was created.'
+        : 'معالجة الاستثمار غير مرتبطة بعد بخادم موثوق؛ لم يتم إنشاء شراء أو سجل ملكية.');
+      return;
+
       if (!state.currentUser || (state.currentUser.role !== 'investor' && state.currentUser.role !== 'admin')) {
         const reqRole = state.currentLang === 'en' ? 'Verified Investor' : 'مستثمر زراعي معتمد';
         const msg = state.currentLang === 'en' ? 'Purchasing olive tree shares is restricted to registered investors.' : 'شراء الحصص الاستثمارية متاح فقط للمستثمرين المسجلين لضمان تسجيل الحصص الزراعية بأسمائهم.';
@@ -24820,6 +24399,17 @@ function setMarketplaceViewMode(mode) {
         }).join('');
       }
 
+      const millSelect = document.getElementById('batch-mill-select');
+      if (millSelect) {
+        const mills = (state.partnerMills || []).filter(mill => mill.status === 'approved');
+        millSelect.innerHTML = `<option value="">${state.currentLang === 'en' ? 'Select assigned mill' : 'اختر المعصرة المكلف بها'}</option>`
+          + mills.map(mill => {
+            const name = state.currentLang === 'en' ? (mill.name_en || mill.name_ar) : (mill.name_ar || mill.name_en);
+            const location = state.currentLang === 'en' ? (mill.location_en || mill.location_ar) : (mill.location_ar || mill.location_en);
+            return `<option value="${escapeHtml(mill.id)}">${escapeHtml(name)} — ${escapeHtml(location)}</option>`;
+          }).join('');
+      }
+
       openModal('modal-mill-batch');
       playAcousticChime(600, 0.15);
       if (window.lucide && typeof window.lucide.createIcons === 'function') {
@@ -24849,47 +24439,59 @@ function setMarketplaceViewMode(mode) {
       toggleMainVoiceRecording();
     }
 
-    function previewFarmerUpload(input) {
-      if (input.files[0]) {
-        showToast(state.currentLang === 'en' ? 'Field photo attached with voice note' : 'تم التقاط الصورة الحقلية وإرفاقها مع الصوت بنجاح');
+    async function submitFarmerVoiceLog() {
+      const isEn = state.currentLang === 'en';
+      if (!state.currentUser || state.currentUser.role !== 'farmer') {
+        showAccessDenied(
+          t('farmer_btn_record'),
+          isEn ? 'Partner Farmer' : 'مزارع شريك معتمد',
+          isEn ? 'Only an approved farmer account can submit field reports.' : 'يمكن لحساب المزارع الشريك المعتمد فقط إرسال التقارير الميدانية.'
+        );
+        return;
       }
-    }
-
-    function submitFarmerVoiceLog() {
-      if (!state.currentUser || (state.currentUser.role !== 'farmer' && state.currentUser.role !== 'admin')) {
-        const reqRole = state.currentLang === 'en' ? 'Partner Farmer' : 'مزارع شريك معتمد';
-        const msg = state.currentLang === 'en' ? 'Field logs are restricted to partner farmers.' : 'هذا الإجراء محصور فقط بالمزارعين المعتمدين والمشرفين الميدانيين على الأشجار.';
-        showAccessDenied(t('farmer_btn_record'), reqRole, msg);
+      if (!window.FaseelaFirebase) {
+        showToast(isEn ? 'Secure field reporting is unavailable.' : 'إرسال التقارير الميدانية الآمن غير متاح حالياً.');
         return;
       }
       if (!rateLimiter.checkLimit('voice_log_' + state.currentUser.id, 5, 60000)) {
-        showToast(state.currentLang === 'en' ? '⚠️ Rate limit exceeded (5 reports per minute).' : '⚠️ تم تجاوز الحد المسموح لإرسال التقارير (5 تقارير في الدقيقة). يرجى الانتظار قليلاً.');
+        showToast(isEn ? 'Too many reports. Please wait a minute.' : 'تم تجاوز الحد المسموح للتقارير. يرجى الانتظار دقيقة.');
         return;
       }
 
-      const tree = state.trees.find(t => t.id === farmerVoiceState.selectedTreeId);
-      const durationSecs = Math.max(farmerVoiceState.seconds, 18);
-      const durationStr = `0:${durationSecs < 10 ? '0' + durationSecs : durationSecs}`;
-
-      if (tree) {
-        tree.maintenance_logs.unshift({
-          id: `mnt_${Date.now()}`,
-          date: new Date().toISOString().split('T')[0],
-          type: farmerVoiceState.selectedType,
-          type_en: "Field Care & Irrigation",
-          notes: `تم إنجاز ${farmerVoiceState.selectedType} للشجرة المباركة بحالة ممتازة.`,
-          notes_en: `Completed seasonal maintenance for the olive tree in prime conditions.`,
-          performed_by: state.currentUser.name,
-          performed_by_en: state.currentUser.name_en || state.currentUser.name,
-          has_voice_note: true,
-          voice_duration: durationStr
-        });
+      const treeId = farmerVoiceState.selectedTreeId;
+      const notes = document.getElementById('log-notes')?.value.trim()
+        || farmerVoiceState.selectedType
+        || '';
+      const activity = farmerVoiceState.selectedType || '';
+      const eventType = activity.includes('سقاية') || /water|irrigat/i.test(activity) ? 'watering'
+        : activity.includes('تقليم') || /prun/i.test(activity) ? 'pruning'
+          : activity.includes('تسميد') || /fertiliz/i.test(activity) ? 'fertilizing'
+            : activity.includes('مكافحة') || /pest|control/i.test(activity) ? 'pest_control'
+              : activity.includes('قطاف') || /harvest/i.test(activity) ? 'harvest'
+                : 'other';
+      if (!treeId || notes.length > 1200) {
+        showToast(isEn ? 'Select a tree and keep the report under 1,200 characters.' : 'اختر شجرة واجعل التقرير أقل من 1200 حرف.');
+        return;
       }
 
-      closeModal('modal-add-maintenance');
-      playAcousticChime(880, 0.3);
-      showToast(state.currentLang === 'en' ? '🎉 Voice log published to investor timeline!' : '🎉 تم نشر تقريرك الصوتي بنجاح وإشعار جميع المستثمرين على الخط الزمني!');
-      renderFarmerPortal();
+      try {
+        await window.FaseelaFirebase.submitFarmerUpdate({
+          treeId,
+          eventType,
+          notes,
+          mediaPaths: []
+        });
+        closeModal('modal-add-maintenance');
+        playAcousticChime(740, 0.2);
+        showToast(isEn
+          ? 'Report submitted for review. Audio and photos are not uploaded yet.'
+          : 'أُرسل التقرير النصي للمراجعة. لم يُرفع التسجيل الصوتي أو الصور بعد.');
+      } catch (error) {
+        console.error('Farmer report submission failed:', error);
+        showToast(isEn
+          ? 'Could not submit the report. Check your farmer assignment and try again.'
+          : 'تعذر إرسال التقرير. تحقق من اعتماد حسابك على الشجرة ثم أعد المحاولة.');
+      }
     }
 
     function submitFarmerPayout() {
@@ -25591,7 +25193,7 @@ function setMarketplaceViewMode(mode) {
 
     // ================= FOUNDER SOVEREIGN USER DOSSIER INSPECTOR =================
     function openFounderUserDossierModal(userId) {
-      if (!state.currentUser || (state.currentUser.role !== 'admin' && state.currentUser.id !== 'usr_founder_01')) {
+      if (!state.currentUser || (state.currentUser.role !== 'admin')) {
         showToast(state.currentLang === 'en' ? 'Unauthorized: Founder root clearance required' : 'غير مصرح: يتطلب صلاحيات المدير العام والمؤسس');
         return;
       }
@@ -25762,62 +25364,9 @@ function setMarketplaceViewMode(mode) {
 
     function saveFounderUserEdit(e) {
       if (e && e.preventDefault) e.preventDefault();
-      if (!state.currentUser || state.currentUser.role !== 'admin') {
-        showToast(state.currentLang === 'en' ? 'Unauthorized: Founder root clearance required' : 'غير مصرح: يتطلب صلاحيات المدير العام');
-        return;
-      }
-      const userId = document.getElementById('fndr-edit-user-id').value;
-      const u = (state.users || []).find(x => x.id === userId);
-      if (!u) return;
-
-      const name = document.getElementById('fndr-edit-name').value.trim();
-      const email = document.getElementById('fndr-edit-email').value.trim().toLowerCase();
-      const phone = document.getElementById('fndr-edit-phone').value.trim();
-      const role = document.getElementById('fndr-edit-role').value;
-      const region = document.getElementById('fndr-edit-region').value;
-      const status = document.getElementById('fndr-edit-status').value;
-      const newPwd = document.getElementById('fndr-edit-password').value.trim();
-
-      const roleProfiles = {
-        investor: { ar: "مستثمر زراعي", en: "Agricultural Investor", badge: "bg-olive-200 text-olive-900", pages: ['home', 'marketplace', 'dashboard'] },
-        farmer: { ar: "مزارع شريك", en: "Partner Farmer", badge: "bg-emerald-200 text-emerald-950", pages: ['home', 'marketplace', 'farmer-portal'], farm_id: "farm_01" },
-        mill_owner: { ar: "صاحب معصرة", en: "Mill Operator", badge: "bg-amber-200 text-amber-950", pages: ['home', 'marketplace', 'mill-portal'], mill_id: "mill_01" },
-        admin: { ar: "مؤسس المنصة والإدارة العليا", en: "Founder & Chief Executive", badge: "bg-purple-100 text-purple-950 border border-purple-300 ring-2 ring-purple-500/30", pages: ['home', 'marketplace', 'dashboard', 'farmer-portal', 'mill-portal', 'founder-control'] }
-      };
-
-      const prof = roleProfiles[role] || roleProfiles.investor;
-
-      u.name = name;
-      u.name_en = name;
-      u.email = email;
-      u.phone = phone;
-      u.role = role;
-      u.roleName = prof.ar;
-      u.roleName_en = prof.en;
-      u.badgeColor = prof.badge;
-      u.permittedPages = prof.pages;
-      u.governorate = region;
-      u.region = region;
-      u.status = status;
-      u.verified = (status === 'active');
-      if (newPwd && newPwd.length >= 6) {
-        u.password = newPwd;
-      }
-
-      // If updating current active user, sync state
-      if (state.currentUser && state.currentUser.id === u.id) {
-        state.currentUser = u;
-        updateNavbarSecurityLocks();
-        renderAuthSessionModal();
-      }
-
-      savePlatformState();
-      closeModal('modal-fndr-manage-user');
-      renderFounderUsers();
-      playAcousticChime(680, 0.2);
-      showToast(state.currentLang === 'en' 
-        ? `Account updated successfully for ${name} (${prof.en})` 
-        : `تم تحديث بيانات الحساب والصلاحيات بنجاح للمستخدم: ${name}`);
+      showToast(state.currentLang === 'en'
+        ? 'Account and role administration must be completed in the secured identity backend.'
+        : 'يجب إدارة الحسابات والأدوار عبر خدمة الهوية الآمنة في الخادم.');
     }
 
     function triggerFounderImpersonateFromModal() {
@@ -25835,86 +25384,16 @@ function setMarketplaceViewMode(mode) {
     }
 
     function openFounderAddUserModal() {
-      document.getElementById('fndr-new-name').value = '';
-      document.getElementById('fndr-new-email').value = '';
-      document.getElementById('fndr-new-phone').value = '';
-      document.getElementById('fndr-new-role').value = 'investor';
-      document.getElementById('fndr-new-region').value = state.currentLang === 'en' ? 'Syrian Coast - Tartous' : 'الساحل السوري - طرطوس';
-      document.getElementById('fndr-new-password').value = 'Faseela@2026!';
-
-      openModal('modal-fndr-add-user');
-      if (window.lucide) window.lucide.createIcons();
-      playAcousticChime(540, 0.15);
+      showToast(state.currentLang === 'en'
+        ? 'User provisioning is not available until the secured identity workflow is deployed.'
+        : 'إنشاء المستخدمين غير متاح حتى نشر سير عمل الهوية الآمن.');
     }
 
     function submitFounderAddUser(e) {
       if (e && e.preventDefault) e.preventDefault();
-      if (!state.currentUser || state.currentUser.role !== 'admin') {
-        showToast(state.currentLang === 'en' ? 'Unauthorized: Founder root clearance required' : 'غير مصرح: يتطلب صلاحيات المدير العام');
-        return;
-      }
-      const name = document.getElementById('fndr-new-name').value.trim();
-      const email = document.getElementById('fndr-new-email').value.trim().toLowerCase();
-      const phone = document.getElementById('fndr-new-phone').value.trim();
-      const role = document.getElementById('fndr-new-role').value;
-      const region = document.getElementById('fndr-new-region').value;
-      const password = document.getElementById('fndr-new-password').value.trim() || 'Faseela@2026!';
-
-      if (!name || !email || !phone) {
-        showToast(state.currentLang === 'en' ? 'Please fill in all required fields' : 'يرجى تعبئة كافة الحقول المطلوبة');
-        return;
-      }
-
-      // Check if email or phone already exists
-      const exists = (state.users || []).find(u => u.email.toLowerCase() === email || u.phone === phone);
-      if (exists) {
-        showToast(state.currentLang === 'en' ? 'An account with this email or phone already exists' : 'يوجد حساب مسجل بهذا البريد أو الهاتف مسبقاً');
-        return;
-      }
-
-      const roleProfiles = {
-        investor: { ar: "مستثمر زراعي", en: "Agricultural Investor", badge: "bg-olive-200 text-olive-900", pages: ['home', 'marketplace', 'dashboard'] },
-        farmer: { ar: "مزارع شريك", en: "Partner Farmer", badge: "bg-emerald-200 text-emerald-950", pages: ['home', 'marketplace', 'farmer-portal'], farm_id: "farm_01" },
-        mill_owner: { ar: "صاحب معصرة", en: "Mill Operator", badge: "bg-amber-200 text-amber-950", pages: ['home', 'marketplace', 'mill-portal'], mill_id: "mill_01" },
-        admin: { ar: "مؤسس المنصة والإدارة العليا", en: "Founder & Chief Executive", badge: "bg-purple-100 text-purple-950 border border-purple-300 ring-2 ring-purple-500/30", pages: ['home', 'marketplace', 'dashboard', 'farmer-portal', 'mill-portal', 'founder-control'] }
-      };
-
-      const prof = roleProfiles[role] || roleProfiles.investor;
-      const newId = `usr_${role.substring(0, 3)}_${Date.now().toString(36)}`;
-      const initialLetter = name[0] || 'U';
-
-      const newUser = {
-        id: newId,
-        name: name,
-        name_en: name,
-        role: role,
-        roleName: prof.ar,
-        roleName_en: prof.en,
-        email: email,
-        phone: phone,
-        password: password,
-        governorate: region,
-        region: region,
-        avatar: initialLetter,
-        avatar_en: initialLetter.toUpperCase(),
-        badgeColor: prof.badge,
-        permittedPages: prof.pages,
-        did: `DID: SYR-AGR-2026-${newId.substring(4).toUpperCase()}`,
-        status: 'active',
-        verified: true,
-        created_at: new Date().toISOString()
-      };
-
-      if (!state.users) state.users = [];
-      state.users.push(newUser);
-
-      savePlatformState();
-      closeModal('modal-fndr-add-user');
-      renderFounderUsers();
-      playAcousticChime(680, 0.25);
-      showToast(state.currentLang === 'en' 
-        ? `New account provisioned successfully for ${name} (${prof.en})` 
-        : `تم إنشاء واعتماد حساب جديد بنجاح: ${name} (${prof.ar})`);
+      showToast(state.currentLang === 'en'
+        ? 'User provisioning is not available until the secured identity workflow is deployed.'
+        : 'إنشاء المستخدمين غير متاح حتى نشر سير عمل الهوية الآمن.');
     }
 
     function openFounderDirectAlertModal(userId) {
@@ -25978,59 +25457,15 @@ function setMarketplaceViewMode(mode) {
     }
 
     function founderImpersonateUser(userId) {
-      if (!state.currentUser || state.currentUser.role !== 'admin') {
-        showToast(state.currentLang === 'en' ? 'Unauthorized: Founder root clearance required' : 'غير مصرح: يتطلب صلاحيات المدير العام');
-        return;
-      }
-
-      const u = (state.users || []).find(x => x.id === userId);
-      if (!u) return;
-
-      // Preserve original founder identity if not already stored
-      if (!state.originalFounderUserId) {
-        state.originalFounderUserId = 'usr_founder_01';
-      }
-
-      state.isImpersonating = true;
-      state.currentUser = u;
-      localStorage.setItem('faseela_auth_user_id', u.id);
-
-      // Show Impersonation Floating Top Banner
-      const banner = document.getElementById('admin-impersonation-banner');
-      const titleEl = document.getElementById('impersonate-active-user-title');
-      if (banner && titleEl) {
-        titleEl.innerText = `${u.name} (${state.currentLang === 'en' ? (u.roleName_en || u.role) : (u.roleName || u.role)})`;
-        banner.classList.remove('hidden');
-      }
-
-      updateNavbarSecurityLocks();
-      playAcousticChime(620, 0.2);
-
-      const targetPage = u.role === 'farmer' ? 'farmer-portal' : (u.role === 'mill_owner' ? 'mill-portal' : (u.role === 'admin' ? 'founder-control' : 'dashboard'));
-      navigateTo(targetPage);
-
-      showToast(state.currentLang === 'en' 
-        ? `👁️ Impersonation Mode: Browsing as ${u.name} (${u.roleName_en || u.role})` 
-        : `👁️ وضع المعاينة الإدارية: أنت تتصفح الآن بصفتك: ${u.name} (${u.roleName || u.role})`);
+      showToast(state.currentLang === 'en'
+        ? 'Account impersonation is disabled. Use an authorized test account.'
+        : 'تم تعطيل انتحال الحسابات. استخدم حساب اختبار مخولاً.');
     }
 
     function founderStopImpersonation() {
-      const founder = (state.users || []).find(x => x.id === (state.originalFounderUserId || 'usr_founder_01')) || state.users[0];
-      state.isImpersonating = false;
-      state.currentUser = founder;
-      localStorage.setItem('faseela_auth_user_id', founder.id);
-
-      const banner = document.getElementById('admin-impersonation-banner');
-      if (banner) banner.classList.add('hidden');
-
-      updateNavbarSecurityLocks();
-      playAcousticChime(680, 0.25);
-      navigateTo('founder-control');
-      renderFounderUsers();
-
-      showToast(state.currentLang === 'en' 
-        ? 'Restored Founder Session: Welcome back to Executive Mission Control' 
-        : 'تمت العودة لحساب المدير العام: مرحباً بك في غرفة العمليات التنفيذية');
+      showToast(state.currentLang === 'en'
+        ? 'Account impersonation is disabled. Sign in to the intended account instead.'
+        : 'انتحال الحسابات معطل. سجّل الدخول إلى الحساب المطلوب بدلاً من ذلك.');
     }
 
     function toggleUserSuspend(userId) {
@@ -26038,7 +25473,7 @@ function setMarketplaceViewMode(mode) {
         showToast(state.currentLang === 'en' ? 'Unauthorized: Founder root clearance required' : 'غير مصرح: يتطلب صلاحيات المدير العام');
         return;
       }
-      if (userId === 'usr_founder_01') {
+      if (false) {
         showToast(state.currentLang === 'en' ? 'Cannot suspend the Primary Founder account.' : 'لا يمكن تجميد الحساب السيادي لمؤسس المنصة.');
         return;
       }
@@ -26065,7 +25500,7 @@ function setMarketplaceViewMode(mode) {
         return;
       }
 
-      if (userId === 'usr_founder_01') {
+      if (false) {
         showToast(state.currentLang === 'en' ? 'Cannot delete the Primary Founder account.' : 'لا يمكن حذف حساب المالك والمؤسس الرئيسي.');
         return;
       }
@@ -27467,7 +26902,7 @@ function setMarketplaceViewMode(mode) {
       lucide.createIcons();
     }
 
-    function submitMillBatch(e) {
+    async function submitMillBatch(e) {
       e.preventDefault();
       if (!state.currentUser || (state.currentUser.role !== 'mill_owner' && state.currentUser.role !== 'admin')) {
         const reqRole = state.currentLang === 'en' ? 'Certified Mill Operator' : 'صاحب معصرة معتمد';
@@ -27481,49 +26916,49 @@ function setMarketplaceViewMode(mode) {
       }
 
       const treeId = document.getElementById('batch-tree-select').value;
-      const weight = parseFloat(document.getElementById('batch-weight').value);
-      const oil = parseFloat(document.getElementById('batch-oil').value);
-      const rawAcidity = parseFloat(document.getElementById('batch-acidity').value);
-      if (isNaN(weight) || weight <= 0 || isNaN(oil) || oil <= 0 || isNaN(rawAcidity)) {
-        showToast(state.currentLang === 'en' ? 'Please enter valid numbers for weight, oil output, and acidity' : 'يرجى إدخال أرقام صحيحة للوزن ومحصول الزيت ونسبة الحموضة');
+      const millId = document.getElementById('batch-mill-select').value;
+      const weight = Number(document.getElementById('batch-weight').value);
+      const oil = Number(document.getElementById('batch-oil').value);
+      const acidity = Number(document.getElementById('batch-acidity').value);
+      const temp = Number(document.getElementById('batch-temp').value);
+      const peroxide = Number(document.getElementById('batch-peroxide').value);
+      if (!millId || !treeId || !Number.isFinite(weight) || weight <= 0
+        || !Number.isFinite(oil) || oil < 0 || !Number.isFinite(acidity)
+        || !Number.isFinite(temp) || !Number.isFinite(peroxide)) {
+        showToast(state.currentLang === 'en' ? 'Enter a mill, tree, and valid measurements.' : 'يرجى اختيار المعصرة والشجرة وإدخال قياسات صحيحة.');
         return;
       }
-      const acidity = rawAcidity.toFixed(2);
-      const temp = document.getElementById('batch-temp').value;
-      const tree = state.trees.find(t => t.id === treeId);
-
-      const newBatch = {
-        serial: `SYR-MILL-2026-0${Math.floor(Math.random()*900+100)}`,
-        tree_name: tree ? tree.tree_name : 'شجرة معتمدة',
-        tree_name_en: tree ? (tree.tree_name_en || tree.tree_name) : 'Certified Tree',
-        farm_name: tree ? tree.farm_name : 'مزرعة شريكة',
-        farm_name_en: tree ? (tree.farm_name_en || tree.farm_name) : 'Partner Farm',
-        olives_kg: weight,
-        oil_liters: oil,
-        acidity: `${acidity}%`,
-        temp: `${temp}° C`,
-        grade: "بكر ممتاز فائق (Extra Virgin)",
-        grade_en: "Super Extra Virgin Olive Oil"
-      };
-
-      state.millBatches.unshift(newBatch);
-
-      // Connect with tree harvest status: unlock ready oil for investors!
-      if (tree) {
-        tree.harvest_status = 'ready';
-        tree.harvest_status_ar = 'معصور ومفحوص مخبرياً وجاهز للاستلام والتسييل';
-        tree.harvest_status_en = 'Cold-Pressed, Lab-Tested & Ready for Dispatch';
-        tree.harvest_ready_liters_per_share = parseFloat((oil / 4).toFixed(1));
-        tree.mill_batch_serial = newBatch.serial;
-        tree.harvest_batch_acidity = `${acidity}%`;
+      const submitButton = e.currentTarget.querySelector('button[type="submit"]');
+      if (submitButton) submitButton.disabled = true;
+      try {
+        if (!window.FaseelaFirebase?.submitPressingBatch) {
+          throw new Error('Cloud batch submission is unavailable.');
+        }
+        const response = await window.FaseelaFirebase.submitPressingBatch({
+          treeId,
+          millId,
+          olivesWeightKg: weight,
+          oilYieldLiters: oil,
+          temperatureCelsius: temp,
+          acidityPct: acidity,
+          peroxideValue: peroxide
+        });
+        const result = response?.data;
+        if (result?.status !== 'pending_review' || !result.batchId) {
+          throw new Error('The server did not confirm that this batch entered review.');
+        }
+        closeModal('modal-mill-batch');
+        showToast(state.currentLang === 'en'
+          ? 'Batch submitted for quality review. It will not be published until approved.'
+          : 'أُرسلت الدفعة لمراجعة الجودة. لن تُنشر قبل اعتمادها.');
+      } catch (error) {
+        console.error('Pressing batch submission failed:', error);
+        showToast(state.currentLang === 'en'
+          ? 'Batch submission failed. Verify your mill assignment and try again.'
+          : 'تعذر إرسال الدفعة. تحقق من تكليف المعصرة ثم أعد المحاولة.');
+      } finally {
+        if (submitButton) submitButton.disabled = false;
       }
-
-      savePlatformState();
-      closeModal('modal-mill-batch');
-      showToast(state.currentLang === 'en' ? '🎉 Pressing batch registered & harvest unlocked for investors!' : '🎉 تم تسجيل دفعة العصر بنجاح واعتماد شهادة الجودة وإتاحة المحصول للمستثمرين!');
-      renderMillPortal();
-      renderDashboard();
-      renderMarketplace();
     }
 
     // Faseela Chat Assistant
@@ -27543,80 +26978,10 @@ function setMarketplaceViewMode(mode) {
       }
     }
 
-    // ================= ADMIN AUTHENTICATION WITH BACKEND =================
-    let adminToken = null;
-    const API_BASE = window.FASEELA_API_BASE || (
-      window.location.protocol === 'file:' || window.location.hostname === 'localhost'
-        ? 'http://localhost:5000'
-        : ''
-    );
-
-    function checkAdminAccess() {
-      const stored = localStorage.getItem('faseela_admin_token');
-      if (stored) {
-        adminToken = stored;
-        return true;
-      }
-      
-      openModal('modal-admin-password');
-      document.getElementById('admin-email-input').focus();
-      return false;
-    }
-
-    async function verifyAdminPassword(event) {
-      event.preventDefault();
-      const email = document.getElementById('admin-email-input').value;
-      const password = document.getElementById('admin-password-input').value;
-      const errorEl = document.getElementById('admin-pwd-error');
-      const form = event.target;
-      const btn = form.querySelector('button[type="submit"]');
-      
-      if (!email || !password) {
-        errorEl.classList.remove('hidden');
-        errorEl.innerText = '✖ Email and password required';
-        return;
-      }
-
-      btn.disabled = true;
-      const originalText = btn.innerText;
-      btn.innerText = '⏳ Verifying...';
-
-      try {
-        const response = await fetch(`${API_BASE}/api/auth/admin-login`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, password })
-        });
-
-        const data = await response.json();
-
-        if (data.success && data.token) {
-          adminToken = data.token;
-          localStorage.setItem('faseela_admin_token', data.token);
-          closeModal('modal-admin-password');
-          form.reset();
-          errorEl.classList.add('hidden');
-          showToast('✅ Admin access granted');
-          navigateTo('founder-control');
-        } else {
-          errorEl.classList.remove('hidden');
-          errorEl.innerText = '✖ ' + (data.error || 'Invalid credentials');
-        }
-      } catch (error) {
-        console.error('Auth error:', error);
-        errorEl.classList.remove('hidden');
-        errorEl.innerText = '✖ Connection error';
-      } finally {
-        btn.disabled = false;
-        btn.innerText = originalText;
-      }
-    }
-
-    function logoutAdmin() {
-      adminToken = null;
-      localStorage.removeItem('faseela_admin_token');
-      navigateTo('home');
-      showToast('✅ Admin logged out');
+    // Admin access is governed by Firebase Auth custom claims.
+    // No client-side password or JWT is accepted here.
+    function hasFirebaseAdminClaim() {
+      return state.currentUser?.role === 'admin';
     }
 
     function handleChatScroll() {
@@ -27642,15 +27007,27 @@ function setMarketplaceViewMode(mode) {
     // Faseela Chat History Persistence & Real-time State Binding
     let faseelaChatHistory = [];
 
+    function chatStorageKey() {
+      const uid = state.currentUser?.uid || state.currentUser?.id;
+      return uid ? `faseela_chat_history_${uid}` : null;
+    }
+
     function saveChatHistory() {
+      const key = chatStorageKey();
+      if (!key) return;
       try {
-        localStorage.setItem('faseela_chat_history', JSON.stringify(faseelaChatHistory.slice(-40)));
+        localStorage.setItem(key, JSON.stringify(faseelaChatHistory.slice(-40)));
       } catch(e) {}
     }
 
     function loadChatHistory() {
+      const key = chatStorageKey();
+      if (!key) {
+        faseelaChatHistory = [];
+        return false;
+      }
       try {
-        const raw = localStorage.getItem('faseela_chat_history');
+        const raw = localStorage.getItem(key);
         if (raw) {
           const parsed = JSON.parse(raw);
           if (Array.isArray(parsed) && parsed.length > 0) {
@@ -27721,7 +27098,7 @@ function setMarketplaceViewMode(mode) {
     function resetFaseelaChat(clearStorage = false) {
       if (clearStorage) {
         faseelaChatHistory = [];
-        try { localStorage.removeItem('faseela_chat_history'); } catch(e) {}
+        try { const key = chatStorageKey(); if (key) localStorage.removeItem(key); } catch(e) {}
       }
       const container = document.getElementById('faseela-chat-messages');
       const btn = document.getElementById('chat-scroll-bottom-btn');
@@ -30156,12 +29533,24 @@ function setMarketplaceViewMode(mode) {
 
     // Initialize Page
     window.addEventListener('DOMContentLoaded', () => {
+      // Ensure body is scrollable on load (safety net)
+      document.body.style.overflow = '';
       lucide.createIcons();
       setLanguage(state.currentLang);
       renderHeroFeaturedTree();
       applyTheme(state.currentTheme || 'light');
       loadChatHistory();
       if (typeof loadSelectedContractForEditing === 'function') loadSelectedContractForEditing('charter');
+
+      // Global safety: Periodically check if overflow is stuck while no modal is open
+      setInterval(() => {
+        const anyModalVisible = Array.from(document.querySelectorAll('[id^="modal-"]')).some(m => !m.classList.contains('hidden'));
+        const harvestNotice = document.getElementById('harvest-notice-wrapper');
+        const harvestVisible = harvestNotice && harvestNotice.innerHTML.trim().length > 0;
+        if (!anyModalVisible && !harvestVisible && document.body.style.overflow === 'hidden') {
+          document.body.style.overflow = '';
+        }
+      }, 2000);
     });
   
     // Missing Interactive Handlers (Payment, Voice Logs, Subsidies, Orders)
@@ -30369,6 +29758,8 @@ function setMarketplaceViewMode(mode) {
     function closeHarvestMaturingNotice() {
       const noticeEl = document.getElementById('harvest-notice-wrapper');
       if (noticeEl) noticeEl.innerHTML = '';
+      // Reset body overflow since this modal is a full-screen overlay
+      if (document.body) document.body.style.overflow = '';
     }
 
     function populateHarvestModalWithEligibility(eligibility, targetTreeId = null) {
@@ -30780,15 +30171,6 @@ function setMarketplaceViewMode(mode) {
       recordedAudioBlobUrl = null;
       realAudioChunks = [];
       showToast(state.currentLang === 'en' ? 'Ready to record again' : 'جاهز لإعادة التسجيل الصوتي');
-    }
-
-    function simulateFarmerPhotoAttach() {
-      const promptEl = document.getElementById('farmer-photo-prompt');
-      const previewEl = document.getElementById('farmer-photo-preview');
-      if (promptEl) promptEl.classList.add('hidden');
-      if (previewEl) previewEl.classList.remove('hidden');
-      playAcousticChime(580, 0.15);
-      showToast(state.currentLang === 'en' ? 'Field photo attached with voice report' : 'تم التقاط الصورة الحقلية وإرفاقها مع الصوت بنجاح');
     }
 
   
@@ -31208,7 +30590,12 @@ function setMarketplaceViewMode(mode) {
         localStorage.setItem('faseela_farmer_wallet', JSON.stringify(state.farmerWallet));
         localStorage.setItem('faseela_farmer_payouts', JSON.stringify(state.farmerPayouts || []));
         localStorage.setItem('faseela_emergency_alerts', JSON.stringify(state.emergencyAlerts || []));
-        localStorage.setItem('faseela_users', JSON.stringify(state.users || []));
+        const safeUsers = (state.users || []).map(user => {
+          const safeUser = { ...user };
+          delete safeUser.password;
+          return safeUser;
+        });
+        localStorage.setItem('faseela_users', JSON.stringify(safeUsers));
         localStorage.setItem('faseela_virgin_groves', JSON.stringify(state.virginGroves || []));
         localStorage.setItem('faseela_escrow_rate', JSON.stringify(state.escrowRate || 2.5));
         localStorage.setItem('faseela_notifications', JSON.stringify(state.notifications || []));
@@ -31416,6 +30803,11 @@ function setMarketplaceViewMode(mode) {
         return;
       }
 
+      const safeUsers = (state.users || []).map(user => {
+        const safeUser = { ...user };
+        delete safeUser.password;
+        return safeUser;
+      });
       const snapshot = {
         version: "2.0-enterprise",
         timestamp: new Date().toISOString(),
@@ -31423,7 +30815,7 @@ function setMarketplaceViewMode(mode) {
         system: "Faseela Smart Agricultural & Agro-IoT Platform",
         checksum: "SYR-AGR-" + Date.now().toString(36).toUpperCase(),
         data: {
-          users: state.users,
+          users: safeUsers,
           trees: state.trees,
           virginGroves: state.virginGroves,
           userShares: state.userShares,
@@ -31491,6 +30883,7 @@ function setMarketplaceViewMode(mode) {
         // Protect primary founder root clearance
         const founderInSeed = state.users.find(u => u.id === 'usr_founder_01');
         const restoredUsers = d.users.map(u => {
+          if (u && typeof u === 'object') delete u.password;
           if (u.id === 'usr_founder_01' && founderInSeed) {
             return { ...u, email: 'simooosy77@gmail.com', role: 'admin', verified: true, status: 'active' };
           }
@@ -31906,7 +31299,7 @@ function setMarketplaceViewMode(mode) {
 
     function setFeaturedSeasonTree(treeId) {
       // STRICT ZERO-BACKDOOR RBAC VALIDATION
-      if (!state.currentUser || state.currentUser.role !== 'admin' || state.currentUser.id !== 'usr_founder_01') {
+      if (!state.currentUser || state.currentUser.role !== 'admin') {
         const isEn = state.currentLang === 'en';
         showToast(isEn ? '⛔ Unauthorized: Founder root clearance required to change featured season tree' : '⛔ غير مصرح: يتطلب صلاحيات المؤسس والمدير العام التنفيذي لتعيين شجرة الموسم');
         return;
@@ -34784,5 +34177,6 @@ function approveFinancialRequest(reqId) {
     </div>
   </div>
 
+  <script type="module" src="./firebase-client.mjs"></script>
 </body>
 </html>

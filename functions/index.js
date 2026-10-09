@@ -58,25 +58,40 @@ exports.ensureInvestorProfile = onCall({ region: REGION }, async (request) => {
   const auth = requireUser(request);
   const displayName = request.data?.displayName;
   const phone = request.data?.phone;
+  const region = request.data?.region;
+  const requestedRole = request.data?.requestedRole;
   if ((displayName !== undefined && (typeof displayName !== 'string' || displayName.trim().length > 120))
-    || (phone !== undefined && (typeof phone !== 'string' || phone.length > 40))) {
+    || (phone !== undefined && (typeof phone !== 'string' || phone.length > 40))
+    || (region !== undefined && (typeof region !== 'string' || region.trim().length > 120))
+    || (requestedRole !== undefined
+      && !['investor', 'farmer', 'mill_operator'].includes(requestedRole))) {
     throw new HttpsError('invalid-argument', 'Profile data is invalid.');
   }
   const profileRef = db.doc(`users_private/${auth.uid}`);
+  let profile;
   await db.runTransaction(async (transaction) => {
-    const profile = await transaction.get(profileRef);
-    if (profile.exists) return;
-    transaction.create(profileRef, {
+    const snapshot = await transaction.get(profileRef);
+    const existing = snapshot.exists ? snapshot.data() : {};
+    profile = {
       uid: auth.uid,
-      email: auth.token.email || null,
-      displayName: typeof displayName === 'string' ? displayName.trim() : '',
-      phone: typeof phone === 'string' ? phone.trim() : '',
-      role: 'investor',
-      createdAt: FieldValue.serverTimestamp(),
+      email: auth.token.email || existing.email || null,
+      displayName: displayName === undefined
+        ? existing.displayName || ''
+        : displayName.trim(),
+      phone: phone === undefined ? existing.phone || '' : phone.trim(),
+      region: region === undefined ? existing.region || '' : region.trim(),
+      requestedRole: requestedRole === undefined
+        ? existing.requestedRole || 'investor'
+        : requestedRole,
+      role: existing.role || 'investor'
+    };
+    transaction.set(profileRef, {
+      ...profile,
+      createdAt: existing.createdAt || FieldValue.serverTimestamp(),
       updatedAt: FieldValue.serverTimestamp()
-    });
+    }, { merge: true });
   });
-  return { uid: auth.uid, role: 'investor' };
+  return { uid: auth.uid, role: profile.role, profile };
 });
 
 exports.submitRoleApplication = onCall({ region: REGION }, async (request) => {
@@ -94,8 +109,14 @@ exports.submitRoleApplication = onCall({ region: REGION }, async (request) => {
   const applicationRef = db.doc(`role_applications/${auth.uid}`);
   return db.runTransaction(async (transaction) => {
     const existing = await transaction.get(applicationRef);
-    if (existing.exists && existing.data().status === 'pending') {
-      return { status: 'pending', requestedRole: existing.data().requestedRole };
+    if (existing.exists) {
+      const previous = existing.data();
+      if (previous.status === 'pending') {
+        return { status: 'pending', requestedRole: previous.requestedRole };
+      }
+      if (previous.status === 'approved' && previous.requestedRole === application.requestedRole) {
+        return { status: 'approved', requestedRole: previous.requestedRole };
+      }
     }
     transaction.set(applicationRef, {
       ...application,
@@ -469,8 +490,16 @@ exports.submitPressingBatch = onCall({ region: REGION }, async (request) => {
   } catch (error) {
     rethrowDomainError(error);
   }
-  const assignment = await db.doc(`mill_assignments/${auth.uid}/mills/${batch.millId}`).get();
+  const [assignment, treeSnapshot, publicTreeSnapshot] = await Promise.all([
+    db.doc(`mill_assignments/${auth.uid}/mills/${batch.millId}`).get(),
+    db.doc(`trees/${batch.treeId}`).get(),
+    db.doc(`trees_public/${batch.treeId}`).get()
+  ]);
   if (!assignment.exists) throw new HttpsError('permission-denied', 'Mill is not assigned to this operator.');
+  if (!treeSnapshot.exists || !publicTreeSnapshot.exists
+    || publicTreeSnapshot.data().status !== 'listed') {
+    throw new HttpsError('not-found', 'This tree is not available for pressing records.');
+  }
 
   const batchRef = db.collection('pressing_batches').doc();
   await batchRef.create({
