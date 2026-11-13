@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="de" dir="ltr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+  <meta name="robots" content="noindex">
+  <title>Datenschutz · Faseela</title>
+  <link rel="stylesheet" href="../fonts/fonts.css">
+  <style>
+    :root { color-scheme: light dark; --bg:#fafaf9; --fg:#1c1917; --muted:#57534e; --line:#d6d3d1; --accent:#424830; }
+    @media (prefers-color-scheme: dark) { :root { --bg:#1c1917; --fg:#fafaf9; --muted:#d6d3d1; --line:#57534e; --accent:#bcc3a1; } }
+    body { margin:0; background:var(--bg); color:var(--fg); font:16px/1.6 'Plus Jakarta Sans','Cairo',system-ui,sans-serif; }
+    main { max-width:52rem; margin:0 auto; padding:2rem 1rem 4rem; }
+    h1 { font-size:1.75rem; margin:0 0 1rem; } h2 { font-size:1.15rem; margin:2rem 0 .5rem; }
+    .muted { color:var(--muted); } a { color:var(--accent); }
+    .table-wrap { overflow-x:auto; } table { border-collapse:collapse; width:100%; font-size:.9rem; min-width:40rem; }
+    th, td { border:1px solid var(--line); padding:.5rem; text-align:start; vertical-align:top; }
+    [dir="rtl"] { font-family:'Cairo',system-ui,sans-serif; }
+  </style>
+</head>
+<body>
+<main>
+  <p><a href="../index.html">← Zurück zur App / العودة إلى التطبيق</a></p>
+  <h1>Datenschutzerklärung</h1>
+
+  <h2>1. Verantwortlicher</h2>
+  <p>Wissem Al Hamdoli<br>Faseela Platform<br>Dirksenstr. 3<br>Deutschland<br>E-Mail: wissamalhamdoli@gmail.com</p>
+
+  <h2>2. Welche Daten wir verarbeiten</h2>
+  <div class="table-wrap">
+  <table>
+    <thead><tr><th>Verarbeitung</th><th>Daten</th><th>Zweck</th><th>Rechtsgrundlage</th><th>Speicherdauer</th></tr></thead>
+    <tbody>
+      <tr><td>Konto &amp; Anmeldung</td><td>E-Mail, Name, optional Telefon und Region</td><td>Nutzerkonto, Verifizierung der E-Mail</td><td>Art. 6 Abs. 1 lit. b DSGVO</td><td>Bis zur Löschung des Kontos</td></tr>
+      <tr><td>Investitionsanfragen &amp; Anteile</td><td>Baum, Anzahl Anteile, Betrag, Status, Zeitstempel</td><td>Vertragsdurchführung</td><td>Art. 6 Abs. 1 lit. b, c DSGVO</td><td>Gesetzliche handels- und steuerrechtliche Aufbewahrungsfrist; nach Kontolöschung pseudonymisiert</td></tr>
+      <tr><td>Zahlungsbelege</td><td>Hochgeladene Überweisungsbelege (JPG/PNG/PDF)</td><td>Prüfung des Zahlungseingangs durch das Vier-Augen-Prinzip</td><td>Art. 6 Abs. 1 lit. b, c DSGVO</td><td>10 Jahre Aufbewahrungsfrist für steuerrelevante Buchungsbelege</td></tr>
+      <tr><td>Feldberichte (Landwirte) &amp; Pressprotokolle (Mühlen)</td><td>Notizen, optional Fotos/Sprachaufnahmen und GPS</td><td>Dokumentation der Pflege und Qualität</td><td>Art. 6 Abs. 1 lit. b DSGVO i.V.m. Art. 6 Abs. 1 lit. a DSGVO (Einwilligung bei optionaler Standorterfassung/Audio)</td><td>Dauer der aktiven Baumpflege-Dokumentation</td></tr>
+      <tr><td>Sicherheitsprotokoll</td><td>Nutzer-ID, Aktion, Zeitpunkt</td><td>Nachvollziehbarkeit sicherheitsrelevanter Entscheidungen</td><td>Art. 6 Abs. 1 lit. c, f DSGVO</td><td>90 Tage, rollierend gelöscht</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h2>3. Empfänger und Hosting</h2>
+  <p>Anmeldung, Datenbank, Dateispeicher (Zahlungsbelege, Feldmedien) und die serverseitige Geschäftslogik betreibt <strong>Supabase Inc.</strong> als Auftragsverarbeiter auf Grundlage von Standardvertragsklauseln (SCC) und dem Data Privacy Framework. Das Projekt liegt in der Region <strong>eu-central-1 (Frankfurt am Main, Deutschland)</strong>. Die Web-App selbst (statische Dateien) wird über <strong>Firebase Hosting</strong> (Google Ireland Ltd.) ausgeliefert; dabei fallen nur technische Zugriffsdaten an (IP-Adresse, Zeitpunkt, angefragte Datei), keine Konto- oder Finanzdaten.</p>
+
+  <h2>4. Keine Tracking- oder Werbedienste</h2>
+  <p>Die App verwendet keine Analyse- oder Werbe-Tracker. Schriften und Skripte werden von unserem eigenen Server bzw. lokal aus der App ausgeliefert; es werden keine Drittanbieter-Tracking-Anfragen gestellt.</p>
+
+  <h2>5. Speicherung auf Ihrem Gerät</h2>
+  <p>Wir speichern im lokalen Gerätespeicher nur Ihre Einstellungen (Sprache, Darstellung, Währung) sowie die technisch notwendige Anmeldesitzung (Supabase-Zugangs- und Erneuerungstoken). Das ist für die von Ihnen gewünschte Nutzung unbedingt erforderlich (§ 25 Abs. 2 Nr. 2 TDDDG).</p>
+
+  <h2>6. Ihre Rechte</h2>
+  <p>Sie haben das Recht auf Auskunft, Berichtigung, Löschung, Einschränkung der Verarbeitung, Datenübertragbarkeit und Widerspruch (Art. 15–21 DSGVO) sowie auf Beschwerde bei einer Aufsichtsbehörde.</p>
+  <ul>
+    <li><strong>Datenexport:</strong> Im Profilmenü unter „Meine Daten &amp; Datenschutz → Daten herunterladen“ erhalten Sie Ihre Daten als JSON-Datei.</li>
+    <li><strong>Kontolöschung:</strong> Unter „Konto löschen“ werden Profil und Login gelöscht. Offene Anfragen müssen vorher abgeschlossen oder storniert werden; Finanzbelege bleiben wegen gesetzlicher Aufbewahrungspflichten pseudonymisiert erhalten.</li>
+  </ul>
+
+  <h2>7. Stand</h2>
+  <p class="muted">Version 1.0.0 · Stand: November 2026</p>
+
+  <section dir="rtl" lang="ar">
+    <h2>سياسة الخصوصية وحماية البيانات</h2>
+    <p>المسؤول عن معالجة البيانات: م. وسام الحمدولي (Wissem Al Hamdoli)، البريد الإلكتروني: wissamalhamdoli@gmail.com.<br>نعالج بيانات حسابك وطلبات الاستثمار وإيصالات الدفع لتنفيذ الالتزامات التعاقدية فقط. الخوادم السحابية تقع في فرانكفورت - ألمانيا (Supabase Frankfurt eu-central-1). لا نستخدم أي برمجيات تتبع أو إعلانات تجارية. يمكنك طلب تنزيل نسختك من البيانات أو حذف الحساب مباشرة من داخل التطبيق في أي وقت.</p>
+  </section>
+</main>
+</body>
+</html>

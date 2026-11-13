@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: https://riyvlhlhzxxerlwqoxsy.supabase.co; connect-src 'self' https://riyvlhlhzxxerlwqoxsy.supabase.co; object-src 'none'; base-uri 'self'; form-action 'none'">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta name="description" content="Faseela olive tree profile · ملف شجرة زيتون في فسيلة">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Faseela · شجرة زيتون">
+  <meta property="og:description" content="Field reports, certified pressings and available shares of one olive tree in Syria.">
+  <meta property="og:image" content="images/olive_branches_macro.jpg">
+  <title>شجرة زيتون · Faseela tree</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="fonts/fonts.css">
+  <style>
+    :root { color-scheme: light dark; --bg:#fafaf9; --card:#fff; --fg:#1c1917; --muted:#57534e; --line:#e7e5e4; --accent:#424830; --accent-fg:#fff; --soft:#eef0e6; --ok:#15803d; --ok-bg:#dcfce7; --amber:#b45309; --amber-bg:#fef3c7; }
+    @media (prefers-color-scheme: dark) { :root { --bg:#1c1917; --card:#292524; --fg:#fafaf9; --muted:#d6d3d1; --line:#44403c; --accent:#bcc3a1; --accent-fg:#1c1917; --soft:#2f3128; --ok:#86efac; --ok-bg:#14532d; --amber:#fcd34d; --amber-bg:#78350f; } }
+    * { box-sizing: border-box; }
+    body { margin:0; background:var(--bg); color:var(--fg); font:16px/1.6 'Cairo','Plus Jakarta Sans',system-ui,sans-serif; }
+    .en { direction:ltr; text-align:left; font-family:'Plus Jakarta Sans',system-ui,sans-serif; }
+    header { display:flex; align-items:center; justify-content:space-between; gap:1rem; padding:.9rem 1rem; max-width:62rem; margin:0 auto; }
+    header a { color:var(--accent); font-weight:700; text-decoration:none; }
+    .lang { display:flex; gap:.25rem; }
+    .lang button { font:inherit; font-size:.85rem; font-weight:700; padding:.3rem .7rem; border-radius:999px; border:1px solid var(--line); background:var(--card); color:var(--fg); cursor:pointer; }
+    .lang button[aria-pressed="true"] { background:var(--accent); color:var(--accent-fg); border-color:var(--accent); }
+    main { max-width:62rem; margin:0 auto; padding:0 1rem 3rem; display:grid; gap:1.25rem; }
+    .hero { position:relative; border-radius:1.25rem; overflow:hidden; min-height:14rem; background:var(--soft); }
+    .hero img { width:100%; height:22rem; object-fit:cover; display:block; }
+    .hero .overlay { position:absolute; inset:auto 0 0 0; padding:1.25rem; background:linear-gradient(transparent, rgba(0,0,0,.72)); color:#fff; }
+    .hero h1 { margin:0; font-size:1.6rem; } .hero p { margin:.2rem 0 0; opacity:.9; font-size:.95rem; }
+    .grid { display:grid; grid-template-columns:1fr; gap:1.25rem; }
+    @media (min-width: 48rem) { .grid { grid-template-columns:2fr 1fr; } }
+    .card { background:var(--card); border:1px solid var(--line); border-radius:1.25rem; padding:1.25rem; }
+    .card h2 { margin:0 0 .75rem; font-size:1.1rem; }
+    .facts { display:grid; grid-template-columns:repeat(auto-fit, minmax(8rem, 1fr)); gap:.75rem; }
+    .fact { background:var(--soft); border-radius:.9rem; padding:.7rem .85rem; }
+    .fact span { display:block; font-size:.72rem; color:var(--muted); font-weight:700; } .fact strong { font-size:1.05rem; }
+    .bar { height:.6rem; border-radius:999px; background:var(--line); overflow:hidden; margin:.5rem 0; }
+    .bar div { height:100%; background:var(--accent); }
+    .cta { display:block; text-align:center; margin-top:.75rem; padding:.85rem; border-radius:.9rem; background:var(--accent); color:var(--accent-fg); font-weight:800; text-decoration:none; }
+    .cta[aria-disabled="true"] { opacity:.5; pointer-events:none; }
+    .farmer { display:flex; gap:1rem; align-items:flex-start; }
+    .farmer img, .farmer .ph { width:4.5rem; height:4.5rem; border-radius:1rem; object-fit:cover; background:var(--soft); flex:none; display:grid; place-items:center; font-weight:900; color:var(--accent); font-size:1.5rem; }
+    .timeline { list-style:none; margin:0; padding:0; display:grid; gap:1rem; }
+    .timeline li { border-top:1px solid var(--line); padding-top:.9rem; }
+    .timeline .meta { font-size:.8rem; color:var(--muted); display:flex; gap:.6rem; flex-wrap:wrap; }
+    .badge { font-size:.72rem; font-weight:800; padding:.15rem .55rem; border-radius:999px; background:var(--soft); color:var(--accent); }
+    .badge.ok { background:var(--ok-bg); color:var(--ok); } .badge.amber { background:var(--amber-bg); color:var(--amber); }
+    .photos { display:grid; grid-template-columns:repeat(auto-fill, minmax(7rem, 1fr)); gap:.5rem; margin-top:.6rem; }
+    .photos img { width:100%; aspect-ratio:1; object-fit:cover; border-radius:.75rem; background:var(--soft); }
+    .empty { color:var(--muted); font-size:.9rem; }
+    .share { display:flex; gap:.5rem; flex-wrap:wrap; margin-top:.75rem; }
+    .share a, .share button { font:inherit; font-size:.85rem; font-weight:700; padding:.5rem .8rem; border-radius:.75rem; border:1px solid var(--line); background:var(--card); color:var(--fg); text-decoration:none; cursor:pointer; }
+    footer { font-size:.78rem; color:var(--muted); text-align:center; padding:1rem; }
+    a:focus-visible, button:focus-visible { outline:3px solid var(--accent); outline-offset:2px; }
+    [hidden] { display:none !important; }
+  </style>
+</head>
+<body>
+<header>
+  <a href="./" id="brand">فسيلة · Faseela</a>
+  <div class="lang" role="group" aria-label="Language">
+    <button type="button" data-lang="ar" aria-pressed="true">العربية</button>
+    <button type="button" data-lang="en" aria-pressed="false">English</button>
+  </div>
+</header>
+<main id="main" aria-busy="true">
+  <section class="hero" id="hero">
+    <img id="hero-img" alt="" src="images/olive_branches_macro.webp" width="1200" height="352">
+    <div class="overlay"><h1 id="tree-name">…</h1><p id="tree-sub"></p></div>
+  </section>
+  <div class="grid">
+    <div style="display:grid;gap:1.25rem">
+      <section class="card" aria-labelledby="h-facts">
+        <h2 id="h-facts" data-t="facts">عن الشجرة</h2>
+        <div class="facts" id="facts"></div>
+      </section>
+      <section class="card" aria-labelledby="h-farmer" id="farmer-card" hidden>
+        <h2 id="h-farmer" data-t="farmer">المزارع الشريك</h2>
+        <div class="farmer"><img id="farmer-photo" alt="" hidden><div class="ph" id="farmer-ph">م</div><div><strong id="farmer-name"></strong><div id="farmer-meta" class="meta" style="color:var(--muted);font-size:.85rem"></div><p id="farmer-bio" style="margin:.4rem 0 0"></p></div></div>
+      </section>
+      <section class="card" aria-labelledby="h-timeline">
+        <h2 id="h-timeline" data-t="timeline">يوميات الشجرة</h2>
+        <ul class="timeline" id="timeline"></ul>
+        <p class="empty" id="timeline-empty" hidden data-t="timeline_empty">لا توجد تقارير منشورة بعد. تظهر هنا بعد اعتماد أول تقرير ميداني من المدقق.</p>
+      </section>
+    </div>
+    <aside style="display:grid;gap:1.25rem;align-content:start">
+      <section class="card" aria-labelledby="h-shares">
+        <h2 id="h-shares" data-t="shares">الحصص</h2>
+        <div id="shares-text"></div>
+        <div class="bar" aria-hidden="true"><div id="shares-bar" style="width:0%"></div></div>
+        <div id="price"></div>
+        <a class="cta" id="cta" href="./#marketplace" data-t="cta">احجز حصة الآن</a>
+      </section>
+      <section class="card" aria-labelledby="h-pressing">
+        <h2 id="h-pressing" data-t="pressing">آخر عصرة معتمدة</h2>
+        <div id="pressing"></div>
+      </section>
+      <section class="card" aria-labelledby="h-share">
+        <h2 id="h-share" data-t="share">شارك</h2>
+        <div class="share"><button type="button" id="copy" data-t="copy">نسخ الرابط</button><a id="wa" href="#" target="_blank" rel="noopener">WhatsApp</a></div>
+      </section>
+    </aside>
+  </div>
+  <p id="error" class="empty" hidden role="alert"></p>
+</main>
+<footer><span data-t="footer">البيانات من تقارير ميدانية معتمدة وشهادات عصر مختبرية. لا وعد بعائد.</span> · <a href="legal/datenschutz.html">Datenschutz</a> · <a href="legal/impressum.html">Impressum</a></footer>
+<script type="module" src="tree.mjs"></script>
+</body>
+</html>

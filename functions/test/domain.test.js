@@ -1,10 +1,12 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const {
+  buildTreeRecords,
   calculateReservationAmount,
   nextInvestmentStatus,
   validateFarmerUpdate,
   validatePressingBatch,
+  validateReviewNote,
   validateRoleApplication,
   validateReservationInput
 } = require('../domain');
@@ -120,4 +122,42 @@ test('pressing batches reject implausible measurements', () => {
     acidityPct: 0.3,
     peroxideValue: 6
   }), { code: 'invalid-argument' });
+});
+
+test('validateReviewNote handles optional strings and enforces character limit', () => {
+  assert.equal(validateReviewNote(undefined), '');
+  assert.equal(validateReviewNote(' Approved '), 'Approved');
+  assert.throws(() => validateReviewNote('a'.repeat(501)), { code: 'invalid-argument' });
+  assert.throws(() => validateReviewNote(12345), { code: 'invalid-argument' });
+});
+
+test('buildTreeRecords transforms seed tree into canonical server and public records', () => {
+  const seed = {
+    id: 'tree_test',
+    farm_id: 'farm_01',
+    mill_id: 'mill_01',
+    tree_name: 'شجرة تجريبية',
+    tree_name_en: 'Test Tree',
+    price_per_share: 35.5,
+    total_shares_available: 50,
+    land_parcel: {
+      has_land_option: true,
+      land_addon_price_usd: 15,
+      land_area_sqm: 5
+    },
+    gps_lat: 34.5,
+    gps_lng: 36.2
+  };
+  const { tree, publicTree } = buildTreeRecords(seed);
+  assert.equal(tree.treeId, 'tree_test');
+  assert.equal(tree.totalShares, 4);
+  assert.equal(tree.soldShares, 2); // 50% available -> 2 available, 2 sold
+  assert.equal(tree.pricePerShareMinor, 3550);
+  assert.equal(tree.landPriceMinor, 1500);
+
+  assert.equal(publicTree.status, 'listed');
+  assert.equal(publicTree.availableShares, 2);
+  assert.equal(publicTree.pricePerShareMinor, 3550);
+  assert.equal(publicTree.landPriceMinor, 1500);
+  assert.equal(publicTree.hasLandOption, true);
 });

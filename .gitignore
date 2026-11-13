@@ -13,12 +13,18 @@ build/
 local.properties
 .firebase/
 .firebase/**
-backend/.env
-backend/*.db
-backend/*.db-*
+legacy/backend/.env
+legacy/backend/*.db
+legacy/backend/*.db-*
 .agents/
 .claude/
 skills-lock.json
 053500
 053500.pub
-
+.config/
+# Legacy and alt directories (kept locally as archives, excluded from release git index)
+android-alt/
+ios-alt/
+legacy/
+scratch/
+scratch-tools/

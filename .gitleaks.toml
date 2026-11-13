@@ -1,0 +1,15 @@
+# gitleaks config: default rules + the Supabase publishable key is public by design (RLS-protected).
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Public identifiers that are not secrets"
+regexes = [
+  '''sb_publishable_[A-Za-z0-9_-]+''',
+  '''gen-lang-client-0319369264''',
+]
+paths = [
+  '''public/vendor/.*''',
+  '''public/supabase-client\.mjs''',
+  '''package-lock\.json''',
+]

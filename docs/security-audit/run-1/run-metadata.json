@@ -1,0 +1,69 @@
+{
+ "run_id": "faseela-run-1-2026-11-08",
+ "repo": "faseela",
+ "target": "/home/claude/proj",
+ "source_ref": {
+  "commit": "5abe33e4a4cf8efaaa34fc9e7584bc0f0e5310a3",
+  "worktree_dirty": true,
+  "note": "90 uncommitted paths (Welle 1 + prior slices); the dirty worktree is the reviewed state"
+ },
+ "profile": "standard",
+ "scope_paths": [
+  "supabase/",
+  "src/",
+  "public/",
+  "functions/",
+  "tests/",
+  "scripts/",
+  "firebase.json",
+  "capacitor.config.json",
+  "android/app/src/main/AndroidManifest.xml",
+  "package.json"
+ ],
+ "budget": 40,
+ "budget_plan": {
+  "recon": 4,
+  "critics_reserved": 2,
+  "verifiers_reserved": 12,
+  "hunters_wave1": 14,
+  "phase5_reserved": 4,
+  "slack": 4
+ },
+ "execution_policy": "sandboxed-source-and-local-only",
+ "sandbox_note": "No OS-enforced sandbox (netns/rlimits/read-only mounts) is available in this container for target-controlled execution; target code execution is therefore NOT permitted in this run. Source-only checks plus already-existing deterministic test outputs observed earlier by the parent (not by agents) may be cited as context, not as local_checks artifacts.",
+ "selected_companions": [
+  "WEB-PROTOCOL-AND-AUTH.md",
+  "DATA-ISOLATION-AND-LIFECYCLE.md",
+  "CLIENT-SIDE.md",
+  "CLOUD-AND-DEPLOYMENT.md",
+  "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md",
+  "SUPPLY-CHAIN-AND-RELEASE.md",
+  "DESKTOP-MOBILE-AND-LOCAL-IPC.md"
+ ],
+ "prior_runs": [],
+ "shared_file_owners": {
+  "parent": [
+   "run-metadata.json",
+   "architecture.md",
+   "coverage-ledger.json",
+   "findings.json",
+   "REPORT.md",
+   "FINDINGS-DETAIL.md",
+   "NEEDS-VALIDATION.md"
+  ]
+ },
+ "run_status": "complete",
+ "agents_spent": 38,
+ "phases": {
+  "recon": 4,
+  "hunters": 10,
+  "critics": 3,
+  "phase3_verifiers": 11,
+  "phase5_verifiers": 10
+ },
+ "deviations": [
+  "Hunter/verifier prompts referenced the pinned companion files by absolute path and section name instead of embedding the blocks verbatim (token economy); agents were required to read them before work.",
+  "No OS-enforced sandbox approved: zero target-controlled execution; all checks method=source. Explore-type Phase 5 verifiers could not write files; parent recorded their returned JSON verdicts verbatim.",
+  "Phase 5 p04 replacement applied directly as non-material wording/line correction (impact unchanged, low)."
+ ]
+}

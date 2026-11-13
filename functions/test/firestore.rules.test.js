@@ -8,10 +8,14 @@ const {
   initializeTestEnvironment
 } = require('@firebase/rules-unit-testing');
 const {
+  collection,
   doc,
   getDoc,
+  getDocs,
+  query,
   serverTimestamp,
-  setDoc
+  setDoc,
+  where
 } = require('firebase/firestore');
 
 const projectId = 'demo-faseela';
@@ -83,7 +87,7 @@ test('browser clients cannot create or approve financial records', async () => {
   }));
 });
 
-test('farmers can submit bounded pending reports only for assigned trees', async () => {
+test('farmer reports are function-only: clients cannot write them, even for assigned trees', async () => {
   await testEnvironment.withSecurityRulesDisabled(async (context) => {
     await setDoc(doc(context.firestore(databaseId), 'farmer_assignments/farmer-rules-test/trees/tree-assigned-test'), {
       treeId: 'tree-assigned-test'
@@ -93,21 +97,12 @@ test('farmers can submit bounded pending reports only for assigned trees', async
   const farmerDb = testEnvironment.authenticatedContext('farmer-rules-test', {
     role: 'farmer'
   }).firestore(databaseId);
-  await assertSucceeds(setDoc(doc(farmerDb, 'farmer_updates/assigned-report-test'), {
+  await assertFails(setDoc(doc(farmerDb, 'farmer_updates/assigned-report-test'), {
     farmerUid: 'farmer-rules-test',
     treeId: 'tree-assigned-test',
     eventType: 'watering',
     notes: 'Watering completed',
-    mediaPaths: [],
-    status: 'pending_review',
-    createdAt: serverTimestamp()
-  }));
-  await assertFails(setDoc(doc(farmerDb, 'farmer_updates/unassigned-report-test'), {
-    farmerUid: 'farmer-rules-test',
-    treeId: 'tree-not-assigned',
-    eventType: 'watering',
-    notes: 'Watering completed',
-    mediaPaths: [],
+    mediaPaths: ['field-media/other-farmer/tree-assigned-test/stolen.jpg'],
     status: 'pending_review',
     createdAt: serverTimestamp()
   }));
@@ -115,4 +110,116 @@ test('farmers can submit bounded pending reports only for assigned trees', async
     treeId: 'tree-assigned-test',
     status: 'published'
   }));
+});
+
+test('farmers can list only their own reports', async () => {
+  await testEnvironment.withSecurityRulesDisabled(async (context) => {
+    const db = context.firestore(databaseId);
+    await setDoc(doc(db, 'farmer_updates/own-report-test'), { farmerUid: 'farmer-list-test', status: 'pending_review' });
+    await setDoc(doc(db, 'farmer_updates/foreign-report-test'), { farmerUid: 'farmer-other-test', status: 'pending_review' });
+  });
+  const farmerDb = testEnvironment.authenticatedContext('farmer-list-test', { role: 'farmer' }).firestore(databaseId);
+  await assertSucceeds(getDocs(query(collection(farmerDb, 'farmer_updates'), where('farmerUid', '==', 'farmer-list-test'))));
+  await assertFails(getDoc(doc(farmerDb, 'farmer_updates/foreign-report-test')));
+  await assertFails(getDocs(collection(farmerDb, 'farmer_updates')));
+});
+
+test('role applications are owner/admin readable, admin listable, and never client-writable', async () => {
+  await testEnvironment.withSecurityRulesDisabled(async (context) => {
+    await setDoc(doc(context.firestore(databaseId), 'role_applications/applicant-rules-test'), {
+      userId: 'applicant-rules-test',
+      requestedRole: 'farmer',
+      region: 'North',
+      organizationName: 'Test Co-op',
+      message: 'Please approve',
+      status: 'pending',
+      submittedAt: new Date(),
+      reviewedAt: null,
+      reviewedByUid: null,
+      reviewNote: null
+    });
+  });
+
+  const ownerDb = testEnvironment.authenticatedContext('applicant-rules-test').firestore(databaseId);
+  const otherDb = testEnvironment.authenticatedContext('applicant-other-test').firestore(databaseId);
+  const adminDb = testEnvironment.authenticatedContext('admin-rules-test', { admin: true }).firestore(databaseId);
+
+  await assertSucceeds(getDoc(doc(ownerDb, 'role_applications/applicant-rules-test')));
+  await assertFails(getDoc(doc(otherDb, 'role_applications/applicant-rules-test')));
+  await assertSucceeds(getDocs(collection(adminDb, 'role_applications')));
+  await assertFails(getDocs(collection(ownerDb, 'role_applications')));
+  await assertFails(setDoc(doc(ownerDb, 'role_applications/applicant-rules-test'), {
+    userId: 'applicant-rules-test',
+    requestedRole: 'farmer',
+    status: 'approved'
+  }));
+});
+
+test('investors can query their own investment requests but not read others', async () => {
+  await testEnvironment.withSecurityRulesDisabled(async (context) => {
+    const db = context.firestore(databaseId);
+    await setDoc(doc(db, 'investment_requests/own-request-test'), {
+      userId: 'investor-query-test',
+      status: 'pending'
+    });
+    await setDoc(doc(db, 'investment_requests/foreign-request-test'), {
+      userId: 'investor-foreign-test',
+      status: 'pending'
+    });
+  });
+
+  const investorDb = testEnvironment.authenticatedContext('investor-query-test').firestore(databaseId);
+  await assertSucceeds(getDocs(query(
+    collection(investorDb, 'investment_requests'),
+    where('userId', '==', 'investor-query-test')
+  )));
+  await assertFails(getDoc(doc(investorDb, 'investment_requests/foreign-request-test')));
+  await assertFails(getDocs(collection(investorDb, 'investment_requests')));
+});
+
+test('pressing batches are submitter/reviewer only, even when certified', async () => {
+  await testEnvironment.withSecurityRulesDisabled(async (context) => {
+    const db = context.firestore(databaseId);
+    await setDoc(doc(db, 'pressing_batches/certified-batch-test'), {
+      status: 'certified',
+      submittedByUid: 'mill-rules-test'
+    });
+    await setDoc(doc(db, 'pressing_batches/pending-batch-test'), {
+      status: 'pending_review',
+      submittedByUid: 'mill-rules-test'
+    });
+  });
+
+  const guestDb = testEnvironment.unauthenticatedContext().firestore(databaseId);
+  const submitterDb = testEnvironment.authenticatedContext('mill-rules-test', {
+    role: 'mill_operator'
+  }).firestore(databaseId);
+
+  const otherMillDb = testEnvironment.authenticatedContext('mill-other-test', { role: 'mill_operator' }).firestore(databaseId);
+  const auditorDb = testEnvironment.authenticatedContext('auditor-rules-test', { role: 'quality_auditor' }).firestore(databaseId);
+
+  await assertFails(getDoc(doc(guestDb, 'pressing_batches/certified-batch-test')));
+  await assertFails(getDoc(doc(guestDb, 'pressing_batches/pending-batch-test')));
+  await assertFails(getDoc(doc(otherMillDb, 'pressing_batches/certified-batch-test')));
+  await assertSucceeds(getDoc(doc(submitterDb, 'pressing_batches/pending-batch-test')));
+  await assertSucceeds(getDocs(query(collection(submitterDb, 'pressing_batches'), where('submittedByUid', '==', 'mill-rules-test'))));
+  await assertSucceeds(getDoc(doc(auditorDb, 'pressing_batches/certified-batch-test')));
+});
+
+test('audit logs are readable by admins only', async () => {
+  await testEnvironment.withSecurityRulesDisabled(async (context) => {
+    await setDoc(doc(context.firestore(databaseId), 'audit_logs/audit-event-test'), {
+      action: 'role_application_approved',
+      actorUid: 'admin-rules-test'
+    });
+  });
+
+  const adminDb = testEnvironment.authenticatedContext('admin-rules-test', { admin: true }).firestore(databaseId);
+  const userDb = testEnvironment.authenticatedContext('audit-user-test').firestore(databaseId);
+  const guestDb = testEnvironment.unauthenticatedContext().firestore(databaseId);
+
+  await assertSucceeds(getDoc(doc(adminDb, 'audit_logs/audit-event-test')));
+  await assertSucceeds(getDocs(collection(adminDb, 'audit_logs')));
+  await assertFails(getDoc(doc(userDb, 'audit_logs/audit-event-test')));
+  await assertFails(getDoc(doc(guestDb, 'audit_logs/audit-event-test')));
 });

@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="de" dir="ltr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="referrer" content="no-referrer">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://riyvlhlhzxxerlwqoxsy.supabase.co wss://riyvlhlhzxxerlwqoxsy.supabase.co; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none';">
+  <title>Faseela · Admin</title>
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../fonts/fonts.css">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+  <a class="skip" href="#view">Zum Inhalt springen</a>
+
+  <!-- Sign-in -->
+  <main id="screen-login" class="login" hidden>
+    <section class="card login-card" aria-labelledby="login-title">
+      <img src="../images/icon-192.png" width="64" height="64" alt="" class="login-logo">
+      <h1 id="login-title">Faseela Admin</h1>
+      <p class="muted">Zugang nur für Admin- und Finanz-Admin-Konten.</p>
+      <div class="field">
+        <label for="login-email">E-Mail</label>
+        <input id="login-email" type="email" autocomplete="username" inputmode="email" required>
+      </div>
+      <div class="field">
+        <label for="login-password">Passwort</label>
+        <input id="login-password" type="password" autocomplete="current-password" required>
+      </div>
+      <p id="login-error" class="alert alert-error" role="alert" hidden></p>
+      <button id="login-submit" type="button" class="btn btn-primary btn-block">Anmelden</button>
+      <button id="login-forgot" type="button" class="btn btn-link btn-block">Passwort vergessen?</button>
+      <p id="login-info" class="alert alert-info" role="status" hidden></p>
+    </section>
+  </main>
+
+  <!-- Boot / session check -->
+  <main id="screen-boot" class="login">
+    <p class="muted" role="status">Sitzung wird geprüft …</p>
+  </main>
+
+  <!-- Panel -->
+  <div id="screen-panel" class="shell" hidden>
+    <header class="topbar">
+      <div class="brand">
+        <img src="../images/icon-192.png" width="32" height="32" alt="">
+        <strong>Faseela Admin</strong>
+      </div>
+      <div class="topbar-right">
+        <span id="who" class="who"></span>
+        <button id="theme-toggle" type="button" class="btn btn-ghost" aria-pressed="false">Dunkel</button>
+        <button id="sign-out" type="button" class="btn btn-ghost">Abmelden</button>
+      </div>
+    </header>
+    <nav class="tabs" aria-label="Bereiche">
+      <div id="tablist" role="tablist"></div>
+    </nav>
+    <main id="view" class="view" tabindex="-1" role="tabpanel" aria-live="polite" aria-busy="false"></main>
+    <footer class="foot muted">Alle Aktionen werden serverseitig geprüft und im Audit-Log festgehalten. Automatische Abmeldung nach 30 Minuten ohne Eingabe.</footer>
+  </div>
+
+  <dialog id="dialog" aria-labelledby="dialog-title">
+    <h2 id="dialog-title"></h2>
+    <div id="dialog-body"></div>
+    <p id="dialog-error" class="alert alert-error" role="alert" hidden></p>
+    <div class="dialog-actions">
+      <button id="dialog-cancel" type="button" class="btn btn-ghost">Abbrechen</button>
+      <button id="dialog-ok" type="button" class="btn btn-primary">Bestätigen</button>
+    </div>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+  <script type="module" src="admin.mjs"></script>
+</body>
+</html>

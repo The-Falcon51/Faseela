@@ -107,8 +107,8 @@
       "gps_lat": 34.8971,
       "gps_lng": 36.1438,
       "images": [
-        "images/tree_ancient_khodairi.jpg",
-        "images/olive_branches_macro.jpg"
+        "images/tree_ancient_khodairi.webp",
+        "images/olive_branches_macro.webp"
       ],
       "land_parcel": {
         "has_land_option": true,
@@ -156,8 +156,8 @@
       "gps_lat": 35.7341,
       "gps_lng": 36.5672,
       "images": [
-        "images/tree_sourani_idlib.jpg",
-        "images/olive_harvest_festival.jpg"
+        "images/tree_sourani_idlib.webp",
+        "images/olive_harvest_festival.webp"
       ],
       "land_parcel": {
         "has_land_option": true,
@@ -205,7 +205,7 @@
       "gps_lat": 32.8841,
       "gps_lng": 36.0345,
       "images": [
-        "images/tree_qaisi_daraa.jpg"
+        "images/tree_qaisi_daraa.webp"
       ],
       "land_parcel": {
         "has_land_option": true,

@@ -5,9 +5,12 @@
     "node": "20"
   },
   "scripts": {
-    "test": "node --test test/domain.test.js",
+    "test": "node --test test/domain.test.js test/investment-flow.test.js test/policy.test.js",
     "test:rules": "firebase emulators:exec --config ../firebase.json --only firestore --project demo-faseela \"node --test test/firestore.rules.test.js\"",
-    "test:functions:emulator": "firebase emulators:exec --config ../firebase.json --only auth,firestore,functions,pubsub --project demo-faseela \"node --test test/pressing-batch.emulator.test.js\""
+    "test:functions:emulator": "firebase emulators:exec --config ../firebase.json --only auth,firestore,functions,pubsub --project demo-faseela \"node --test test/pressing-batch.emulator.test.js\"",
+    "test:abuse:emulator": "firebase emulators:exec --config ../firebase.json --only auth,firestore,functions,pubsub --project demo-faseela \"node --test test/adversarial.emulator.test.js\"",
+    "test:privacy:emulator": "firebase emulators:exec --config ../firebase.json --only auth,firestore,functions,pubsub --project demo-faseela \"node --test test/privacy.emulator.test.js\"",
+    "test:storage:rules": "firebase emulators:exec --config ../firebase.json --only firestore,storage --project demo-faseela \"node --test test/storage.rules.test.js\""
   },
   "dependencies": {
     "firebase-admin": "^13.4.0",
