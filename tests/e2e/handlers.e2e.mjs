@@ -135,6 +135,34 @@ try {
     return out;
   });
   assert.deepEqual(smoke, { nav: true, page: 'marketplace', lang: true, langState: 'en', auth: true, authOpen: true, close: true, authClosed: true });
+
+  // ---- 2b. land / greenfield offer switch (legal): off = no surface, no purchase path -----
+  const land = await page.evaluate(() => {
+    const shown = (sel) => { const host = document.querySelector(sel)?.closest('[data-feature="land"]'); return !host || getComputedStyle(host).display !== 'none'; };
+    const toasts = [];
+    const orig = window.showToast; window.showToast = (m) => toasts.push(m);
+    setModalPackageChoice(true); toggleROILandOption(true); selectDetailPackage(true);
+    switchMarketplaceTrack('virgin');
+    investInVirginPackage('vg_01', 1, 55, 25);
+    investInAgroforestryBundle();
+    document.getElementById('filter-land').value = 'with_land';
+    renderMarketplace();
+    const cards = document.querySelectorAll('#marketplace-cards-container [data-feature="land"]');
+    window.showToast = orig;
+    return {
+      enabled: landOfferEnabled(),
+      flags: [state.includeLandInModal, state.includeLandInCalc],
+      track: state.marketplaceTrack,
+      blocked: toasts.filter((m) => m === t('land_offer_unavailable')).length,
+      investModalOpen: !document.getElementById('modal-invest').classList.contains('hidden'),
+      treeOptions: state.trees.filter((tr) => tr.land_parcel && tr.land_parcel.has_land_option).length,
+      surfaces: ['#hero-feat-land-pkg', '#sec-land-tenure-showcase', '#tab-market-virgin', '#virgin-groves-container', '#modal-pkg-card-land', '#filter-land'].filter(shown),
+      cardPricesShown: [...cards].filter((el) => getComputedStyle(el).display !== 'none').length
+    };
+  });
+  await page.evaluate(() => { document.getElementById('filter-land').value = 'all'; renderMarketplace(); });
+  assert.deepEqual(land, { enabled: false, flags: [false, false], track: 'mature', blocked: 2, investModalOpen: false,
+    treeOptions: 0, surfaces: [], cardPricesShown: 0 }, 'land offer is off everywhere');
   assert.deepEqual(errors, [], `page errors:\n${errors.join('\n')}`);
   await page.close();
 

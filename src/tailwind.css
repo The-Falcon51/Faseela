@@ -1,3 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Land / greenfield offer switch (see LAND_OFFER_ENABLED in public/app.js): while the offer is off,
+   every surface that advertises or sells it is removed from layout and the accessibility tree. */
+.land-offer-off [data-feature="land"] { display: none !important; }

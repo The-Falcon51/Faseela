@@ -47,6 +47,7 @@
  "gift_err_limit": "Tageslimit für Geschenkcodes (10) erreicht. Versuchen Sie es morgen erneut.",
  "gift_err_generic": "Die Anfrage ist fehlgeschlagen. Bitte versuchen Sie es erneut.",
  "gift_print_cert": "Geschenkurkunde drucken",
+ "land_offer_unavailable": "Dieses Angebot ist derzeit nicht verfügbar.",
  "btn_done": "Fertig",
  "invest_gift_toggle": "Dieser Kauf ist ein Geschenk",
  "invest_gift_hint": "– sobald die Zahlung freigegeben ist, erhalten Sie einen Geschenkcode zum Weitergeben.",

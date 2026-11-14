@@ -115,6 +115,7 @@
         gift_expires_lbl: "صالح حتى",
         gift_share_wa: "مشاركة عبر واتساب",
         gift_print_cert: "طباعة وثيقة الإهداء",
+        land_offer_unavailable: "هذا العرض غير متاح حالياً.",
         gift_result_note: "احتفظ بالرمز سرّاً: من يملكه يستطيع استلام الهدية. يمكنك إلغاؤه من قائمة «هداياي» ما دام غير مستعمَل.",
         gift_err_exists: "يوجد رمز هدية مفتوح لهذه الحصة بالفعل.",
         gift_err_precondition: "لا يمكن إهداء هذه الحصة الآن: تأكد من بريدك، ومن أن الحصة فعّالة ولا يوجد طلب زيت مفتوح لها.",
@@ -3906,6 +3907,7 @@
         gift_expires_lbl: "Valid until",
         gift_share_wa: "Share via WhatsApp",
         gift_print_cert: "Print Gift Certificate",
+        land_offer_unavailable: "This offer is currently not available.",
         gift_result_note: "Keep the code private: whoever holds it can claim the gift. You can cancel it from “My gifts” while it is unused.",
         gift_err_exists: "This share already has an open gift code.",
         gift_err_precondition: "This share cannot be gifted right now: verify your e-mail and make sure the share is active with no open oil request.",
@@ -10253,6 +10255,30 @@
       ]
     };
 
+    // ---- Land / greenfield offer switch (legal) -------------------------------------------
+    // Selling a land parcel, a usufruct deed or a greenfield plot together with a tree is a
+    // regulated offer in several target markets. It stays off until counsel signs off.
+    // Off means: no new land sales and no land marketing surfaces. Shares that already include
+    // land (server records) keep showing it — that is an existing contract, not an offer.
+    const LAND_OFFER_ENABLED = false;
+    function landOfferEnabled() { return LAND_OFFER_ENABLED; }
+    function applyLandOfferSwitch() {
+      if (LAND_OFFER_ENABLED) return;
+      (state.trees || []).forEach(tr => {
+        if (tr.land_parcel) tr.land_parcel.has_land_option = false;
+        tr.server_has_land_option = false;
+      });
+      state.marketplaceTrack = 'mature';
+    }
+    if (!LAND_OFFER_ENABLED) {
+      // Single choke point: every purchase path reads these two flags, so they can never turn on.
+      ['includeLandInCalc', 'includeLandInModal'].forEach(key => Object.defineProperty(state, key, {
+        get: () => false, set: () => {}, enumerable: true, configurable: true
+      }));
+      document.documentElement.classList.add('land-offer-off');
+      applyLandOfferSwitch();
+    }
+
     // Authentication state is provided by the backend session; local storage is never an authority.
     ['faseela_auth_user_id', 'faseela_oauth_token', 'faseela_session_user'].forEach(key => {
       localStorage.removeItem(key);
@@ -10349,7 +10375,7 @@
           local.total_shares = pt.total_shares;
           if (pt.price_per_share > 0) local.price_per_share = pt.price_per_share;
           local.server_land_price = pt.land_price;
-          local.server_has_land_option = pt.has_land_option;
+          local.server_has_land_option = landOfferEnabled() && !!pt.has_land_option;
           local.total_shares_available = pt.total_shares > 0 ? Math.round((pt.shares_available / pt.total_shares) * 100) : 0;
         });
         if (typeof renderMarketplace === 'function' && getCurrentVisiblePage() === 'marketplace') renderMarketplace();
@@ -12492,7 +12518,7 @@
         const name = isEn ? ((t.region_en || t.region) + ' - ' + (t.tree_type_en || t.tree_type)) : (t.region + ' - ' + t.tree_type);
         const age = `${t.age_years} ${isEn ? 'yrs' : 'سنة'}`;
         const price = `${formatMoney(t.price_per_share)} ${isEn ? '/ sh' : '/ حصة'}`;
-        const landPrice = t.land_parcel ? `${isEn ? '• land ' : '• أرض '}${formatMoney(t.land_parcel.land_addon_price_usd)}` : '';
+        const landPrice = (landOfferEnabled() && t.land_parcel) ? `${isEn ? '• land ' : '• أرض '}${formatMoney(t.land_parcel.land_addon_price_usd)}` : '';
         return `<option value="${t.id}">${name} (${age}) • ${price} ${landPrice}</option>`;
       }).join('');
       select.value = currentVal;
@@ -13805,7 +13831,7 @@ function setMarketplaceViewMode(mode) {
     let filtered = state.trees.filter(t => {
       // Land Filter
       if (filterLand === 'with_land') {
-        const hasLand = t.land_parcel && t.land_parcel.has_land_option !== false;
+        const hasLand = landOfferEnabled() && t.land_parcel && t.land_parcel.has_land_option !== false;
         if (!hasLand) return false;
       }
 
@@ -13954,7 +13980,7 @@ function setMarketplaceViewMode(mode) {
               <div class="text-start md:text-end">
                 <div class="flex items-baseline gap-2">
                   <span class="text-xl font-black text-stone-900">${formatMoney(tree.price_per_share)}</span>
-                  <span class="text-[10px] font-black text-emerald-800 bg-emerald-50 border border-emerald-300 px-2 py-0.5 rounded-md">
+                  <span data-feature="land" class="text-[10px] font-black text-emerald-800 bg-emerald-50 border border-emerald-300 px-2 py-0.5 rounded-md">
                     ${formatMoney(tree.price_per_share + (tree.land_parcel?.land_addon_price_usd || 18))} ${state.currentLang !== 'ar' ? 'w/ land' : 'مع أرض'}
                   </span>
                 </div>
@@ -14075,7 +14101,7 @@ function setMarketplaceViewMode(mode) {
                   <span class="text-[10px] text-stone-400 block">${state.currentLang !== 'ar' ? 'Pricing Packages:' : 'خيارات الاستثمار:'}</span>
                   <div class="flex items-baseline gap-2">
                     <span class="text-lg font-black text-stone-900 dark:text-white">${formatMoney(tree.price_per_share)}</span>
-                    <span class="text-[10px] font-black text-emerald-800 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-300 dark:border-emerald-700/60 px-2 py-0.5 rounded-md" title="${state.currentLang !== 'ar' ? 'With 5 m² Registered Land Plot' : 'مع مقسم 5 م² أرض طابو'}">
+                    <span data-feature="land" class="text-[10px] font-black text-emerald-800 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-300 dark:border-emerald-700/60 px-2 py-0.5 rounded-md" title="${state.currentLang !== 'ar' ? 'With 5 m² Registered Land Plot' : 'مع مقسم 5 م² أرض طابو'}">
                       ${formatMoney(tree.price_per_share + (tree.land_parcel?.land_addon_price_usd || 18))} ${state.currentLang !== 'ar' ? 'w/ land' : 'مع أرض'}
                     </span>
                   </div>
@@ -14295,7 +14321,7 @@ function setMarketplaceViewMode(mode) {
           })()}
 
           <!-- Cadastral Land Parcel (5 m² Plot) Card - Harmonized with Faseela Olive & Stone Aesthetic -->
-          <div class="bg-white rounded-3xl p-6 sm:p-7 border border-emerald-200/90 shadow-sm space-y-5">
+          <div data-feature="land" class="bg-white rounded-3xl p-6 sm:p-7 border border-emerald-200/90 shadow-sm space-y-5">
             <div class="flex items-center justify-between flex-wrap gap-3 pb-3 border-b border-stone-100">
               <div class="flex items-center gap-3">
                 <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-800 border border-emerald-200/80 flex items-center justify-center shadow-2xs">
@@ -14471,7 +14497,7 @@ function setMarketplaceViewMode(mode) {
                 </div>
               </div>
 
-              <div id="detail-pkg-land" data-click="selectDetailPackage(true)" class="p-3 rounded-2xl border-2 cursor-pointer transition-all relative ${state.includeLandInModal ? 'border-emerald-600 bg-emerald-50/70 shadow-xs ring-2 ring-emerald-500/20' : 'border-stone-200 bg-white hover:border-stone-300'}">
+              <div id="detail-pkg-land" data-feature="land" data-click="selectDetailPackage(true)" class="p-3 rounded-2xl border-2 cursor-pointer transition-all relative ${state.includeLandInModal ? 'border-emerald-600 bg-emerald-50/70 shadow-xs ring-2 ring-emerald-500/20' : 'border-stone-200 bg-white hover:border-stone-300'}">
                 <span class="absolute -top-2 end-3 bg-emerald-700 text-white text-[9px] font-black px-2 py-0.5 rounded-full">${state.currentLang !== 'ar' ? 'Most Popular' : 'الأكثر طلباً'}</span>
                 <div class="flex items-center justify-between">
                   <div class="flex items-center gap-2">
@@ -15371,7 +15397,7 @@ function setMarketplaceViewMode(mode) {
       const displayFarm = isEn ? (tree.farm_name_en || tree.farm_name) : tree.farm_name;
       const displayMill = isEn ? (tree.mill_name_en || tree.mill_name) : tree.mill_name;
 
-      const hasLand = (userShare && userShare.includes_land) || (isOwned && state.includeLandInModal) || (tree.land_parcel && tree.land_parcel.has_land_option);
+      const hasLand = (userShare && userShare.includes_land) || (isOwned && state.includeLandInModal) || (landOfferEnabled() && tree.land_parcel && tree.land_parcel.has_land_option);
       const landAreaSqm = userShare?.land_parcel_sqm || tree.land_parcel?.land_area_sqm || 5.0;
       const deedSerial = isOwned ? (userShare?.land_deed_serial || 'SYR-LAND-DEED-2026-0042') : 'SPECIMEN-UNREGISTERED';
       const treeSerial = isOwned ? `SYR-OLIVE-2026-${tree.id.replace('tree_','00')}` : 'SPECIMEN-PREVIEW-NOT-ISSUED';
@@ -15903,6 +15929,7 @@ function setMarketplaceViewMode(mode) {
     // 4. Multi-Crop Agroforestry Bundle Direct Investment
     // -----------------------------------------------------------------
     function investInAgroforestryBundle() {
+      if (!landOfferEnabled()) { showToast(t('land_offer_unavailable')); return; }
       playAcousticChime(780, 0.2);
       const isEn = state.currentLang !== 'ar';
 
@@ -15965,6 +15992,7 @@ function setMarketplaceViewMode(mode) {
     // Dual-Track Marketplace Controller (Mature vs. Virgin Greenfield)
     function switchMarketTrack(track) { return switchMarketplaceTrack(track); }
     function switchMarketplaceTrack(track) {
+      if (track === 'virgin' && !landOfferEnabled()) track = 'mature';
       state.marketplaceTrack = track;
       playAcousticChime(620, 0.1);
 
@@ -16124,6 +16152,7 @@ function setMarketplaceViewMode(mode) {
     }
 
     function investInVirginPackage(groveId, saplingsCount, priceUsd, landSqm) {
+      if (!landOfferEnabled()) { showToast(t('land_offer_unavailable')); return; }
       playAcousticChime(660, 0.12);
       const vg = (state.virginGroves && state.virginGroves.find(g => g.id === groveId)) || state.virginGroves[0];
       const isEn = state.currentLang !== 'ar';
