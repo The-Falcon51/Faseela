@@ -46,6 +46,7 @@
  "gift_err_precondition": "Dieser Anteil kann derzeit nicht verschenkt werden: Bestätigen Sie Ihre E-Mail-Adresse und stellen Sie sicher, dass der Anteil aktiv ist und keine offene Ölanforderung besteht.",
  "gift_err_limit": "Tageslimit für Geschenkcodes (10) erreicht. Versuchen Sie es morgen erneut.",
  "gift_err_generic": "Die Anfrage ist fehlgeschlagen. Bitte versuchen Sie es erneut.",
+ "gift_print_cert": "Geschenkurkunde drucken",
  "btn_done": "Fertig",
  "invest_gift_toggle": "Dieser Kauf ist ein Geschenk",
  "invest_gift_hint": "– sobald die Zahlung freigegeben ist, erhalten Sie einen Geschenkcode zum Weitergeben.",
