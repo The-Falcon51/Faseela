@@ -73,7 +73,9 @@ const current = {};
 for (const relativePath of RATCHET_FILES) {
   const filePath = path.resolve(__dirname, '..', relativePath);
   if (!fs.existsSync(filePath)) continue;
-  const text = fs.readFileSync(filePath, 'utf8');
+  // Text between the two markers is not counted: the assistant has to name these words to say that
+  // sponsorship is NOT an investment and that land is NOT offered, and to recognise such questions.
+  const text = fs.readFileSync(filePath, 'utf8').replace(/\/\/ claims-ratchet:off[\s\S]*?\/\/ claims-ratchet:on/g, '');
   current[relativePath] = {};
   for (const { label, pattern } of RATCHET_TERMS) current[relativePath][label] = (text.match(pattern) || []).length;
 }

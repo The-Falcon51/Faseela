@@ -8,12 +8,12 @@
     "escrow": 4
   },
   "public/app.js": {
-    "land title (ar)": 115,
-    "land title": 247,
-    "deed / usufruct": 335,
+    "land title (ar)": 112,
+    "land title": 242,
+    "deed / usufruct": 330,
     "investment wording": 521,
     "return / profit wording": 91,
-    "escrow": 11
+    "escrow": 10
   },
   "src/i18n/de.json": {
     "land title (ar)": 0,

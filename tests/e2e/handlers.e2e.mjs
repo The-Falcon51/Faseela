@@ -161,6 +161,36 @@ try {
     };
   });
   await page.evaluate(() => { document.getElementById('filter-land').value = 'all'; renderMarketplace(); });
+
+  // ---- 2c. assistant knowledge layer: truthful topics first, in the language of the question ----
+  const faq = await page.evaluate(() => {
+    const ask = (lang, q) => { state.currentLang = lang; const html = generateFaseelaResponse(q); return `${(/data-faq="([a-z_]+)"/.exec(html) || [])[1] || 'legacy'}/${(/ lang="([a-z]+)"/.exec(html) || [])[1] || '-'}`; };
+    const out = {
+      dates: [ask('de', 'Gibt es auch Dattelpalmen?'), ask('en', 'Do you have date palms?'), ask('ar', 'هل يوجد نخيل تمر؟')],
+      land: [ask('de', 'Kann ich ein Grundstück dazu kaufen?'), ask('en', 'Can I buy the land parcel?'), ask('ar', 'هل أستطيع شراء قطعة أرض مع الشجرة؟')],
+      money: [ask('de', 'Ist das eine Geldanlage mit Rendite?'), ask('en', 'Can I sell my share on the P2P market?'), ask('en', 'Is there a cash payout?')],
+      flow: [ask('de', 'Wie kann ich bezahlen?'), ask('ar', 'كيف أستلم الزيت؟'), ask('en', 'How do I delete my account?')],
+      noFalseHit: [ask('ar', 'هل يجوز لي التسجيل؟'), ask('ar', 'كم ينتج الزيتون؟'), ask('de', 'Ich bin Landwirt, wie mache ich mit?')],
+      landText: (() => { state.currentLang = 'en'; return /currently not offered/.test(generateFaseelaResponse('Can I buy the land parcel?')); })(),
+      chips: {}
+    };
+    for (const lang of ['ar', 'en', 'de']) {
+      state.currentLang = lang; renderChatQuickChips();
+      const queries = [...document.querySelectorAll('#chat-quick-chips button')].map((b) => b.dataset.query);
+      out.chips[lang] = [queries.length, queries.filter((q) => !/data-faq=/.test(generateFaseelaResponse(q))).length];
+    }
+    state.currentLang = 'en';
+    return out;
+  });
+  assert.deepEqual(faq, {
+    dates: ['dates/de', 'dates/en', 'dates/ar'],
+    land: ['land_off/de', 'land_off/en', 'land_off/ar'],
+    money: ['not_investment/de', 'resale_off/en', 'reinvest_off/en'],
+    flow: ['payment/de', 'oil/ar', 'account/en'],
+    noFalseHit: ['signup/ar', 'legacy/-', 'farmer/de'],
+    landText: true,
+    chips: { ar: [10, 0], en: [10, 0], de: [10, 0] }
+  }, 'assistant answers from the knowledge layer');
   assert.deepEqual(land, { enabled: false, flags: [false, false], track: 'mature', blocked: 2, investModalOpen: false,
     treeOptions: 0, surfaces: [], cardPricesShown: 0 }, 'land offer is off everywhere');
   assert.deepEqual(errors, [], `page errors:\n${errors.join('\n')}`);
