@@ -727,6 +727,24 @@ try {
       }
       return out;
     }, role);
+    // Real session: no sample widgets, no built-in sample notifications, no shop.
+    const demo = await p.evaluate(() => {
+      const blocks = [...document.querySelectorAll('[data-demo]')];
+      const shop = [...document.querySelectorAll('[data-feature="boutique"]')];
+      const toasts = []; const orig = window.showToast; window.showToast = (m) => toasts.push(m);
+      switchMarketplaceTrack('boutique'); openBoutiqueCheckout('prod_01'); confirmBoutiqueOrder();
+      window.showToast = orig;
+      return {
+        serverClass: document.documentElement.classList.contains('server-mode'),
+        blocks: blocks.length >= 15, visibleBlocks: blocks.filter((el) => getComputedStyle(el).display !== 'none').map((el) => el.id || el.className.slice(0, 30)),
+        shopBlocks: shop.length, visibleShop: shop.filter((el) => getComputedStyle(el).display !== 'none').length,
+        track: state.marketplaceTrack, shopRefused: toasts.length, checkoutOpen: !document.getElementById('modal-boutique-checkout').classList.contains('hidden'),
+        sampleNotifications: (state.notifications || []).filter((n) => /credited|صرف|180/.test(JSON.stringify(n))).length,
+        badgeHidden: document.getElementById('notifications-badge').classList.contains('hidden') || (state.notifications || []).length > 0
+      };
+    });
+    assert.deepEqual(demo, { serverClass: true, blocks: true, visibleBlocks: [], shopBlocks: 2, visibleShop: 0, track: 'mature', shopRefused: 2, checkoutOpen: false, sampleNotifications: 0, badgeHidden: true }, `no sample data in a real session (${role})`);
+
     if (role === 'farmer') {
       assert.equal(result.page, 'farmer-portal');
       assert.equal(result.toolsVisible, true, 'farmer server tools visible');

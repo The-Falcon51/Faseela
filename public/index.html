@@ -1872,14 +1872,14 @@
           <i data-lucide="sprout" class="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400"></i>
           <span data-i18n="market_tab_virgin">غراس بكر مع أرض</span>
         </button>
-        <button type="button" id="tab-market-boutique" data-click="switchMarketplaceTrack('boutique')" class="flex-1 py-2.5 px-3 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-1.5 text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-200 cursor-pointer shrink-0">
+        <button type="button" id="tab-market-boutique" data-feature="boutique" data-click="switchMarketplaceTrack('boutique')" class="flex-1 py-2.5 px-3 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-1.5 text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-200 cursor-pointer shrink-0">
           <i data-lucide="shopping-bag" class="w-3.5 h-3.5 text-amber-600 dark:text-amber-400"></i>
           <span data-i18n="market_tab_boutique">متجر المؤن والمنتجات</span>
         </button>
       </div>
 
       <!-- Container for Boutique Terroir Store View (Hidden by default, shown when 'boutique' tab selected) -->
-      <div id="boutique-store-container" class="hidden mb-10 space-y-6">
+      <div id="boutique-store-container" data-feature="boutique" class="hidden mb-10 space-y-6">
         <!-- Boutique Banner -->
         <div class="bg-gradient-to-r from-amber-950 via-stone-900 to-stone-950 text-white p-6 sm:p-8 rounded-3xl shadow-md border border-amber-600/40 text-start space-y-4">
           <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -5385,7 +5385,7 @@
 
     <!-- 5. PAGE: FARMER PORTAL (AUDIO-FIRST & VOICE-ENABLED FOR ACCESSIBILITY) -->
     <section id="page-farmer-portal" class="page-content hidden py-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
-      <div id="farmer-preview-banner" class="hidden mb-6 p-3 rounded-2xl border border-amber-300 dark:border-amber-700 bg-amber-50 dark:bg-amber-950/40 text-amber-950 dark:text-amber-100 text-xs flex items-start gap-2" role="note">
+      <div id="farmer-preview-banner" data-demo class="hidden mb-6 p-3 rounded-2xl border border-amber-300 dark:border-amber-700 bg-amber-50 dark:bg-amber-950/40 text-amber-950 dark:text-amber-100 text-xs flex items-start gap-2" role="note">
         <i data-lucide="info" class="w-4 h-4 flex-shrink-0 mt-0.5" aria-hidden="true"></i>
         <span data-i18n="preview_banner_farmer">معاينة: المحفظة والسلف بيانات توضيحية. تقاريرك الميدانية المرسلة تُحفظ على الخادم وتظهر أدناه.</span>
       </div>
@@ -5485,7 +5485,7 @@
         </section>
       </div>
       <!-- Farmer Hero Banner -->
-      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 bg-gradient-to-r from-olive-950 via-olive-900 to-stone-900 text-white p-6 sm:p-8 rounded-3xl shadow-xl border border-olive-800/50 relative overflow-hidden">
+      <div data-demo class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 bg-gradient-to-r from-olive-950 via-olive-900 to-stone-900 text-white p-6 sm:p-8 rounded-3xl shadow-xl border border-olive-800/50 relative overflow-hidden">
         <div class="absolute -end-10 -bottom-10 w-48 h-48 rounded-full bg-emerald-500/10 blur-3xl pointer-events-none"></div>
         <div class="space-y-3 relative z-10">
           <div class="flex flex-wrap items-center gap-2">
@@ -5591,10 +5591,10 @@
         </div>
 
       <!-- Active Emergency Alert Banner -->
-      <div id="farmer-emergency-banner-container"></div>
+      <div id="farmer-emergency-banner-container" data-demo></div>
 
       <!-- Farmer Operational KPI Metrics Strip (5 High-Impact Cards) -->
-      <div class="grid grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4 mb-6 text-xs text-start">
+      <div data-demo class="grid grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4 mb-6 text-xs text-start">
         <div class="bg-white dark:bg-stone-900 p-4 rounded-2xl border border-stone-200 dark:border-stone-800 shadow-2xs">
           <div class="flex items-center justify-between text-stone-500 dark:text-stone-400 mb-1">
             <span class="font-bold text-[11px]" data-i18n="farmer_kpi1_trees">الأشجار الموكلة</span>
@@ -5652,7 +5652,7 @@
       </div>
 
       <!-- Interactive Farmer Sub-Tabs Navigation (5 Operational Pillars) -->
-      <div class="sticky top-20 z-30 bg-stone-100/95 dark:bg-stone-800/95 backdrop-blur-md p-1.5 rounded-2xl border border-stone-200 dark:border-stone-700 text-xs font-bold mb-6 overflow-x-auto shadow-xs transition-all">
+      <div data-demo class="sticky top-20 z-30 bg-stone-100/95 dark:bg-stone-800/95 backdrop-blur-md p-1.5 rounded-2xl border border-stone-200 dark:border-stone-700 text-xs font-bold mb-6 overflow-x-auto shadow-xs transition-all">
         <button type="button" data-click="switchFarmerSubTab('tasks')" id="btn-farmer-tab-tasks" class="flex-1 min-w-[130px] py-2.5 px-3 rounded-xl transition-all flex items-center justify-center gap-1.5 bg-white dark:bg-stone-900 text-olive-950 dark:text-olive-200 shadow-2xs font-black cursor-pointer">
           <i data-lucide="check-square" class="w-4 h-4 text-emerald-600"></i>
           <span data-i18n="farmer_tab_tasks" class="truncate">المهام اليومية والرعاية</span>
@@ -5676,7 +5676,7 @@
       </div>
 
       <!-- ================= FARMER PANEL 1: DAILY FIELD TASKS ================= -->
-      <div id="panel-farmer-tasks" class="space-y-6 text-start">
+      <div id="panel-farmer-tasks" data-demo class="space-y-6 text-start">
         <div class="bg-white dark:bg-stone-900 rounded-3xl border border-stone-200 dark:border-stone-800 p-6 shadow-sm space-y-4">
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-stone-100 dark:border-stone-800">
             <div>
@@ -5716,7 +5716,7 @@
       </div>
 
       <!-- ================= FARMER PANEL 2: WALLET & CASH PAYOUTS ================= -->
-      <div id="panel-farmer-wallet" class="space-y-6 hidden text-start">
+      <div id="panel-farmer-wallet" data-demo class="space-y-6 hidden text-start">
         <div class="bg-white dark:bg-stone-900 rounded-3xl border border-stone-200 dark:border-stone-800 p-6 shadow-sm space-y-6">
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-stone-100 dark:border-stone-800">
             <div>
@@ -5801,7 +5801,7 @@
       </div>
 
       <!-- ================= FARMER PANEL 3: CLIMATE & SOIL TELEMETRY ================= -->
-      <div id="panel-farmer-climate" class="space-y-6 hidden text-start">
+      <div id="panel-farmer-climate" data-demo class="space-y-6 hidden text-start">
         <div class="bg-gradient-to-br from-white via-emerald-50/30 to-stone-50 dark:from-stone-900 dark:via-stone-900 dark:to-emerald-950/20 rounded-3xl border border-emerald-200/90 dark:border-stone-800 p-6 shadow-sm space-y-5">
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-emerald-100 dark:border-stone-800">
             <div class="flex items-center gap-3">
@@ -5866,7 +5866,7 @@
       </div>
 
       <!-- ================= FARMER PANEL 4: MILL BOOKING & INPUTS REQUISITION ================= -->
-      <div id="panel-farmer-logistics" class="space-y-6 hidden text-start">
+      <div id="panel-farmer-logistics" data-demo class="space-y-6 hidden text-start">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <!-- Card A: Mill Slot Booking -->
           <div class="bg-white dark:bg-stone-900 rounded-3xl border border-stone-200 dark:border-stone-800 p-6 shadow-sm space-y-4">
@@ -5928,7 +5928,7 @@
       </div>
 
       <!-- ================= FARMER PANEL 5: VOICE LOGS & EMERGENCY ================= -->
-      <div id="panel-farmer-voice_sos" class="space-y-6 hidden text-start">
+      <div id="panel-farmer-voice_sos" data-demo class="space-y-6 hidden text-start">
         <div class="bg-white dark:bg-stone-900 rounded-3xl border border-stone-200 dark:border-stone-800 p-6 shadow-sm space-y-4">
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-stone-100 dark:border-stone-800">
             <div class="flex items-center gap-2.5">
@@ -5954,7 +5954,7 @@
     </section>
 <!-- 6. PAGE: OLIVE MILL PORTAL -->
     <section id="page-mill-portal" class="page-content hidden py-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div id="mill-preview-banner" class="hidden mb-6 p-3 rounded-2xl border border-amber-300 dark:border-amber-700 bg-amber-50 dark:bg-amber-950/40 text-amber-950 dark:text-amber-100 text-xs flex items-start gap-2" role="note">
+      <div id="mill-preview-banner" data-demo class="hidden mb-6 p-3 rounded-2xl border border-amber-300 dark:border-amber-700 bg-amber-50 dark:bg-amber-950/40 text-amber-950 dark:text-amber-100 text-xs flex items-start gap-2" role="note">
         <i data-lucide="info" class="w-4 h-4 flex-shrink-0 mt-0.5" aria-hidden="true"></i>
         <span data-i18n="preview_banner_mill">معاينة: الخزانات والتعبئة بيانات توضيحية. دفعات العصر المرسلة تُحفظ على الخادم وتظهر أدناه.</span>
       </div>
@@ -6007,7 +6007,7 @@
       </div>
 
       <!-- Executive Mill KPI Metrics Strip (5 High-Impact Cards) -->
-      <div class="grid grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4 mb-6 text-xs text-start">
+      <div data-demo class="grid grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4 mb-6 text-xs text-start">
         <div class="bg-white dark:bg-stone-900 p-4 rounded-2xl border border-stone-200 dark:border-stone-800 shadow-2xs">
           <div class="flex items-center justify-between text-stone-500 dark:text-stone-400 mb-1">
             <span class="font-bold text-[11px]" data-i18n="mill_kpi1_title">إجمالي الزيتون المستلم</span>
@@ -6065,7 +6065,7 @@
       </div>
 
       <!-- Interactive Mill Sub-Tabs Navigation (5 Operational Pillars) -->
-      <div class="sticky top-20 z-30 bg-stone-100/95 dark:bg-stone-800/95 backdrop-blur-md p-1.5 rounded-2xl border border-stone-200 dark:border-stone-700 text-xs font-bold mb-6 overflow-x-auto shadow-xs transition-all">
+      <div data-demo class="sticky top-20 z-30 bg-stone-100/95 dark:bg-stone-800/95 backdrop-blur-md p-1.5 rounded-2xl border border-stone-200 dark:border-stone-700 text-xs font-bold mb-6 overflow-x-auto shadow-xs transition-all">
         <button type="button" data-click="switchMillSubTab('batches')" id="btn-mill-tab-batches" class="flex-1 min-w-[130px] py-2.5 px-3 rounded-xl transition-all flex items-center justify-center gap-1.5 bg-white dark:bg-stone-900 text-amber-950 dark:text-amber-200 shadow-2xs font-black cursor-pointer">
           <i data-lucide="clipboard-check" class="w-4 h-4 text-amber-600"></i>
           <span data-i18n="mill_tab_batches" class="truncate">دفعات العصر والمخبر</span>
@@ -6089,7 +6089,7 @@
       </div>
 
       <!-- ================= PANEL 1: BATCHES & PRESSING RUNS ================= -->
-      <div id="panel-mill-batches" class="space-y-6">
+      <div id="panel-mill-batches" data-demo class="space-y-6">
         <!-- 4-Stage Cold Pressing Pipeline -->
         <div class="bg-gradient-to-br from-amber-50/60 via-stone-50 to-white dark:from-stone-900 dark:via-stone-900/80 dark:to-stone-850 rounded-3xl border border-amber-200/80 dark:border-stone-800 p-5 sm:p-6 shadow-2xs">
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4 pb-3 border-b border-amber-200/60 dark:border-stone-800 text-start">
@@ -6179,7 +6179,7 @@
       </div>
 
       <!-- ================= PANEL 2: SMART TANKS & NITROGEN SILOS ================= -->
-      <div id="panel-mill-tanks" class="space-y-6 hidden text-start">
+      <div id="panel-mill-tanks" data-demo class="space-y-6 hidden text-start">
         <div class="bg-gradient-to-br from-stone-900 via-stone-950 to-purple-950/80 rounded-3xl p-5 sm:p-6 text-white border border-purple-500/30 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div class="space-y-1">
             <div class="inline-flex items-center gap-1.5 bg-purple-500/20 text-purple-300 border border-purple-400/40 text-[10px] font-bold px-2.5 py-0.5 rounded-full">
@@ -6210,7 +6210,7 @@
       </div>
 
       <!-- ================= PANEL 3: MILLING FEES & IN-KIND SETTLEMENT ================= -->
-      <div id="panel-mill-fees" class="space-y-6 hidden text-start">
+      <div id="panel-mill-fees" data-demo class="space-y-6 hidden text-start">
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <!-- Fee Calculator Form -->
           <div class="lg:col-span-2 bg-white dark:bg-stone-900 rounded-3xl border border-stone-200 dark:border-stone-800 p-6 shadow-sm space-y-5">
@@ -6328,7 +6328,7 @@
       </div>
 
       <!-- ================= PANEL 4: BOTTLING & INVESTOR DISPATCH ================= -->
-      <div id="panel-mill-bottling" class="space-y-6 hidden text-start">
+      <div id="panel-mill-bottling" data-demo class="space-y-6 hidden text-start">
         <div class="bg-white dark:bg-stone-900 rounded-3xl border border-stone-200 dark:border-stone-800 p-6 shadow-sm space-y-4">
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-stone-100 dark:border-stone-800">
             <div class="flex items-center gap-2.5">
@@ -6366,7 +6366,7 @@
       </div>
 
       <!-- ================= PANEL 5: CIRCULAR ECONOMY & POMACE ================= -->
-      <div id="panel-mill-circular" class="space-y-6 hidden text-start">
+      <div id="panel-mill-circular" data-demo class="space-y-6 hidden text-start">
         <div class="bg-gradient-to-br from-lime-950 via-stone-900 to-stone-950 rounded-3xl p-6 sm:p-8 text-white border border-lime-800/40 shadow-xl space-y-4">
           <div class="inline-flex items-center gap-1.5 bg-lime-900/60 border border-lime-500/40 text-lime-300 px-3 py-1 rounded-full text-xs font-bold">
             <i data-lucide="sprout" class="w-3.5 h-3.5 text-lime-400"></i>

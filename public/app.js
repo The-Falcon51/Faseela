@@ -10369,6 +10369,9 @@
     // Off means: no new land sales and no land marketing surfaces. Shares that already include
     // land (server records) keep showing it — that is an existing contract, not an offer.
     const LAND_OFFER_ENABLED = false;
+    // The shop has sample products and prices and no order backend: an "order" would go nowhere. Off until it has one.
+    const BOUTIQUE_ENABLED = false;
+    if (!BOUTIQUE_ENABLED) document.documentElement.classList.add('boutique-off');
     function landOfferEnabled() { return LAND_OFFER_ENABLED; }
     function applyLandOfferSwitch() {
       if (LAND_OFFER_ENABLED) return;
@@ -10505,6 +10508,10 @@
     // Demo seed records are dropped so real accounts never see fabricated balances.
     function enterServerMode() {
       state.serverMode = true;
+      // Built-in sample notifications ("$180.00 credited" …) and sample widgets must not sit next to real data.
+      state.notifications = [];
+      document.documentElement.classList.add('server-mode');
+      if (typeof updateNotificationsBadge === 'function') updateNotificationsBadge();
       state.userShares = [];
       state.transactions = [];
       state.myInvestments = [];
@@ -15986,6 +15993,7 @@ function setMarketplaceViewMode(mode) {
     }
 
     function openBoutiqueCheckout(prodId) {
+      if (!BOUTIQUE_ENABLED) { showToast(t('land_offer_unavailable')); return; }
       const prod = (state.storeProducts || []).find(p => p.id === prodId);
       if (!prod) return;
 
@@ -16039,6 +16047,7 @@ function setMarketplaceViewMode(mode) {
     }
 
     function confirmBoutiqueOrder() {
+      if (!BOUTIQUE_ENABLED) { showToast(t('land_offer_unavailable')); return; }
       if (!state.activeBoutiqueProduct) return;
 
       const prod = state.activeBoutiqueProduct;
@@ -16183,6 +16192,7 @@ function setMarketplaceViewMode(mode) {
     function switchMarketTrack(track) { return switchMarketplaceTrack(track); }
     function switchMarketplaceTrack(track) {
       if (track === 'virgin' && !landOfferEnabled()) track = 'mature';
+      if (track === 'boutique' && !BOUTIQUE_ENABLED) track = 'mature';
       state.marketplaceTrack = track;
       playAcousticChime(620, 0.1);
 
@@ -24958,7 +24968,7 @@ function setMarketplaceViewMode(mode) {
         const savedNotifs = localStorage.getItem('faseela_notifications');
         if (savedNotifs) {
           const parsed = JSON.parse(savedNotifs);
-          if (Array.isArray(parsed) && parsed.length > 0) state.notifications = parsed;
+          if (Array.isArray(parsed) && parsed.length > 0 && !state.serverMode) state.notifications = parsed;
         }
 
         const savedCurr = localStorage.getItem('faseela_currency');
@@ -25119,7 +25129,7 @@ function setMarketplaceViewMode(mode) {
         if (d.farmerPayouts) state.farmerPayouts = d.farmerPayouts;
         if (d.emergencyAlerts) state.emergencyAlerts = d.emergencyAlerts;
         if (d.escrowRate) state.escrowRate = d.escrowRate;
-        if (d.notifications) state.notifications = d.notifications;
+        if (d.notifications && !state.serverMode) state.notifications = d.notifications;
 
         savePlatformState();
         closeModal('modal-fndr-restore-snapshot');
