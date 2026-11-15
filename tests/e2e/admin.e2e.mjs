@@ -39,7 +39,7 @@ window.FaseelaBackend = window.FaseelaFirebase = {
   reviewInvestmentRequest: async (p) => { calls.push(['reviewInvestmentRequest', p]); if (p.decision === 'approve' && (!state.screening || state.screening.result !== 'clear')) throw fail(state.screening ? 'screening-blocked' : 'screening-required'); state.payments = []; return { data: {} }; },
   getPaymentProofUrl: async (p) => { calls.push(['getPaymentProofUrl', p]); return { data: { url: q.get('evilProof') ? 'https://evil.example/x.pdf' : 'https://riyvlhlhzxxerlwqoxsy.supabase.co/storage/v1/object/sign/payment-proofs/r.pdf?token=t' } }; },
   reviewRoleApplication: async (p) => { calls.push(['reviewRoleApplication', p]); return { data: {} }; },
-  adminListUsers: async () => [{ id: 'u1', name: 'Me Admin', email: 'me@example.test', role: 'admin', verified: true, status: 'active', joined_date: '2026-10-20' }, { id: 'u2', name: ${JSON.stringify(XSS)}, email: 'inv@example.test', role: 'investor', verified: true, status: 'active', joined_date: '2026-10-21' }, { id: 'u3', name: 'Mill', email: 'mill@example.test', role: 'mill_owner', verified: false, status: 'suspended', joined_date: '2026-10-22' }],
+  adminListUsers: async () => [{ id: 'u1', name: 'Me Admin', email: 'me@example.test', role: 'admin', verified: true, status: 'active', joined_date: '2026-10-20' }, { id: 'u2', name: ${JSON.stringify(XSS)}, email: 'inv@example.test', role: 'investor', verified: true, status: 'active', joined_date: '2026-10-21' }, { id: 'u3', name: 'Mill', email: 'mill@example.test', role: 'mill_owner', verified: false, status: 'suspended', joined_date: '2026-10-22' }, { id: 'u4', name: 'Farmer Fadi', email: 'farmer@example.test', role: 'farmer', verified: true, status: 'active', joined_date: '2026-10-23' }],
   adminSetUserRole: async (p) => { calls.push(['adminSetUserRole', p]); return { data: {} }; },
   adminSetUserStatus: async (p) => { calls.push(['adminSetUserStatus', p]); return { data: {} }; },
   adminPaymentState: async () => ({ data: { live: { channels: [{ id: 'syriatel_cash', titleAr: 'سيريتل', titleEn: 'Syriatel', account: '0999 123' }], updatedAt: Date.now() }, pending: state.pending, fourEyes: !!q.get('pending'), adminCount: q.get('pending') ? 2 : 1 } }),
@@ -98,6 +98,17 @@ window.FaseelaBackend = window.FaseelaFirebase = {
       { farmId: 'farm_es', countryCode: 'ES', name: 'مزرعة', nameEn: 'Finca Prueba', region: '', regionEn: 'Jaen', status: 'unlisted', trees: 0 }],
     mills: [{ millId: 'mill_01', countryCode: 'SY', name: 'معصرة', nameEn: 'Dreikish Mill', region: '', regionEn: '', status: 'listed', trees: 1 }]
   } }),
+  adminListMarketplace: async () => { const m = window.__market || (window.__market = { fee: 1500, o1: 'under_review', o2: 'paid', p1: 'pending_review', rates: [], members: [] }); const o = (id, status, extra) => ({ orderId: id.repeat(64), status, farmId: 'farm_01', currency: 'EUR', itemsMinor: 2400, shippingMinor: 900, feeBps: 1500, feeMinor: 360, totalMinor: 3660, destCountry: 'DE', paymentReference: 'FO-' + id.toUpperCase().repeat(10), expiresAt: Date.now() + 3600000, createdAt: Date.now() - 3600000, reviewNote: '', trackingCode: '', lines: [{ productId: 'p1', name: ${JSON.stringify(XSS)}, unit: '500 ml', unitPriceMinor: 1200, quantity: 2, lineMinor: 2400 }], ...extra });
+    return { data: { feeBps: m.fee, farms: [{ farmId: 'farm_01', name: 'مزرعة', nameEn: 'Tartus Farm', countryCode: 'SY', listed: true }],
+      products: [{ productId: 'p1', farmId: 'farm_01', farmName: 'مزرعة', farmNameEn: 'Tartus Farm', category: 'oil', name: 'زيت', nameEn: ${JSON.stringify(XSS)}, unit: '500 ml', priceMinor: 1200, currency: 'EUR', stockUnits: 8, status: m.p1, reviewNote: '' }],
+      shippingRates: m.rates, members: m.members, orders: [o('a', m.o1), o('b', m.o2)], balances: [{ farmId: 'farm_01', currency: 'EUR', amountMinor: 2400 }] } }; },
+  reviewOrderPayment: async (p) => { calls.push(['reviewOrderPayment', p]); if (p.orderId[0] === 'a' && p.decision === 'approve' && !window.__otherReviewer) throw fail('permission-denied'); window.__market.o1 = p.decision === 'approve' ? 'paid' : 'rejected'; return { data: {} }; },
+  adminOrderContact: async (p) => { calls.push(['adminOrderContact', p]); return { data: { orderId: p.orderId, contact: { name: ${JSON.stringify(XSS)}, addressLine1: 'Geheimweg 7', addressLine2: '', postalCode: '10115', city: 'Berlin', country: 'DE', phone: '' } } }; },
+  adminSetOrderFulfilment: async (p) => { calls.push(['adminSetOrderFulfilment', p]); window.__market.o2 = p.step; return { data: {} }; },
+  adminReviewProduct: async (p) => { calls.push(['adminReviewProduct', p]); window.__market.p1 = p.decision === 'list' ? 'listed' : p.decision === 'reject' ? 'rejected' : 'unlisted'; return { data: {} }; },
+  adminSetPlatformFee: async (p) => { calls.push(['adminSetPlatformFee', p]); window.__market.fee = p.feeBps; return { data: p }; },
+  adminSetShippingRate: async (p) => { calls.push(['adminSetShippingRate', p]); window.__market.rates = [p]; return { data: p }; },
+  adminSetFarmMember: async (p) => { calls.push(['adminSetFarmMember', p]); window.__market.members = p.active ? [{ farmId: p.farmId, userId: p.userId, displayName: 'Farmer Fadi', addedAt: Date.now() }] : []; return { data: p }; },
   adminSetCountryStatus: async (p) => { calls.push(['adminSetCountryStatus', p]); window.__esActive = p.status === 'active'; return { data: p }; },
   adminUpsertFarm: async (p) => { calls.push(['adminUpsertFarm', p]); if (p.farmId === 'farm_01') throw fail('failed-precondition'); return { data: p }; },
   adminUpsertMill: async (p) => { calls.push(['adminUpsertMill', p]); return { data: p }; },
@@ -175,9 +186,13 @@ try {
   {
     const { ctx, page } = await open('?mockRole=finance_admin');
     await page.waitForSelector('#screen-panel:not([hidden])');
-    assert.deepEqual(await page.$$eval('#tablist .tab', (n) => n.map((b) => b.textContent)), ['Aufgaben', 'Zahlungen', 'Weitere Prüfungen', 'Patenschaften', 'Bäume', 'Besitzregister', 'Finanz-Export']);
+    assert.deepEqual(await page.$$eval('#tablist .tab', (n) => n.map((b) => b.textContent)), ['Aufgaben', 'Zahlungen', 'Weitere Prüfungen', 'Patenschaften', 'Bäume', 'Marktplatz', 'Besitzregister', 'Finanz-Export']);
     await page.waitForFunction(() => document.querySelectorAll('.task-list li').length === 2);
     assert.equal(await page.$$eval('#view input[type=search]', (n) => n.length), 0, 'the account search is for admins only');
+    await tab(page, 'Marktplatz');
+    await page.waitForFunction(() => /Guthaben der Höfe/.test(document.getElementById('view').textContent));
+    assert.equal(await page.evaluate(() => ['Gebühr ändern', 'Neuer Versandpreis', 'Zugang vergeben'].some((t) => [...document.querySelectorAll('#view button')].some((b) => b.textContent === t)) || !!document.querySelector('#view button[aria-label^="Freigeben"]')), false, 'finance sees orders but no catalogue or pricing controls');
+    assert.equal(!!(await page.$('button[aria-label^="Zahlung bestätigen"]')), true, 'finance can decide payments');
     await ctx.close();
   }
   // ---- 4. admin: every view, both themes
@@ -186,7 +201,7 @@ try {
     await page.waitForSelector('#screen-panel:not([hidden])');
     await tab(page, 'Übersicht');
     await page.waitForFunction(() => document.querySelectorAll('.kpi').length === 8);
-    assert.deepEqual(await page.$$eval('#tablist .tab', (n) => n.map((b) => b.textContent)), ['Aufgaben', 'Übersicht', 'Zahlungen', 'Weitere Prüfungen', 'Rollenanträge', 'Patenschaften', 'Bäume', 'Stammdaten', 'Besitzregister', 'Nutzer', 'Empfangskonten', 'Finanz-Export', 'E-Mails', 'Automationen', 'Fehler', 'Audit-Log', 'Einstellungen', 'Go-Live', 'System']);
+    assert.deepEqual(await page.$$eval('#tablist .tab', (n) => n.map((b) => b.textContent)), ['Aufgaben', 'Übersicht', 'Zahlungen', 'Weitere Prüfungen', 'Rollenanträge', 'Patenschaften', 'Bäume', 'Stammdaten', 'Marktplatz', 'Besitzregister', 'Nutzer', 'Empfangskonten', 'Finanz-Export', 'E-Mails', 'Automationen', 'Fehler', 'Audit-Log', 'Einstellungen', 'Go-Live', 'System']);
     const overview = await page.evaluate(() => ({ text: document.getElementById('view').textContent, charts: document.querySelectorAll('.chart-svg').length, bars: document.querySelectorAll('.chart-bar').length, hints: [...document.querySelectorAll('.hints li')].map((li) => li.textContent.slice(0, 40)), peak: [...document.querySelectorAll('.chart-value')].map((n) => n.textContent) }));
     assert.equal(overview.charts, 3); assert.equal(overview.bars, 36, 'twelve months per chart');
     assert.match(overview.peak[0], /12\.345,00/, 'peak month is labelled directly');
@@ -199,7 +214,7 @@ try {
     await page.waitForFunction(() => document.querySelector('.tab[aria-selected=true]').textContent === 'Empfangskonten');
     for (const theme of ['light', 'dark']) {
       if (theme === 'dark') await page.click('#theme-toggle');
-      for (const label of ['Aufgaben', 'Übersicht', 'Zahlungen', 'Weitere Prüfungen', 'Rollenanträge', 'Patenschaften', 'Bäume', 'Stammdaten', 'Besitzregister', 'Nutzer', 'Empfangskonten', 'Finanz-Export', 'E-Mails', 'Automationen', 'Fehler', 'Audit-Log', 'Einstellungen', 'Go-Live', 'System']) { await tab(page, label); await page.waitForTimeout(150); await axe(page, `${theme}/${label}`); }
+      for (const label of ['Aufgaben', 'Übersicht', 'Zahlungen', 'Weitere Prüfungen', 'Rollenanträge', 'Patenschaften', 'Bäume', 'Stammdaten', 'Marktplatz', 'Besitzregister', 'Nutzer', 'Empfangskonten', 'Finanz-Export', 'E-Mails', 'Automationen', 'Fehler', 'Audit-Log', 'Einstellungen', 'Go-Live', 'System']) { await tab(page, label); await page.waitForTimeout(150); await axe(page, `${theme}/${label}`); }
     }
     assert.equal(await page.evaluate(() => document.documentElement.dataset.theme), 'dark');
     // payments: text-only rendering, screening gate, proof link, approve after screening
@@ -348,6 +363,62 @@ try {
     assert.deepEqual(await calls(page, 'adminUpsertMill'), [{ millId: 'mill_new', countryCode: 'SY', name: 'معصرة', nameEn: 'New Mill', region: '', regionEn: '', status: 'unlisted' }]);
     assert.deepEqual((await calls(page, 'adminCreateTree')).slice(-1)[0], { name: 'شجرة', nameEn: 'New tree', region: 'إدلب', regionEn: 'Idlib', treeType: 'صوراني', treeTypeEn: 'Sorani', totalShares: 10, pricePerShareMinor: 3500, images: ['images/olive_branches_macro.webp'], landPriceMinor: 1500, landAreaSqm: 25, treeId: 'tree_04', hasLandOption: true });
     await page.waitForFunction(() => document.getElementById('view').getAttribute('aria-busy') === 'false');
+    // marketplace: text-only rendering, payment decision, address on demand, shipping, product review, fee, shipping price, farm access
+    await tab(page, 'Marktplatz');
+    await page.waitForFunction(() => /Servicegebühr: 15 %/.test(document.getElementById('view').textContent));
+    assert.equal(await page.evaluate(() => window.__xss === undefined && !document.querySelector('#view img, #view script')), true, 'product and customer strings render as text');
+    assert.match(await page.textContent('#view'), /24,00\s€[\s\S]*3,60\s€[\s\S]*9,00\s€[\s\S]*36,60\s€/, 'goods, fee, shipping and total are shown separately');
+    assert.equal(await calls(page, 'adminOrderContact').then((c) => c.length), 0, 'no address is fetched just by opening the list');
+    await axe(page, 'dark/market');
+    await page.getByRole('button', { name: 'Zahlung bestätigen: FO-AAAAAAAAAA' }).click(); await page.click('#dialog-ok');
+    await page.waitForFunction(() => /eigener Vorgang/.test(document.getElementById('dialog-error').textContent));
+    assert.equal(await page.evaluate(() => document.getElementById('dialog').open), true, 'a refused payment decision keeps the dialog open');
+    await page.click('#dialog-cancel');
+    await page.getByRole('button', { name: 'Ablehnen: FO-AAAAAAAAAA' }).click(); await page.click('#dialog-ok');
+    assert.match(await page.textContent('#dialog-error'), /Begründung/);
+    assert.equal((await calls(page, 'reviewOrderPayment')).filter((c) => c.decision === 'reject').length, 0, 'no rejection without a reason');
+    await dlg('Begründung für den Kunden').fill('Kein Zahlungseingang'); await page.click('#dialog-ok');
+    await page.waitForFunction(() => !document.getElementById('dialog').open);
+    assert.deepEqual((await calls(page, 'reviewOrderPayment')).slice(-1)[0], { orderId: 'a'.repeat(64), decision: 'reject', note: 'Kein Zahlungseingang' });
+    await page.waitForFunction(() => /abgelehnt/.test(document.getElementById('view').textContent) && document.getElementById('view').getAttribute('aria-busy') === 'false');
+    await page.getByRole('button', { name: 'Lieferadresse: FO-BBBBBBBBBB' }).click();
+    await page.waitForFunction(() => document.getElementById('dialog').open && /Geheimweg 7/.test(document.getElementById('dialog-body').textContent));
+    assert.equal(await page.evaluate(() => window.__xss === undefined && !document.querySelector('#dialog-body img')), true, 'the address renders as text');
+    assert.match(await page.textContent('#dialog-body'), /10115 Berlin[\s\S]*Audit-Log|Audit-Log[\s\S]*10115 Berlin/);
+    await page.click('#dialog-ok'); await page.waitForFunction(() => !document.getElementById('dialog').open);
+    assert.deepEqual(await calls(page, 'adminOrderContact'), [{ orderId: 'b'.repeat(64) }]);
+    await page.getByRole('button', { name: 'Als versandt markieren: FO-BBBBBBBBBB' }).click();
+    await dlg('Sendungsnummer (optional)').fill(' DHL-123 '); await page.click('#dialog-ok');
+    await page.waitForFunction(() => !document.getElementById('dialog').open);
+    assert.deepEqual(await calls(page, 'adminSetOrderFulfilment'), [{ orderId: 'b'.repeat(64), step: 'shipped', trackingCode: 'DHL-123' }]);
+    await page.waitForFunction(() => !!document.querySelector('button[aria-label="Als zugestellt markieren: FO-BBBBBBBBBB"]'));
+    await page.getByRole('button', { name: /^Ablehnen: / }).click(); await page.click('#dialog-ok');
+    assert.match(await page.textContent('#dialog-error'), /Begründung/); await page.click('#dialog-cancel');
+    await page.getByRole('button', { name: /^Freigeben: / }).click(); await page.click('#dialog-ok');
+    await page.waitForFunction(() => !document.getElementById('dialog').open);
+    assert.deepEqual(await calls(page, 'adminReviewProduct'), [{ productId: 'p1', decision: 'list', note: '' }]);
+    await page.waitForFunction(() => /im Shop/.test(document.getElementById('view').textContent) && document.getElementById('view').getAttribute('aria-busy') === 'false');
+    await page.getByRole('button', { name: 'Gebühr ändern' }).click();
+    await dlg('Servicegebühr in Prozent des Warenwerts (0 bis 30)').fill('31'); await page.click('#dialog-ok');
+    assert.match(await page.textContent('#dialog-error'), /zwischen 0 und 30/);
+    await dlg('Servicegebühr in Prozent des Warenwerts (0 bis 30)').fill('12.5'); await page.click('#dialog-ok');
+    await page.waitForFunction(() => !document.getElementById('dialog').open);
+    assert.deepEqual(await calls(page, 'adminSetPlatformFee'), [{ feeBps: 1250 }]);
+    await page.waitForFunction(() => /Servicegebühr: 12,5 %/.test(document.getElementById('view').textContent) && document.getElementById('view').getAttribute('aria-busy') === 'false');
+    assert.match(await page.textContent('#view'), /niemand kann bestellen/, 'missing shipping prices are called out');
+    await page.getByRole('button', { name: 'Neuer Versandpreis' }).click();
+    await dlg('Zielland (zwei Buchstaben, z. B. DE)').fill('Deutschland'.slice(0, 2)); await page.click('#dialog-ok');
+    assert.match(await page.textContent('#dialog-error'), /Preis eingeben/);
+    await dlg('Zielland (zwei Buchstaben, z. B. DE)').fill('de'); await dlg('Preis je Bestellung').fill('9.90'); await page.click('#dialog-ok');
+    await page.waitForFunction(() => !document.getElementById('dialog').open);
+    assert.deepEqual(await calls(page, 'adminSetShippingRate'), [{ originCountry: 'SY', destCountry: 'DE', amountMinor: 990, currency: 'EUR', active: true }]);
+    await page.waitForFunction(() => document.getElementById('view').getAttribute('aria-busy') === 'false');
+    await page.getByRole('button', { name: 'Zugang vergeben' }).click();
+    assert.deepEqual(await dlg('Konto').locator('option').evaluateAll((n) => n.map((o) => o.value)), ['u4'], 'only farmer accounts can be given farm access');
+    await page.click('#dialog-ok'); await page.waitForFunction(() => !document.getElementById('dialog').open);
+    assert.deepEqual(await calls(page, 'adminSetFarmMember'), [{ farmId: 'farm_01', userId: 'u4', active: true }]);
+    await page.waitForFunction(() => !!document.querySelector('button[aria-label="Zugang entziehen: Farmer Fadi"]'));
+    await axe(page, 'dark/market-filled');
     // ownership register: paging, tree filter, text-only
     await tab(page, 'Besitzregister');
     assert.match(await page.textContent('#view'), /1–50 von 60/);

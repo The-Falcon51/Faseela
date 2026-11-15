@@ -23,6 +23,12 @@ const TEXTS: Record<string, PushText> = {
   farmer_update_rejected: { ar: "تعذّر نشر تحديثك الميداني.", en: "Your field update could not be published." },
   batch_certified: { ar: "تم اعتماد دفعة العصر.", en: "The pressing batch was certified." },
   batch_rejected: { ar: "تعذّر اعتماد دفعة العصر.", en: "The pressing batch could not be certified." },
+  order_placed: { ar: "استلمنا طلبك. يرجى إتمام التحويل.", en: "We received your order. Please complete the transfer." },
+  order_paid: { ar: "تم تأكيد دفعتك ونجهّز الشحنة.", en: "Your payment was confirmed. We are preparing the shipment." },
+  order_rejected: { ar: "تعذّر تأكيد الدفع لطلبك. التفاصيل في التطبيق.", en: "The payment for your order could not be confirmed. See the app for details." },
+  order_shipped: { ar: "طلبك في الطريق.", en: "Your order is on its way." },
+  order_expired: { ar: "انتهت مهلة الطلب وأُلغي تلقائياً.", en: "Your order expired and was released." },
+  farm_order_paid: { ar: "وصل طلب مدفوع جديد لمزرعتك.", en: "A new paid order arrived for your farm." },
 };
 
 const FALLBACK: PushText = { ar: "لديك تحديث جديد على فسيلة.", en: "You have a new update on Faseela." };

@@ -825,6 +825,42 @@ const adminListMasterData = callable('admin_list_master_data');
 const staffSecurityState = callable('staff_security_state');
 const adminSetStaffMfa = callable('admin_set_staff_mfa');
 
+// ---- Marketplace (migration 50): farm products, orders, service fee ----
+const marketplaceConfig = callableNoArg('marketplace_config');
+const quoteOrder = callable('quote_order');
+const createOrder = callable('create_order');
+const reportOrderPayment = callable('report_order_payment');
+const cancelMyOrder = callable('cancel_my_order');
+const listMyOrders = callableNoArg('list_my_orders');
+const farmerUpsertProduct = callable('farmer_upsert_product');
+const farmerSetProductStock = callable('farmer_set_product_stock');
+const farmOverview = callableNoArg('farm_overview');
+const adminListMarketplace = callableNoArg('admin_list_marketplace');
+const adminSetFarmMember = callable('admin_set_farm_member');
+const adminReviewProduct = callable('admin_review_product');
+const adminSetShippingRate = callable('admin_set_shipping_rate');
+const adminSetPlatformFee = callable('admin_set_platform_fee');
+const reviewOrderPayment = callable('review_order_payment');
+const adminSetOrderFulfilment = callable('admin_set_order_fulfilment');
+const adminOrderContact = callable('admin_order_contact');
+
+/**
+ * The shop: products an admin listed, of farms that are listed, plus the destinations each origin country ships to.
+ * Row policies decide what comes back; a project without these tables answers with an error and the shop stays empty.
+ */
+async function listProducts() {
+  const [products, rates] = await Promise.all([
+    supabase.from('products').select('id,farm_id,category,name,name_en,description,description_en,unit,price_minor,currency,stock_units')
+      .eq('status', 'listed').order('name').limit(500),
+    supabase.from('shipping_rates').select('origin_country,dest_country,amount_minor,currency')
+  ]);
+  if (products.error || rates.error) {
+    console.warn('shop unavailable', (products.error || rates.error).message);
+    return { products: [], shippingRates: [] };
+  }
+  return { products: camelize(products.data || []), shippingRates: camelize(rates.data || []) };
+}
+
 // ---- Second factor (TOTP authenticator app) of the signed-in user ----
 /** { currentLevel, nextLevel, factorId }: factorId is the verified authenticator, or null when none is set up. */
 async function mfaStatus() {
@@ -967,6 +1003,24 @@ const api = Object.freeze({
   adminListMasterData,
   staffSecurityState,
   adminSetStaffMfa,
+  marketplaceConfig,
+  quoteOrder,
+  createOrder,
+  reportOrderPayment,
+  cancelMyOrder,
+  listMyOrders,
+  listProducts,
+  farmerUpsertProduct,
+  farmerSetProductStock,
+  farmOverview,
+  adminListMarketplace,
+  adminSetFarmMember,
+  adminReviewProduct,
+  adminSetShippingRate,
+  adminSetPlatformFee,
+  reviewOrderPayment,
+  adminSetOrderFulfilment,
+  adminOrderContact,
   mfaStatus,
   mfaEnroll,
   mfaVerify,
