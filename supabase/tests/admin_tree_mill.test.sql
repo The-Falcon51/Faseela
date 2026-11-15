@@ -9,6 +9,8 @@ begin
   select '00000000-0000-0000-0000-000000000000', u.id, 'authenticated', 'authenticated', u.email, '', now(), '{}'::jsonb, jsonb_build_object('display_name', u.n, 'requested_role', 'investor'), now(), now()
   from (values (c_a, 'ma@t.faseela.invalid', 'Mill Admin'), (c_i, 'mi@t.faseela.invalid', 'Mill Investor')) u(id, email, n);
   insert into private.user_roles (user_id, role) values (c_a, 'admin');
+  -- Since migration 48 a mill must exist as a record before a tree can point to it.
+  insert into public.mills (mill_id, country_code, name, name_en) values ('mill_09', 'SY', 'معصرة اختبار', 'Test mill');
   perform set_config('request.jwt.claims', json_build_object('sub', c_i, 'role', 'authenticated')::text, true);
   begin perform private.admin_set_tree_mill('{"treeId":"tree_03","millId":"mill_09"}'::jsonb); v_r := v_r || 'FAIL investor allowed';
   exception when others then get stacked diagnostics v_e = pg_exception_hint; v_r := v_r || ('investor=' || v_e); end;
