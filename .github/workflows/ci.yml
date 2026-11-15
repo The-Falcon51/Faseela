@@ -67,6 +67,7 @@ jobs:
         run: |
           npx playwright install --with-deps chromium >/dev/null
           npm run test:ui
+          npm run test:shop
   deploy:
     needs: verify
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'

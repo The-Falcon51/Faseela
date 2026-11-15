@@ -276,6 +276,10 @@ begin
   perform pg_temp.chk('removed member sees no farm orders', pg_temp.cnt($q$select count(*) from public.orders$q$) = 0 and jsonb_array_length(public.farm_overview()->'farms') = 0);
 
   -- ---------------------------------------------------------------- data retention and account deletion
+  perform pg_temp.as_user(c_d);
+  v_j := public.export_my_data('{}');
+  perform pg_temp.chk('data export holds own orders with own address only', jsonb_array_length(v_j->'orders') = 6 and v_j#>>'{orders,0,deliveryContact,addressLine1}' = 'Geheimweg 7'
+    and v_j::text not like '%' || v_o2 || '%', left((v_j->'orders')::text, 300));
   perform pg_temp.chk('open orders block account deletion', pg_temp.call_as(c_d, $q$select public.delete_my_account('{"confirmation":"DELETE"}')$q$) = 'failed-precondition');
   perform pg_temp.as_pg();
   update public.orders set updated_at = now() - interval '91 days' where id in (v_o1, v_o2);

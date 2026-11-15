@@ -1,6 +1,6 @@
 // Faseela service worker (review F-14): small app-shell precache, bounded image cache.
 // Bump CACHE_VERSION whenever shell assets change so clients pick up the new build.
-const CACHE_VERSION = 'v13';
+const CACHE_VERSION = 'v14';
 const SHELL_CACHE = `faseela-shell-${CACHE_VERSION}`;
 const IMAGE_CACHE = `faseela-images-${CACHE_VERSION}`;
 const IMAGE_CACHE_LIMIT = 40;
@@ -10,6 +10,7 @@ const SHELL_ASSETS = [
   './index.html',
   './app.js',
   './events.js',
+  './shop.js',
   './manifest.json',
   './assets/tailwind.css',
   './fonts/fonts.css',

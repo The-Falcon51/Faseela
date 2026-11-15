@@ -7522,6 +7522,7 @@
     }
 
         function applyI18n() {
+      if (window.FaseelaShop) window.FaseelaShop.render();
       document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
         const val = t(key);
@@ -16373,6 +16374,7 @@ function setMarketplaceViewMode(mode) {
     function switchMarketplaceTrack(track) {
       if (track === 'virgin' && !landOfferEnabled()) track = 'mature';
       if (track === 'boutique' && !BOUTIQUE_ENABLED) track = 'mature';
+      if (track === 'shop' && (!window.FaseelaShop || !document.getElementById('tab-market-shop') || document.getElementById('tab-market-shop').hidden)) track = 'mature';
       state.marketplaceTrack = track;
       playAcousticChime(620, 0.1);
 
@@ -16386,6 +16388,8 @@ function setMarketplaceViewMode(mode) {
 
       const btnBoutique = document.getElementById('tab-market-boutique');
       const boutiqueContainer = document.getElementById('boutique-store-container');
+      const btnShop = document.getElementById('tab-market-shop');
+      const shopContainer = document.getElementById('shop-container');
       const bundleBanner = document.getElementById('agroforestry-bundle-banner');
       const cropTabs = document.getElementById('marketplace-crop-tabs');
 
@@ -16395,6 +16399,8 @@ function setMarketplaceViewMode(mode) {
       if (btnMature) btnMature.className = (track === 'mature') ? activeCls : inactiveCls;
       if (btnVirgin) btnVirgin.className = (track === 'virgin') ? activeCls : inactiveCls;
       if (btnBoutique) btnBoutique.className = (track === 'boutique') ? activeCls : inactiveCls;
+      if (btnShop) btnShop.className = (track === 'shop') ? activeCls : inactiveCls;
+      if (shopContainer) shopContainer.classList.toggle('hidden', track !== 'shop');
 
       if (track === 'virgin') {
         if (virginContainer) virginContainer.classList.remove('hidden');
@@ -16406,6 +16412,16 @@ function setMarketplaceViewMode(mode) {
         if (cropTabs) cropTabs.classList.add('hidden');
         if (countBadge) countBadge.innerText = state.currentLang !== 'ar' ? '4 Virgin Projects' : '4 مشاريع بكر';
         renderVirginGroves();
+      } else if (track === 'shop') {
+        if (virginContainer) virginContainer.classList.add('hidden');
+        if (boutiqueContainer) boutiqueContainer.classList.add('hidden');
+        if (matureSearch) matureSearch.classList.add('hidden');
+        if (matureFilters) matureFilters.classList.add('hidden');
+        if (matureCards) matureCards.classList.add('hidden');
+        if (bundleBanner) bundleBanner.classList.add('hidden');
+        if (cropTabs) cropTabs.classList.add('hidden');
+        if (countBadge) countBadge.innerText = t('shop_tab');
+        window.FaseelaShop.show();
       } else if (track === 'boutique') {
         if (virginContainer) virginContainer.classList.add('hidden');
         if (boutiqueContainer) boutiqueContainer.classList.remove('hidden');

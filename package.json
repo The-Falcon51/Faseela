@@ -7,7 +7,7 @@
     "build:web": "node scripts/build-web.cjs",
     "sync": "node scripts/sync-web-assets.cjs",
     "sync:all": "node scripts/sync-web-assets.cjs --include-faseela",
-    "build": "node --check functions/domain.js && node --check public/app.js && node --check public/i18n-de.js && node --check public/events.js && node --check public/supabase-client.mjs && node --check public/data-mappers.mjs && node --check public/admin/admin.mjs && node --check public/auth/reset.mjs && node scripts/sync-web-assets.cjs --check && node scripts/check-frontend.cjs && node scripts/check-claims.cjs",
+    "build": "node --check functions/domain.js && node --check public/app.js && node --check public/i18n-de.js && node --check public/events.js && node --check public/shop.js && node --check public/supabase-client.mjs && node --check public/data-mappers.mjs && node --check public/admin/admin.mjs && node --check public/auth/reset.mjs && node scripts/sync-web-assets.cjs --check && node scripts/check-frontend.cjs && node scripts/check-claims.cjs",
     "test": "npm --prefix functions test",
     "test:web": "node --test tests/*.test.mjs",
     "test:all": "npm test && npm run test:web && npm run test:ui && npm run test:db && npm run test:e2e",
@@ -23,6 +23,7 @@
     "test:db:local": "node scripts/local-db.cjs --test",
     "test:ui": "node tests/e2e/handlers.e2e.mjs",
     "test:admin": "node tests/e2e/admin.e2e.mjs",
+    "test:shop": "node tests/e2e/shop.e2e.mjs",
     "test:contrast": "node tests/e2e/home-contrast.e2e.mjs",
     "test:catalog": "node tests/e2e/catalog.e2e.mjs",
     "test:load": "node tests/load/reserve.load.mjs"

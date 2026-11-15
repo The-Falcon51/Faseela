@@ -1872,11 +1872,18 @@
           <i data-lucide="sprout" class="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400"></i>
           <span data-i18n="market_tab_virgin">غراس بكر مع أرض</span>
         </button>
+        <button type="button" id="tab-market-shop" hidden data-click="switchMarketplaceTrack('shop')" class="flex-1 py-2.5 px-3 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-1.5 text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-200 cursor-pointer">
+          <i data-lucide="shopping-bag" class="w-3.5 h-3.5 text-amber-600 dark:text-amber-400"></i>
+          <span data-i18n="shop_tab">متجر المزارع</span>
+        </button>
         <button type="button" id="tab-market-boutique" data-feature="boutique" data-click="switchMarketplaceTrack('boutique')" class="flex-1 py-2.5 px-3 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-1.5 text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-200 cursor-pointer shrink-0">
           <i data-lucide="shopping-bag" class="w-3.5 h-3.5 text-amber-600 dark:text-amber-400"></i>
           <span data-i18n="market_tab_boutique">متجر المؤن والمنتجات</span>
         </button>
       </div>
+
+      <!-- Farm shop (public/shop.js): products of the farms, basket, orders, product upkeep for farm accounts -->
+      <div id="shop-container" class="hidden mb-10 space-y-6"></div>
 
       <!-- Container for Boutique Terroir Store View (Hidden by default, shown when 'boutique' tab selected) -->
       <div id="boutique-store-container" data-feature="boutique" class="hidden mb-10 space-y-6">
@@ -9247,6 +9254,7 @@
 
   <!-- ================= JAVASCRIPT LOGIC & STATE ================= -->
   <script src="app.js"></script>
+  <script src="shop.js"></script>
 
   <!-- ================= 1. MODAL: FOUNDER EDIT TREE & PRICING ================= -->
   <div id="modal-fndr-edit-tree" role="dialog" aria-modal="true" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 mobile-sheet-overlay">

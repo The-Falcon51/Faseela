@@ -25,7 +25,7 @@
 -- Bestellungen – rechtlich zu klären, bevor echte Bestellungen angenommen werden.]
 --
 -- Rollback: unschedule the jobs 'faseela-expire-orders' and 'faseela-purge-order-contacts'; restore
---   private.delete_my_account from migration 20261110000210; drop the public and private functions created below;
+--   private.delete_my_account from migration 20261110000210 and private.export_my_data from 20261111000100; drop the public and private functions created below;
 --   drop table private.farm_ledger, private.order_contacts, public.order_items, public.orders, public.shipping_rates,
 --   public.products, public.farm_members (in this order); delete the app_settings row 'platform_fee_bps'.
 --   Dropping the tables discards orders: export them first if any exist.
@@ -1062,6 +1062,39 @@ begin
   perform private.audit(v_uid, 'account.deleted', 'profiles/' || v_uid, jsonb_build_object('role', v_role));
   delete from auth.users where id = v_uid;
   return jsonb_build_object('deleted', true);
+end;
+$$;
+
+-- ---------------------------------------------------------------------------------------------------------------
+-- Data export (right of access): the person's orders with their own delivery address, while it is still stored.
+-- (Full redefinition of the function from migration 20261111000100; only the 'orders' entry is new.)
+-- ---------------------------------------------------------------------------------------------------------------
+
+create or replace function private.export_my_data(payload jsonb)
+returns jsonb
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  v_uid uuid := private.require_user();
+begin
+  perform private.audit(v_uid, 'account.exported', 'profiles/' || v_uid, '{}'::jsonb);
+  return jsonb_build_object(
+    'exportedAt', to_char(now() at time zone 'utc', 'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"'),
+    'format', 'faseela-data-export/v2',
+    'role', private.current_app_role(),
+    'profile', (select to_jsonb(pr) from public.profiles pr where pr.id = v_uid),
+    'roleApplication', (select to_jsonb(ra) from public.role_applications ra where ra.user_id = v_uid),
+    'investmentRequests', coalesce((select jsonb_agg(to_jsonb(x) order by x.created_at) from public.investment_requests x where x.user_id = v_uid), '[]'::jsonb),
+    'transactions', coalesce((select jsonb_agg(to_jsonb(x) order by x.created_at) from public.transactions x where x.user_id = v_uid), '[]'::jsonb),
+    'shares', coalesce((select jsonb_agg(to_jsonb(x) order by x.created_at) from public.shares x where x.user_id = v_uid), '[]'::jsonb),
+    'farmerUpdates', coalesce((select jsonb_agg(to_jsonb(x) order by x.created_at) from public.farmer_updates x where x.farmer_uid = v_uid), '[]'::jsonb),
+    'pressingBatches', coalesce((select jsonb_agg(to_jsonb(x) order by x.created_at) from public.pressing_batches x where x.submitted_by_uid = v_uid), '[]'::jsonb),
+    'orders', coalesce((select jsonb_agg(private.order_summary(o) || jsonb_build_object('deliveryContact',
+        (select extensions.pgp_sym_decrypt(c.contact_enc, private.pii_key())::jsonb from private.order_contacts c where c.order_id = o.id))
+        order by o.created_at) from public.orders o where o.user_id = v_uid), '[]'::jsonb)
+  );
 end;
 $$;
 
