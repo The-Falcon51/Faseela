@@ -8,6 +8,8 @@ declare
   c_new constant jsonb := '{"treeId":"tree_ops_test","name":"شجرة اختبار","nameEn":"Test tree","region":"إدلب","regionEn":"Idlib","treeType":"صوراني","treeTypeEn":"Sorani","totalShares":10,"pricePerShareMinor":3500,"plantedYear":1990,"estimatedAnnualYieldKg":40}';
   v_j jsonb; v_n integer; v_tree text; v_mail bigint; v_mail2 bigint;
 begin
+  -- The land option is off by default (migration 46); this suite exercises it, so it is switched on for this transaction.
+  insert into private.app_settings (key, value) values ('land_offer_enabled', 'true') on conflict (key) do update set value = 'true';
   create temp table t_chk (name text, ok boolean) on commit drop;
   grant insert on t_chk to anon, authenticated;
   create function pg_temp.chk(p_name text, p_cond boolean, p_got text default null) returns void language plpgsql as $f$

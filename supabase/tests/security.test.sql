@@ -36,6 +36,8 @@ declare
   v_req_i2 text := encode(sha256(convert_to('22222222-2222-4222-8222-222222222222:key-i2-treet4-000001', 'UTF8')), 'hex');
   v_upload_sql text;
 begin
+  -- The land option is off by default (migration 46); this suite exercises it, so it is switched on for this transaction.
+  insert into private.app_settings (key, value) values ('land_offer_enabled', 'true') on conflict (key) do update set value = 'true';
   -- ---------------------------------------------------------------- setup (as postgres)
   insert into auth.users (instance_id, id, aud, role, email, encrypted_password, email_confirmed_at,
                           raw_app_meta_data, raw_user_meta_data, created_at, updated_at)
