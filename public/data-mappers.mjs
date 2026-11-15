@@ -65,7 +65,7 @@ export function statusLabel(status, lang = 'ar') {
   return lang === 'ar' ? entry.ar : entry.en;
 }
 
-const CROP_CATEGORIES = ['olive', 'pistachio', 'almond', 'pomegranate', 'walnut'];
+const CROP_CATEGORIES = ['olive', 'pistachio', 'almond', 'pomegranate', 'date', 'walnut'];
 const CATALOG_IMAGE = /^images\/[A-Za-z0-9_-]{1,80}\.(webp|png|jpg|jpeg)$/;
 /** Catalogue text from the server: markup characters and control characters never reach the page. */
 function cleanText(value) {

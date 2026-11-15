@@ -2809,6 +2809,7 @@
         crop_tab_pistachio: "الفستق الحلبي (الذهب الأخضر)",
         crop_tab_nuts: "اللوزيات والجوز السوري",
         crop_tab_pomegranate: "رمان حوران العصيري",
+        crop_tab_date: "نخيل التمر السوري",
         filter_crop_lbl: "نوع المحصول الشجري",
         filter_crop_all: "كافة المحاصيل الزراعية",
         filter_crop_olive: "🫒 بساتين الزيتون المبارك",
@@ -2816,10 +2817,12 @@
         filter_crop_almond: "🌸 لوز المخرم الفوقاني",
         filter_crop_walnut: "🪵 جوز وادي بردى الشاهق",
         filter_crop_pomegranate: "🍇 رمان حوران العصيري",
+        filter_crop_date: "🌴 نخيل التمر السوري",
         calc_pistachio_unit: "كغ فستق حلبي فاخر",
         calc_almond_unit: "كغ لوز بلدي مفرك",
         calc_walnut_unit: "كغ جوز بلدي مجفف",
         calc_pomegranate_unit: "كغ رمان سكري فاخر",
+        calc_date_unit: "كغ تمر",
         dash_crop_breakdown: "توزيع محفظة المحاصيل الشجرية",
         agro_synergy_badge: "محصول شقيق متكامل مع الزيتون",
         // Strategic Enhancements: Calendar, Store, Weather, Bundles
@@ -2827,6 +2830,7 @@
         crop_name_pistachio: "الفستق الحلبي (الذهب الأخضر)",
         crop_name_almond: "اللوز السوري الفرك",
         crop_name_pomegranate: "رمان حوران العصيري",
+        crop_name_date: "نخيل التمر (تدمر والفرات)",
         crop_name_walnut: "جوز بردى البلدي المعمر",
         cal_financial_payout: "موعد جني وتسييل العوائد:",
         market_tab_boutique: "متجر المؤن والمنتجات السورية",
@@ -3333,6 +3337,7 @@
         crop_almond_badge: "🌸 لوز سوري (Almond)",
         pomace_organic_compost_badge: "🌿 سماد عضوي مخمر بلدي (Organic Compost)",
         crop_pomegranate_badge: "🍇 رمان حوراني (Pomegranate)",
+        crop_date_badge: "🌴 نخيل التمر (Date Palm)",
         crop_walnut_badge: "🪵 جوز بردى (Walnut)",
         pomace_briquettes_badge: "🪵 حطب الجفت البيئي المضغوط (Eco-Briquettes)",
         crop_olive_badge: "🫒 زيتون (Olive)",
@@ -5603,6 +5608,7 @@
         crop_tab_pistachio: "Aleppo Pistachio (Green Gold)",
         crop_tab_nuts: "Syrian Almonds & Walnuts",
         crop_tab_pomegranate: "Houran Sweet Pomegranate",
+        crop_tab_date: "Syrian Date Palm",
         filter_crop_lbl: "Tree Crop Category",
         filter_crop_all: "All Agrarian Crops",
         filter_crop_olive: "🫒 Olive Groves",
@@ -5610,10 +5616,12 @@
         filter_crop_almond: "🌸 Mukharram Soft-Shell Almond",
         filter_crop_walnut: "🪵 Barada Valley Heritage Walnut",
         filter_crop_pomegranate: "🍇 Houran Sweet Pomegranate",
+        filter_crop_date: "🌴 Syrian Date Palm",
         calc_pistachio_unit: "kg Premium Pistachios",
         calc_almond_unit: "kg Syrian Soft-Shell Almonds",
         calc_walnut_unit: "kg Mountain Dried Walnuts",
         calc_pomegranate_unit: "kg Sweet Pomegranates",
+        calc_date_unit: "kg dates",
         dash_crop_breakdown: "Crop Portfolio Allocation",
         agro_synergy_badge: "Synergistic Olive Sister Crop",
         // Strategic Enhancements: Calendar, Store, Weather, Bundles
@@ -5621,6 +5629,7 @@
         crop_name_pistachio: "Aleppo Pistachio (Green Gold)",
         crop_name_almond: "Syrian Soft-Shell Almond",
         crop_name_pomegranate: "Yarmouk Sweet Pomegranate",
+        crop_name_date: "Date Palm (Palmyra & Euphrates)",
         crop_name_walnut: "Barada Mountain Walnut",
         cal_financial_payout: "Harvest Payout & Liquidity Window:",
         market_tab_boutique: "Syrian Gourmet Store",
@@ -6133,6 +6142,7 @@
         crop_almond_badge: "🌸 Syrian Almond (Almond)",
         pomace_organic_compost_badge: "🌿 Organic Fermented Compost",
         crop_pomegranate_badge: "🍇 Haurani Pomegranate (Pomegranate)",
+        crop_date_badge: "🌴 Date Palm",
         crop_walnut_badge: "🪵 Barada Walnut (Walnut)",
         pomace_briquettes_badge: "🪵 Eco-Friendly Pomace Briquettes",
         crop_olive_badge: "🫒 Olive (Olive)",
@@ -8258,6 +8268,81 @@
             }
           ]
         },
+        date: {
+          badge: "موسوعة الأصناف والمذاق السوري: نخيل البادية والفرات",
+          badge_en: "Syrian Cultivars Index: Palms of the Steppe and the Euphrates",
+          title: "أصناف التمر السوري ومراحل نضجه",
+          title_en: "Syrian Date Cultivars and Their Ripening Stages",
+          sub: "من واحة تدمر وبساتين الفرات بين دير الزور والبوكمال: الثمرة تمر بمراحل الكمري ثم الخلال ثم الرطب ثم التمر",
+          sub_en: "From the Palmyra oasis and the Euphrates groves between Deir ez-Zor and Al-Bukamal: the fruit passes through kimri, khalal, rutab and tamr",
+          items: [
+            {
+              id: "date_khastawi",
+              name: "تمر الخستاوي",
+              name_en: "Khastawi Date",
+              region: "واحة تدمر وحوض الفرات (دير الزور – البوكمال)",
+              region_en: "Palmyra Oasis & Euphrates Basin (Deir ez-Zor – Al-Bukamal)",
+              badge_top: "تمر طري شديد الحلاوة",
+              badge_top_en: "Soft, very sweet",
+              highlight_badge: "الأشهر في حوض الفرات",
+              highlight_badge_en: "Best known along the Euphrates",
+              desc: "صنف طري عسلي المذاق يؤكل رطباً وتمراً، ومن أكثر الأصناف حضوراً في بساتين الفرات.",
+              desc_en: "A soft, syrupy variety eaten both as rutab and as tamr; one of the most common cultivars in the Euphrates groves.",
+              image: "images/tree_date_palm.webp",
+              filter_keyword: "تمر",
+              btn_text: "تصفح أشجار النخيل المتاحة",
+              btn_text_en: "Browse Available Date Palms",
+              metrics: [
+                { label: "مرحلة الأكل", label_en: "Eating stage", val: "رطب وتمر", val_en: "Rutab and tamr", is_text: true },
+                { label: "القوام", label_en: "Texture", val: "طري لين", val_en: "Soft", is_text: true },
+                { label: "البصمة الذوقية", label_en: "Sensory Notes", val: "حلاوة عسلية • قوام دبسي", val_en: "Honeyed Sweetness \u2022 Syrupy Body", is_text: true }
+              ]
+            },
+            {
+              id: "date_zahidi",
+              name: "تمر الزهدي",
+              name_en: "Zahidi Date",
+              region: "واحة تدمر وحوض الفرات (دير الزور – البوكمال)",
+              region_en: "Palmyra Oasis & Euphrates Basin (Deir ez-Zor – Al-Bukamal)",
+              badge_top: "نصف جاف • يتحمل التخزين",
+              badge_top_en: "Semi-dry \u2022 Stores well",
+              highlight_badge: null,
+              desc: "تمر ذهبي نصف جاف متماسك اللب، معتدل الحلاوة، يصلح للتخزين الطويل وللاستخدام في المطبخ.",
+              desc_en: "A golden, semi-dry date with firm flesh and moderate sweetness; it keeps well and suits cooking.",
+              image: "images/tree_date_palm.webp",
+              filter_keyword: "تمر",
+              btn_text: "تصفح أشجار النخيل المتاحة",
+              btn_text_en: "Browse Available Date Palms",
+              metrics: [
+                { label: "مرحلة الأكل", label_en: "Eating stage", val: "تمر", val_en: "Tamr", is_text: true },
+                { label: "القوام", label_en: "Texture", val: "نصف جاف متماسك", val_en: "Semi-dry, firm", is_text: true },
+                { label: "البصمة الذوقية", label_en: "Sensory Notes", val: "حلاوة معتدلة • نكهة جوزية خفيفة", val_en: "Mild Sweetness \u2022 Light Nutty Note", is_text: true }
+              ]
+            },
+            {
+              id: "date_barhi",
+              name: "تمر البرحي",
+              name_en: "Barhi Date",
+              region: "واحة تدمر وحوض الفرات (دير الزور – البوكمال)",
+              region_en: "Palmyra Oasis & Euphrates Basin (Deir ez-Zor – Al-Bukamal)",
+              badge_top: "يؤكل أصفر مقرمشاً (خلال)",
+              badge_top_en: "Eaten yellow and crisp (khalal)",
+              highlight_badge: "يُقطف مبكراً",
+              highlight_badge_en: "Harvested early",
+              desc: "يُعرف بثماره الصفراء التي تؤكل مقرمشة في مرحلة الخلال، ثم تصبح رطباً طرياً شديد الحلاوة.",
+              desc_en: "Known for yellow fruit eaten crisp at the khalal stage, turning into a very sweet, soft rutab later.",
+              image: "images/tree_date_palm.webp",
+              filter_keyword: "تمر",
+              btn_text: "تصفح أشجار النخيل المتاحة",
+              btn_text_en: "Browse Available Date Palms",
+              metrics: [
+                { label: "مرحلة الأكل", label_en: "Eating stage", val: "خلال ورطب", val_en: "Khalal and rutab", is_text: true },
+                { label: "القوام", label_en: "Texture", val: "مقرمش ثم طري", val_en: "Crisp, then soft", is_text: true },
+                { label: "البصمة الذوقية", label_en: "Sensory Notes", val: "حلاوة منعشة • نكهة قصب السكر", val_en: "Fresh Sweetness \u2022 Sugar-cane Note", is_text: true }
+              ]
+            }
+          ]
+        },
         walnut: {
           badge: "موسوعة الأصناف والمذاق السوري: شجر الظلال المعمر",
           badge_en: "Syrian Cultivars Index: Ancient Walnuts",
@@ -8358,6 +8443,12 @@
           { q: "Q2", month: "أيار – حزيران", month_en: "May – Jun", title: "الإزهار القرمزي وتكوين الياقوت", title_en: "Scarlet Bloom & Fruit Setting", desc: "تألق أزهار الجلنار القرمزية في حوران وبدء تشكل كرات الرمان الغنية بمضادات الأكسدة.", desc_en: "Brilliant scarlet Gulnar blossoms and setting of nascent antioxidant-rich pomegranate globes.", badge: "رصد كثافة التزهير", badge_en: "Bloom Density Monitor", icon: "flame", color: "red" },
           { q: "Q3", month: "تموز – آب", month_en: "Jul – Aug", title: "ري التكثيف وحماية القشور", title_en: "Precision Drip & Sunburn Defense", desc: "انتظام دورات الري بالتنقيط في وادي اليرموك لحماية قشور الرمان من التشقق بسبب الحرارة.", desc_en: "Strictly scheduled drip cycles in Yarmouk to prevent skin cracking under summer heat.", badge: "فحص سلامة القشرة", badge_en: "Skin Integrity Index", icon: "shield-check", color: "cyan" },
           { q: "Q4", month: "تشرين الأول – تشرين الثاني", month_en: "Oct – Nov", title: "موسم قطاف الياقوت وعصر الدبس", title_en: "Ruby Harvest & Molasses Press", desc: "قطاف الثمار الياقوتية المتشققة طبيعياً وعصر جزء منها كدبس رمان نقي وتوزيع الأرباح.", desc_en: "Harvesting heavy ruby pomegranates, cold-pressing artisanal molasses, and dividend payout.", badge: "عائد عيني ونقدي معتمد", badge_en: "Molasses & Cash Yield", icon: "sparkles", color: "rose" }
+        ],
+        date: [
+          { q: "Q1", month: "كانون الثاني – شباط", month_en: "Jan – Feb", title: "تنظيف النخلة وقص السعف اليابس", title_en: "Frond Pruning & Crown Cleaning", desc: "قص السعف اليابس وإزالة الأشواك وتنظيف قلب النخلة تمهيداً لموسم التلقيح، مع العناية بالفسائل.", desc_en: "Dry fronds and thorns are removed and the crown is cleaned ahead of pollination; offshoots are tended.", badge: "تقرير صور التقليم", badge_en: "Pruning Photo Report", icon: "scissors", color: "olive" },
+          { q: "Q2", month: "آذار – أيار", month_en: "Mar – May", title: "التلقيح اليدوي وعقد الثمار", title_en: "Hand Pollination & Fruit Set", desc: "تلقيح الطلع يدوياً وتكراره بعد نحو أسبوعين لضمان العقد، ثم خف الثمار في أيار وحزيران.", desc_en: "Flower clusters are pollinated by hand, usually repeated after about two weeks; fruit thinning follows in May and June.", badge: "تقرير التلقيح", badge_en: "Pollination Report", icon: "flower-2", color: "emerald" },
+          { q: "Q3", month: "حزيران – آب", month_en: "Jun – Aug", title: "تدلية العذوق وتكييسها", title_en: "Bunch Support & Bagging", desc: "ربط العذوق وتدليتها وتغطيتها بأكياس تحميها من الغبار والحشرات والمطر، مع ري منتظم في مرحلة الخلال.", desc_en: "Bunches are tied down and covered with bags against dust, pests and rain, with steady irrigation through the khalal stage.", badge: "تقرير صور العذوق", badge_en: "Bunch Photo Report", icon: "shield-check", color: "amber" },
+          { q: "Q4", month: "أيلول – تشرين الثاني", month_en: "Sep – Nov", title: "قطاف الرطب والتمر", title_en: "Rutab & Tamr Harvest", desc: "قطاف على عدة دفعات مع نضج الثمار من الرطب إلى التمر، ثم الفرز والتعبئة.", desc_en: "Picking in several passes as the fruit ripens from rutab to tamr, followed by sorting and packing.", badge: "تقرير الحصاد", badge_en: "Harvest Report", icon: "package-check", color: "terracotta" }
         ],
         walnut: [
           { q: "Q1", month: "كانون الثاني – شباط", month_en: "Jan – Feb", title: "السكون الشتوي والرش الوقائي", title_en: "Winter Dormancy & Protective Spray", desc: "سكون شتوي عميق لأشجار بردى الباسقة ورش الزيوت النحاسية العضوية لوقاية اللحاء.", desc_en: "Deep winter dormancy in Barada mountain heights with organic copper bark protection.", badge: "توثيق مقاومة الصقيع", badge_en: "Frost Resistance Log", icon: "snowflake", color: "sky" },
@@ -13542,6 +13633,28 @@ function togglePasswordVisibility(inputId, iconId) {
         if (uvLabel) uvLabel.innerText = isEn ? "Antioxidants & Punicalagin Index:" : "مضادات الأكسدة والبوليفينول:";
         if (uvEl) uvEl.innerText = isEn ? "3,450 mg/L (Immunity Bio-Shield)" : "3,450 مغ/لتر (درع مناعي ومضاد أكسدة)";
 
+      } else if (category === 'date') {
+        // No invented lab figures: a date record exists only once a harvest has been sorted.
+        const pending = isEn ? "Recorded after the harvest" : "يُسجَّل بعد الحصاد";
+        if (subHeadingEl) subHeadingEl.innerText = isEn ? "Date Sorting & Quality Record" : "سجل فرز وجودة التمور";
+        if (millEl) millEl.innerText = isEn ? "Sorting and packing station (assigned after the harvest)" : "محطة الفرز والتعبئة (تُحدَّد بعد الحصاد)";
+        if (operEl) operEl.innerText = isEn ? "Sorting by ripening stage • Hygienic packing" : "فرز حسب مرحلة النضج • تعبئة صحية";
+        if (gradeBadge) {
+          gradeBadge.innerText = isEn ? "Record pending first harvest" : "السجل بانتظار أول موسم";
+          gradeBadge.className = "bg-amber-100 text-amber-900 border border-amber-300 text-[10px] font-black px-2.5 py-1 rounded-full";
+        }
+        if (serialEl) serialEl.innerText = `${isEn ? 'Batch Record:' : 'رقم الاعتماد:'} —`;
+        if (weightOilEl) weightOilEl.innerText = pending;
+        if (yieldRateEl) yieldRateEl.innerText = pending;
+        if (acidityLabel) acidityLabel.innerText = isEn ? "Ripening stage at harvest:" : "مرحلة النضج عند القطاف:";
+        if (acidityEl) acidityEl.innerText = pending;
+        if (peroxideLabel) peroxideLabel.innerText = isEn ? "Moisture content:" : "نسبة الرطوبة:";
+        if (peroxideEl) peroxideEl.innerText = pending;
+        if (tempLabel) tempLabel.innerText = isEn ? "Sorting grade:" : "درجة الفرز:";
+        if (tempEl) tempEl.innerText = pending;
+        if (uvLabel) uvLabel.innerText = isEn ? "Storage:" : "التخزين:";
+        if (uvEl) uvEl.innerText = pending;
+
       } else {
         // Olive standard Extra Virgin
         if (subHeadingEl) subHeadingEl.innerText = isEn ? "Chemical & Spectrophotometric Extra Virgin Olive Oil Analysis" : "الفحص الكيميائي والمطيافي لزيت الزيتون البكر الممتاز";
@@ -13719,6 +13832,14 @@ function setMarketplaceViewMode(mode) {
           badge: isEn ? 'Brix 16.8° • Sweet' : 'بريكس 16.8° • عصير سكري',
           badgeBg: 'bg-red-600/90 text-white'
         };
+      } else if (cat === 'date') {
+        return {
+          emoji: '🌴',
+          yieldLabel: isEn ? 'Annual Dates:' : 'الإنتاج السنوي:',
+          yieldValue: tree.estimated_annual_yield_kg ? `~ ${tree.estimated_annual_yield_kg} ${t('calc_date_unit')}` : '—',
+          badge: isEn ? 'Palmyra & Euphrates' : 'تدمر والفرات',
+          badgeBg: 'bg-amber-700/90 text-white'
+        };
       } else {
         return {
           emoji: '🫒',
@@ -13806,7 +13927,8 @@ function setMarketplaceViewMode(mode) {
                         filterCrop === 'almond_walnut' ? (state.currentLang !== 'ar' ? 'Almonds & Walnuts' : 'اللوزيات والجوز') :
                         filterCrop === 'almond' ? (state.currentLang !== 'ar' ? 'Syrian Almonds' : 'اللوزيات السورية') :
                         filterCrop === 'walnut' ? (state.currentLang !== 'ar' ? 'Mountain Walnuts' : 'الجوز البلدي') :
-                        filterCrop === 'pomegranate' ? (state.currentLang !== 'ar' ? 'Sweet Pomegranate' : 'رمان حوران') : filterCrop;
+                        filterCrop === 'pomegranate' ? (state.currentLang !== 'ar' ? 'Sweet Pomegranate' : 'رمان حوران') :
+                        filterCrop === 'date' ? (state.currentLang !== 'ar' ? 'Date Palm' : 'نخيل التمر') : filterCrop;
       activeTags.push({ label: `${state.currentLang !== 'ar' ? 'Crop:' : 'المحصول:'} ${cropLabel}`, clear: () => { setCropCategoryFilter('all'); } });
     }
 
@@ -13927,11 +14049,11 @@ function setMarketplaceViewMode(mode) {
           <div class="w-16 h-16 rounded-full bg-olive-50 text-olive-700 flex items-center justify-center mx-auto mb-4 border border-olive-200">
             <i data-lucide="search-x" class="w-8 h-8"></i>
           </div>
-          <h3 class="font-black text-lg text-stone-800 mb-2" data-i18n="market_empty_title">لم نجد أشجاراً تطابق معايير البحث والتصفية</h3>
-          <p class="text-xs text-stone-500 max-w-md mx-auto mb-6" data-i18n="market_empty_sub">جرّب تخفيف الفلاتر أو البحث بكلمات عامة مثل: طرطوس، إدلب، درعا، خضيري، أو الشجرة المعمرة.</p>
+          <h3 class="font-black text-lg text-stone-800 mb-2" data-i18n="market_empty_title">${t('market_empty_title')}</h3>
+          <p class="text-xs text-stone-500 max-w-md mx-auto mb-6" data-i18n="market_empty_sub">${t('market_empty_sub')}</p>
           <button data-click="resetMarketplaceFilters()" class="bg-olive-800 hover:bg-olive-900 text-white font-bold text-xs px-6 py-3 rounded-2xl transition-all shadow-sm flex items-center gap-2 mx-auto cursor-pointer">
             <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
-            <span data-i18n="market_empty_reset_btn">إعادة ضبط كافة الفلاتر وعرض الأشجار</span>
+            <span data-i18n="market_empty_reset_btn">${t('market_empty_reset_btn')}</span>
           </button>
         </div>
       `;
@@ -13957,7 +14079,7 @@ function setMarketplaceViewMode(mode) {
             <div class="flex items-center gap-4 w-full md:w-auto">
               <div class="relative w-24 h-24 rounded-2xl overflow-hidden flex-shrink-0 border border-stone-200">
                 <img loading="lazy" src="${tree.images[0]}" alt="${displayName}" class="w-full h-full object-cover group-hover:scale-105 transition-all duration-300">
-                <span class="absolute bottom-1 start-1 bg-emerald-800 text-white text-[8px] font-black px-1.5 py-0.5 rounded-full">
+                <span data-feature="land" class="absolute bottom-1 start-1 bg-emerald-800 text-white text-[8px] font-black px-1.5 py-0.5 rounded-full">
                   ${state.currentLang !== 'ar' ? '5 m² Land' : '5 م² أرض'}
                 </span>
               </div>
@@ -14038,7 +14160,7 @@ function setMarketplaceViewMode(mode) {
                 <span class="absolute top-3 start-3 bg-olive-700 text-white text-[10px] font-black px-2.5 py-1 rounded-full shadow-xs">
                   ${displayType}
                 </span>
-                <span class="absolute bottom-3 end-3 bg-emerald-800 text-white text-[10px] font-black px-2.5 py-1 rounded-full shadow-xs border border-emerald-400/40 flex items-center gap-1">
+                <span data-feature="land" class="absolute bottom-3 end-3 bg-emerald-800 text-white text-[10px] font-black px-2.5 py-1 rounded-full shadow-xs border border-emerald-400/40 flex items-center gap-1">
                   <i data-lucide="map" class="w-3 h-3"></i>
                   <span>🌿 + ${state.currentLang !== 'ar' ? '5 m² Deed Land' : '5 م² أرض طابو'}</span>
                 </span>
@@ -14106,7 +14228,7 @@ function setMarketplaceViewMode(mode) {
                     </span>
                   </div>
                 </div>
-                <button data-click="viewTreeDetails('${tree.id}')" title="${state.currentLang !== 'ar' ? 'View Cadastral Blueprint' : 'معاينة المخطط المساحي'}" class="text-emerald-700 hover:text-emerald-900 text-xs font-bold flex items-center gap-0.5 bg-emerald-50 px-2 py-1 rounded-lg cursor-pointer">
+                <button data-feature="land" data-click="viewTreeDetails('${tree.id}')" title="${state.currentLang !== 'ar' ? 'View Cadastral Blueprint' : 'معاينة المخطط المساحي'}" class="text-emerald-700 hover:text-emerald-900 text-xs font-bold flex items-center gap-0.5 bg-emerald-50 px-2 py-1 rounded-lg cursor-pointer">
                   <i data-lucide="map" class="w-3.5 h-3.5"></i>
                   <span>${state.currentLang !== 'ar' ? '5 m²' : '5 م²'}</span>
                 </button>
@@ -14298,6 +14420,11 @@ function setMarketplaceViewMode(mode) {
               facName = tree.processing_center || (state.currentLang !== 'ar' ? 'Daraa Pomegranate Station' : 'محطة عصر وتكثيف دبس الرمان بدرعا');
               facDesc = state.currentLang !== 'ar' ? 'Pure Direct Extraction • 100% Natural • Zero Additives' : 'استخلاص نقي مباشر • 100% طبيعي بدون أي إضافات';
               facIcon = 'flame';
+            } else if (tree.crop_category === 'date') {
+              facTitle = state.currentLang !== 'ar' ? 'Date Sorting & Packing Station:' : 'محطة فرز وتعبئة التمور:';
+              facName = tree.processing_center || (state.currentLang !== 'ar' ? 'Assigned after the harvest' : 'تُحدَّد بعد الحصاد');
+              facDesc = state.currentLang !== 'ar' ? 'Sorting by ripening stage • Hygienic packing' : 'فرز حسب مرحلة النضج • تعبئة صحية';
+              facIcon = 'package-check';
             }
 
             return `
@@ -14858,6 +14985,10 @@ function setMarketplaceViewMode(mode) {
           estYieldDisplay = `~ ${(s * 11.2).toFixed(1)} ${t('calc_walnut_unit')}`;
         } else if (cat === 'pomegranate') {
           estYieldDisplay = `~ ${(s * 14.5).toFixed(1)} ${t('calc_pomegranate_unit')}`;
+        } else if (cat === 'date') {
+          // From the tree's own figure, never a built-in constant; unknown stays unknown.
+          const perShare = (Number(tree.estimated_annual_yield_kg) || 0) / (Number(tree.total_shares) || 4);
+          estYieldDisplay = perShare > 0 ? `~ ${(s * perShare).toFixed(1)} ${t('calc_date_unit')}` : '—';
         }
         if (sOil) sOil.innerText = estYieldDisplay;
         const sCarbon = document.getElementById('invest-summary-carbon');
@@ -15566,7 +15697,7 @@ function setMarketplaceViewMode(mode) {
       if (typeof playAcousticChime === 'function') playAcousticChime(660, 0.08);
       if (typeof triggerHaptic === 'function') triggerHaptic('light');
 
-      const crops = ['olive', 'pistachio', 'almond', 'pomegranate', 'walnut'];
+      const crops = ['olive', 'pistachio', 'almond', 'pomegranate', 'date', 'walnut'];
       crops.forEach(c => {
         const btn = document.getElementById(`cal-btn-${c}`);
         if (btn) {
@@ -15688,6 +15819,46 @@ function setMarketplaceViewMode(mode) {
       }
     }
 
+    // German texts for the seasonal calendar (the data above carries Arabic and English only).
+    const CALENDAR_DE = {
+      olive: [
+        { month: "Jan – Feb", title: "Winterschnitt & Düngung", desc: "Trockene Äste werden ausgelichtet, die Krone geöffnet und organischer Kompost eingearbeitet.", badge: "Fotobericht zum Schnitt" },
+        { month: "Apr – Mai", title: "Vollblüte & Fruchtansatz", desc: "Auf die weiße Blüte folgen die ersten Oliven; die Bodenfeuchte wird laufend erfasst.", badge: "Bewertung des Fruchtansatzes" },
+        { month: "Jul – Aug", title: "Zusatzbewässerung & Pflanzenschutz", desc: "Gezielte Tropfbewässerung aus Quellen und biologische Pheromonfallen gegen Schädlinge.", badge: "Sprachbericht des Landwirts" },
+        { month: "Okt – Nov", title: "Handernte & Kaltpressung", desc: "Die Oliven werden von Hand geerntet und sofort unter 27 °C kalt gepresst; das Labor prüft die Qualität.", badge: "Laborzertifikat" }
+      ],
+      pistachio: [
+        { month: "Jan – Feb", title: "Kronenpflege & Kaliumdüngung", desc: "Ein leichter Schnitt gleicht den Wechselertrag aus; Kalium stärkt die Kerne.", badge: "Bericht zur Knospengesundheit" },
+        { month: "Apr – Mai", title: "Windbestäubung & Fruchtstände", desc: "Der Wind bestäubt die Blüten, in den Ebenen von Mork bilden sich die ersten Fruchtstände.", badge: "Prüfung der Bestäubung" },
+        { month: "Jul – Aug", title: "Kernfüllung & Aufspringen der Schale", desc: "Die Kerne füllen sich, die Schale härtet aus und springt in der Sommersonne von selbst auf.", badge: "Prüfung des Aufspringens" },
+        { month: "Sep – Okt", title: "Ernte & Röstung", desc: "Die Fruchtstände werden von Hand geerntet, sortiert und trocken geröstet.", badge: "Erntebericht" }
+      ],
+      almond: [
+        { month: "Feb – Mär", title: "Frühe rosa Blüte", desc: "Noch vor dem Laubaustrieb stehen die Mandelhaine von Homs in rosa-weißer Blüte.", badge: "Fotobericht zur Blüte" },
+        { month: "Apr – Mai", title: "Fruchthärtung & Belaubung", desc: "Die zarten grünen Mandeln wachsen heran, die Schale härtet bei ausgewogener Düngung allmählich aus.", badge: "Prüfung des Behangs" },
+        { month: "Jul – Aug", title: "Aufplatzen der Hülle & Sommerernte", desc: "Die Außenhülle platzt auf; die weichschaligen Mandeln werden von Hand gesammelt und in der Sonne getrocknet.", badge: "Erntebericht" },
+        { month: "Okt – Dez", title: "Sortierung & Verpackung", desc: "Die Mandeln werden sortiert und vakuumverpackt.", badge: "Bericht zur Sortierung" }
+      ],
+      pomegranate: [
+        { month: "Jan – Feb", title: "Formschnitt & Bodenbearbeitung", desc: "Wasserschosse werden entfernt, die Krone geöffnet und organischer Kompost eingearbeitet.", badge: "Prüfung der Feldpflege" },
+        { month: "Mai – Jun", title: "Scharlachrote Blüte & Fruchtansatz", desc: "Auf die leuchtend rote Blüte folgen die ersten jungen Granatäpfel.", badge: "Beobachtung der Blüte" },
+        { month: "Jul – Aug", title: "Tropfbewässerung & Sonnenschutz", desc: "Regelmäßige Tropfbewässerung im Yarmouk-Tal verhindert, dass die Schale in der Sommerhitze aufreißt.", badge: "Prüfung der Schale" },
+        { month: "Okt – Nov", title: "Ernte & Sirup-Pressung", desc: "Die reifen Früchte werden geerntet, ein Teil wird zu Granatapfelsirup verarbeitet.", badge: "Erntebericht" }
+      ],
+      date: [
+        { month: "Jan – Feb", title: "Wedelschnitt & Kronenpflege", desc: "Trockene Wedel und Dornen werden entfernt und die Krone vor der Bestäubung gereinigt; die Schösslinge werden gepflegt.", badge: "Fotobericht zum Schnitt" },
+        { month: "Mär – Mai", title: "Handbestäubung & Fruchtansatz", desc: "Die Blütenstände werden von Hand bestäubt, meist nach etwa zwei Wochen ein zweites Mal; im Mai und Juni werden die Früchte ausgedünnt.", badge: "Bericht zur Bestäubung" },
+        { month: "Jun – Aug", title: "Fruchtstände stützen & einhüllen", desc: "Die Fruchtstände werden heruntergebunden und mit Hüllen vor Staub, Schädlingen und Regen geschützt; in der Khalal-Phase wird gleichmäßig bewässert.", badge: "Fotobericht zu den Fruchtständen" },
+        { month: "Sep – Nov", title: "Ernte von Rutab und Tamr", desc: "Geerntet wird in mehreren Durchgängen, während die Früchte von Rutab zu Tamr reifen; danach wird sortiert und verpackt.", badge: "Erntebericht" }
+      ],
+      walnut: [
+        { month: "Jan – Feb", title: "Winterruhe & Schutzbehandlung", desc: "Die Bäume im Barada-Tal ruhen; die Rinde wird mit organischem Kupfer geschützt.", badge: "Protokoll zur Frostfestigkeit" },
+        { month: "Apr – Mai", title: "Laubaustrieb & Nussbildung", desc: "Das Laubdach schließt sich, die ersten festen grünen Walnüsse erscheinen.", badge: "Bericht zum Kronenwachstum" },
+        { month: "Jul – Aug", title: "Ölbildung & Aushärtung der Schale", desc: "Im Kern bilden sich Öle und Omega-3-Fettsäuren, die holzige Schale härtet aus.", badge: "Prüfung des Nährwerts" },
+        { month: "Sep – Okt", title: "Schütteln der Bäume & Ernte", desc: "Die Äste werden behutsam geschüttelt, die Nüsse von Hand gesammelt, getrocknet und verpackt.", badge: "Erntebericht" }
+      ]
+    };
+
     function renderCalendarCards() {
       const grid = document.getElementById('seasonal-calendar-grid');
       if (!grid) return;
@@ -15696,25 +15867,27 @@ function setMarketplaceViewMode(mode) {
       const crop = state.activeCalendarCrop || 'olive';
       const stages = (state.calendarData && state.calendarData[crop]) ? state.calendarData[crop] : (state.calendarData ? state.calendarData.olive : []);
 
-      grid.innerHTML = stages.map(s => {
+      const deStages = state.currentLang === 'de' ? (CALENDAR_DE[crop] || []) : [];
+      grid.innerHTML = stages.map((s, idx) => {
+        const de = deStages[idx] || {};
         const borderCls = s.q === 'Q4' ? 'border-2 border-amber-500/50 bg-gradient-to-br from-white dark:from-stone-800 to-amber-50/40 dark:to-amber-950/20 shadow-md' : 'bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 shadow-sm';
         return `
           <div class="${borderCls} p-6 rounded-3xl relative transition-all hover:shadow-md">
             <div class="flex items-center justify-between mb-3">
               <span class="text-xs font-black text-olive-800 dark:text-olive-300 bg-olive-100 dark:bg-olive-950/60 px-2.5 py-1 rounded-lg block w-fit">
-                ${isEn ? s.month_en : s.month}
+                ${de.month || (isEn ? s.month_en : s.month)}
               </span>
               <span class="text-[10px] font-mono font-bold text-stone-500 dark:text-stone-400">${s.q}</span>
             </div>
             <h3 class="text-base sm:text-lg font-black text-stone-900 dark:text-white mb-1.5 leading-tight">
-              ${isEn ? s.title_en : s.title}
+              ${de.title || (isEn ? s.title_en : s.title)}
             </h3>
             <p class="text-xs text-stone-600 dark:text-stone-300 leading-relaxed min-h-[55px]">
-              ${isEn ? s.desc_en : s.desc}
+              ${de.desc || (isEn ? s.desc_en : s.desc)}
             </p>
             <div class="mt-4 pt-3 border-t border-stone-100 dark:border-stone-700 text-[11px] font-bold text-olive-800 dark:text-olive-300 flex items-center gap-1.5">
               <i data-lucide="${s.icon || 'check-circle'}" class="w-3.5 h-3.5 text-olive-600 dark:text-olive-400"></i>
-              <span>${isEn ? s.badge_en : s.badge}</span>
+              <span>${de.badge || (isEn ? s.badge_en : s.badge)}</span>
             </div>
           </div>
         `;
@@ -24882,6 +25055,7 @@ function setMarketplaceViewMode(mode) {
       { path: 'images/pistachio_clusters_macro.webp', crop: 'pistachio', name_ar: 'عناقيد فستق حلبي', name_en: 'Pistachio Clusters' },
       { path: 'images/tree_almond_homs.webp', crop: 'almond', name_ar: 'لوز سوري (حمص)', name_en: 'Almond (Homs)' },
       { path: 'images/pomegranate_tree_daraa.webp', crop: 'pomegranate', name_ar: 'رمان فرنسي (درعا)', name_en: 'Pomegranate (Daraa)' },
+      { path: 'images/tree_date_palm.webp', crop: 'date', name_ar: 'نخلة تمر (رسم توضيحي)', name_en: 'Date Palm (illustration)' },
       { path: 'images/walnut_tree_barada.webp', crop: 'walnut', name_ar: 'جوز بلدي (بردى)', name_en: 'Walnut (Barada)' },
       { path: 'images/olive_branches_macro.webp', crop: 'olive', name_ar: 'أغصان زيتون مثمرة', name_en: 'Olive Canopy' },
       { path: 'images/olive_harvest_festival.webp', crop: 'olive', name_ar: 'موسم القطاف السوري', name_en: 'Harvest Season' }
@@ -24892,6 +25066,7 @@ function setMarketplaceViewMode(mode) {
         case 'pistachio': return 'images/tree_pistachio_mork.webp';
         case 'almond': return 'images/tree_almond_homs.webp';
         case 'pomegranate': return 'images/pomegranate_tree_daraa.webp';
+        case 'date': return 'images/tree_date_palm.webp';
         case 'walnut': return 'images/walnut_tree_barada.webp';
         case 'olive':
         default:
@@ -25281,14 +25456,14 @@ function setMarketplaceViewMode(mode) {
         name_en: nameEn,
         crop_category: crop,
         crop_type: crop,
-        tree_type: crop === 'olive' ? 'زيتون خضيري ساحلي' : (crop === 'pistachio' ? 'فستق حلبي عاشوري' : (crop === 'almond' ? 'لوز سوري فركاسي' : (crop === 'pomegranate' ? 'رمان فرنسي حلو' : 'جوز بلدي برداوي'))),
-        tree_type_en: crop === 'olive' ? 'Coastal Khodairi Olive' : (crop === 'pistachio' ? 'Ashouri Red Pistachio' : (crop === 'almond' ? 'Syrian Forkasi Almond' : (crop === 'pomegranate' ? 'Sweet French Pomegranate' : 'Barada Walnut'))),
+        tree_type: crop === 'olive' ? 'زيتون خضيري ساحلي' : (crop === 'pistachio' ? 'فستق حلبي عاشوري' : (crop === 'almond' ? 'لوز سوري فركاسي' : (crop === 'pomegranate' ? 'رمان فرنسي حلو' : (crop === 'date' ? 'نخيل تمر' : 'جوز بلدي برداوي')))),
+        tree_type_en: crop === 'olive' ? 'Coastal Khodairi Olive' : (crop === 'pistachio' ? 'Ashouri Red Pistachio' : (crop === 'almond' ? 'Syrian Forkasi Almond' : (crop === 'pomegranate' ? 'Sweet French Pomegranate' : (crop === 'date' ? 'Date Palm' : 'Barada Walnut')))),
         farm_name: `مزرعة كروم ${region} النموذجية`,
         farm_name_en: `${region} Model Grove Farm`,
         mill_name: 'معصرة الدريكيش الإيطالية الحديثة',
         mill_name_en: 'Dreikish Italian Modern Mill',
-        cultivar: crop === 'olive' ? 'خضيري سوري ساحلي' : (crop === 'pistachio' ? 'عاشوري حبة حمراء' : (crop === 'almond' ? 'فركاسي بلدي' : (crop === 'pomegranate' ? 'فرنسي حلو' : 'بلدي برداوي'))),
-        cultivar_en: crop === 'olive' ? 'Syrian Coastal Khodairi' : (crop === 'pistachio' ? 'Ashouri Red Pistachio' : (crop === 'almond' ? 'Syrian Forkasi Almond' : (crop === 'pomegranate' ? 'Sweet French Pomegranate' : 'Barada Walnut'))),
+        cultivar: crop === 'olive' ? 'خضيري سوري ساحلي' : (crop === 'pistachio' ? 'عاشوري حبة حمراء' : (crop === 'almond' ? 'فركاسي بلدي' : (crop === 'pomegranate' ? 'فرنسي حلو' : (crop === 'date' ? 'تمر' : 'بلدي برداوي')))),
+        cultivar_en: crop === 'olive' ? 'Syrian Coastal Khodairi' : (crop === 'pistachio' ? 'Ashouri Red Pistachio' : (crop === 'almond' ? 'Syrian Forkasi Almond' : (crop === 'pomegranate' ? 'Sweet French Pomegranate' : (crop === 'date' ? 'Date Palm' : 'Barada Walnut')))),
         age_years: age,
         age: age,
         region: region,

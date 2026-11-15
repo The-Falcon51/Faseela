@@ -1226,6 +1226,9 @@
             <button type="button" data-click="switchCalendarCrop('pomegranate')" id="cal-btn-pomegranate" class="cal-crop-btn px-4 py-2.5 rounded-2xl text-xs font-bold transition-all flex items-center gap-1.5 bg-white dark:bg-stone-800 text-stone-700 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-700 border border-stone-200 dark:border-stone-700 cursor-pointer">
               <i data-lucide="cherry" class="w-4 h-4" aria-hidden="true"></i> <span data-i18n="crop_name_pomegranate">رمان حوران العصيري</span>
             </button>
+            <button type="button" data-click="switchCalendarCrop('date')" id="cal-btn-date" class="cal-crop-btn px-4 py-2.5 rounded-2xl text-xs font-bold transition-all flex items-center gap-1.5 bg-white dark:bg-stone-800 text-stone-700 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-700 border border-stone-200 dark:border-stone-700 cursor-pointer">
+              <i data-lucide="tree-palm" class="w-4 h-4" aria-hidden="true"></i> <span data-i18n="crop_name_date">نخيل التمر (تدمر والفرات)</span>
+            </button>
             <button type="button" data-click="switchCalendarCrop('walnut')" id="cal-btn-walnut" class="cal-crop-btn px-4 py-2.5 rounded-2xl text-xs font-bold transition-all flex items-center gap-1.5 bg-white dark:bg-stone-800 text-stone-700 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-700 border border-stone-200 dark:border-stone-700 cursor-pointer">
               <i data-lucide="tree-deciduous" class="w-4 h-4" aria-hidden="true"></i> <span data-i18n="crop_name_walnut">جوز بردى البلدي المعمر</span>
             </button>
@@ -2019,6 +2022,10 @@
           <span data-i18n="crop_tab_pomegranate">رمان حوران العصيري</span>
           <span class="bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300 text-[10px] font-black px-1.5 py-0.5 rounded-full">1</span>
         </button>
+        <button type="button" data-click="setCropCategoryFilter('date')" id="btn-crop-date" class="crop-cat-btn bg-white dark:bg-stone-800 text-stone-700 dark:text-stone-300 hover:bg-amber-50 border border-stone-200 dark:border-stone-700 px-4 py-2.5 rounded-2xl text-xs font-bold flex items-center gap-2 shrink-0 transition-all cursor-pointer">
+          <span class="text-base">🌴</span>
+          <span data-i18n="crop_tab_date">نخيل التمر السوري</span>
+        </button>
       </div>
 
       <!-- Smart Search Bar -->
@@ -2041,6 +2048,7 @@
               <option value="almond" data-i18n="filter_crop_almond">🌸 لوز المخرم الفوقاني</option>
               <option value="walnut" data-i18n="filter_crop_walnut">🪵 جوز وادي بردى الشاهق</option>
               <option value="pomegranate" data-i18n="filter_crop_pomegranate">🍇 رمان حوران العصيري</option>
+              <option value="date" data-i18n="filter_crop_date">🌴 نخيل التمر السوري</option>
             </select>
           </div>
           <div data-feature="land">
@@ -9393,6 +9401,7 @@
               <option value="pistachio" data-i18n="crop_pistachio_badge">🌰 فستق حلبي (Pistachio)</option>
               <option value="almond" data-i18n="crop_almond_badge">🌸 لوز سوري (Almond)</option>
               <option value="pomegranate" data-i18n="crop_pomegranate_badge">🍇 رمان حوراني (Pomegranate)</option>
+              <option value="date" data-i18n="crop_date_badge">🌴 نخيل التمر (Date Palm)</option>
               <option value="walnut" data-i18n="crop_walnut_badge">🪵 جوز بردى (Walnut)</option>
             </select>
           </div>
