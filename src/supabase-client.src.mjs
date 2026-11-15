@@ -430,6 +430,31 @@ async function listPublicTrees() {
 }
 
 /**
+ * Active origin countries and listed farms (public reference data, migration 48). A project that does not have
+ * these tables yet answers with an error; the catalogue then simply has no country filter and no farm names.
+ */
+async function listOrigins() {
+  const [countries, farms] = await Promise.all([
+    supabase.from('countries').select('code,name,name_en,name_de,currency'),
+    supabase.from('farms').select('farm_id,country_code,name,name_en,region,region_en')
+  ]);
+  if (countries.error || farms.error) {
+    console.warn('origins unavailable', (countries.error || farms.error).message);
+    return { countries: [], farms: [] };
+  }
+  return {
+    countries: (countries.data || []).map((row) => mappers.mapCountry(camelize(row))).filter(Boolean),
+    farms: (farms.data || []).map((row) => mappers.mapFarm(camelize(row))).filter(Boolean)
+  };
+}
+
+/** Stores the interface language on the profile of the signed-in user (ar | en | de). */
+async function setMyLocale(locale) {
+  const { data } = await callable('set_my_locale')({ locale });
+  return data;
+}
+
+/**
  * Live list of the caller's own rows: initial load + Realtime change notifications
  * (RLS-filtered on the server). Falls back to polling if the Realtime channel fails.
  */
@@ -796,6 +821,12 @@ const adminSetReadiness = callable('admin_set_readiness');
 const adminSetTreeMill = callable('admin_set_tree_mill');
 const adminGetTreeMill = callable('admin_get_tree_mill');
 const adminSetTreeCrop = callable('admin_set_tree_crop');
+const adminListMasterData = callable('admin_list_master_data');
+const adminSetCountryStatus = callable('admin_set_country_status');
+const adminUpsertFarm = callable('admin_upsert_farm');
+const adminUpsertMill = callable('admin_upsert_mill');
+const adminSetTreeOrigin = callable('admin_set_tree_origin');
+const adminGetTreeOrigin = callable('admin_get_tree_origin');
 const adminGetTreeCrop = callable('admin_get_tree_crop');
 
 const myReferralCode = callableNoArg('my_referral_code');
@@ -897,6 +928,14 @@ const api = Object.freeze({
   adminSetTreeMill,
   adminGetTreeMill,
   adminSetTreeCrop,
+  adminListMasterData,
+  adminSetCountryStatus,
+  adminUpsertFarm,
+  adminUpsertMill,
+  adminSetTreeOrigin,
+  adminGetTreeOrigin,
+  listOrigins,
+  setMyLocale,
   adminGetTreeCrop,
   signIn,
   register,

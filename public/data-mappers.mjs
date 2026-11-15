@@ -66,6 +66,9 @@ export function statusLabel(status, lang = 'ar') {
 }
 
 const CROP_CATEGORIES = ['olive', 'pistachio', 'almond', 'pomegranate', 'date', 'walnut'];
+const COUNTRY_CODE = /^[A-Z]{2}$/;
+const SITE_ID = /^[A-Za-z0-9_-]{1,80}$/;
+const CURRENCY_CODE = /^[A-Z]{3}$/;
 const CATALOG_IMAGE = /^images\/[A-Za-z0-9_-]{1,80}\.(webp|png|jpg|jpeg)$/;
 /** Catalogue text from the server: markup characters and control characters never reach the page. */
 function cleanText(value) {
@@ -84,6 +87,8 @@ export function mapPublicTree(doc) {
     land_price: minorToMajor(d.landPriceMinor),
     has_land_option: d.hasLandOption === true,
     currency: d.currency || 'USD',
+    country_code: COUNTRY_CODE.test(d.countryCode || '') ? d.countryCode : 'SY',
+    farm_id: SITE_ID.test(d.farmId || '') ? d.farmId : null,
     catalog: {
       tree_name: cleanText(d.name), tree_name_en: cleanText(d.nameEn),
       region: cleanText(d.region), region_en: cleanText(d.regionEn),
@@ -93,6 +98,28 @@ export function mapPublicTree(doc) {
       estimated_annual_yield_kg: Number.isFinite(Number(d.estimatedAnnualYieldKg)) && Number(d.estimatedAnnualYieldKg) > 0 ? Number(d.estimatedAnnualYieldKg) : null,
       images: (Array.isArray(d.images) ? d.images : []).filter((path) => typeof path === 'string' && CATALOG_IMAGE.test(path)).slice(0, 6)
     }
+  };
+}
+
+/** countries row -> { code, name, name_en, name_de, currency }; rows with an unusable code are dropped. */
+export function mapCountry(doc) {
+  const d = normalizeDoc(doc || {});
+  if (!COUNTRY_CODE.test(d.code || '')) return null;
+  return {
+    code: d.code,
+    name: cleanText(d.name), name_en: cleanText(d.nameEn), name_de: cleanText(d.nameDe),
+    currency: CURRENCY_CODE.test(d.currency || '') ? d.currency : 'USD'
+  };
+}
+
+/** farms row -> { id, country_code, name, name_en, region, region_en }. */
+export function mapFarm(doc) {
+  const d = normalizeDoc(doc || {});
+  if (!SITE_ID.test(d.farmId || '') || !COUNTRY_CODE.test(d.countryCode || '')) return null;
+  return {
+    id: d.farmId, country_code: d.countryCode,
+    name: cleanText(d.name), name_en: cleanText(d.nameEn),
+    region: cleanText(d.region), region_en: cleanText(d.regionEn)
   };
 }
 

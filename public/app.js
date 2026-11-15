@@ -1836,6 +1836,8 @@
         market_search_ph: "ابحث باسم الشجرة، المزرعة، المحافظة (طرطوس، اللاذقية، إدلب، حلب، حماة، حمص، درعا...)، أو صنف الزيتون...",
         filter_region_lbl: "المحافظة / المنطقة",
         filter_region_all: "جميع المحافظات",
+        filter_country_lbl: "بلد المنشأ",
+        filter_country_all: "كل البلدان",
         filter_region_tartus: "طرطوس (الساحل)",
         filter_region_idlib: "إدلب (جبل الزاوية)",
         filter_region_daraa: "درعا (سهل حوران)",
@@ -4656,6 +4658,8 @@
         market_search_ph: "Search by tree name, farm, region (Tartus, Idlib, Daraa), or olive variety...",
         filter_region_lbl: "Province / Region",
         filter_region_all: "All Provinces",
+        filter_country_lbl: "Country of origin",
+        filter_country_all: "All countries",
         filter_region_tartus: "Tartus (Coastal)",
         filter_region_idlib: "Idlib (Zawiya Mountain)",
         filter_region_daraa: "Daraa (Hauran Plains)",
@@ -7452,6 +7456,17 @@
 
       // 3. Apply translations to all static data-i18n attributes across the DOM
       applyI18n();
+      if (typeof renderCountryFilter === 'function') renderCountryFilter();
+
+      // The signed-in user's language is kept on the profile (once per account and language, not on every page load).
+      if (state.serverMode && state.currentUser && window.FaseelaFirebase?.setMyLocale) {
+        const marker = `${state.currentUser.id}:${lang}`;
+        if (localStorage.getItem('faseela_locale_saved') !== marker) {
+          window.FaseelaFirebase.setMyLocale(lang)
+            .then(() => localStorage.setItem('faseela_locale_saved', marker))
+            .catch((error) => console.warn('Language preference was not saved:', error));
+        }
+      }
 
       // 4. Re-render dynamic components with proper language context
       renderROIRegionOptions();
@@ -10463,6 +10478,54 @@
       return entry;
     }
 
+    // ---- Origin: country and farm come from the database (public.countries / public.farms) ----
+    const BUILT_IN_COUNTRY_NAMES = { SY: { ar: 'سوريا', en: 'Syria', de: 'Syrien' } };
+    function countryName(code) {
+      const lang = state.currentLang === 'ar' ? 'ar' : (state.currentLang === 'de' ? 'de' : 'en');
+      const row = ((state.origins && state.origins.countries) || []).find(c => c.code === code);
+      if (row) return (lang === 'ar' ? row.name : (lang === 'de' ? row.name_de : row.name_en)) || row.name_en || code;
+      return (BUILT_IN_COUNTRY_NAMES[code] && BUILT_IN_COUNTRY_NAMES[code][lang]) || code;
+    }
+    function treeCountry(tree) { return (tree && /^[A-Z]{2}$/.test(tree.country_code || '')) ? tree.country_code : 'SY'; }
+    /** The country filter appears only once trees from more than one country are on offer. */
+    function renderCountryFilter() {
+      const wrapper = document.getElementById('filter-country-wrapper');
+      const select = document.getElementById('filter-country');
+      if (!wrapper || !select) return;
+      const codes = [...new Set((state.trees || []).map(treeCountry))].sort((a, b) => countryName(a).localeCompare(countryName(b), state.currentLang));
+      const current = codes.includes(select.value) ? select.value : 'all';
+      select.replaceChildren();
+      const all = document.createElement('option');
+      all.value = 'all'; all.setAttribute('data-i18n', 'filter_country_all'); all.textContent = t('filter_country_all');
+      select.appendChild(all);
+      codes.forEach(code => {
+        const option = document.createElement('option');
+        option.value = code; option.textContent = countryName(code);
+        select.appendChild(option);
+      });
+      select.value = current;
+      wrapper.classList.toggle('hidden', codes.length < 2);
+    }
+    async function loadOrigins() {
+      if (window.FaseelaFirebase?.listOrigins) {
+        try {
+          state.origins = await window.FaseelaFirebase.listOrigins();
+        } catch (error) {
+          state.origins = { countries: [], farms: [] };
+          console.warn('Could not load countries and farms:', error);
+        }
+        // A listed farm record replaces the farm name of the built-in template the tree entry was copied from.
+        const farms = new Map(((state.origins && state.origins.farms) || []).map(farm => [farm.id, farm]));
+        (state.trees || []).forEach(tree => {
+          const farm = tree.farm_id ? farms.get(tree.farm_id) : null;
+          if (!farm) return;
+          if (farm.name) tree.farm_name = farm.name;
+          if (farm.name_en || farm.name) tree.farm_name_en = farm.name_en || farm.name;
+        });
+      }
+      renderCountryFilter();
+    }
+
     async function loadServerCatalog() {
       if (!window.FaseelaFirebase?.listPublicTrees) return;
       try {
@@ -10488,7 +10551,10 @@
           local.server_land_price = pt.land_price;
           local.server_has_land_option = landOfferEnabled() && !!pt.has_land_option;
           local.total_shares_available = pt.total_shares > 0 ? Math.round((pt.shares_available / pt.total_shares) * 100) : 0;
+          local.country_code = pt.country_code || 'SY';
+          local.farm_id = pt.farm_id || null;
         });
+        await loadOrigins();
         if (typeof renderMarketplace === 'function' && getCurrentVisiblePage() === 'marketplace') renderMarketplace();
         // Deep link from the public tree page (/tree.html -> ./?tree=<id>#marketplace): open that tree once.
         const wantedTree = new URLSearchParams(location.search).get('tree');
@@ -13785,6 +13851,7 @@ function setMarketplaceViewMode(mode) {
   function resetMarketplaceFilterInputs() {
     if (document.getElementById('marketplace-search-input')) document.getElementById('marketplace-search-input').value = '';
     if (document.getElementById('filter-region')) document.getElementById('filter-region').value = 'all';
+    if (document.getElementById('filter-country')) document.getElementById('filter-country').value = 'all';
     if (document.getElementById('filter-variety')) document.getElementById('filter-variety').value = 'all';
     if (document.getElementById('filter-age')) document.getElementById('filter-age').value = 'all';
     if (document.getElementById('filter-price')) document.getElementById('filter-price').value = 'all';
@@ -13906,6 +13973,7 @@ function setMarketplaceViewMode(mode) {
     const searchInput = document.getElementById('marketplace-search-input');
     const searchVal = searchInput ? searchInput.value.trim().toLowerCase() : '';
     const filterRegion = document.getElementById('filter-region')?.value || 'all';
+    const filterCountry = document.getElementById('filter-country')?.value || 'all';
     const filterVariety = document.getElementById('filter-variety')?.value || 'all';
     const filterAge = document.getElementById('filter-age')?.value || 'all';
     const filterPrice = document.getElementById('filter-price')?.value || 'all';
@@ -13927,6 +13995,9 @@ function setMarketplaceViewMode(mode) {
 
     if (searchVal) {
       activeTags.push({ label: `${state.currentLang !== 'ar' ? 'Search:' : 'بحث:'} "${searchVal}"`, clear: () => { searchInput.value = ''; renderMarketplace(); } });
+    }
+    if (filterCountry !== 'all') {
+      activeTags.push({ label: `${t('filter_country_lbl')}: ${countryName(filterCountry)}`, clear: () => { document.getElementById('filter-country').value = 'all'; renderMarketplace(); } });
     }
     if (filterRegion !== 'all') {
       activeTags.push({ label: `${state.currentLang !== 'ar' ? 'Region:' : 'المنطقة:'} ${filterRegion}`, clear: () => { document.getElementById('filter-region').value = 'all'; renderMarketplace(); } });
@@ -14003,6 +14074,7 @@ function setMarketplaceViewMode(mode) {
       }
 
       // Region Filter
+      if (filterCountry !== 'all' && treeCountry(t) !== filterCountry) return false;
       if (filterRegion !== 'all' && t.region !== filterRegion) return false;
 
       // Variety Filter

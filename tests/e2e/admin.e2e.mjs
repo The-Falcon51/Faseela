@@ -87,6 +87,19 @@ window.FaseelaBackend = window.FaseelaFirebase = {
   adminGetTreeMill: async () => ({ data: { treeId: 'tree_01', millId: '' } }),
   adminSetTreeMill: async (p) => { calls.push(['adminSetTreeMill', p]); return { data: p }; },
   adminGetTreeCrop: async () => ({ data: { treeId: 'tree_01', cropCategory: 'olive' } }),
+  adminGetTreeOrigin: async () => ({ data: { treeId: 'tree_01', countryCode: 'SY', farmId: 'farm_01' } }),
+  adminSetTreeOrigin: async (p) => { calls.push(['adminSetTreeOrigin', p]); return { data: p }; },
+  adminListMasterData: async () => ({ data: {
+    currencies: [{ code: 'USD', minorUnits: 2 }, { code: 'EUR', minorUnits: 2 }],
+    countries: [{ code: 'ES', name: 'إسبانيا', nameEn: 'Spain', nameDe: 'Spanien', currency: 'EUR', status: window.__esActive ? 'active' : 'planned', trees: 0 },
+      { code: 'SY', name: 'سوريا', nameEn: 'Syria', nameDe: 'Syrien', currency: 'USD', status: 'active', trees: 3 }],
+    farms: [{ farmId: 'farm_01', countryCode: 'SY', name: 'مزرعة', nameEn: ${JSON.stringify(XSS)} + ' Farm', region: '', regionEn: 'Tartus', status: 'listed', trees: 1 },
+      { farmId: 'farm_es', countryCode: 'ES', name: 'مزرعة', nameEn: 'Finca Prueba', region: '', regionEn: 'Jaen', status: 'unlisted', trees: 0 }],
+    mills: [{ millId: 'mill_01', countryCode: 'SY', name: 'معصرة', nameEn: 'Dreikish Mill', region: '', regionEn: '', status: 'listed', trees: 1 }]
+  } }),
+  adminSetCountryStatus: async (p) => { calls.push(['adminSetCountryStatus', p]); window.__esActive = p.status === 'active'; return { data: p }; },
+  adminUpsertFarm: async (p) => { calls.push(['adminUpsertFarm', p]); if (p.farmId === 'farm_01') throw fail('failed-precondition'); return { data: p }; },
+  adminUpsertMill: async (p) => { calls.push(['adminUpsertMill', p]); return { data: p }; },
   adminSetTreeCrop: async (p) => { calls.push(['adminSetTreeCrop', p]); return { data: p }; },
   adminListAuditLogs: async () => [{ id: 1, actorUid: 'a6380508-cca1', action: 'role.granted', target: 'user_roles/x', details: { note: ${JSON.stringify(XSS)} }, createdAt: Date.now() }]
 };
@@ -146,7 +159,7 @@ try {
   {
     const { ctx, page } = await open('?mockRole=finance_admin');
     await page.waitForSelector('#screen-panel:not([hidden])');
-    assert.deepEqual(await page.$$eval('#tablist .tab', (n) => n.map((b) => b.textContent)), ['Aufgaben', 'Zahlungen', 'Weitere Prüfungen', 'Investitionen', 'Bäume', 'Besitzregister', 'Finanz-Export']);
+    assert.deepEqual(await page.$$eval('#tablist .tab', (n) => n.map((b) => b.textContent)), ['Aufgaben', 'Zahlungen', 'Weitere Prüfungen', 'Patenschaften', 'Bäume', 'Besitzregister', 'Finanz-Export']);
     await page.waitForFunction(() => document.querySelectorAll('.task-list li').length === 2);
     assert.equal(await page.$$eval('#view input[type=search]', (n) => n.length), 0, 'the account search is for admins only');
     await ctx.close();
@@ -157,7 +170,7 @@ try {
     await page.waitForSelector('#screen-panel:not([hidden])');
     await tab(page, 'Übersicht');
     await page.waitForFunction(() => document.querySelectorAll('.kpi').length === 8);
-    assert.deepEqual(await page.$$eval('#tablist .tab', (n) => n.map((b) => b.textContent)), ['Aufgaben', 'Übersicht', 'Zahlungen', 'Weitere Prüfungen', 'Rollenanträge', 'Investitionen', 'Bäume', 'Besitzregister', 'Nutzer', 'Empfangskonten', 'Finanz-Export', 'E-Mails', 'Automationen', 'Fehler', 'Audit-Log', 'Einstellungen', 'Go-Live', 'System']);
+    assert.deepEqual(await page.$$eval('#tablist .tab', (n) => n.map((b) => b.textContent)), ['Aufgaben', 'Übersicht', 'Zahlungen', 'Weitere Prüfungen', 'Rollenanträge', 'Patenschaften', 'Bäume', 'Stammdaten', 'Besitzregister', 'Nutzer', 'Empfangskonten', 'Finanz-Export', 'E-Mails', 'Automationen', 'Fehler', 'Audit-Log', 'Einstellungen', 'Go-Live', 'System']);
     const overview = await page.evaluate(() => ({ text: document.getElementById('view').textContent, charts: document.querySelectorAll('.chart-svg').length, bars: document.querySelectorAll('.chart-bar').length, hints: [...document.querySelectorAll('.hints li')].map((li) => li.textContent.slice(0, 40)), peak: [...document.querySelectorAll('.chart-value')].map((n) => n.textContent) }));
     assert.equal(overview.charts, 3); assert.equal(overview.bars, 36, 'twelve months per chart');
     assert.match(overview.peak[0], /12\.345,00/, 'peak month is labelled directly');
@@ -170,7 +183,7 @@ try {
     await page.waitForFunction(() => document.querySelector('.tab[aria-selected=true]').textContent === 'Empfangskonten');
     for (const theme of ['light', 'dark']) {
       if (theme === 'dark') await page.click('#theme-toggle');
-      for (const label of ['Aufgaben', 'Übersicht', 'Zahlungen', 'Weitere Prüfungen', 'Rollenanträge', 'Investitionen', 'Bäume', 'Besitzregister', 'Nutzer', 'Empfangskonten', 'Finanz-Export', 'E-Mails', 'Automationen', 'Fehler', 'Audit-Log', 'Einstellungen', 'Go-Live', 'System']) { await tab(page, label); await page.waitForTimeout(150); await axe(page, `${theme}/${label}`); }
+      for (const label of ['Aufgaben', 'Übersicht', 'Zahlungen', 'Weitere Prüfungen', 'Rollenanträge', 'Patenschaften', 'Bäume', 'Stammdaten', 'Besitzregister', 'Nutzer', 'Empfangskonten', 'Finanz-Export', 'E-Mails', 'Automationen', 'Fehler', 'Audit-Log', 'Einstellungen', 'Go-Live', 'System']) { await tab(page, label); await page.waitForTimeout(150); await axe(page, `${theme}/${label}`); }
     }
     assert.equal(await page.evaluate(() => document.documentElement.dataset.theme), 'dark');
     // payments: text-only rendering, screening gate, proof link, approve after screening
@@ -220,7 +233,7 @@ try {
     assert.equal((await calls(page, 'reviewFarmerUpdate'))[0].decision, 'publish');
     await page.waitForFunction(() => document.getElementById('view').getAttribute('aria-busy') === 'false');
     // investments: filter + paging are sent to the server, overdue badge, proof button only when a proof exists
-    await tab(page, 'Investitionen');
+    await tab(page, 'Patenschaften');
     assert.equal(await page.$$eval('#view tbody tr', (n) => n.length), 25);
     assert.match(await page.textContent('#view'), /1–25 von 30/);
     assert.equal(await page.$$eval('#view tbody button', (n) => n.length), 2);
@@ -249,6 +262,9 @@ try {
     const dlg = (label) => page.locator('#dialog-body').getByLabel(label, { exact: true });
     assert.equal(await dlg('Kultur (nach dem ersten Verkauf nicht änderbar)').isDisabled(), true, 'crop is fixed once shares are sold');
     assert.equal(await dlg('Kultur (nach dem ersten Verkauf nicht änderbar)').inputValue(), 'olive');
+    assert.equal(await dlg('Herkunftsland (nach dem ersten Verkauf nicht änderbar)').isDisabled(), true, 'country is fixed once shares are sold');
+    assert.deepEqual(await dlg('Hof').locator('option').evaluateAll((o) => o.map((x) => x.value)), ['', 'farm_01'], 'only farms of the tree country are offered');
+    assert.equal(await dlg('Hof').inputValue(), 'farm_01');
     await dlg('Region (Arabisch)').fill('حمص'); await dlg('Region (Englisch)').fill('Homs');
     await dlg('Anzahl Anteile').fill('3'); await page.click('#dialog-ok');
     await page.waitForFunction(() => /in diesem Zustand nicht möglich/.test(document.getElementById('dialog-error').textContent));
@@ -278,9 +294,42 @@ try {
     assert.match(await page.textContent('#dialog-error'), /Preis der Parzelle fehlt/);
     assert.deepEqual(await dlg('Kultur').locator('option').evaluateAll((o) => o.map((x) => x.value)), ['olive', 'pistachio', 'almond', 'pomegranate', 'date', 'walnut']);
     await dlg('Kultur').selectOption('date');
+    await dlg('Herkunftsland').selectOption('ES');
+    assert.deepEqual(await dlg('Hof').locator('option').evaluateAll((o) => o.map((x) => x.value)), ['', 'farm_es'], 'farm list follows the chosen country');
+    await dlg('Hof').selectOption('farm_es');
     await dlg('Preis der Parzelle (USD)').fill('15'); await dlg('Fläche der Parzelle (m²)').fill('25'); await page.click('#dialog-ok');
     await page.waitForFunction(() => !document.getElementById('dialog').open);
     assert.deepEqual(await calls(page, 'adminSetTreeCrop'), [{ treeId: 'tree_04', cropCategory: 'date' }], 'a new date tree gets its crop in a second step; refused or locked saves never set one');
+    assert.deepEqual(await calls(page, 'adminSetTreeOrigin'), [{ treeId: 'tree_04', countryCode: 'ES', farmId: 'farm_es' }], 'origin is set once, for the new tree only');
+    await page.waitForFunction(() => document.getElementById('view').getAttribute('aria-busy') === 'false');
+    // master data: text-only rendering, country activation, farm validation and server refusal
+    await tab(page, 'Stammdaten');
+    await page.waitForFunction(() => /Finca Prueba/.test(document.getElementById('view').textContent));
+    assert.equal(await page.evaluate(() => window.__xss === undefined && !document.querySelector('#view img, #view script')), true, 'farm names render as text');
+    await axe(page, 'dark/master');
+    await page.getByRole('button', { name: 'Spanien aktivieren' }).click();
+    await page.click('#dialog-ok');
+    await page.waitForFunction(() => !document.getElementById('dialog').open);
+    assert.deepEqual(await calls(page, 'adminSetCountryStatus'), [{ code: 'ES', status: 'active' }]);
+    await page.waitForFunction(() => !!document.querySelector('button[aria-label="Spanien zurückstellen"]'));
+    await page.getByRole('button', { name: 'Neuer Hof' }).click();
+    await page.click('#dialog-ok');
+    assert.match(await page.textContent('#dialog-error'), /Kennung: 3 bis 40/);
+    assert.equal((await calls(page, 'adminUpsertFarm')).length, 0, 'nothing is sent while the farm form is incomplete');
+    await page.locator('#dialog-body').getByLabel(/^Kennung/).fill('farm_01');
+    await dlg('Land').selectOption('ES'); await dlg('Name (Arabisch)').fill('مزرعة جديدة'); await dlg('Name (Englisch)').fill('<b>x</b>');
+    await page.click('#dialog-ok');
+    assert.match(await page.textContent('#dialog-error'), /Name \(Englisch\) fehlt oder enthält unzulässige Zeichen/);
+    await dlg('Name (Englisch)').fill('New Farm'); await page.click('#dialog-ok');
+    await page.waitForFunction(() => /in diesem Zustand nicht möglich/.test(document.getElementById('dialog-error').textContent));
+    await page.locator('#dialog-body').getByLabel(/^Kennung/).fill('farm_new'); await page.locator('#dialog-body').getByLabel('Für Besucher sichtbar').check(); await page.click('#dialog-ok');
+    await page.waitForFunction(() => !document.getElementById('dialog').open);
+    assert.deepEqual((await calls(page, 'adminUpsertFarm')).slice(-1)[0], { farmId: 'farm_new', countryCode: 'ES', name: 'مزرعة جديدة', nameEn: 'New Farm', region: '', regionEn: '', status: 'listed' });
+    await page.waitForFunction(() => document.getElementById('view').getAttribute('aria-busy') === 'false');
+    await page.getByRole('button', { name: 'Neue Mühle' }).click();
+    await page.locator('#dialog-body').getByLabel(/^Kennung/).fill('mill_new'); await dlg('Name (Arabisch)').fill('معصرة'); await dlg('Name (Englisch)').fill('New Mill'); await page.click('#dialog-ok');
+    await page.waitForFunction(() => !document.getElementById('dialog').open);
+    assert.deepEqual(await calls(page, 'adminUpsertMill'), [{ millId: 'mill_new', countryCode: 'SY', name: 'معصرة', nameEn: 'New Mill', region: '', regionEn: '', status: 'unlisted' }]);
     assert.deepEqual((await calls(page, 'adminCreateTree')).slice(-1)[0], { name: 'شجرة', nameEn: 'New tree', region: 'إدلب', regionEn: 'Idlib', treeType: 'صوراني', treeTypeEn: 'Sorani', totalShares: 10, pricePerShareMinor: 3500, images: ['images/olive_branches_macro.webp'], landPriceMinor: 1500, landAreaSqm: 25, treeId: 'tree_04', hasLandOption: true });
     await page.waitForFunction(() => document.getElementById('view').getAttribute('aria-busy') === 'false');
     // ownership register: paging, tree filter, text-only

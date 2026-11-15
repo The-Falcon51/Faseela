@@ -32,8 +32,9 @@ const TABS = [
   { id: 'payments', label: 'Zahlungen', roles: ['admin', 'finance_admin'] },
   { id: 'reviews', label: 'Weitere Prüfungen', roles: ['admin', 'finance_admin'] },
   { id: 'roles', label: 'Rollenanträge', roles: ['admin'] },
-  { id: 'investments', label: 'Investitionen', roles: ['admin', 'finance_admin'] },
+  { id: 'investments', label: 'Patenschaften', roles: ['admin', 'finance_admin'] },
   { id: 'trees', label: 'Bäume', roles: ['admin', 'finance_admin'] },
+  { id: 'master', label: 'Stammdaten', roles: ['admin'] },
   { id: 'register', label: 'Besitzregister', roles: ['admin', 'finance_admin'] },
   { id: 'users', label: 'Nutzer', roles: ['admin'] },
   { id: 'accounts', label: 'Empfangskonten', roles: ['admin'] },
@@ -920,7 +921,7 @@ async function viewInvestments(view) {
     el('span', { class: 'muted', text: total ? `${investmentFilter.offset + 1}–${Math.min(investmentFilter.offset + rows.length, total)} von ${total}` : '0 Einträge' }),
     el('button', { type: 'button', class: 'btn btn-sm btn-ghost', text: 'Weiter', disabled: investmentFilter.offset + rows.length >= total, on: { click: () => { investmentFilter.offset += PAGE; show('investments'); } } })
   ]);
-  view.append(el('h2', { text: 'Investitionen' }), el('div', { class: 'row row-between' }, [el('div', { class: 'field' }, [select]), pager]));
+  view.append(el('h2', { text: 'Patenschaften' }), el('div', { class: 'row row-between' }, [el('div', { class: 'field' }, [select]), pager]));
   if (!rows.length) { view.append(stateBlock('empty', investmentFilter.status ? 'Keine Anfragen mit diesem Status.' : 'Noch keine Investitionsanfragen.')); return; }
   view.append(el('div', { class: 'table-wrap' }, [el('table', {}, [
     el('thead', {}, [el('tr', {}, ['Datum', 'Zahler', 'Baum', 'Anteile', 'Betrag', 'Status', 'Beleg'].map((text) => el('th', { scope: 'col', text })))]),
@@ -933,6 +934,99 @@ async function viewInvestments(view) {
       el('td', {}, [row.hasProof ? el('button', { type: 'button', class: 'btn btn-sm btn-ghost', text: 'Ansehen', on: { click: () => openProof({ id: row.id }) } }) : el('span', { class: 'muted', text: '–' })])
     ])))
   ])]));
+}
+
+/** Countries, farms and mills: the records trees point to. Planned countries stay invisible to visitors. */
+async function viewMaster(view) {
+  const { data } = await api().adminListMasterData();
+  const master = data || {};
+  const countries = Array.isArray(master.countries) ? master.countries : [];
+  const countryLabel = (code) => { const c = countries.find((x) => x.code === code); return c ? `${c.nameDe || c.nameEn} (${code})` : code; };
+  view.append(el('h2', { text: 'Stammdaten' }),
+    el('p', { class: 'muted', text: 'Länder, Höfe und Mühlen, auf die Bäume verweisen. Ein geplantes Land ist für Besucher unsichtbar, bis es aktiviert wird. Höfe und Mühlen starten ausgeblendet.' }));
+
+  view.append(el('h3', { text: 'Herkunftsländer' }));
+  view.append(el('div', { class: 'table-wrap' }, [el('table', {}, [
+    el('thead', {}, [el('tr', {}, ['Land', 'Angebotswährung', 'Bäume', 'Status'].map((text) => el('th', { scope: 'col', text })))]),
+    el('tbody', {}, countries.map((c) => {
+      const active = c.status === 'active';
+      const toggle = el('button', { type: 'button', class: `btn btn-sm ${active ? 'btn-ghost' : 'btn-primary'}`, text: active ? 'Zurückstellen' : 'Aktivieren', 'aria-label': `${c.nameDe || c.code} ${active ? 'zurückstellen' : 'aktivieren'}`, on: { click: () => openDialog({
+        title: active ? 'Land zurückstellen' : 'Land aktivieren',
+        text: `${c.nameDe || c.nameEn} (${c.code}): ${active ? 'Das Land verschwindet aus dem Länderfilter. Das geht nur, solange dort kein Baum im Katalog steht.' : 'Das Land erscheint für Besucher, sobald dort ein Baum im Katalog steht.'}`,
+        confirmLabel: active ? 'Zurückstellen' : 'Aktivieren',
+        onConfirm: () => api().adminSetCountryStatus({ code: c.code, status: active ? 'planned' : 'active' })
+      }).then((ok) => { if (ok) { toast('Status des Landes geändert.'); show('master'); } }) } });
+      return el('tr', {}, [
+        el('td', {}, [el('div', { text: c.nameDe || c.nameEn || c.code }), el('div', { class: 'mono item-meta', text: c.code })]),
+        el('td', { class: 'mono', text: c.currency || '–' }), el('td', { text: fmtInt(c.trees) }),
+        el('td', {}, [el('div', { class: 'row' }, [el('span', { class: `badge ${active ? 'badge-ok' : 'badge-warn'}`, text: active ? 'aktiv' : 'geplant' }), toggle])])
+      ]);
+    }))
+  ])]));
+
+  const siteTable = (kind, title, addLabel, items) => {
+    const idKey = kind === 'farm' ? 'farmId' : 'millId';
+    view.append(el('div', { class: 'row row-between' }, [el('h3', { text: title }),
+      el('button', { type: 'button', class: 'btn btn-primary', text: addLabel, on: { click: () => editSite(kind, null, countries) } })]));
+    if (!items.length) { view.append(stateBlock('empty', kind === 'farm' ? 'Noch keine Höfe angelegt.' : 'Noch keine Mühlen angelegt.')); return; }
+    view.append(el('div', { class: 'table-wrap' }, [el('table', {}, [
+      el('thead', {}, [el('tr', {}, ['Name', 'Land', 'Region', 'Bäume', 'Sichtbarkeit'].map((text) => el('th', { scope: 'col', text })))]),
+      el('tbody', {}, items.map((site) => el('tr', {}, [
+        el('td', {}, [el('div', { text: site.nameEn || site.name || '(ohne Namen)' }), el('div', { class: 'mono item-meta', text: site[idKey] })]),
+        el('td', { text: countryLabel(site.countryCode) }), el('td', { text: site.regionEn || site.region || '–' }), el('td', { text: fmtInt(site.trees) }),
+        el('td', {}, [el('div', { class: 'row' }, [el('span', { class: `badge ${site.status === 'listed' ? 'badge-ok' : 'badge-warn'}`, text: site.status === 'listed' ? 'sichtbar' : 'ausgeblendet' }),
+          el('button', { type: 'button', class: 'btn btn-sm btn-ghost', text: 'Bearbeiten', 'aria-label': `${site.nameEn || site[idKey]} bearbeiten`, on: { click: () => editSite(kind, site, countries) } })])])
+      ])))
+    ])]));
+  };
+  siteTable('farm', 'Höfe', 'Neuer Hof', Array.isArray(master.farms) ? master.farms : []);
+  siteTable('mill', 'Mühlen', 'Neue Mühle', Array.isArray(master.mills) ? master.mills : []);
+}
+
+async function editSite(kind, site, countries) {
+  const isFarm = kind === 'farm';
+  const noun = isFarm ? 'Hof' : 'Mühle';
+  const idKey = isFarm ? 'farmId' : 'millId';
+  const text = (value, extra = {}) => el('input', { type: 'text', maxlength: 120, value: value || '', autocomplete: 'off', ...extra });
+  const f = {
+    id: text('', { maxlength: 40, placeholder: isFarm ? 'farm_04' : 'mill_03' }),
+    country: el('select', {}, countries.map((c) => el('option', { value: c.code, text: `${c.nameDe || c.nameEn || c.code} (${c.code})${c.status === 'planned' ? ' – geplant' : ''}`, selected: c.code === ((site && site.countryCode) || 'SY') }))),
+    name: text(site && site.name, { dir: 'rtl', lang: 'ar' }), nameEn: text(site && site.nameEn),
+    region: text(site && site.region, { dir: 'rtl', lang: 'ar' }), regionEn: text(site && site.regionEn),
+    listed: el('input', { type: 'checkbox', checked: site && site.status === 'listed' ? 'checked' : null })
+  };
+  const readText = (control, label, required) => {
+    const value = control.value.trim();
+    if (!value && !required) return '';
+    if (value.length < 2 || /[<>]/.test(value)) throw userError(`${label} fehlt oder enthält unzulässige Zeichen.`);
+    return value;
+  };
+  const ok = await openDialog({
+    title: site ? `${noun} bearbeiten: ${site[idKey]}` : (isFarm ? 'Neuer Hof' : 'Neue Mühle'), confirmLabel: site ? 'Änderungen speichern' : `${noun} anlegen`,
+    build: (body) => {
+      body.append(
+        site ? null : field('Kennung (klein, a–z, 0–9, _ ; später nicht änderbar)', f.id),
+        el('div', { class: 'form-grid' }, [
+          field('Land', f.country), el('span'),
+          field('Name (Arabisch)', f.name), field('Name (Englisch)', f.nameEn),
+          field('Region (Arabisch, optional)', f.region), field('Region (Englisch, optional)', f.regionEn)
+        ]),
+        el('label', { class: 'row' }, [f.listed, el('span', { text: 'Für Besucher sichtbar' })])
+      );
+    },
+    onConfirm: async () => {
+      const id = site ? site[idKey] : f.id.value.trim();
+      if (!site && !/^[a-z0-9_]{3,40}$/.test(id)) throw userError('Kennung: 3 bis 40 Zeichen, nur Kleinbuchstaben, Ziffern und _.');
+      const payload = {
+        [idKey]: id, countryCode: f.country.value,
+        name: readText(f.name, 'Name (Arabisch)', true), nameEn: readText(f.nameEn, 'Name (Englisch)', true),
+        region: readText(f.region, 'Region (Arabisch)', false), regionEn: readText(f.regionEn, 'Region (Englisch)', false),
+        status: f.listed.checked ? 'listed' : 'unlisted'
+      };
+      await (isFarm ? api().adminUpsertFarm(payload) : api().adminUpsertMill(payload));
+    }
+  });
+  if (ok) { toast(`${noun} gespeichert.`); show('master'); }
 }
 
 async function viewTrees(view) {
@@ -976,25 +1070,43 @@ const TREE_CROPS = [['olive', 'Olive'], ['pistachio', 'Pistazie'], ['almond', 'M
 /** Create (treeId = null) or edit a tree. The server validates again; this form only catches obvious slips early. */
 async function editTree(treeId) {
   let tree = null;
-  if (treeId) {
-    try {
+  let master = { countries: [], farms: [], mills: [] };
+  try {
+    master = (await api().adminListMasterData()).data || master;
+    if (treeId) {
       ({ data: tree } = await api().adminGetTree({ treeId }));
       const mill = await api().adminGetTreeMill({ treeId });
       tree.millId = (mill.data && mill.data.millId) || '';
       const crop = await api().adminGetTreeCrop({ treeId });
       tree.cropCategory = (crop.data && crop.data.cropCategory) || 'olive';
-    } catch (error) {
-      logError('tree load', error);
-      toast(errorText(error), true);
-      return;
+      const origin = await api().adminGetTreeOrigin({ treeId });
+      tree.countryCode = (origin.data && origin.data.countryCode) || 'SY';
+      tree.farmId = (origin.data && origin.data.farmId) || '';
     }
+  } catch (error) {
+    logError('tree load', error);
+    toast(errorText(error), true);
+    return;
   }
+  const countries = Array.isArray(master.countries) ? master.countries : [];
+  const farms = Array.isArray(master.farms) ? master.farms : [];
   const text = (value, extra = {}) => el('input', { type: 'text', maxlength: 120, value: value || '', autocomplete: 'off', ...extra });
   const number = (value, extra = {}) => el('input', { type: 'text', inputmode: 'decimal', value: value === null || value === undefined ? '' : String(value), autocomplete: 'off', ...extra });
   const hasLand = el('input', { type: 'checkbox', checked: tree && tree.hasLandOption ? 'checked' : null, disabled: Boolean(tree) });
   // The crop is fixed once anything is sold or reserved (the server refuses the change as well).
   const cropLocked = Boolean(tree) && (Number(tree.soldShares) + Number(tree.reservedShares)) > 0;
   const currentCrop = (tree && tree.cropCategory) || 'olive';
+  const currentCountry = (tree && tree.countryCode) || 'SY';
+  const currentFarm = (tree && tree.farmId) || '';
+  const countrySelect = el('select', { disabled: cropLocked }, countries.map((c) => el('option', { value: c.code, text: `${c.nameDe || c.nameEn || c.code} (${c.code})${c.status === 'planned' ? ' – geplant' : ''}`, selected: c.code === currentCountry })));
+  const farmSelect = el('select', {});
+  // Only farms of the chosen country can be picked; the server enforces the same rule.
+  const fillFarms = (keep) => {
+    farmSelect.replaceChildren(el('option', { value: '', text: '— kein Hof —' }),
+      ...farms.filter((f) => f.countryCode === countrySelect.value).map((f) => el('option', { value: f.farmId, text: `${f.nameEn || f.name || f.farmId} (${f.farmId})`, selected: f.farmId === keep })));
+  };
+  fillFarms(currentFarm);
+  countrySelect.addEventListener('change', () => fillFarms(''));
   const f = {
     treeId: text('', { maxlength: 40, placeholder: 'tree_04' }),
     name: text(tree && tree.name, { dir: 'rtl', lang: 'ar' }), nameEn: text(tree && tree.nameEn),
@@ -1059,6 +1171,7 @@ async function editTree(treeId) {
           field('Name (Arabisch)', f.name), field('Name (Englisch)', f.nameEn),
           field('Region (Arabisch)', f.region), field('Region (Englisch)', f.regionEn),
           field(cropLocked ? 'Kultur (nach dem ersten Verkauf nicht änderbar)' : 'Kultur', f.crop), el('span'),
+          field(cropLocked ? 'Herkunftsland (nach dem ersten Verkauf nicht änderbar)' : 'Herkunftsland', countrySelect), field('Hof', farmSelect),
           field('Sorte (Arabisch)', f.treeType), field('Sorte (Englisch)', f.treeTypeEn),
           field('Anzahl Anteile', f.totalShares), field('Preis je Anteil (USD)', f.price),
           field('Pflanzjahr (optional)', f.plantedYear), field('Ertrag pro Jahr in kg (optional)', f.yieldKg)
@@ -1078,6 +1191,8 @@ async function editTree(treeId) {
         await api().adminCreateTree({ ...payload, treeId: id, hasLandOption: hasLand.checked });
         // New trees are stored as olive; any other crop is set in a second, separately audited step.
         if (crop !== 'olive') await api().adminSetTreeCrop({ treeId: id, cropCategory: crop });
+        // Likewise the origin: a new tree is stored for Syria without a farm.
+        if (countrySelect.value && (countrySelect.value !== 'SY' || farmSelect.value)) await api().adminSetTreeOrigin({ treeId: id, countryCode: countrySelect.value, farmId: farmSelect.value || null });
         return;
       }
       // Send only what changed, so the audit log names the real change.
@@ -1090,8 +1205,10 @@ async function editTree(treeId) {
       const millChanged = millId !== (tree.millId || '');
       const crop = cropValue();
       const cropChanged = !cropLocked && crop !== currentCrop;
-      if (!Object.keys(changed).length && !millChanged && !cropChanged) throw userError('Es wurde nichts geändert.');
+      const originChanged = Boolean(countrySelect.value) && (countrySelect.value !== currentCountry || farmSelect.value !== currentFarm);
+      if (!Object.keys(changed).length && !millChanged && !cropChanged && !originChanged) throw userError('Es wurde nichts geändert.');
       if (cropChanged) await api().adminSetTreeCrop({ treeId: tree.treeId, cropCategory: crop });
+      if (originChanged) await api().adminSetTreeOrigin({ treeId: tree.treeId, countryCode: countrySelect.value, farmId: farmSelect.value || null });
       if (Object.keys(changed).length) await api().adminUpdateTree({ ...changed, treeId: tree.treeId });
       if (millChanged) await api().adminSetTreeMill({ treeId: tree.treeId, millId: millId || null });
     }
@@ -1200,7 +1317,7 @@ async function viewSettings(view) {
     ])]));
 }
 
-const VIEWS = { tasks: viewTasks, automation: viewAutomation, readiness: viewReadiness, overview: viewOverview, payments: viewPayments, reviews: viewReviews, roles: viewRoles, investments: viewInvestments, trees: viewTrees, register: viewRegister, users: viewUsers, accounts: viewAccounts, export: viewExport, mail: viewMail, errors: viewErrors, audit: viewAudit, settings: viewSettings, system: viewSystem };
+const VIEWS = { master: viewMaster, tasks: viewTasks, automation: viewAutomation, readiness: viewReadiness, overview: viewOverview, payments: viewPayments, reviews: viewReviews, roles: viewRoles, investments: viewInvestments, trees: viewTrees, register: viewRegister, users: viewUsers, accounts: viewAccounts, export: viewExport, mail: viewMail, errors: viewErrors, audit: viewAudit, settings: viewSettings, system: viewSystem };
 
 // ---------------------------------------------------------------- shell
 async function show(tabId) {

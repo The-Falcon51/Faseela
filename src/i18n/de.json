@@ -766,6 +766,8 @@
  "market_search_ph": "Suche nach Baumname, Hof, Region (Tartus, Idlib, Daraa) oder Olivensorte...",
  "filter_region_lbl": "Provinz / Region",
  "filter_region_all": "Alle Provinzen",
+ "filter_country_lbl": "Herkunftsland",
+ "filter_country_all": "Alle Länder",
  "filter_region_tartus": "Tartus (Küste)",
  "filter_region_idlib": "Idlib (Zawiya-Gebirge)",
  "filter_region_daraa": "Daraa (Hauran-Ebene)",

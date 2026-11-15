@@ -2058,6 +2058,12 @@
               <option value="with_land" data-i18n="filter_land_with">شجرة + 5 م² أرض طابو</option>
             </select>
           </div>
+          <div id="filter-country-wrapper" class="hidden">
+            <label for="filter-country" class="block text-xs font-bold text-stone-700 mb-1.5" data-i18n="filter_country_lbl">بلد المنشأ</label>
+            <select id="filter-country" data-change="applyFilters()" class="w-full bg-stone-50 border border-stone-200 rounded-xl px-3 py-2.5 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-olive-600">
+              <option value="all" data-i18n="filter_country_all">كل البلدان</option>
+            </select>
+          </div>
           <div>
             <label for="filter-region" class="block text-xs font-bold text-stone-700 mb-1.5" data-i18n="filter_region_lbl">المحافظة / المنطقة</label>
             <select id="filter-region" data-change="applyFilters()" class="w-full bg-stone-50 border border-stone-200 rounded-xl px-3 py-2.5 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-olive-600">

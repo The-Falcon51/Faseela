@@ -162,6 +162,30 @@ try {
   });
   await page.evaluate(() => { document.getElementById('filter-land').value = 'all'; renderMarketplace(); });
 
+  // ---- 2b2. country filter: hidden with one origin country, data-driven with more -----
+  const origin = await page.evaluate(() => {
+    const visible = () => !document.getElementById('filter-country-wrapper').classList.contains('hidden');
+    const cards = () => [...document.querySelectorAll('#trees-grid [data-click^="viewTreeDetails"]')].length;
+    state.currentLang = 'de'; // country names come from the data; the German dictionary is not loaded here, so labels fall back to English
+    renderCountryFilter();
+    const single = { visible: visible(), options: document.getElementById('filter-country').options.length };
+    state.origins = { countries: [{ code: 'ES', name: 'إسبانيا', name_en: 'Spain', name_de: 'Spanien', currency: 'EUR' }], farms: [] };
+    state.trees.push({ ...JSON.parse(JSON.stringify(state.trees[0])), id: 'tree_es_x', country_code: 'ES', tree_name_en: 'Picual Test' });
+    renderCountryFilter(); renderMarketplace();
+    const all = cards();
+    const options = [...document.getElementById('filter-country').options].map((o) => `${o.value}:${o.textContent}`);
+    document.getElementById('filter-country').value = 'ES'; renderMarketplace();
+    const onlySpain = { cards: cards(), names: document.getElementById('trees-grid').textContent.includes('Picual Test') };
+    resetMarketplaceFilters();
+    const afterReset = document.getElementById('filter-country').value;
+    state.trees = state.trees.filter((tr) => tr.id !== 'tree_es_x'); state.origins = null;
+    renderCountryFilter(); renderMarketplace();
+    const back = visible();
+    state.currentLang = 'en';
+    return { single, twoVisible: options.length === 3, options, fewer: onlySpain.cards > 0 && onlySpain.cards < all, names: onlySpain.names, afterReset, back };
+  });
+  assert.deepEqual(origin, { single: { visible: false, options: 2 }, twoVisible: true, options: ['all:All countries', 'ES:Spanien', 'SY:Syrien'], fewer: true, names: true, afterReset: 'all', back: false }, 'country filter follows the catalogue');
+
   // ---- 2c. assistant knowledge layer: truthful topics first, in the language of the question ----
   const faq = await page.evaluate(() => {
     const ask = (lang, q) => { state.currentLang = lang; const html = generateFaseelaResponse(q); return `${(/data-faq="([a-z_]+)"/.exec(html) || [])[1] || 'legacy'}/${(/ lang="([a-z]+)"/.exec(html) || [])[1] || '-'}`; };
