@@ -10573,6 +10573,30 @@
       });
       select.value = current;
       wrapper.classList.toggle('hidden', codes.length < 2);
+      renderRegionFilter();
+    }
+    /** Regions of the trees on offer (of the chosen country, if one is chosen); the list used to be fixed to Syrian governorates. */
+    function renderRegionFilter() {
+      const select = document.getElementById('filter-region');
+      if (!select) return;
+      const country = document.getElementById('filter-country')?.value || 'all';
+      const isAr = state.currentLang === 'ar';
+      const regions = new Map();
+      catalogTrees().forEach(tree => {
+        if (!tree.region || (country !== 'all' && treeCountry(tree) !== country)) return;
+        if (!regions.has(tree.region)) regions.set(tree.region, isAr ? tree.region : (tree.region_en || tree.region));
+      });
+      const current = regions.has(select.value) ? select.value : 'all';
+      select.replaceChildren();
+      const all = document.createElement('option');
+      all.value = 'all'; all.setAttribute('data-i18n', 'filter_region_all'); all.textContent = t('filter_region_all');
+      select.appendChild(all);
+      [...regions.entries()].sort((a, b) => a[1].localeCompare(b[1], state.currentLang)).forEach(([value, label]) => {
+        const option = document.createElement('option');
+        option.value = value; option.textContent = label;
+        select.appendChild(option);
+      });
+      select.value = current;
     }
     async function loadOrigins() {
       if (window.FaseelaFirebase?.listOrigins) {
@@ -14084,7 +14108,7 @@ function setMarketplaceViewMode(mode) {
       activeTags.push({ label: `${t('filter_country_lbl')}: ${countryName(filterCountry)}`, clear: () => { document.getElementById('filter-country').value = 'all'; renderMarketplace(); } });
     }
     if (filterRegion !== 'all') {
-      activeTags.push({ label: `${state.currentLang !== 'ar' ? 'Region:' : 'المنطقة:'} ${filterRegion}`, clear: () => { document.getElementById('filter-region').value = 'all'; renderMarketplace(); } });
+      activeTags.push({ label: `${state.currentLang !== 'ar' ? 'Region:' : 'المنطقة:'} ${document.getElementById('filter-region')?.selectedOptions?.[0]?.textContent || filterRegion}`, clear: () => { document.getElementById('filter-region').value = 'all'; renderMarketplace(); } });
     }
     if (filterVariety !== 'all') {
       activeTags.push({ label: `${state.currentLang !== 'ar' ? 'Variety:' : 'الصنف:'} ${filterVariety}`, clear: () => { document.getElementById('filter-variety').value = 'all'; renderMarketplace(); } });

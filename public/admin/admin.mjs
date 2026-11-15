@@ -19,6 +19,8 @@ const ERROR_TEXT = {
   'failed-precondition': 'Der Vorgang ist in diesem Zustand nicht möglich (bereits entschieden oder Voraussetzung fehlt).',
   'invalid-argument': 'Die Eingabe ist ungültig. Bitte Felder prüfen.',
   'not-found': 'Der Eintrag wurde nicht gefunden.',
+  'mfa-required': 'Für dieses Konto ist eine Bestätigung mit der Authenticator-App nötig.',
+  'mfa-invalid-code': 'Der Code wurde nicht akzeptiert. Bitte den aktuellen Code aus der App eingeben.',
   'already-exists': 'Der Eintrag existiert bereits.',
   'auth/invalid-credential': 'E-Mail oder Passwort stimmt nicht.',
   'auth/invalid-credentials': 'E-Mail oder Passwort stimmt nicht.',
@@ -1090,6 +1092,8 @@ async function editTree(treeId) {
   }
   const countries = Array.isArray(master.countries) ? master.countries : [];
   const farms = Array.isArray(master.farms) ? master.farms : [];
+  // The server refuses a parcel option while the land offer is off, so the form does not offer one then.
+  const landOffered = master.landOfferEnabled === true || Boolean(tree && tree.hasLandOption);
   const text = (value, extra = {}) => el('input', { type: 'text', maxlength: 120, value: value || '', autocomplete: 'off', ...extra });
   const number = (value, extra = {}) => el('input', { type: 'text', inputmode: 'decimal', value: value === null || value === undefined ? '' : String(value), autocomplete: 'off', ...extra });
   const hasLand = el('input', { type: 'checkbox', checked: tree && tree.hasLandOption ? 'checked' : null, disabled: Boolean(tree) });
@@ -1178,8 +1182,8 @@ async function editTree(treeId) {
         ]),
         field('Bilder (ein Pfad je Zeile)', f.images),
         tree ? field('Ölmühle (Kennung, leer = keine)', f.millId) : null,
-        el('label', { class: 'row' }, [hasLand, el('span', { text: tree ? 'Mit Parzellen-Option (nach dem Anlegen nicht änderbar)' : 'Mit Parzellen-Option' })]),
-        landFields
+        landOffered ? el('label', { class: 'row' }, [hasLand, el('span', { text: tree ? 'Mit Parzellen-Option (nach dem Anlegen nicht änderbar)' : 'Mit Parzellen-Option' })]) : null,
+        landOffered ? landFields : null
       );
     },
     onConfirm: async () => {
@@ -1296,6 +1300,78 @@ async function viewErrors(view) {
   ])]));
 }
 
+/**
+ * Second factor of the signed-in account: confirm a code when an authenticator is set up, otherwise set one up
+ * (QR code and key for the app, then a first code to prove it works). Used when the server answers
+ * 'mfa-required' and in the settings.
+ */
+function mfaPanel({ required = false, onDone }) {
+  const box = el('section', { class: 'item stack' }, [el('h3', { text: 'Zwei-Faktor-Anmeldung' }), el('p', { class: 'muted', text: 'Wird geladen …' })]);
+  const fail = (target, error) => { logError('mfa', error); target.textContent = errorText(error); target.hidden = false; };
+  const codeForm = (factorId, intro, extra = []) => {
+    const code = el('input', { type: 'text', inputmode: 'numeric', autocomplete: 'one-time-code', maxlength: 6, pattern: '[0-9]{6}' });
+    const error = el('p', { class: 'form-error', role: 'alert', hidden: true });
+    const submit = el('button', { type: 'submit', class: 'btn btn-primary', text: 'Code bestätigen' });
+    // novalidate: the message below replaces the browser's own tooltip, so the hint is the same everywhere.
+    const form = el('form', { class: 'stack', novalidate: 'novalidate', on: { submit: async (event) => {
+      event.preventDefault();
+      error.hidden = true;
+      if (!/^[0-9]{6}$/.test(code.value.trim())) { error.textContent = 'Bitte den sechsstelligen Code aus der App eingeben.'; error.hidden = false; return; }
+      submit.disabled = true;
+      try {
+        await api().mfaVerify(factorId, code.value.trim());
+        toast('Zweiter Faktor bestätigt.');
+        if (onDone) onDone();
+      } catch (err) {
+        fail(error, err);
+      } finally {
+        submit.disabled = false;
+      }
+    } } }, [el('p', { text: intro }), ...extra, field('Sechsstelliger Code', code), error, submit]);
+    return form;
+  };
+  const render = async () => {
+    let status;
+    try {
+      status = await api().mfaStatus();
+    } catch (error) {
+      box.replaceChildren(el('h3', { text: 'Zwei-Faktor-Anmeldung' }), stateBlock('error', errorText(error), render));
+      return;
+    }
+    const head = el('h3', { text: 'Zwei-Faktor-Anmeldung' });
+    if (status.factorId && status.currentLevel === 'aal2') {
+      box.replaceChildren(head, el('p', {}, [el('span', { class: 'badge badge-ok', text: 'eingerichtet' }), ' · Diese Sitzung ist mit der Authenticator-App bestätigt.']));
+      return;
+    }
+    if (status.factorId) {
+      box.replaceChildren(head, codeForm(status.factorId, required
+        ? 'Für dieses Konto ist ein zweiter Faktor vorgeschrieben. Bitte den aktuellen Code aus Ihrer Authenticator-App eingeben.'
+        : 'Ein Authenticator ist eingerichtet. Mit dem aktuellen Code bestätigen Sie diese Sitzung.'));
+      return;
+    }
+    const error = el('p', { class: 'form-error', role: 'alert', hidden: true });
+    const start = el('button', { type: 'button', class: 'btn btn-primary', text: 'Authenticator einrichten', on: { click: async () => {
+      start.disabled = true;
+      error.hidden = true;
+      try {
+        const enrolment = await api().mfaEnroll();
+        // The QR code arrives as an SVG data URL; anything else is not shown as an image.
+        const qr = typeof enrolment.qr === 'string' && enrolment.qr.startsWith('data:image/svg+xml') ? el('img', { src: enrolment.qr, alt: 'QR-Code für die Authenticator-App', width: 180, height: 180, class: 'qr' }) : null;
+        box.replaceChildren(head, codeForm(enrolment.factorId, 'Scannen Sie den QR-Code mit einer Authenticator-App (oder geben Sie den Schlüssel von Hand ein) und bestätigen Sie mit dem angezeigten Code.',
+          [qr, el('p', {}, ['Schlüssel: ', el('code', { class: 'mono', text: String(enrolment.secret || '') })])]));
+      } catch (err) {
+        fail(error, err);
+        start.disabled = false;
+      }
+    } } });
+    box.replaceChildren(head, el('p', { text: required
+      ? 'Für dieses Konto ist ein zweiter Faktor vorgeschrieben, es ist aber noch keiner eingerichtet. Richten Sie jetzt eine Authenticator-App ein, um weiterzuarbeiten.'
+      : 'Noch nicht eingerichtet. Ein zweiter Faktor schützt Freigaben und Kontodaten, falls das Passwort in falsche Hände gerät.' }), error, start);
+  };
+  render();
+  return box;
+}
+
 async function viewSettings(view) {
   const { data } = await api().adminDashboard();
   const push = (data && data.push) || {};
@@ -1306,7 +1382,18 @@ async function viewSettings(view) {
     confirmLabel: push.enabled ? 'Ausschalten' : 'Einschalten', danger: true,
     onConfirm: () => api().adminSetPushEnabled({ enabled: !push.enabled })
   }).then((ok) => { if (ok) { toast('Einstellung gespeichert.'); show('settings'); } }) } });
+  const security = (await api().staffSecurityState()).data || {};
+  const mfaOn = security.mfaRequired === true;
+  const mfaToggle = el('button', { type: 'button', class: `btn ${mfaOn ? 'btn-danger' : 'btn-primary'}`, 'aria-pressed': mfaOn ? 'true' : 'false', text: mfaOn ? 'Pflicht aufheben' : 'Für alle Team-Konten verlangen', on: { click: () => openDialog({
+    title: mfaOn ? 'Zwei-Faktor-Pflicht aufheben' : 'Zwei-Faktor-Pflicht einschalten',
+    text: mfaOn ? 'Admin-, Finanz- und Prüferkonten können danach wieder mit dem Passwort allein arbeiten.' : 'Admin-, Finanz- und Prüferkonten brauchen danach bei jeder Anmeldung einen Code aus ihrer Authenticator-App. Wer noch keinen eingerichtet hat, wird beim nächsten Aufruf dazu aufgefordert. Einschalten können Sie die Pflicht nur, wenn Ihre eigene Sitzung bereits mit einem Code bestätigt ist.',
+    confirmLabel: mfaOn ? 'Aufheben' : 'Einschalten', danger: true,
+    onConfirm: () => api().adminSetStaffMfa({ required: !mfaOn })
+  }).then((ok) => { if (ok) { toast('Einstellung gespeichert.'); show('settings'); } }) } });
   view.append(el('h2', { text: 'Einstellungen' }),
+    mfaPanel({ required: mfaOn, onDone: () => show('settings') }),
+    el('section', { class: 'item stack' }, [el('h3', { text: 'Zwei-Faktor-Pflicht für das Team' }),
+      el('p', {}, [el('span', { class: `badge ${mfaOn ? 'badge-ok' : 'badge-warn'}`, text: mfaOn ? 'eingeschaltet' : 'ausgeschaltet' }), ' · gilt für Admin-, Finanz- und Prüferkonten']), mfaToggle]),
     el('section', { class: 'item stack' }, [el('h3', { text: 'Push-Benachrichtigungen' }),
       el('p', {}, [el('span', { class: `badge ${push.enabled ? 'badge-ok' : 'badge-warn'}`, text: push.enabled ? 'eingeschaltet' : 'ausgeschaltet' }), ` · ${fmtInt(push.activeDevices)} aktive Geräte`]), toggle]),
     el('section', { class: 'item' }, [el('h3', { text: 'Betrieb' }), el('ul', {}, [
@@ -1338,7 +1425,9 @@ async function show(tabId) {
   } catch (error) {
     if (token !== session.loadToken) return;
     logError(`view ${tab.id}`, error);
-    view.replaceChildren(stateBlock('error', errorText(error), () => show(tab.id)));
+    // The server demands a second factor: offer the code prompt (or the set-up) right here instead of a dead end.
+    if (error && error.code === 'mfa-required') view.replaceChildren(mfaPanel({ required: true, onDone: () => show(tab.id) }));
+    else view.replaceChildren(stateBlock('error', errorText(error), () => show(tab.id)));
     if (error && error.code === 'unauthenticated') signOut();
   } finally {
     if (token === session.loadToken) view.setAttribute('aria-busy', 'false');

@@ -44,12 +44,18 @@ begin
   perform pg_temp.chk('explicit false passes the gate', v_false = 'OK', v_false);
   perform pg_temp.chk('admin creates a tree without parcel option', pg_temp.call_as(c_a, format('select public.admin_create_tree(%L)', c_tree)) = 'OK');
 
+  perform pg_temp.as_user(c_a);
+  perform pg_temp.chk('admin overview reports the offer as off', (public.admin_list_master_data()->>'landOfferEnabled')::boolean = false);
+
   -- Only JSON true switches it on.
   perform pg_temp.as_pg();
   insert into private.app_settings (key, value) values ('land_offer_enabled', '"true"');
   perform pg_temp.chk('text value does not enable the offer', not private.land_offer_enabled());
   update private.app_settings set value = 'true' where key = 'land_offer_enabled';
   perform pg_temp.chk('JSON true enables the offer', private.land_offer_enabled());
+  perform pg_temp.as_user(c_a);
+  perform pg_temp.chk('admin overview reports the offer as on', (public.admin_list_master_data()->>'landOfferEnabled')::boolean = true);
+  perform pg_temp.as_pg();
   perform pg_temp.chk('land request accepted when enabled', pg_temp.call_as(c_i, $q$select public.create_investment_request('{"treeId":"tree_03","shareCount":4,"includesLand":true,"idempotencyKey":"key-gate-tree03-000004"}')$q$) = 'OK');
 
   -- The switch itself is not reachable for API roles.

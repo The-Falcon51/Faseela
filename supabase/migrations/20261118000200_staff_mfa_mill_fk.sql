@@ -155,3 +155,28 @@ begin
   );
 end;
 $$;
+
+-- ---------------------------------------------------------------- admin overview knows whether land may be offered
+-- The tree form hides its parcel option while the land offer is off (migration 46), instead of offering a field
+-- the server refuses. Same function as in migration 48 plus the flag.
+create or replace function private.admin_list_master_data()
+returns jsonb
+language plpgsql
+stable
+security definer
+set search_path = ''
+as $$
+declare
+  v_uid uuid := private.require_role('{}'::text[]);
+begin
+  return jsonb_build_object(
+    'landOfferEnabled', private.land_offer_enabled(),
+    'currencies', coalesce((select jsonb_agg(jsonb_build_object('code', code, 'minorUnits', minor_units, 'nameEn', name_en) order by code) from public.currencies), '[]'::jsonb),
+    'countries', coalesce((select jsonb_agg(jsonb_build_object('code', code, 'name', name, 'nameEn', name_en, 'nameDe', name_de, 'currency', currency, 'status', status,
+        'trees', (select count(*) from public.trees_public t where t.country_code = c.code)) order by code) from public.countries c), '[]'::jsonb),
+    'farms', coalesce((select jsonb_agg(jsonb_build_object('farmId', farm_id, 'countryCode', country_code, 'name', name, 'nameEn', name_en, 'region', region,
+        'regionEn', region_en, 'status', status, 'trees', (select count(*) from private.trees t where t.farm_id = f.farm_id)) order by farm_id) from public.farms f), '[]'::jsonb),
+    'mills', coalesce((select jsonb_agg(jsonb_build_object('millId', mill_id, 'countryCode', country_code, 'name', name, 'nameEn', name_en, 'region', region,
+        'regionEn', region_en, 'status', status, 'trees', (select count(*) from private.trees t where t.mill_id = m.mill_id)) order by mill_id) from public.mills m), '[]'::jsonb));
+end;
+$$;

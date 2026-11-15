@@ -225,11 +225,13 @@ try {
     renderCountryFilter();
     const single = { visible: visible(), options: document.getElementById('filter-country').options.length };
     state.origins = { countries: [{ code: 'ES', name: 'إسبانيا', name_en: 'Spain', name_de: 'Spanien', currency: 'EUR' }], farms: [] };
-    state.trees.push({ ...JSON.parse(JSON.stringify(state.trees[0])), id: 'tree_es_x', country_code: 'ES', tree_name_en: 'Picual Test', server_listed: true });
+    state.trees.push({ ...JSON.parse(JSON.stringify(state.trees[0])), id: 'tree_es_x', country_code: 'ES', tree_name_en: 'Picual Test', server_listed: true, region: 'خاين', region_en: 'Jaen' });
     renderCountryFilter(); renderMarketplace();
     const all = cards();
     const options = [...document.getElementById('filter-country').options].map((o) => `${o.value}:${o.textContent}`);
-    document.getElementById('filter-country').value = 'ES'; renderMarketplace();
+    const regionsAll = [...document.getElementById('filter-region').options].map((o) => `${o.value}:${o.textContent}`);
+    document.getElementById('filter-country').value = 'ES'; renderRegionFilter(); renderMarketplace();
+    const regionsSpain = [...document.getElementById('filter-region').options].map((o) => o.textContent);
     const onlySpain = { cards: cards(), names: document.getElementById('trees-grid').textContent.includes('Picual Test') };
     resetMarketplaceFilters();
     const afterReset = document.getElementById('filter-country').value;
@@ -237,9 +239,9 @@ try {
     renderCountryFilter(); renderMarketplace();
     const back = visible();
     state.currentLang = 'en';
-    return { single, twoVisible: options.length === 3, options, fewer: onlySpain.cards > 0 && onlySpain.cards < all, names: onlySpain.names, afterReset, back };
+    return { single, regionsAll, regionsSpain, twoVisible: options.length === 3, options, fewer: onlySpain.cards > 0 && onlySpain.cards < all, names: onlySpain.names, afterReset, back };
   });
-  assert.deepEqual(origin, { single: { visible: false, options: 2 }, twoVisible: true, options: ['all:All countries', 'ES:Spanien', 'SY:Syrien'], fewer: true, names: true, afterReset: 'all', back: false }, 'country filter follows the catalogue');
+  assert.deepEqual(origin, { single: { visible: false, options: 2 }, regionsAll: ['all:All Provinces', 'خاين:Jaen', 'طرطوس:Tartus'], regionsSpain: ['All Provinces', 'Jaen'], twoVisible: true, options: ['all:All countries', 'ES:Spanien', 'SY:Syrien'], fewer: true, names: true, afterReset: 'all', back: false }, 'country filter follows the catalogue');
 
   // ---- 2c. assistant knowledge layer: truthful topics first, in the language of the question ----
   const faq = await page.evaluate(() => {

@@ -90,6 +90,7 @@ window.FaseelaBackend = window.FaseelaFirebase = {
   adminGetTreeOrigin: async () => ({ data: { treeId: 'tree_01', countryCode: 'SY', farmId: 'farm_01' } }),
   adminSetTreeOrigin: async (p) => { calls.push(['adminSetTreeOrigin', p]); return { data: p }; },
   adminListMasterData: async () => ({ data: {
+    landOfferEnabled: q.get('land') !== 'off',
     currencies: [{ code: 'USD', minorUnits: 2 }, { code: 'EUR', minorUnits: 2 }],
     countries: [{ code: 'ES', name: 'إسبانيا', nameEn: 'Spain', nameDe: 'Spanien', currency: 'EUR', status: window.__esActive ? 'active' : 'planned', trees: 0 },
       { code: 'SY', name: 'سوريا', nameEn: 'Syria', nameDe: 'Syrien', currency: 'USD', status: 'active', trees: 3 }],
@@ -103,6 +104,21 @@ window.FaseelaBackend = window.FaseelaFirebase = {
   adminSetTreeCrop: async (p) => { calls.push(['adminSetTreeCrop', p]); return { data: p }; },
   adminListAuditLogs: async () => [{ id: 1, actorUid: 'a6380508-cca1', action: 'role.granted', target: 'user_roles/x', details: { note: ${JSON.stringify(XSS)} }, createdAt: Date.now() }]
 };
+// Second factor: ?mfa=enrolled|none makes every admin* call answer 'mfa-required' until a code was confirmed.
+const mfa = { mode: q.get('mfa') || '', aal2: false, enrolled: q.get('mfa') === 'enrolled', required: !!q.get('mfa') };
+Object.assign(window.FaseelaFirebase, {
+  mfaStatus: async () => ({ currentLevel: mfa.aal2 ? 'aal2' : 'aal1', nextLevel: mfa.enrolled ? 'aal2' : 'aal1', factorId: mfa.enrolled ? 'factor-1' : null }),
+  mfaEnroll: async () => { calls.push(['mfaEnroll']); return { factorId: 'factor-new', qr: 'data:image/svg+xml;utf-8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10"><rect width="10" height="10"/></svg>'), secret: 'JBSWY3DPEHPK3PXP' }; },
+  mfaVerify: async (factorId, code) => { calls.push(['mfaVerify', { factorId, code }]); if (code !== '123456') throw fail('mfa-invalid-code'); mfa.aal2 = true; mfa.enrolled = true; return { ok: true }; },
+  staffSecurityState: async () => ({ data: { mfaRequired: mfa.required, sessionLevel: mfa.aal2 ? 'aal2' : 'aal1' } }),
+  adminSetStaffMfa: async (p) => { calls.push(['adminSetStaffMfa', p]); if (p.required && !mfa.aal2) throw fail('failed-precondition'); mfa.required = p.required; return { data: { mfaRequired: p.required } }; }
+});
+if (mfa.mode) {
+  for (const key of Object.keys(window.FaseelaFirebase)) {
+    const original = window.FaseelaFirebase[key];
+    if (/^admin/.test(key) && typeof original === 'function') window.FaseelaFirebase[key] = async (...args) => { if (mfa.required && !mfa.aal2) throw fail('mfa-required'); return original(...args); };
+  }
+}
 function emit(r) { window.dispatchEvent(new CustomEvent('faseela-auth-state', { detail: r === 'none' ? null : { uid: 'u1', email: 'me@example.test', name: 'Me', role: r } })); }
 setTimeout(() => emit(role), 150);
 `;
@@ -520,6 +536,62 @@ try {
     await down.page.waitForFunction(() => /fehlt diesem Konto die Berechtigung/.test(document.getElementById('view').textContent));
     assert.equal(await down.page.getByRole('button', { name: 'Erneut laden' }).isVisible(), true);
     await down.ctx.close();
+
+    // second factor: an enrolled account confirms a code and lands in the panel
+    const stepUp = await open('?mockRole=admin&mfa=enrolled');
+    await stepUp.page.waitForSelector('#screen-panel:not([hidden])');
+    await stepUp.page.waitForFunction(() => /zweiter Faktor vorgeschrieben/.test(document.getElementById('view').textContent));
+    await axe(stepUp.page, 'dark/mfa-prompt');
+    const code = (page) => page.locator('#view').getByLabel('Sechsstelliger Code');
+    await code(stepUp.page).fill('12'); await stepUp.page.getByRole('button', { name: 'Code bestätigen' }).click();
+    assert.match(await stepUp.page.textContent('#view'), /sechsstelligen Code aus der App/);
+    assert.equal((await calls(stepUp.page, 'mfaVerify')).length, 0, 'an incomplete code is not sent');
+    await code(stepUp.page).fill('000000'); await stepUp.page.getByRole('button', { name: 'Code bestätigen' }).click();
+    await stepUp.page.waitForFunction(() => /Der Code wurde nicht akzeptiert/.test(document.getElementById('view').textContent));
+    await code(stepUp.page).fill('123456'); await stepUp.page.getByRole('button', { name: 'Code bestätigen' }).click();
+    await stepUp.page.waitForFunction(() => document.querySelectorAll('.task-list li').length > 0 || /Nichts offen/.test(document.getElementById('view').textContent));
+    assert.deepEqual(await calls(stepUp.page, 'mfaVerify'), [{ factorId: 'factor-1', code: '000000' }, { factorId: 'factor-1', code: '123456' }]);
+    // …and can lift the team requirement again from the settings
+    await tab(stepUp.page, 'Einstellungen');
+    await stepUp.page.waitForFunction(() => /Diese Sitzung ist mit der Authenticator-App bestätigt/.test(document.getElementById('view').textContent));
+    await stepUp.page.getByRole('button', { name: 'Pflicht aufheben' }).click(); await stepUp.page.click('#dialog-ok');
+    await stepUp.page.waitForFunction(() => !document.getElementById('dialog').open);
+    assert.deepEqual(await calls(stepUp.page, 'adminSetStaffMfa'), [{ required: false }]);
+    await stepUp.ctx.close();
+
+    // second factor: an account without an authenticator is led through the set-up
+    const enrol = await open('?mockRole=finance_admin&mfa=none');
+    await enrol.page.waitForSelector('#screen-panel:not([hidden])');
+    await enrol.page.waitForFunction(() => /noch keiner eingerichtet/.test(document.getElementById('view').textContent));
+    await enrol.page.getByRole('button', { name: 'Authenticator einrichten' }).click();
+    await enrol.page.waitForSelector('#view img.qr');
+    assert.match(await enrol.page.textContent('#view'), /JBSWY3DPEHPK3PXP/, 'the key is shown for manual entry');
+    assert.equal(await enrol.page.$eval('#view img.qr', (img) => img.src.startsWith('data:image/svg+xml') && img.alt.length > 0), true);
+    await axe(enrol.page, 'dark/mfa-enrol');
+    await code(enrol.page).fill('123456'); await enrol.page.getByRole('button', { name: 'Code bestätigen' }).click();
+    await enrol.page.waitForFunction(() => document.querySelectorAll('.task-list li').length > 0 || /Nichts offen/.test(document.getElementById('view').textContent));
+    assert.deepEqual(await calls(enrol.page, 'mfaVerify'), [{ factorId: 'factor-new', code: '123456' }]);
+    await enrol.ctx.close();
+
+    // land offer off: a new tree cannot be given a parcel option
+    const noLand = await open('?mockRole=admin&land=off');
+    await noLand.page.waitForSelector('#screen-panel:not([hidden])');
+    await tab(noLand.page, 'Bäume');
+    await noLand.page.getByRole('button', { name: 'Neuer Baum' }).click();
+    await noLand.page.waitForFunction(() => /Neuer Baum/.test(document.getElementById('dialog-title').textContent));
+    assert.equal(await noLand.page.locator('#dialog-body').getByLabel('Mit Parzellen-Option').count(), 0, 'no parcel option while the land offer is off');
+    assert.equal(await noLand.page.locator('#dialog-body').getByLabel('Herkunftsland', { exact: true }).count(), 1);
+    await noLand.ctx.close();
+
+    // settings without a requirement: the switch refuses an admin whose own session has no second factor
+    const plain = await open('?mockRole=admin');
+    await plain.page.waitForSelector('#screen-panel:not([hidden])');
+    await tab(plain.page, 'Einstellungen');
+    await plain.page.waitForFunction(() => /Noch nicht eingerichtet/.test(document.getElementById('view').textContent));
+    await plain.page.getByRole('button', { name: 'Für alle Team-Konten verlangen' }).click(); await plain.page.click('#dialog-ok');
+    await plain.page.waitForFunction(() => /in diesem Zustand nicht möglich/.test(document.getElementById('dialog-error').textContent));
+    assert.deepEqual(await calls(plain.page, 'adminSetStaffMfa'), [{ required: true }]);
+    await plain.ctx.close();
   }
   assert.deepEqual(failures, [], `axe violations:\n${failures.join('\n')}`);
   console.log(JSON.stringify({ ok: true, suite: 'admin' }));

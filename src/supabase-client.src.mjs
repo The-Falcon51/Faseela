@@ -822,6 +822,42 @@ const adminSetTreeMill = callable('admin_set_tree_mill');
 const adminGetTreeMill = callable('admin_get_tree_mill');
 const adminSetTreeCrop = callable('admin_set_tree_crop');
 const adminListMasterData = callable('admin_list_master_data');
+const staffSecurityState = callable('staff_security_state');
+const adminSetStaffMfa = callable('admin_set_staff_mfa');
+
+// ---- Second factor (TOTP authenticator app) of the signed-in user ----
+/** { currentLevel, nextLevel, factorId }: factorId is the verified authenticator, or null when none is set up. */
+async function mfaStatus() {
+  const [level, factors] = await Promise.all([supabase.auth.mfa.getAuthenticatorAssuranceLevel(), supabase.auth.mfa.listFactors()]);
+  if (level.error || factors.error) throw toBackendError(level.error || factors.error);
+  const verified = ((factors.data && factors.data.totp) || []).filter((factor) => factor.status === 'verified');
+  return {
+    currentLevel: (level.data && level.data.currentLevel) || 'aal1',
+    nextLevel: (level.data && level.data.nextLevel) || 'aal1',
+    factorId: verified.length ? verified[0].id : null
+  };
+}
+/** Starts enrolment and returns what the user needs to add the account to an authenticator app. */
+async function mfaEnroll() {
+  // An abandoned earlier attempt leaves an unverified factor behind; remove it so a new one can be created.
+  const existing = await supabase.auth.mfa.listFactors();
+  if (existing.error) throw toBackendError(existing.error);
+  for (const factor of ((existing.data && existing.data.all) || []).filter((entry) => entry.factor_type === 'totp' && entry.status !== 'verified')) {
+    const removed = await supabase.auth.mfa.unenroll({ factorId: factor.id });
+    if (removed.error) throw toBackendError(removed.error);
+  }
+  const { data, error } = await supabase.auth.mfa.enroll({ factorType: 'totp' });
+  if (error) throw toBackendError(error);
+  return { factorId: data.id, qr: data.totp.qr_code, secret: data.totp.secret };
+}
+/** Confirms a six-digit code for the given factor; on success the session becomes aal2. */
+async function mfaVerify(factorId, code) {
+  const challenge = await supabase.auth.mfa.challenge({ factorId });
+  if (challenge.error) throw toBackendError(challenge.error);
+  const verify = await supabase.auth.mfa.verify({ factorId, challengeId: challenge.data.id, code: String(code || '').trim() });
+  if (verify.error) throw new BackendError('mfa-invalid-code', verify.error.message || 'The code was not accepted.', verify.error);
+  return { ok: true };
+}
 const adminSetCountryStatus = callable('admin_set_country_status');
 const adminUpsertFarm = callable('admin_upsert_farm');
 const adminUpsertMill = callable('admin_upsert_mill');
@@ -929,6 +965,11 @@ const api = Object.freeze({
   adminGetTreeMill,
   adminSetTreeCrop,
   adminListMasterData,
+  staffSecurityState,
+  adminSetStaffMfa,
+  mfaStatus,
+  mfaEnroll,
+  mfaVerify,
   adminSetCountryStatus,
   adminUpsertFarm,
   adminUpsertMill,
