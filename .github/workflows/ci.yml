@@ -17,6 +17,19 @@ jobs:
     env:
       # `secrets` is not available in step-level `if`, so expose it as job env and test that.
       SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+    services:
+      # Throwaway PostgreSQL for the SQL suites (stub Supabase schemas, see scripts/local-db.cjs).
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
     steps:
       - uses: actions/checkout@v4
         with:
@@ -39,7 +52,13 @@ jobs:
         run: npm test && npm run test:web
       - name: Dependency audit (high and above)
         run: npm audit --omit=dev --audit-level=high
-      - name: Database security suite (RLS, four-eyes, quotas, storage)
+      - name: Database suites on local PostgreSQL (all migrations + seed, every push)
+        env:
+          LOCAL_PG_URL: postgresql://postgres:postgres@127.0.0.1:5432/postgres
+        run: |
+          command -v psql >/dev/null || (sudo apt-get update -qq && sudo apt-get install -y -qq postgresql-client >/dev/null)
+          npm run test:db:local
+      - name: Database security suite on the staging Supabase project (optional)
         if: ${{ env.SUPABASE_DB_URL != '' }}
         run: |
           sudo apt-get update -qq && sudo apt-get install -y -qq postgresql-client >/dev/null

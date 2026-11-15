@@ -19,6 +19,8 @@
     "cap:run:ios": "npx cap run ios",
     "seed:sql": "node scripts/supabase-seed.cjs",
     "test:db": "node scripts/run-sql-tests.cjs",
+    "db:local": "node scripts/local-db.cjs",
+    "test:db:local": "node scripts/local-db.cjs --test",
     "test:ui": "node tests/e2e/handlers.e2e.mjs",
     "test:admin": "node tests/e2e/admin.e2e.mjs",
     "test:contrast": "node tests/e2e/home-contrast.e2e.mjs",

@@ -22,6 +22,10 @@ begin
   v_j := private.admin_set_tree_mill('{"treeId":"tree_03","millId":null}'::jsonb);
   v_r := v_r || ('cleared=' || coalesce((select mill_id from private.trees where tree_id = 'tree_03'), 'NULL'))
              || ('audit=' || (select count(*) from public.audit_logs where actor_uid = c_a and action = 'tree.mill_changed'));
-  raise exception 'TEST RESULT %', array_to_string(v_r, ' | ');
+  -- Same summary line as the other suites, so scripts/run-sql-tests.cjs can read the result.
+  if array_to_string(v_r, ' | ') = 'investor=permission-denied | badid=invalid-argument | unknown=not-found | set=mill_09 | get=mill_09 | cleared=NULL | audit=2' then
+    raise exception 'TEST SUMMARY passed=7 failed=0 :: all good';
+  end if;
+  raise exception 'TEST SUMMARY passed=0 failed=7 :: %', array_to_string(v_r, ' | ');
 end
 $t$;

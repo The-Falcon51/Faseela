@@ -82,7 +82,8 @@ begin
   perform private.run_automations();
   perform pg_temp.chk('sold-out tree leaves the catalogue', (select status = 'unlisted' from public.trees_public where tree_id = v_tree)
     and exists (select 1 from private.automation_log where rule = 'sold_out_unlist' and subject = v_tree));
-  perform pg_temp.chk('trees with free shares stay listed', not exists (select 1 from public.trees_public p join private.trees t using (tree_id) where p.status = 'unlisted' and t.sold_shares < t.total_shares and p.tree_id <> v_tree and p.updated_at > now() - interval '1 minute'));
+  -- Judged by what the rule itself logged, so trees that were unlisted for other reasons (e.g. freshly seeded) do not count.
+  perform pg_temp.chk('trees with free shares stay listed', not exists (select 1 from private.automation_log where rule = 'sold_out_unlist' and subject <> v_tree and created_at > now() - interval '1 minute'));
   perform pg_temp.chk('owners keep their shares', (select count(*) from public.shares where tree_id = v_tree) = (select count(*) from public.shares where tree_id = v_tree and status = 'active'));
 
   -- automation state and job control
