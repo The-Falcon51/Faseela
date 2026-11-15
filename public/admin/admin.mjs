@@ -971,6 +971,8 @@ async function viewTrees(view) {
 }
 
 const TREE_IMAGE = /^images\/[A-Za-z0-9_-]{1,80}\.(webp|png|jpg|jpeg)$/;
+// Same list as the database check constraint (trees_public_crop_category_check).
+const TREE_CROPS = [['olive', 'Olive'], ['pistachio', 'Pistazie'], ['almond', 'Mandel'], ['pomegranate', 'Granatapfel'], ['date', 'Dattelpalme'], ['walnut', 'Walnuss']];
 /** Create (treeId = null) or edit a tree. The server validates again; this form only catches obvious slips early. */
 async function editTree(treeId) {
   let tree = null;
@@ -979,6 +981,8 @@ async function editTree(treeId) {
       ({ data: tree } = await api().adminGetTree({ treeId }));
       const mill = await api().adminGetTreeMill({ treeId });
       tree.millId = (mill.data && mill.data.millId) || '';
+      const crop = await api().adminGetTreeCrop({ treeId });
+      tree.cropCategory = (crop.data && crop.data.cropCategory) || 'olive';
     } catch (error) {
       logError('tree load', error);
       toast(errorText(error), true);
@@ -988,6 +992,9 @@ async function editTree(treeId) {
   const text = (value, extra = {}) => el('input', { type: 'text', maxlength: 120, value: value || '', autocomplete: 'off', ...extra });
   const number = (value, extra = {}) => el('input', { type: 'text', inputmode: 'decimal', value: value === null || value === undefined ? '' : String(value), autocomplete: 'off', ...extra });
   const hasLand = el('input', { type: 'checkbox', checked: tree && tree.hasLandOption ? 'checked' : null, disabled: Boolean(tree) });
+  // The crop is fixed once anything is sold or reserved (the server refuses the change as well).
+  const cropLocked = Boolean(tree) && (Number(tree.soldShares) + Number(tree.reservedShares)) > 0;
+  const currentCrop = (tree && tree.cropCategory) || 'olive';
   const f = {
     treeId: text('', { maxlength: 40, placeholder: 'tree_04' }),
     name: text(tree && tree.name, { dir: 'rtl', lang: 'ar' }), nameEn: text(tree && tree.nameEn),
@@ -1000,6 +1007,7 @@ async function editTree(treeId) {
     landPrice: number(tree && tree.hasLandOption ? (Number(tree.landPriceMinor) / 100).toFixed(2) : ''),
     landArea: number(tree && tree.hasLandOption ? tree.landAreaSqm : ''),
     millId: text(tree && tree.millId, { maxlength: 80, placeholder: 'mill_01' }),
+    crop: el('select', { disabled: cropLocked }, TREE_CROPS.map(([value, label]) => el('option', { value, text: label, selected: value === currentCrop }))),
     images: el('textarea', { rows: 3, class: 'mono', text: ((tree && tree.images) || ['images/olive_branches_macro.webp']).join('\n') })
   };
   const landFields = el('div', { class: 'form-grid', hidden: !(tree && tree.hasLandOption) }, [field('Preis der Parzelle (USD)', f.landPrice), field('Fläche der Parzelle (m²)', f.landArea)]);
@@ -1014,6 +1022,11 @@ async function editTree(treeId) {
   const readText = (control, label) => {
     const value = control.value.trim();
     if (value.length < 2 || /[<>]/.test(value)) throw userError(`${label} fehlt oder enthält unzulässige Zeichen.`);
+    return value;
+  };
+  const cropValue = () => {
+    const value = f.crop.value;
+    if (!TREE_CROPS.some(([id]) => id === value)) throw userError('Kultur: Bitte eine der angebotenen Kulturen wählen.');
     return value;
   };
   const collect = () => {
@@ -1045,6 +1058,7 @@ async function editTree(treeId) {
         el('div', { class: 'form-grid' }, [
           field('Name (Arabisch)', f.name), field('Name (Englisch)', f.nameEn),
           field('Region (Arabisch)', f.region), field('Region (Englisch)', f.regionEn),
+          field(cropLocked ? 'Kultur (nach dem ersten Verkauf nicht änderbar)' : 'Kultur', f.crop), el('span'),
           field('Sorte (Arabisch)', f.treeType), field('Sorte (Englisch)', f.treeTypeEn),
           field('Anzahl Anteile', f.totalShares), field('Preis je Anteil (USD)', f.price),
           field('Pflanzjahr (optional)', f.plantedYear), field('Ertrag pro Jahr in kg (optional)', f.yieldKg)
@@ -1060,7 +1074,10 @@ async function editTree(treeId) {
       if (!tree) {
         const id = f.treeId.value.trim();
         if (!/^[a-z0-9_]{3,40}$/.test(id)) throw userError('Kennung: 3 bis 40 Zeichen, nur Kleinbuchstaben, Ziffern und _.');
+        const crop = cropValue();
         await api().adminCreateTree({ ...payload, treeId: id, hasLandOption: hasLand.checked });
+        // New trees are stored as olive; any other crop is set in a second, separately audited step.
+        if (crop !== 'olive') await api().adminSetTreeCrop({ treeId: id, cropCategory: crop });
         return;
       }
       // Send only what changed, so the audit log names the real change.
@@ -1071,7 +1088,10 @@ async function editTree(treeId) {
       const millId = f.millId.value.trim();
       if (millId && !/^[A-Za-z0-9_-]{1,80}$/.test(millId)) throw userError('Ölmühle: Die Kennung darf nur Buchstaben, Ziffern, _ und - enthalten.');
       const millChanged = millId !== (tree.millId || '');
-      if (!Object.keys(changed).length && !millChanged) throw userError('Es wurde nichts geändert.');
+      const crop = cropValue();
+      const cropChanged = !cropLocked && crop !== currentCrop;
+      if (!Object.keys(changed).length && !millChanged && !cropChanged) throw userError('Es wurde nichts geändert.');
+      if (cropChanged) await api().adminSetTreeCrop({ treeId: tree.treeId, cropCategory: crop });
       if (Object.keys(changed).length) await api().adminUpdateTree({ ...changed, treeId: tree.treeId });
       if (millChanged) await api().adminSetTreeMill({ treeId: tree.treeId, millId: millId || null });
     }

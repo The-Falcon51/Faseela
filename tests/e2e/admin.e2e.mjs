@@ -86,6 +86,8 @@ window.FaseelaBackend = window.FaseelaFirebase = {
   adminSetReadiness: async (p) => { calls.push(['adminSetReadiness', p]); window.__ready = p.done ? (p.note || 'x') : null; return { data: p }; },
   adminGetTreeMill: async () => ({ data: { treeId: 'tree_01', millId: '' } }),
   adminSetTreeMill: async (p) => { calls.push(['adminSetTreeMill', p]); return { data: p }; },
+  adminGetTreeCrop: async () => ({ data: { treeId: 'tree_01', cropCategory: 'olive' } }),
+  adminSetTreeCrop: async (p) => { calls.push(['adminSetTreeCrop', p]); return { data: p }; },
   adminListAuditLogs: async () => [{ id: 1, actorUid: 'a6380508-cca1', action: 'role.granted', target: 'user_roles/x', details: { note: ${JSON.stringify(XSS)} }, createdAt: Date.now() }]
 };
 function emit(r) { window.dispatchEvent(new CustomEvent('faseela-auth-state', { detail: r === 'none' ? null : { uid: 'u1', email: 'me@example.test', name: 'Me', role: r } })); }
@@ -245,6 +247,8 @@ try {
     await page.click('#dialog-ok');
     assert.match(await page.textContent('#dialog-error'), /Region \(Arabisch\) fehlt/, 'empty catalogue text must be filled before saving');
     const dlg = (label) => page.locator('#dialog-body').getByLabel(label, { exact: true });
+    assert.equal(await dlg('Kultur (nach dem ersten Verkauf nicht änderbar)').isDisabled(), true, 'crop is fixed once shares are sold');
+    assert.equal(await dlg('Kultur (nach dem ersten Verkauf nicht änderbar)').inputValue(), 'olive');
     await dlg('Region (Arabisch)').fill('حمص'); await dlg('Region (Englisch)').fill('Homs');
     await dlg('Anzahl Anteile').fill('3'); await page.click('#dialog-ok');
     await page.waitForFunction(() => /in diesem Zustand nicht möglich/.test(document.getElementById('dialog-error').textContent));
@@ -272,8 +276,11 @@ try {
     await page.locator('#dialog-body').getByLabel('Mit Parzellen-Option').check();
     await page.click('#dialog-ok');
     assert.match(await page.textContent('#dialog-error'), /Preis der Parzelle fehlt/);
+    assert.deepEqual(await dlg('Kultur').locator('option').evaluateAll((o) => o.map((x) => x.value)), ['olive', 'pistachio', 'almond', 'pomegranate', 'date', 'walnut']);
+    await dlg('Kultur').selectOption('date');
     await dlg('Preis der Parzelle (USD)').fill('15'); await dlg('Fläche der Parzelle (m²)').fill('25'); await page.click('#dialog-ok');
     await page.waitForFunction(() => !document.getElementById('dialog').open);
+    assert.deepEqual(await calls(page, 'adminSetTreeCrop'), [{ treeId: 'tree_04', cropCategory: 'date' }], 'a new date tree gets its crop in a second step; refused or locked saves never set one');
     assert.deepEqual((await calls(page, 'adminCreateTree')).slice(-1)[0], { name: 'شجرة', nameEn: 'New tree', region: 'إدلب', regionEn: 'Idlib', treeType: 'صوراني', treeTypeEn: 'Sorani', totalShares: 10, pricePerShareMinor: 3500, images: ['images/olive_branches_macro.webp'], landPriceMinor: 1500, landAreaSqm: 25, treeId: 'tree_04', hasLandOption: true });
     await page.waitForFunction(() => document.getElementById('view').getAttribute('aria-busy') === 'false');
     // ownership register: paging, tree filter, text-only

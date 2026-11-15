@@ -795,6 +795,8 @@ const adminSetJobActive = callable('admin_set_job_active');
 const adminSetReadiness = callable('admin_set_readiness');
 const adminSetTreeMill = callable('admin_set_tree_mill');
 const adminGetTreeMill = callable('admin_get_tree_mill');
+const adminSetTreeCrop = callable('admin_set_tree_crop');
+const adminGetTreeCrop = callable('admin_get_tree_crop');
 
 const myReferralCode = callableNoArg('my_referral_code');
 const myGifts = callableNoArg('my_gifts');
@@ -894,6 +896,8 @@ const api = Object.freeze({
   adminSetReadiness,
   adminSetTreeMill,
   adminGetTreeMill,
+  adminSetTreeCrop,
+  adminGetTreeCrop,
   signIn,
   register,
   signInWithGoogle,
