@@ -450,6 +450,7 @@ begin
     (repeat('d', 64), c_i2, 'tree_oil', 1, 1000, 'USD', 'approved', now()), (repeat('e', 64), c_o2, 'tree_oil', 2, 2000, 'USD', 'approved', now());
   insert into public.shares (id, request_id, user_id, tree_id, share_count, purchase_price_minor, currency) values
     (repeat('d', 64), repeat('d', 64), c_i2, 'tree_oil', 1, 1000, 'USD'), (repeat('e', 64), repeat('e', 64), c_o2, 'tree_oil', 2, 2000, 'USD');
+  insert into public.mills (mill_id, country_code, name, name_en) values ('mill_oil', 'SY', 'معصرة الزيت', 'Oil test mill') on conflict (mill_id) do nothing; -- assignments reference mill records (migration 49)
   perform private.admin_assign_mill('m@test.faseela.invalid', 'mill_oil');
   perform set_config('request.jwt.claims', json_build_object('sub', c_m, 'role', 'authenticated')::text, true);
   perform set_config('role', 'authenticated', true);
