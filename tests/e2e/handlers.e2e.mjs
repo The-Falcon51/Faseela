@@ -104,8 +104,63 @@ try {
   const errors = [];
   page.on('pageerror', (e) => errors.push(`pageerror: ${e.message}`));
   page.on('console', (m) => { if (m.type() === 'error' && !/40[14]/.test(m.text())) errors.push(`console: ${m.text().slice(0, 200)}`); });
+  // The catalogue is what the database lists, so the anonymous page gets a fixed catalogue instead of live data.
+  const tree = (id, crop, nameEn, extra = {}) => ({ tree_id: id, status: 'listed', crop_category: crop, name: 'شجرة ' + id, name_en: nameEn, region: 'طرطوس', region_en: 'Tartus',
+    tree_type: 'خضيري', tree_type_en: 'Khodairi', planted_year: 1990, estimated_annual_yield_kg: 60, images: ['images/olive_branches_macro.webp'], total_shares: 4, available_shares: 3,
+    price_per_share_minor: 3500, land_price_minor: 0, has_land_option: false, land_area_sqm: 0, currency: 'USD', country_code: 'SY', farm_id: 'farm_01', ...extra });
+  const CATALOG = [tree('tree_01', 'olive', 'Fixture Olive One'), tree('tree_02', 'olive', 'Fixture Olive Two', { farm_id: null }), tree('tree_15', 'pomegranate', 'Fixture Pomegranate', { farm_id: null })];
+  await page.route('**/rest/v1/trees_public*', (r) => r.fulfill({ contentType: 'application/json', body: JSON.stringify(CATALOG) }));
+  await page.route('**/rest/v1/countries*', (r) => r.fulfill({ contentType: 'application/json', body: JSON.stringify([{ code: 'SY', name: 'سوريا', name_en: 'Syria', name_de: 'Syrien', currency: 'USD' }]) }));
+  await page.route('**/rest/v1/farms*', (r) => r.fulfill({ contentType: 'application/json', body: JSON.stringify([{ farm_id: 'farm_01', country_code: 'SY', name: 'مزرعة الاختبار', name_en: 'Fixture Farm', region: '', region_en: '' }]) }));
   await page.goto(base, { waitUntil: 'load' });
   await page.waitForFunction(() => window.FaseelaEvents && typeof navigateTo === 'function', null, { timeout: 20000 });
+  await page.waitForFunction(() => state.catalogState === 'ready', null, { timeout: 20000 });
+
+  // ---- 1b. database-only catalogue: built-in entries are templates, never offers ----
+  const catalog = await page.evaluate(async () => {
+    navigateTo('marketplace'); await new Promise((r) => setTimeout(r, 200));
+    const offered = catalogTrees();
+    const grid = document.getElementById('trees-grid');
+    const first = offered.find((tr) => tr.id === 'tree_01');
+    const out = {
+      builtIn: state.treeTemplates.length, offered: offered.map((tr) => tr.id).sort(),
+      cards: grid.querySelectorAll('[data-click^="viewTreeDetails"]').length > 0, text: ['شجرة tree_01', 'شجرة tree_15'].every((n) => grid.textContent.includes(n)), // the page starts in Arabic
+      sampleGone: [first.mill_name, first.mill_batch_serial, first.harvest_batch_acidity, first.health_status].join('') === '' && first.maintenance_logs.length === 0 && first.harvest_status === 'growing',
+      farmFromDb: first.farm_name_en, farmless: offered.find((tr) => tr.id === 'tree_02').farm_name_en,
+      counts: Object.fromEntries([...document.querySelectorAll('[data-crop-count]')].map((el) => [el.getAttribute('data-crop-count'), el.classList.contains('hidden') ? 'hidden' : el.textContent])),
+      featured: state.featuredSeasonTreeId, calculator: [...document.getElementById('roi-region-select').options].map((o) => o.value)
+    };
+    return out;
+  });
+  // error and retry (the client object is frozen, so the failure is produced at the network level; 404 is the status the error filter above ignores)
+  const failing = (r) => r.fulfill({ status: 404, contentType: 'application/json', body: '{"message":"not found"}' });
+  await page.route('**/rest/v1/trees_public*', failing);
+  catalog.error = await page.evaluate(async () => {
+    await loadServerCatalog();
+    const grid = document.getElementById('trees-grid');
+    return { state: state.catalogState, shown: !!grid.querySelector('[data-catalog-state="error"]'), offered: catalogTrees().length, cards: grid.querySelectorAll('[data-click^="viewTreeDetails"]').length };
+  });
+  await page.unroute('**/rest/v1/trees_public*', failing);
+  await page.click('#trees-grid [data-click="retryCatalog()"]');
+  await page.waitForFunction(() => state.catalogState === 'ready');
+  catalog.retry = await page.evaluate(() => ({ state: state.catalogState, offered: catalogTrees().length }));
+  // empty catalogue: nothing on offer, no featured tree, no calculator
+  const nothing = (r) => r.fulfill({ contentType: 'application/json', body: '[]' });
+  await page.route('**/rest/v1/trees_public*', nothing);
+  catalog.empty = await page.evaluate(async () => {
+    await loadServerCatalog();
+    const grid = document.getElementById('trees-grid');
+    return { offered: catalogTrees().length, emptyState: /No trees found|لم يتم العثور/.test(grid.textContent), heroHidden: document.getElementById('hero-featured-tree-container').classList.contains('hidden'),
+      calculatorHidden: document.getElementById('section-harvest-calculator').classList.contains('hidden'), templatesKept: state.trees.length >= 16 };
+  });
+  await page.unroute('**/rest/v1/trees_public*', nothing);
+  catalog.restored = await page.evaluate(async () => { await loadServerCatalog(); const n = catalogTrees().length; navigateTo('home'); return n; });
+  assert.deepEqual(catalog, {
+    builtIn: 16, offered: ['tree_01', 'tree_02', 'tree_15'], cards: true, text: true, sampleGone: true, farmFromDb: 'Fixture Farm', farmless: '',
+    counts: { olive: '2', pistachio: 'hidden', almond_walnut: 'hidden', pomegranate: '1' }, featured: 'tree_01', calculator: ['tree_01', 'tree_02', 'tree_15'],
+    error: { state: 'error', shown: true, offered: 0, cards: 0 }, retry: { state: 'ready', offered: 3 },
+    empty: { offered: 0, emptyState: true, heroHidden: true, calculatorHidden: true, templatesKept: true }, restored: 3
+  }, 'only database trees are on offer');
   const inventory = await page.evaluate((list) => {
     const bad = [];
     for (const src of list) {
@@ -170,7 +225,7 @@ try {
     renderCountryFilter();
     const single = { visible: visible(), options: document.getElementById('filter-country').options.length };
     state.origins = { countries: [{ code: 'ES', name: 'إسبانيا', name_en: 'Spain', name_de: 'Spanien', currency: 'EUR' }], farms: [] };
-    state.trees.push({ ...JSON.parse(JSON.stringify(state.trees[0])), id: 'tree_es_x', country_code: 'ES', tree_name_en: 'Picual Test' });
+    state.trees.push({ ...JSON.parse(JSON.stringify(state.trees[0])), id: 'tree_es_x', country_code: 'ES', tree_name_en: 'Picual Test', server_listed: true });
     renderCountryFilter(); renderMarketplace();
     const all = cards();
     const options = [...document.getElementById('filter-country').options].map((o) => `${o.value}:${o.textContent}`);

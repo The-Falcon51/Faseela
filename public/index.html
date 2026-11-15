@@ -1594,7 +1594,7 @@
 
 
 <!-- Interactive Harvest & Carbon Impact Calculator -->
-      <section class="py-14 bg-white border-b border-stone-200">
+      <section id="section-harvest-calculator" class="py-14 bg-white border-b border-stone-200">
         <div class="max-w-5xl mx-auto px-4 sm:px-6 text-start">
           <div class="text-center max-w-2xl mx-auto mb-10">
             <span class="bg-olive-100 text-olive-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider" data-i18n="calc_badge">حاسبة الكفالة والأثر التفاعلية</span>
@@ -1866,7 +1866,7 @@
       <div class="flex items-center gap-1.5 sm:gap-2 p-1.5 bg-stone-200/70 dark:bg-stone-800/80 rounded-2xl mb-6 max-w-3xl border border-stone-300/50 dark:border-stone-700/60 shadow-xs overflow-x-auto">
         <button type="button" id="tab-market-mature" data-click="switchMarketplaceTrack('mature')" class="flex-1 py-2.5 px-3 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-1.5 shadow-xs bg-white dark:bg-stone-900 text-olive-950 dark:text-stone-100 cursor-pointer shrink-0">
           <i data-lucide="trees" class="w-3.5 h-3.5 text-olive-700 dark:text-olive-400"></i>
-          <span data-i18n="market_tab_mature">الأشجار المعمرة (16 شجرة)</span>
+          <span data-i18n="market_tab_mature">الأشجار المعمرة المنتجة</span>
         </button>
         <button type="button" id="tab-market-virgin" data-feature="land" data-click="switchMarketplaceTrack('virgin')" class="flex-1 py-2.5 px-3 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-1.5 text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-200 cursor-pointer shrink-0">
           <i data-lucide="sprout" class="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400"></i>
@@ -2000,27 +2000,27 @@
       <div id="marketplace-crop-tabs" class="mb-5 flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
         <button type="button" data-click="setCropCategoryFilter('all')" id="btn-crop-all" class="crop-cat-btn bg-olive-800 text-white px-4 py-2.5 rounded-2xl text-xs font-black flex items-center gap-2 shrink-0 shadow-xs transition-all cursor-pointer">
           <i data-lucide="layout-grid" class="w-4 h-4"></i>
-          <span data-i18n="crop_tab_all">كافة المحاصيل (16 شجرة)</span>
+          <span data-i18n="crop_tab_all">كافة المحاصيل</span>
         </button>
         <button type="button" data-click="setCropCategoryFilter('olive')" id="btn-crop-olive" class="crop-cat-btn bg-white dark:bg-stone-800 text-stone-700 dark:text-stone-300 hover:bg-olive-50 border border-stone-200 dark:border-stone-700 px-4 py-2.5 rounded-2xl text-xs font-bold flex items-center gap-2 shrink-0 transition-all cursor-pointer">
           <span class="text-base">🫒</span>
           <span data-i18n="crop_tab_olive">الزيتون المبارك (الركيزة ال)</span>
-          <span class="bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 text-[10px] font-black px-1.5 py-0.5 rounded-full">11</span>
+          <span class="bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 text-[10px] font-black px-1.5 py-0.5 rounded-full" data-crop-count="olive">11</span>
         </button>
         <button type="button" data-click="setCropCategoryFilter('pistachio')" id="btn-crop-pistachio" class="crop-cat-btn bg-white dark:bg-stone-800 text-stone-700 dark:text-stone-300 hover:bg-amber-50 border border-stone-200 dark:border-stone-700 px-4 py-2.5 rounded-2xl text-xs font-bold flex items-center gap-2 shrink-0 transition-all cursor-pointer">
           <span class="text-base">🌰</span>
           <span data-i18n="crop_tab_pistachio">الفستق الحلبي (الذهب الأخضر)</span>
-          <span class="bg-amber-100 text-amber-900 dark:bg-amber-950 dark:text-amber-300 text-[10px] font-black px-1.5 py-0.5 rounded-full">2</span>
+          <span class="bg-amber-100 text-amber-900 dark:bg-amber-950 dark:text-amber-300 text-[10px] font-black px-1.5 py-0.5 rounded-full" data-crop-count="pistachio">2</span>
         </button>
         <button type="button" data-click="setCropCategoryFilter('almond_walnut')" id="btn-crop-almond_walnut" class="crop-cat-btn bg-white dark:bg-stone-800 text-stone-700 dark:text-stone-300 hover:bg-rose-50 border border-stone-200 dark:border-stone-700 px-4 py-2.5 rounded-2xl text-xs font-bold flex items-center gap-2 shrink-0 transition-all cursor-pointer">
           <span class="text-base">🌸</span>
           <span data-i18n="crop_tab_nuts">اللوزيات والجوز السوري</span>
-          <span class="bg-stone-100 text-stone-800 dark:bg-stone-700 dark:text-stone-200 text-[10px] font-black px-1.5 py-0.5 rounded-full">2</span>
+          <span class="bg-stone-100 text-stone-800 dark:bg-stone-700 dark:text-stone-200 text-[10px] font-black px-1.5 py-0.5 rounded-full" data-crop-count="almond_walnut">2</span>
         </button>
         <button type="button" data-click="setCropCategoryFilter('pomegranate')" id="btn-crop-pomegranate" class="crop-cat-btn bg-white dark:bg-stone-800 text-stone-700 dark:text-stone-300 hover:bg-red-50 border border-stone-200 dark:border-stone-700 px-4 py-2.5 rounded-2xl text-xs font-bold flex items-center gap-2 shrink-0 transition-all cursor-pointer">
           <span class="text-base">🍇</span>
           <span data-i18n="crop_tab_pomegranate">رمان حوران العصيري</span>
-          <span class="bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300 text-[10px] font-black px-1.5 py-0.5 rounded-full">1</span>
+          <span class="bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300 text-[10px] font-black px-1.5 py-0.5 rounded-full" data-crop-count="pomegranate">1</span>
         </button>
         <button type="button" data-click="setCropCategoryFilter('date')" id="btn-crop-date" class="crop-cat-btn bg-white dark:bg-stone-800 text-stone-700 dark:text-stone-300 hover:bg-amber-50 border border-stone-200 dark:border-stone-700 px-4 py-2.5 rounded-2xl text-xs font-bold flex items-center gap-2 shrink-0 transition-all cursor-pointer">
           <span class="text-base">🌴</span>

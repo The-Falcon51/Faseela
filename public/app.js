@@ -2806,7 +2806,11 @@
         fndr_restore_json_ph: "الصق هنا كود JSON الخاص باللقطة الاحتياطية...",
         contract_btn_print_deed: "طباعة صك الحيازة والعقد الرسمي (Print / PDF)",
         auth_brute_force_lock: "تم قفل محاولات تسجيل الدخول مؤقتاً لهذا الحساب لدواعي الأمان. يرجى الانتظار دقيقتين.",
-        crop_tab_all: "كافة المحاصيل (16 شجرة)",
+        crop_tab_all: "كافة المحاصيل",
+        catalog_loading_title: "جارٍ تحميل الأشجار المتاحة…",
+        catalog_error_title: "تعذّر تحميل الأشجار المتاحة",
+        catalog_error_sub: "تحقق من اتصالك بالإنترنت ثم أعد المحاولة.",
+        catalog_retry_btn: "إعادة المحاولة",
         crop_tab_olive: "الزيتون المبارك (الركيزة ال)",
         crop_tab_pistachio: "الفستق الحلبي (الذهب الأخضر)",
         crop_tab_nuts: "اللوزيات والجوز السوري",
@@ -5607,7 +5611,11 @@
         fndr_restore_json_ph: "Paste backup JSON code here...",
         contract_btn_print_deed: "Print Usufruct Deed & Contract (Print / PDF)",
         auth_brute_force_lock: "Login attempts temporarily locked for this account for security. Please wait 2 minutes.",
-        crop_tab_all: "All Crops (16 Trees)",
+        crop_tab_all: "All Crops",
+        catalog_loading_title: "Loading the trees on offer…",
+        catalog_error_title: "The trees on offer could not be loaded",
+        catalog_error_sub: "Check your internet connection and try again.",
+        catalog_retry_btn: "Try again",
         crop_tab_olive: "Blessed Olives (Core)",
         crop_tab_pistachio: "Aleppo Pistachio (Green Gold)",
         crop_tab_nuts: "Syrian Almonds & Walnuts",
@@ -10383,6 +10391,7 @@
     // regulated offer in several target markets. It stays off until counsel signs off.
     // Off means: no new land sales and no land marketing surfaces. Shares that already include
     // land (server records) keep showing it — that is an existing contract, not an offer.
+    state.catalogState = 'loading'; // 'loading' | 'ready' | 'error' — see catalogTrees()
     const LAND_OFFER_ENABLED = false;
     // The shop has sample products and prices and no order backend: an "order" would go nowhere. Off until it has one.
     const BOUTIQUE_ENABLED = false;
@@ -10457,26 +10466,85 @@
      * the full shape of a built-in entry, so one of the same crop is copied and everything tree-specific is cleared.
      */
     function buildServerTreeEntry(pt) {
-      const template = (state.trees || []).find(tr => tr.crop_category === pt.catalog.crop_category) || (state.trees || [])[0];
+      // Templates are the built-in entries as they were at start-up; the tree's own template wins, then one of its crop.
+      const templates = state.treeTemplates || state.trees || [];
+      const template = templates.find(tr => tr.id === pt.id) || templates.find(tr => tr.crop_category === pt.catalog.crop_category) || templates[0];
       if (!template) return null;
       const entry = JSON.parse(JSON.stringify(template));
       entry.id = pt.id;
-      entry.server_only = true;
-      entry.farm_id = null;
-      entry.mill_id = null;
-      ['farm_name', 'farm_name_en', 'mill_name', 'mill_name_en', 'mill_batch_serial', 'harvest_batch_acidity', 'harvest_season_name', 'harvest_season_name_en'].forEach(key => {
-        if (key in entry) entry[key] = '';
-      });
+      entry.server_only = !templates.some(tr => tr.id === pt.id);
       entry.region_detail = pt.catalog.region || '';
       entry.region_detail_en = pt.catalog.region_en || '';
+      stripSampleDetails(entry);
+      return entry;
+    }
+
+    /**
+     * Removes what the built-in entries invent about a tree's operations (farm and mill names, a pressed batch with
+     * serial and acidity, care log, health note). A tree on offer shows only what the database says about it;
+     * farm names come back from public.farms (loadOrigins), reports and lab values from the tree page.
+     */
+    function stripSampleDetails(entry) {
+      ['farm_name', 'farm_name_en', 'mill_name', 'mill_name_en', 'mill_batch_serial', 'harvest_batch_acidity', 'harvest_season_name', 'harvest_season_name_en', 'health_status', 'health_status_en'].forEach(key => {
+        if (key in entry) entry[key] = '';
+      });
       entry.harvest_status = 'growing';
       entry.harvest_status_ar = 'قيد الرعاية';
       entry.harvest_status_en = 'In care';
       entry.harvest_ready_liters_per_share = 0;
       entry.maintenance_logs = [];
       if (entry.land_parcel) entry.land_parcel.has_land_option = false;
+      entry.sample_stripped = true;
       return entry;
     }
+
+    /** Trees on offer: only what the database lists. The built-in entries are templates, never offers. */
+    function catalogTrees() {
+      if (state.catalogState !== 'ready') return [];
+      return (state.trees || []).filter(tr => tr.server_listed);
+    }
+
+    /** Loading and error states of the catalogue (the empty state is rendered by renderMarketplace itself). */
+    function renderCatalogState(container) {
+      const failed = state.catalogState === 'error';
+      container.className = 'grid grid-cols-1 gap-8';
+      container.innerHTML = `
+        <div class="py-14 text-center text-stone-500 bg-white rounded-3xl border border-stone-200 p-8 shadow-sm" role="${failed ? 'alert' : 'status'}" aria-live="polite" data-catalog-state="${failed ? 'error' : 'loading'}">
+          <div class="w-16 h-16 rounded-full bg-olive-50 text-olive-700 flex items-center justify-center mx-auto mb-4 border border-olive-200">
+            <i data-lucide="${failed ? 'cloud-off' : 'loader'}" class="w-8 h-8"></i>
+          </div>
+          <h3 class="font-black text-lg text-stone-800 mb-2">${t(failed ? 'catalog_error_title' : 'catalog_loading_title')}</h3>
+          ${failed ? `<p class="text-xs text-stone-500 max-w-md mx-auto mb-6">${t('catalog_error_sub')}</p>
+          <button type="button" data-click="retryCatalog()" class="bg-olive-800 hover:bg-olive-900 text-white font-bold text-xs px-6 py-3 rounded-2xl transition-all shadow-sm flex items-center gap-2 mx-auto cursor-pointer">
+            <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+            <span>${t('catalog_retry_btn')}</span>
+          </button>` : ''}
+        </div>
+      `;
+      if (window.lucide && typeof window.lucide.createIcons === 'function') window.lucide.createIcons();
+    }
+    function retryCatalog() {
+      state.catalogState = 'loading';
+      if (typeof renderMarketplace === 'function') renderMarketplace();
+      loadServerCatalog();
+    }
+    /** Number of offered trees per crop, written into the crop tabs (the numbers used to be fixed text). */
+    function updateCropCounts() {
+      const offers = catalogTrees();
+      document.querySelectorAll('[data-crop-count]').forEach(el => {
+        const key = el.getAttribute('data-crop-count');
+        const n = offers.filter(tr => key === 'almond_walnut' ? ['almond', 'walnut'].includes(tr.crop_category) : (tr.crop_category || 'olive') === key).length;
+        el.textContent = String(n);
+        el.classList.toggle('hidden', n === 0);
+      });
+    }
+    // If no backend answers at all, the catalogue must not stay on "loading" forever.
+    setTimeout(() => {
+      if (state.catalogState === 'loading') {
+        state.catalogState = 'error';
+        if (typeof renderMarketplace === 'function' && typeof getCurrentVisiblePage === 'function' && getCurrentVisiblePage() === 'marketplace') renderMarketplace();
+      }
+    }, 12000);
 
     // ---- Origin: country and farm come from the database (public.countries / public.farms) ----
     const BUILT_IN_COUNTRY_NAMES = { SY: { ar: 'سوريا', en: 'Syria', de: 'Syrien' } };
@@ -10492,7 +10560,7 @@
       const wrapper = document.getElementById('filter-country-wrapper');
       const select = document.getElementById('filter-country');
       if (!wrapper || !select) return;
-      const codes = [...new Set((state.trees || []).map(treeCountry))].sort((a, b) => countryName(a).localeCompare(countryName(b), state.currentLang));
+      const codes = [...new Set(catalogTrees().map(treeCountry))].sort((a, b) => countryName(a).localeCompare(countryName(b), state.currentLang));
       const current = codes.includes(select.value) ? select.value : 'all';
       select.replaceChildren();
       const all = document.createElement('option');
@@ -10530,6 +10598,7 @@
       if (!window.FaseelaFirebase?.listPublicTrees) return;
       try {
         const publicTrees = await window.FaseelaFirebase.listPublicTrees();
+        if (!state.treeTemplates) state.treeTemplates = JSON.parse(JSON.stringify(state.trees || []));
         state.serverPublicTrees = publicTrees || [];
         state.serverCatalogLoaded = true;
         const byId = new Map(state.serverPublicTrees.map(pt => [pt.id, pt]));
@@ -10554,7 +10623,12 @@
           local.country_code = pt.country_code || 'SY';
           local.farm_id = pt.farm_id || null;
         });
+        (state.trees || []).forEach(local => { if (local.server_listed && !local.sample_stripped) stripSampleDetails(local); });
+        state.catalogState = 'ready';
         await loadOrigins();
+        updateCropCounts();
+        if (typeof renderHeroFeaturedTree === 'function') renderHeroFeaturedTree();
+        if (typeof renderROIRegionOptions === 'function') renderROIRegionOptions();
         if (typeof renderMarketplace === 'function' && getCurrentVisiblePage() === 'marketplace') renderMarketplace();
         // Deep link from the public tree page (/tree.html -> ./?tree=<id>#marketplace): open that tree once.
         const wantedTree = new URLSearchParams(location.search).get('tree');
@@ -10565,7 +10639,9 @@
         }
       } catch (error) {
         state.serverCatalogLoaded = false;
+        state.catalogState = 'error';
         console.warn('Could not load public trees catalog from server:', error);
+        if (typeof renderMarketplace === 'function' && getCurrentVisiblePage() === 'marketplace') renderMarketplace();
       }
     }
 
@@ -12692,10 +12768,17 @@
     
     function renderROIRegionOptions() {
       const select = document.getElementById('roi-region-select');
-      if (!select || !state.trees || state.trees.length === 0) return;
+      if (!select) return;
+      const offers = catalogTrees();
+      // The calculator works on trees that are on offer; without any it is hidden.
+      const section = document.getElementById('section-harvest-calculator');
+      if (section) section.classList.toggle('hidden', offers.length === 0);
+      if (offers.length === 0) return;
       const isEn = state.currentLang !== 'ar';
-      const currentVal = select.value || state.roiSelectedTreeId || 'tree_01';
-      select.innerHTML = state.trees.map(t => {
+      const wanted = select.value || state.roiSelectedTreeId;
+      const currentVal = offers.some(tr => tr.id === wanted) ? wanted : offers[0].id;
+      state.roiSelectedTreeId = currentVal;
+      select.innerHTML = offers.map(t => {
         const name = isEn ? ((t.region_en || t.region) + ' - ' + (t.tree_type_en || t.tree_type)) : (t.region + ' - ' + t.tree_type);
         const age = `${t.age_years} ${isEn ? 'yrs' : 'سنة'}`;
         const price = `${formatMoney(t.price_per_share)} ${isEn ? '/ sh' : '/ حصة'}`;
@@ -13970,6 +14053,7 @@ function setMarketplaceViewMode(mode) {
 
     function renderMarketplace() {
     const container = document.getElementById('trees-grid');
+    if (container && state.catalogState !== 'ready') { renderCatalogState(container); return; }
     const searchInput = document.getElementById('marketplace-search-input');
     const searchVal = searchInput ? searchInput.value.trim().toLowerCase() : '';
     const filterRegion = document.getElementById('filter-region')?.value || 'all';
@@ -14045,7 +14129,7 @@ function setMarketplaceViewMode(mode) {
     }
 
     // Filter Logic
-    let filtered = state.trees.filter(t => {
+    let filtered = catalogTrees().filter(t => {
       // Land Filter
       if (filterLand === 'with_land') {
         const hasLand = landOfferEnabled() && t.land_parcel && t.land_parcel.has_land_option !== false;
@@ -25520,12 +25604,12 @@ function setMarketplaceViewMode(mode) {
 
       const isEn = state.currentLang !== 'ar';
       const treeId = state.featuredSeasonTreeId || 'tree_01';
-      let tree = state.trees.find(t => t.id === treeId);
-      if (!tree && state.trees.length > 0) {
-        tree = state.trees[0];
-        state.featuredSeasonTreeId = tree.id;
-      }
+      // Only a tree that is really on offer is featured; without one the card is hidden.
+      const offers = catalogTrees();
+      const tree = offers.find(t => t.id === treeId) || offers[0];
+      container.classList.toggle('hidden', !tree);
       if (!tree) return;
+      state.featuredSeasonTreeId = tree.id;
 
       // Extract tree presentation details safely
       const name = isEn ? (tree.tree_name_en || tree.name_en || tree.tree_name || tree.name) : (tree.tree_name || tree.name);
