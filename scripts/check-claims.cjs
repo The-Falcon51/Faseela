@@ -63,7 +63,7 @@ const RATCHET_FILES = ['public/index.html', 'public/app.js', 'src/i18n/de.json',
 const RATCHET_TERMS = [
   { label: 'land title (ar)', pattern: /طابو/g },
   { label: 'land title', pattern: /\bTabu\b|\bGrundbuch|\bcadastral\b|كاداستر/gi },
-  { label: 'deed / usufruct', pattern: /\busufruct\b|\bdeeds?\b|\bNießbrauch|سند حيازة|صك/gi },
+  { label: 'deed / usufruct', pattern: /\busufruct\b|\bdeeds?\b|\bNießbrauch|سند حيازة|(?<![ء-ي])(?:[وبل]|ال)*صك/gi },
   { label: 'investment wording', pattern: /\binvest(?:or|ors|ment|ments|ing)?\b|\bInvestition|\bAnleger|استثمار|مستثمر/gi },
   { label: 'return / profit wording', pattern: /\bROI\b|\bdividends?\b|\bcapital gains?\b|\bappreciation\b|\bRendite|أرباح|عوائد|ربح رأسمالي/gi },
   { label: 'escrow', pattern: /\bescrow\b|\bTreuhand|حساب الضمان/gi }

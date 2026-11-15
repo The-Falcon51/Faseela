@@ -46,7 +46,7 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
 });
 
 const roleNames = {
-  investor: { ar: 'مستثمر زراعي', en: 'Agricultural Investor' },
+  investor: { ar: 'كافل شجرة', en: 'Tree Sponsor' },
   farmer: { ar: 'مزارع شريك', en: 'Partner Farmer' },
   mill_operator: { ar: 'صاحب معصرة', en: 'Mill Operator' },
   finance_admin: { ar: 'مدقق مالي', en: 'Finance Administrator' },
@@ -196,7 +196,7 @@ async function publishSessionNow(user) {
   const appRole = claimRole === 'mill_operator' ? 'mill_owner' : claimRole;
   const labels = roleNames[claimRole] || roleNames.investor;
   const displayName = profile.displayName || user.user_metadata?.display_name
-    || user.user_metadata?.full_name || user.email?.split('@')[0] || 'Investor';
+    || user.user_metadata?.full_name || user.email?.split('@')[0] || 'Sponsor';
   const avatar = displayName.trim().charAt(0) || '؟';
 
   dispatchAuthState({

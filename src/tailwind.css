@@ -11,3 +11,5 @@
    next to their own data. The shop takes no real orders yet and is off for everyone (BOUTIQUE_ENABLED). */
 .server-mode [data-demo] { display: none !important; }
 .boutique-off [data-feature="boutique"] { display: none !important; }
+/* Blocks that describe a feature the platform does not have (e.g. a growth / compounding simulator). */
+[data-off] { display: none !important; }

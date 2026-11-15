@@ -6,7 +6,7 @@ import '../supabase-client.mjs';
 const SUPABASE_ORIGIN = 'https://riyvlhlhzxxerlwqoxsy.supabase.co';
 const IDLE_LIMIT_MS = 30 * 60 * 1000;
 const ROLES = ['investor', 'farmer', 'mill_operator', 'finance_admin', 'quality_auditor', 'admin'];
-const ROLE_LABEL = { investor: 'Investor', farmer: 'Landwirt', mill_operator: 'Ölmühle', mill_owner: 'Ölmühle', finance_admin: 'Finanz-Admin', quality_auditor: 'Qualitätsprüfer', admin: 'Admin' };
+const ROLE_LABEL = { investor: 'Baumpate', farmer: 'Landwirt', mill_operator: 'Ölmühle', mill_owner: 'Ölmühle', finance_admin: 'Finanz-Admin', quality_auditor: 'Qualitätsprüfer', admin: 'Admin' };
 const CHANNEL_TYPES = ['syriatel_cash', 'mtn_cash', 'bank_iban', 'exchange_office', 'other'];
 const CHANNEL_LABEL = { syriatel_cash: 'Syriatel Cash', mtn_cash: 'MTN Cash', bank_iban: 'Bankkonto / IBAN', exchange_office: 'Wechselstube', other: 'Sonstiges' };
 const FINANCE_COLUMNS = ['requestId', 'createdAt', 'status', 'payerName', 'payerEmail', 'userId', 'treeId', 'shareCount', 'includesLand', 'amountMinor', 'currency'];
@@ -486,7 +486,7 @@ async function viewOverview(view) {
     mini('Geschenke', d.gifts, { open: 'offen', redeemed: 'eingelöst', cancelled: 'storniert', expired: 'abgelaufen' }),
     mini('Empfehlungen', d.referrals, { pending: 'offen', rewarded: 'belohnt', void: 'verfallen' }),
     mini('Olivenöl', d.oil, { requestsPending: 'Anfragen offen', requestsApproved: 'freigegeben' }),
-    mini('Rollen', d.roles, { investor: 'Investoren', farmer: 'Landwirte', mill_operator: 'Ölmühlen', finance_admin: 'Finanz-Admins', quality_auditor: 'Qualitätsprüfer', admin: 'Admins' })
+    mini('Rollen', d.roles, { investor: 'Baumpaten', farmer: 'Landwirte', mill_operator: 'Ölmühlen', finance_admin: 'Finanz-Admins', quality_auditor: 'Qualitätsprüfer', admin: 'Admins' })
   ]));
   view.append(el('p', { class: 'muted', text: `Stand ${fmtDate(d.generatedAt)}` }));
 }
