@@ -72,7 +72,7 @@ const failures = [];
 const open = async (query) => {
   const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 }, locale: 'en-US' });
   await ctx.addInitScript(() => { try { localStorage.setItem('faseela_lang', 'en'); } catch (e) { /* ignore */ } });
-  await ctx.route('**/supabase-client.mjs', (r) => r.fulfill({ contentType: 'text/javascript', body: MOCK_CLIENT }));
+  await ctx.route('**/supabase-client.mjs*', (r) => r.fulfill({ contentType: 'text/javascript', body: MOCK_CLIENT }));
   const page = await ctx.newPage();
   const errors = [];
   page.on('pageerror', (e) => errors.push(`pageerror: ${e.message}`));

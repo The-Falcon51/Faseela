@@ -6725,7 +6725,9 @@
       if (germanDictionaryPromise) return germanDictionaryPromise;
       germanDictionaryPromise = new Promise((resolve) => {
         const script = document.createElement('script');
-        script.src = 'i18n-de.js';
+        // Same build id as the page, so the dictionary always belongs to this version of the app.
+        const build = document.querySelector('meta[name="faseela-build"]')?.content || '';
+        script.src = build ? `i18n-de.js?v=${build}` : 'i18n-de.js';
         script.async = true;
         script.onload = () => {
           const dict = window.FASEELA_I18N_DE;
@@ -7526,7 +7528,9 @@
       document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
         const val = t(key);
-        if (val) {
+        // t() answers with the key itself when no language has the text: keep the text the page shipped with
+        // instead of showing a key such as "crop_name_date".
+        if (val && val !== key) {
           if (el.tagName === 'OPTION') {
             el.innerText = val;
           } else {

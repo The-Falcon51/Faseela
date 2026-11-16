@@ -191,6 +191,33 @@ try {
   });
   assert.deepEqual(smoke, { nav: true, page: 'marketplace', lang: true, langState: 'en', auth: true, authOpen: true, close: true, authClosed: true });
 
+  // ---- 2a. page and code belong together; a missing text never shows its key ----
+  {
+    const versions = await page.evaluate(() => ({ build: document.querySelector('meta[name="faseela-build"]').content,
+      urls: [...document.querySelectorAll('script[src], link[rel=stylesheet]')].map((n) => n.getAttribute('src') || n.getAttribute('href')).filter((u) => /(app|shop|events)\.js|supabase-client\.mjs|tailwind\.css/.test(u)) }));
+    assert.match(versions.build, /^[0-9a-f]{12}$/);
+    assert.equal(versions.urls.length, 5);
+    assert.ok(versions.urls.every((u) => u.endsWith(`?v=${versions.build}`)), `every code URL carries the build id: ${versions.urls}`);
+    const kept = await page.evaluate(() => {
+      const before = state.currentLang;
+      const saved = { ar: i18n.ar.crop_name_date, en: i18n.en.crop_name_date };
+      delete i18n.ar.crop_name_date; delete i18n.en.crop_name_date; // what an outdated dictionary looks like
+      setLanguage('ar');
+      const label = document.querySelector('[data-i18n="crop_name_date"]').textContent.trim();
+      i18n.ar.crop_name_date = saved.ar; i18n.en.crop_name_date = saved.en;
+      setLanguage(before);
+      return label;
+    });
+    assert.notEqual(kept, 'crop_name_date', 'a label never falls back to its key');
+    assert.ok(kept.length > 3);
+    const raw = {};
+    for (const lang of ['ar', 'en']) {
+      raw[lang] = await page.evaluate((l) => { setLanguage(l); return [...document.querySelectorAll('[data-i18n]')].filter((n) => n.textContent.trim() === n.getAttribute('data-i18n')).map((n) => n.getAttribute('data-i18n')); }, lang);
+    }
+    assert.deepEqual(raw, { ar: [], en: [] }, 'no label on the page shows a raw key');
+    await page.evaluate(() => setLanguage('ar'));
+  }
+
   // ---- 2b. land / greenfield offer switch (legal): off = no surface, no purchase path -----
   const land = await page.evaluate(() => {
     const shown = (sel) => { const host = document.querySelector(sel)?.closest('[data-feature="land"]'); return !host || getComputedStyle(host).display !== 'none'; };
@@ -280,7 +307,7 @@ try {
   // ---- 2b. gift landing for signed-out visitors ------------------------------------------
   {
     const ctx = await browser.newContext({ viewport: { width: 390, height: 844 } });
-    await ctx.route('**/supabase-client.mjs', (r) => r.fulfill({ contentType: 'text/javascript', body: `
+    await ctx.route('**/supabase-client.mjs*', (r) => r.fulfill({ contentType: 'text/javascript', body: `
       const params = new URLSearchParams(location.search);
       const gift = (params.get('gift') || '').toUpperCase();
       history.replaceState(null, '', location.pathname);
@@ -307,14 +334,14 @@ try {
   // ---- 2c. German as third language (lazy dictionary, fallback chain, no Arabic leakage) -----
   {
     const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
-    await ctx.route('**/supabase-client.mjs', (r) => r.fulfill({ contentType: 'text/javascript', body: `
+    await ctx.route('**/supabase-client.mjs*', (r) => r.fulfill({ contentType: 'text/javascript', body: `
       window.FaseelaFirebase = window.FaseelaBackend = { backend: 'supabase', listPublicTrees: async () => [], pendingGiftCode: () => '', pendingReferralCode: () => '' };
       setTimeout(() => window.dispatchEvent(new CustomEvent('faseela-auth-state', { detail: null })), 200);` }));
     const d = await ctx.newPage();
     const dErrs = [];
     const dRequests = [];
     d.on('pageerror', (e) => dErrs.push(e.message));
-    d.on('request', (req) => { if (req.url().endsWith('i18n-de.js')) dRequests.push(req.url()); });
+    d.on('request', (req) => { if (/i18n-de\.js(\?v=[0-9a-f]+)?$/.test(req.url())) dRequests.push(req.url()); });
     await d.goto(base, { waitUntil: 'load' });
     await d.waitForTimeout(600);
     assert.equal(dRequests.length, 0, 'German dictionary is not downloaded for Arabic visitors');
@@ -379,9 +406,9 @@ try {
     assert.deepEqual(cycle, ['de', 'ar:rtl', 'en:ltr', 'de:ltr', 'ar']);
     // Error state: dictionary unreachable -> stays usable in English, user is told.
     const ctx2 = await browser.newContext({ viewport: { width: 390, height: 844 } });
-    await ctx2.route('**/supabase-client.mjs', (r) => r.fulfill({ contentType: 'text/javascript', body: `
+    await ctx2.route('**/supabase-client.mjs*', (r) => r.fulfill({ contentType: 'text/javascript', body: `
       window.FaseelaFirebase = window.FaseelaBackend = { backend: 'supabase', listPublicTrees: async () => [], pendingGiftCode: () => '', pendingReferralCode: () => '' };` }));
-    await ctx2.route('**/i18n-de.js', (r) => r.abort());
+    await ctx2.route('**/i18n-de.js*', (r) => r.abort());
     const f = await ctx2.newPage();
     const fErrs = [];
     f.on('pageerror', (e) => fErrs.push(e.message));
@@ -413,7 +440,7 @@ try {
     const TOKEN = 'fcmTok_' + 'p'.repeat(60);
     // Browser (no Capacitor): the card stays hidden and nothing is registered.
     const webCtx = await browser.newContext({ viewport: { width: 390, height: 844 } });
-    await webCtx.route('**/supabase-client.mjs', (r) => r.fulfill({ contentType: 'text/javascript', body: MOCK_CLIENT }));
+    await webCtx.route('**/supabase-client.mjs*', (r) => r.fulfill({ contentType: 'text/javascript', body: MOCK_CLIENT }));
     const w = await webCtx.newPage();
     await w.goto(`${base}?mockRole=investor`, { waitUntil: 'load' });
     await w.waitForFunction(() => state.currentUser && state.serverMode, null, { timeout: 20000 });
@@ -425,7 +452,7 @@ try {
     await webCtx.close();
 
     const ctx = await browser.newContext({ viewport: { width: 390, height: 844 } });
-    await ctx.route('**/supabase-client.mjs', (r) => r.fulfill({ contentType: 'text/javascript', body: MOCK_CLIENT }));
+    await ctx.route('**/supabase-client.mjs*', (r) => r.fulfill({ contentType: 'text/javascript', body: MOCK_CLIENT }));
     await ctx.addInitScript((token) => {
       const listeners = {};
       window.__push = { permission: localStorage.getItem('__pushPerm') || 'prompt', afterRequest: 'granted', token, log: [], listeners }; // the OS remembers the permission across app starts
@@ -542,7 +569,7 @@ try {
   // ---- 3. mocked sessions ---------------------------------------------------------------
   for (const role of ['investor', 'admin', 'farmer']) {
     const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
-    await ctx.route('**/supabase-client.mjs', (r) => r.fulfill({ contentType: 'text/javascript', body: MOCK_CLIENT }));
+    await ctx.route('**/supabase-client.mjs*', (r) => r.fulfill({ contentType: 'text/javascript', body: MOCK_CLIENT }));
     const p = await ctx.newPage();
     const errs = [];
     const navs = [];

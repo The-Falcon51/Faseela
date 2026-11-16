@@ -67,4 +67,9 @@ step('self-hosted fonts', () => {
   fs.writeFileSync(path.join(fontsDir, 'fonts.css'), css);
 });
 
+// Last: every step above can change a file the build id is computed from.
+step('build id in page and service worker', () => {
+  require('./version-assets.cjs').run(false);
+});
+
 console.log('✅ Front-end assets built.');
