@@ -15,6 +15,22 @@
     "return / profit wording": 28,
     "escrow": 10
   },
+  "public/assistant-knowledge.js": {
+    "land title (ar)": 0,
+    "land title": 0,
+    "deed / usufruct": 0,
+    "investment wording": 0,
+    "return / profit wording": 0,
+    "escrow": 0
+  },
+  "public/shop.js": {
+    "land title (ar)": 0,
+    "land title": 0,
+    "deed / usufruct": 0,
+    "investment wording": 0,
+    "return / profit wording": 0,
+    "escrow": 0
+  },
   "src/i18n/de.json": {
     "land title (ar)": 0,
     "land title": 1,

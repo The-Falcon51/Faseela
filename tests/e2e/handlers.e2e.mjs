@@ -95,7 +95,7 @@ const failures = [];
 try {
   // ---- 1. handler inventory ------------------------------------------------------------
   const attrs = new Set();
-  for (const file of ['public/index.html', 'public/app.js']) {
+  for (const file of ['public/index.html', 'public/app.js', 'public/assistant-knowledge.js']) {
     for (const m of fs.readFileSync(path.join(root, file), 'utf8').matchAll(/data-(click|change|input|submit|keydown|scroll)=\\?"((?:[^"\\]|\\.)*)\\?"/g)) {
       attrs.add(m[2].replace(/\\"/g, '"'));
     }
@@ -194,9 +194,9 @@ try {
   // ---- 2a. page and code belong together; a missing text never shows its key ----
   {
     const versions = await page.evaluate(() => ({ build: document.querySelector('meta[name="faseela-build"]').content,
-      urls: [...document.querySelectorAll('script[src], link[rel=stylesheet]')].map((n) => n.getAttribute('src') || n.getAttribute('href')).filter((u) => /(app|shop|events)\.js|supabase-client\.mjs|tailwind\.css/.test(u)) }));
+      urls: [...document.querySelectorAll('script[src], link[rel=stylesheet]')].map((n) => n.getAttribute('src') || n.getAttribute('href')).filter((u) => /(app|shop|events|assistant-knowledge)\.js|supabase-client\.mjs|tailwind\.css/.test(u)) }));
     assert.match(versions.build, /^[0-9a-f]{12}$/);
-    assert.equal(versions.urls.length, 5);
+    assert.equal(versions.urls.length, 6);
     assert.ok(versions.urls.every((u) => u.endsWith(`?v=${versions.build}`)), `every code URL carries the build id: ${versions.urls}`);
     const kept = await page.evaluate(() => {
       const before = state.currentLang;

@@ -15,7 +15,7 @@ const crypto = require('node:crypto');
 
 const pub = path.resolve(__dirname, '..', 'public');
 // Referenced by index.html with a version.
-const VERSIONED = ['events.js', 'app.js', 'shop.js', 'supabase-client.mjs', 'assets/tailwind.css'];
+const VERSIONED = ['events.js', 'app.js', 'assistant-knowledge.js', 'shop.js', 'supabase-client.mjs', 'assets/tailwind.css'];
 // Loaded by the versioned files themselves; they change the build id too.
 const ALSO_HASHED = ['i18n-de.js', 'data-mappers.mjs'];
 
