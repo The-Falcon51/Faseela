@@ -12,7 +12,7 @@ declare
   c_order constant jsonb := '{"idempotencyKey":"market-test-key-0001","contact":{"name":"Kunde Geheim","phone":"+49 30 000","addressLine1":"Geheimweg 7","postalCode":"10115","city":"Berlin","country":"DE"}}';
   v_j jsonb; v_n integer; v_items jsonb;
   v_p1 uuid; v_p2 uuid; v_p3 uuid;
-  v_o1 text; v_o2 text; v_o3 text; v_o4 text;
+  v_o1 text; v_o2 text; v_o3 text; v_o4 text; v_o5 text;
 begin
   create temp table t_chk (name text, ok boolean) on commit drop;
   grant insert on t_chk to anon, authenticated;
@@ -97,6 +97,14 @@ begin
     and pg_temp.call_as(c_c, $q$delete from public.products$q$) <> 'OK');
 
   -- ---------------------------------------------------------------- pricing
+  perform pg_temp.chk('closed shop takes no quote and no order', pg_temp.call_as(c_c, format($q$select public.quote_order('{"destCountry":"DE","items":[{"productId":"%s","quantity":2}]}')$q$, v_p1)) = 'shop-closed'
+    and pg_temp.call_as(c_c, format('select public.create_order(%L)', c_order || jsonb_build_object('items', jsonb_build_array(jsonb_build_object('productId', v_p1, 'quantity', 1))))) = 'shop-closed');
+  perform pg_temp.as_anon();
+  perform pg_temp.chk('visitors are told the shop is closed', (public.marketplace_config()->>'shopOpen')::boolean = false);
+  perform pg_temp.chk('customer cannot open the shop', pg_temp.call_as(c_c, $q$select public.admin_set_shop_open('{"open":true}')$q$) = 'permission-denied');
+  perform pg_temp.chk('finance cannot open the shop', pg_temp.call_as(c_f, $q$select public.admin_set_shop_open('{"open":true}')$q$) = 'permission-denied');
+  perform pg_temp.chk('open must be a boolean', pg_temp.call_as(c_a, $q$select public.admin_set_shop_open('{"open":"yes"}')$q$) = 'invalid-argument');
+  perform pg_temp.chk('admin opens the shop', pg_temp.call_as(c_a, $q$select public.admin_set_shop_open('{"open":true}')$q$) = 'OK');
   perform pg_temp.chk('no shipping rate, no order', pg_temp.call_as(c_c, format($q$select public.quote_order('{"destCountry":"DE","items":[{"productId":"%s","quantity":2}]}')$q$, v_p1)) = 'no-shipping-rate');
   perform pg_temp.chk('customer cannot set a shipping rate', pg_temp.call_as(c_c, $q$select public.admin_set_shipping_rate('{"originCountry":"SY","destCountry":"DE","amountMinor":0,"currency":"EUR"}')$q$) = 'permission-denied');
   perform pg_temp.chk('customer cannot write a rate directly', pg_temp.call_as(c_c, $q$insert into public.shipping_rates values ('SY', 'DE', 0, 'EUR', true)$q$) <> 'OK');
@@ -104,8 +112,8 @@ begin
   perform pg_temp.chk('admin sets a shipping rate', pg_temp.call_as(c_a, $q$select public.admin_set_shipping_rate('{"originCountry":"SY","destCountry":"DE","amountMinor":900,"currency":"EUR"}')$q$) = 'OK');
   perform pg_temp.as_user(c_c);
   v_j := public.quote_order(jsonb_build_object('destCountry', 'DE', 'items', jsonb_build_array(jsonb_build_object('productId', v_p1, 'quantity', 2))));
-  perform pg_temp.chk('quote: items + 15 % fee + shipping', (v_j->>'itemsMinor')::int = 2400 and (v_j->>'feeMinor')::int = 360 and (v_j->>'feeBps')::int = 1500
-    and (v_j->>'shippingMinor')::int = 900 and (v_j->>'totalMinor')::int = 3660, v_j::text);
+  perform pg_temp.chk('quote: fee is inside the price, nothing added', (v_j->>'itemsMinor')::int = 2400 and (v_j->>'feeMinor')::int = 360 and (v_j->>'feeBps')::int = 1500
+    and (v_j->>'farmNetMinor')::int = 2040 and (v_j->>'shippingMinor')::int = 900 and (v_j->>'totalMinor')::int = 3300, v_j::text);
   perform pg_temp.as_pg();
   perform pg_temp.chk('a quote reserves nothing', (select stock_units from public.products where id = v_p1) = 10 and not exists (select 1 from public.orders where user_id = c_c));
   perform pg_temp.chk('products of two farms refused', pg_temp.call_as(c_c, format($q$select public.quote_order('{"destCountry":"DE","items":[{"productId":"%s","quantity":1},{"productId":"%s","quantity":1}]}')$q$, v_p1, v_p3)) = 'mixed-farms');
@@ -134,7 +142,7 @@ begin
   perform pg_temp.as_user(c_c);
   v_j := public.create_order(c_order || v_items);
   v_o1 := v_j->>'orderId';
-  perform pg_temp.chk('order created with server-side totals', v_j->>'status' = 'awaiting_payment' and (v_j->>'totalMinor')::int = 3660 and (v_j->>'feeMinor')::int = 360
+  perform pg_temp.chk('order created with server-side totals', v_j->>'status' = 'awaiting_payment' and (v_j->>'totalMinor')::int = 3300 and (v_j->>'feeMinor')::int = 360
     and v_j->>'paymentReference' ~ '^FO-[0-9A-F]{10}$' and jsonb_array_length(v_j->'lines') = 1 and not (v_j->>'replayed')::boolean, v_j::text);
   v_j := public.create_order(c_order || v_items || '{"items":[]}'::jsonb);
   perform pg_temp.chk('same key returns the same order', v_j->>'orderId' = v_o1 and (v_j->>'replayed')::boolean, v_j::text);
@@ -178,9 +186,9 @@ begin
   perform pg_temp.chk('admin lists it again', pg_temp.call_as(c_a, format($q$select public.admin_review_product('{"productId":"%s","decision":"list"}')$q$, v_p1)) = 'OK');
   perform pg_temp.as_user(c_d);
   v_j := public.quote_order(jsonb_build_object('destCountry', 'DE', 'items', jsonb_build_array(jsonb_build_object('productId', v_p1, 'quantity', 1))));
-  perform pg_temp.chk('new quotes use new price and fee', (v_j->>'itemsMinor')::int = 1500 and (v_j->>'feeMinor')::int = 300 and (v_j->>'totalMinor')::int = 2700, v_j::text);
+  perform pg_temp.chk('new quotes use new price and fee', (v_j->>'itemsMinor')::int = 1500 and (v_j->>'feeMinor')::int = 300 and (v_j->>'farmNetMinor')::int = 1200 and (v_j->>'totalMinor')::int = 2400, v_j::text);
   perform pg_temp.as_pg();
-  perform pg_temp.chk('the existing order is unchanged', (select fee_bps = 1500 and total_minor = 3660 from public.orders where id = v_o1)
+  perform pg_temp.chk('the existing order is unchanged', (select fee_bps = 1500 and fee_minor = 360 and total_minor = 3300 from public.orders where id = v_o1)
     and (select unit_price_minor = 1200 from public.order_items where order_id = v_o1) and (select stock_units from public.products where id = v_p1) = 8);
   perform pg_temp.chk('totals cannot drift from their parts', pg_temp.try(format($q$update public.orders set total_minor = total_minor + 1 where id = '%s'$q$, v_o1)) <> 'OK');
   perform pg_temp.chk('admin restores the fee', pg_temp.call_as(c_a, $q$select public.admin_set_platform_fee('{"feeBps":1500}')$q$) = 'OK');
@@ -200,17 +208,32 @@ begin
   perform pg_temp.chk('customer reports the transfer', pg_temp.call_as(c_c, format($q$select public.report_order_payment('{"orderId":"%s"}')$q$, v_o2)) = 'OK');
   perform pg_temp.chk('reported order can no longer be cancelled by the customer', pg_temp.call_as(c_c, format($q$select public.cancel_my_order('{"orderId":"%s"}')$q$, v_o2)) = 'failed-precondition');
   perform pg_temp.chk('rejecting needs a reason', pg_temp.call_as(c_f, format($q$select public.review_order_payment('{"orderId":"%s","decision":"reject"}')$q$, v_o2)) = 'invalid-argument');
+  perform pg_temp.chk('no confirmation without a screening', pg_temp.call_as(c_f, format($q$select public.review_order_payment('{"orderId":"%s","decision":"approve"}')$q$, v_o2)) = 'screening-required');
+  perform pg_temp.chk('customer and farm cannot record a screening', pg_temp.call_as(c_c, format($q$select public.record_order_screening('{"orderId":"%s","result":"clear","listsChecked":"EU, UN"}')$q$, v_o2)) = 'permission-denied'
+    and pg_temp.call_as(c_g, format($q$select public.record_order_screening('{"orderId":"%s","result":"clear","listsChecked":"EU, UN"}')$q$, v_o2)) = 'permission-denied');
+  perform pg_temp.chk('screening needs the lists and a note for a hit', pg_temp.call_as(c_f, format($q$select public.record_order_screening('{"orderId":"%s","result":"clear"}')$q$, v_o2)) = 'invalid-argument'
+    and pg_temp.call_as(c_f, format($q$select public.record_order_screening('{"orderId":"%s","result":"hit","listsChecked":"EU, UN"}')$q$, v_o2)) = 'invalid-argument');
+  perform pg_temp.chk('a hit blocks the confirmation', pg_temp.call_as(c_f, format($q$select public.record_order_screening('{"orderId":"%s","result":"hit","listsChecked":"EU, UN","note":"name match"}')$q$, v_o2)) = 'OK'
+    and pg_temp.call_as(c_f, format($q$select public.review_order_payment('{"orderId":"%s","decision":"approve"}')$q$, v_o2)) = 'screening-blocked');
+  perform pg_temp.as_user(c_f);
+  v_j := public.order_payer(jsonb_build_object('orderId', v_o2));
+  perform pg_temp.as_pg();
+  perform pg_temp.chk('finance sees the payer name for the screening, audited', v_j->>'deliveryName' = 'Kunde Geheim' and v_j->>'accountName' = 'Market Customer' and v_j::text not like '%Geheimweg%'
+    and exists (select 1 from public.audit_logs where action = 'order.payer_read' and target = 'orders/' || v_o2), v_j::text);
+  perform pg_temp.chk('farm cannot see the payer', pg_temp.call_as(c_g, format($q$select public.order_payer('{"orderId":"%s"}')$q$, v_o2)) = 'permission-denied');
+  perform pg_temp.chk('a later clear screening lifts the block', pg_temp.call_as(c_f, format($q$select public.record_order_screening('{"orderId":"%s","result":"clear","listsChecked":"EU, UN","note":"different person"}')$q$, v_o2)) = 'OK');
   perform pg_temp.chk('finance approves the payment', pg_temp.call_as(c_f, format($q$select public.review_order_payment('{"orderId":"%s","decision":"approve"}')$q$, v_o2)) = 'OK');
   perform pg_temp.chk('a second decision is refused', pg_temp.call_as(c_f, format($q$select public.review_order_payment('{"orderId":"%s","decision":"approve"}')$q$, v_o2)) = 'failed-precondition'
     and pg_temp.call_as(c_f, format($q$select public.review_order_payment('{"orderId":"%s","decision":"reject","note":"too late"}')$q$, v_o2)) = 'failed-precondition');
   perform pg_temp.as_pg();
-  perform pg_temp.chk('farm credited once with the items amount', (select count(*) = 1 and sum(amount_minor) = 3000 from private.farm_ledger where order_id = v_o2)
+  perform pg_temp.chk('farm credited once with price minus fee', (select count(*) = 1 and sum(amount_minor) = 2550 from private.farm_ledger where order_id = v_o2)
+    and (select items_minor = 3000 and fee_minor = 450 and total_minor = 3900 from public.orders where id = v_o2)
     and (select status from public.orders where id = v_o2) = 'paid' and (select stock_units from public.products where id = v_p1) = 8);
   perform pg_temp.chk('ledger refuses a second sale for one order', pg_temp.try(format($q$insert into private.farm_ledger (farm_id, order_id, kind, amount_minor, currency) values ('farm_mk_a', '%s', 'sale', 1, 'EUR')$q$, v_o2)) <> 'OK');
   perform pg_temp.as_user(c_g);
   v_j := public.farm_overview();
   perform pg_temp.chk('farm overview: order, balance, no customer data', jsonb_array_length(v_j->'farms') = 1 and jsonb_array_length(v_j#>'{farms,0,orders}') = 1
-    and (v_j#>>'{farms,0,balances,0,amountMinor}')::int = 3000 and v_j::text not like '%Geheim%' and v_j::text not like '%paymentReference%' and v_j::text not like '%' || c_c::text || '%', left(v_j::text, 400));
+    and (v_j#>>'{farms,0,balances,0,amountMinor}')::int = 2550 and v_j::text not like '%Geheim%' and v_j::text not like '%paymentReference%' and v_j::text not like '%' || c_c::text || '%', left(v_j::text, 400));
   perform pg_temp.as_user(c_h);
   perform pg_temp.chk('other farm sees neither order nor balance', (public.farm_overview())::text not like '%' || v_o2 || '%' and (public.farm_overview()#>>'{farms,0,balances}') = '[]');
   perform pg_temp.as_user(c_f);
@@ -228,7 +251,34 @@ begin
   perform pg_temp.as_user(c_f);
   v_j := public.admin_list_marketplace();
   perform pg_temp.chk('staff list shows orders, products, rates, balances', jsonb_array_length(v_j->'orders') >= 2 and jsonb_array_length(v_j->'products') >= 3
-    and jsonb_array_length(v_j->'shippingRates') >= 1 and jsonb_array_length(v_j->'members') >= 2 and jsonb_array_length(v_j->'farms') >= 2 and (v_j->>'feeBps')::int = 1500 and v_j::text not like '%Geheim%', left(v_j::text, 300));
+    and jsonb_array_length(v_j->'shippingRates') >= 1 and jsonb_array_length(v_j->'members') >= 2 and jsonb_array_length(v_j->'farms') >= 2 and (v_j->>'feeBps')::int = 1500 and (v_j->>'shopOpen')::boolean
+    and exists (select 1 from jsonb_array_elements(v_j->'orders') o where o->>'orderId' = v_o2 and o#>>'{screening,result}' = 'clear') and v_j::text not like '%Geheim%', left(v_j::text, 300));
+
+  -- ---------------------------------------------------------------- refund and payout
+  perform pg_temp.as_user(c_c);
+  v_o5 := public.create_order(c_order || v_items || '{"idempotencyKey":"market-test-key-0005"}')->>'orderId';
+  perform pg_temp.chk('unpaid order cannot be refunded', pg_temp.call_as(c_f, format($q$select public.refund_order('{"orderId":"%s","note":"customer asked"}')$q$, v_o5)) = 'failed-precondition');
+  perform pg_temp.chk('second order is screened and paid', pg_temp.call_as(c_f, format($q$select public.record_order_screening('{"orderId":"%s","result":"clear","listsChecked":"EU, UN"}')$q$, v_o5)) = 'OK'
+    and pg_temp.call_as(c_f, format($q$select public.review_order_payment('{"orderId":"%s","decision":"approve"}')$q$, v_o5)) = 'OK');
+  perform pg_temp.chk('paid order can no longer be screened', pg_temp.call_as(c_f, format($q$select public.record_order_screening('{"orderId":"%s","result":"hit","listsChecked":"EU, UN","note":"late"}')$q$, v_o5)) = 'failed-precondition');
+  perform pg_temp.chk('customer and farm cannot refund', pg_temp.call_as(c_c, format($q$select public.refund_order('{"orderId":"%s","note":"mine"}')$q$, v_o5)) = 'permission-denied'
+    and pg_temp.call_as(c_g, format($q$select public.refund_order('{"orderId":"%s","note":"mine"}')$q$, v_o5)) = 'permission-denied');
+  perform pg_temp.chk('refund needs a reason', pg_temp.call_as(c_f, format($q$select public.refund_order('{"orderId":"%s"}')$q$, v_o5)) = 'invalid-argument');
+  perform pg_temp.chk('finance refunds a paid order', pg_temp.call_as(c_f, format($q$select public.refund_order('{"orderId":"%s","note":"customer asked"}')$q$, v_o5)) = 'OK');
+  perform pg_temp.chk('a refund happens once', pg_temp.call_as(c_f, format($q$select public.refund_order('{"orderId":"%s","note":"again"}')$q$, v_o5)) = 'failed-precondition');
+  perform pg_temp.as_pg();
+  perform pg_temp.chk('refund returns stock and reverses the credit', (select status from public.orders where id = v_o5) = 'refunded' and (select stock_units from public.products where id = v_p1) = 8
+    and (select sum(amount_minor) from private.farm_ledger where order_id = v_o5) = 0 and (select sum(amount_minor) from private.farm_ledger where farm_id = 'farm_mk_a') = 2550);
+  perform pg_temp.chk('delivered order cannot be refunded here', pg_temp.call_as(c_f, format($q$select public.refund_order('{"orderId":"%s","note":"late"}')$q$, v_o2)) = 'failed-precondition');
+  perform pg_temp.chk('customer and farm cannot book a payout', pg_temp.call_as(c_c, $q$select public.record_farm_payout('{"farmId":"farm_mk_a","amountMinor":100,"currency":"EUR","reference":"BANK-0"}')$q$) = 'permission-denied'
+    and pg_temp.call_as(c_g, $q$select public.record_farm_payout('{"farmId":"farm_mk_a","amountMinor":100,"currency":"EUR","reference":"BANK-0"}')$q$) = 'permission-denied');
+  perform pg_temp.chk('payout above the credit refused', pg_temp.call_as(c_f, $q$select public.record_farm_payout('{"farmId":"farm_mk_a","amountMinor":2551,"currency":"EUR","reference":"BANK-1"}')$q$) = 'failed-precondition');
+  perform pg_temp.chk('payout in a currency without credit refused', pg_temp.call_as(c_f, $q$select public.record_farm_payout('{"farmId":"farm_mk_a","amountMinor":100,"currency":"USD","reference":"BANK-1"}')$q$) = 'failed-precondition');
+  perform pg_temp.chk('payout without a bank reference refused', pg_temp.call_as(c_f, $q$select public.record_farm_payout('{"farmId":"farm_mk_a","amountMinor":100,"currency":"EUR"}')$q$) = 'invalid-argument');
+  perform pg_temp.chk('finance books a payout', pg_temp.call_as(c_f, $q$select public.record_farm_payout('{"farmId":"farm_mk_a","amountMinor":1000,"currency":"EUR","reference":"BANK-1"}')$q$) = 'OK');
+  perform pg_temp.chk('the same bank reference is booked once', pg_temp.call_as(c_f, $q$select public.record_farm_payout('{"farmId":"farm_mk_a","amountMinor":1000,"currency":"EUR","reference":"BANK-1"}')$q$) = 'already-exists');
+  perform pg_temp.as_user(c_g);
+  perform pg_temp.chk('farm sees the reduced credit', (public.farm_overview()#>>'{farms,0,balances,0,amountMinor}')::int = 1550);
 
   -- ---------------------------------------------------------------- four eyes, rejection
   perform pg_temp.as_user(c_f);

@@ -29,6 +29,8 @@ const TEXTS: Record<string, PushText> = {
   order_shipped: { ar: "طلبك في الطريق.", en: "Your order is on its way." },
   order_expired: { ar: "انتهت مهلة الطلب وأُلغي تلقائياً.", en: "Your order expired and was released." },
   farm_order_paid: { ar: "وصل طلب مدفوع جديد لمزرعتك.", en: "A new paid order arrived for your farm." },
+  order_refunded: { ar: "أُلغي طلبك وسيُعاد المبلغ إليك.", en: "Your order was cancelled and will be refunded." },
+  farm_payout: { ar: "تم تحويل رصيد إلى مزرعتك.", en: "A payout to your farm was made." },
 };
 
 const FALLBACK: PushText = { ar: "لديك تحديث جديد على فسيلة.", en: "You have a new update on Faseela." };

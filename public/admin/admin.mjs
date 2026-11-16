@@ -22,6 +22,7 @@ const ERROR_TEXT = {
   'mfa-required': 'Für dieses Konto ist eine Bestätigung mit der Authenticator-App nötig.',
   'mfa-invalid-code': 'Der Code wurde nicht akzeptiert. Bitte den aktuellen Code aus der App eingeben.',
   'already-exists': 'Der Eintrag existiert bereits.',
+  'shop-closed': 'Der Hofladen ist geschlossen.',
   'auth/invalid-credential': 'E-Mail oder Passwort stimmt nicht.',
   'auth/invalid-credentials': 'E-Mail oder Passwort stimmt nicht.',
   'auth/invalid_credentials': 'E-Mail oder Passwort stimmt nicht.',
@@ -1034,11 +1035,14 @@ async function editSite(kind, site, countries) {
 
 const ORDER_STATUS = {
   awaiting_payment: ['wartet auf Zahlung', 'badge-warn'], under_review: ['Zahlung gemeldet', 'badge-warn'], paid: ['bezahlt', 'badge-ok'],
-  shipped: ['versandt', 'badge-ok'], delivered: ['zugestellt', 'badge-ok'], cancelled: ['storniert', ''], expired: ['abgelaufen', ''], rejected: ['abgelehnt', 'badge-bad']
+  shipped: ['versandt', 'badge-ok'], delivered: ['zugestellt', 'badge-ok'], cancelled: ['storniert', ''], expired: ['abgelaufen', ''], rejected: ['abgelehnt', 'badge-bad'], refunded: ['erstattet', 'badge-bad']
 };
 const PRODUCT_STATUS = { pending_review: ['wartet auf Prüfung', 'badge-warn'], listed: ['im Shop', 'badge-ok'], unlisted: ['ausgeblendet', ''], rejected: ['abgelehnt', 'badge-bad'] };
 const PRODUCT_CATEGORY = { oil: 'Öl', olives: 'Oliven', dates: 'Datteln', nuts: 'Nüsse', fruit: 'Obst', preserves: 'Eingemachtes', other: 'Sonstiges' };
-const fmtPrice = (minor, currency) => new Intl.NumberFormat('de-DE', { style: 'currency', currency: /^[A-Z]{3}$/.test(currency) ? currency : 'EUR' }).format((Number(minor) || 0) / 100);
+/** Minor units per currency as Intl knows them (EUR 2, TND 3, JPY 0). */
+const unitFactor = (currency) => { try { return 10 ** new Intl.NumberFormat('en', { style: 'currency', currency }).resolvedOptions().maximumFractionDigits; } catch (error) { return 100; } };
+const fmtPrice = (minor, currency) => { const code = /^[A-Z]{3}$/.test(currency) ? currency : 'EUR'; return new Intl.NumberFormat('de-DE', { style: 'currency', currency: code }).format((Number(minor) || 0) / unitFactor(code)); };
+const SCREENING_LABEL = { clear: 'unauffällig', unclear: 'unklar', hit: 'Treffer' };
 const fmtPercent = (bps) => `${new Intl.NumberFormat('de-DE', { maximumFractionDigits: 2 }).format((Number(bps) || 0) / 100)} %`;
 const asList = (value) => (Array.isArray(value) ? value : []);
 const statusBadge = (map, status) => { const [text, tone] = map[status] || [status, '']; return el('span', { class: `badge ${tone}`, text }); };
@@ -1053,23 +1057,54 @@ async function viewMarket(view) {
   const done = (message) => (ok) => { if (ok) { toast(message); show('market'); } };
 
   view.append(el('h2', { text: 'Marktplatz' }),
-    el('p', { class: 'muted', text: `Höfe bieten Produkte an, Kunden bestellen und zahlen per Überweisung. Auf den Warenwert kommt eine offen ausgewiesene Servicegebühr von ${fmtPercent(market.feeBps)}; der Hof erhält den Warenwert gutgeschrieben. Umsatzsteuer wird hier noch nicht berechnet.` }));
+    el('p', { class: 'muted', text: `Höfe bieten Produkte an, Kunden bestellen und zahlen per Überweisung. Die Servicegebühr von ${fmtPercent(market.feeBps)} ist im Produktpreis enthalten: Der Kunde zahlt den angezeigten Preis plus Versand, der Hof erhält den Preis abzüglich der Gebühr. Umsatzsteuer wird hier noch nicht berechnet.` }));
+
+  // ---- the switch that lets customers order at all
+  const shopOpen = market.shopOpen === true;
+  view.append(el('div', { class: 'item row row-between', id: 'shop-switch' }, [
+    el('div', {}, [el('div', { class: 'row' }, [el('strong', { text: 'Hofladen' }), el('span', { class: `badge ${shopOpen ? 'badge-ok' : 'badge-warn'}`, text: shopOpen ? 'geöffnet' : 'geschlossen' })]),
+      el('div', { class: 'item-meta', text: shopOpen ? 'Kunden können bestellen.' : 'Niemand kann bestellen. Höfe können Produkte einreichen, Sie können sie prüfen und Versandpreise hinterlegen.' })]),
+    isAdmin ? el('button', { type: 'button', class: `btn ${shopOpen ? 'btn-danger' : 'btn-primary'}`, text: shopOpen ? 'Hofladen schließen' : 'Hofladen öffnen', on: { click: () => openDialog({
+      title: shopOpen ? 'Hofladen schließen' : 'Hofladen öffnen', confirmLabel: shopOpen ? 'Schließen' : 'Jetzt öffnen', danger: shopOpen,
+      text: shopOpen ? 'Neue Bestellungen sind danach nicht mehr möglich. Bestehende Bestellungen laufen weiter.'
+        : 'Ab dann können Kunden verbindlich bestellen. Bitte erst öffnen, wenn rechtlich geklärt ist: Umsatzsteuer und Preisangabe, Widerrufsbelehrung und AGB für den Warenverkauf, wer Verkäufer ist (Hof oder Plattform), und wenn Empfangskonto und Versandpreise hinterlegt sind.',
+      onConfirm: () => api().adminSetShopOpen({ open: !shopOpen })
+    }).then(done(shopOpen ? 'Hofladen geschlossen.' : 'Hofladen geöffnet.')) } }) : null
+  ]));
 
   // ---- orders
   const orders = asList(market.orders);
   view.append(el('h3', { text: 'Bestellungen' }));
   if (!orders.length) view.append(stateBlock('empty', 'Noch keine Bestellungen.'));
   else view.append(el('div', { class: 'table-wrap' }, [el('table', {}, [
-    el('thead', {}, [el('tr', {}, ['Bestellung', 'Hof', 'Artikel', 'Ware', 'Gebühr', 'Versand', 'Gesamt', 'Status', 'Aktionen'].map((text) => el('th', { scope: 'col', text })))]),
+    el('thead', {}, [el('tr', {}, ['Bestellung', 'Hof', 'Artikel', 'Ware', 'davon Gebühr', 'Hof erhält', 'Versand', 'Gesamt', 'Status', 'Aktionen'].map((text) => el('th', { scope: 'col', text })))]),
     el('tbody', {}, orders.map((order) => {
       const ref = order.paymentReference || String(order.orderId).slice(0, 10);
       const money = (minor) => fmtPrice(minor, order.currency);
       const button = (text, tone, handler) => el('button', { type: 'button', class: `btn btn-sm ${tone}`, text, 'aria-label': `${text}: ${ref}`, on: { click: handler } });
       const actions = [];
       if (order.status === 'awaiting_payment' || order.status === 'under_review') {
+        actions.push(button('Prüfung erfassen', 'btn-ghost', async () => {
+          let payer;
+          try { payer = (await api().orderPayer({ orderId: order.orderId })).data || {}; } catch (error) { logError('order payer', error); toast(errorText(error), true); return; }
+          const result = el('select', {}, Object.entries(SCREENING_LABEL).map(([value, text]) => el('option', { value, text })));
+          const lists = el('input', { type: 'text', maxlength: 300, placeholder: 'z. B. EU, UN, OFAC' });
+          const reference = el('input', { type: 'text', maxlength: 120 });
+          const note = el('textarea', { maxlength: 500 });
+          openDialog({
+            title: `Sanktionsprüfung ${ref}`, confirmLabel: 'Speichern',
+            text: `Besteller: ${payer.deliveryName || 'unbekannt'}${payer.accountName && payer.accountName !== payer.deliveryName ? ` (Konto: ${payer.accountName})` : ''}, Lieferland ${payer.country || '–'}. Erfasst wird, dass und gegen welche Listen geprüft wurde.`,
+            build: (body) => body.append(field('Ergebnis', result), field('Geprüfte Listen', lists), field('Referenz (optional)', reference), field('Notiz (Pflicht bei „unklar" oder „Treffer")', note)),
+            onConfirm: () => {
+              if (lists.value.trim().length < 3) throw userError('Bitte angeben, welche Listen geprüft wurden.');
+              if (result.value !== 'clear' && note.value.trim().length < 3) throw userError('Bei „unklar" oder „Treffer" ist eine Notiz nötig.');
+              return api().recordOrderScreening({ orderId: order.orderId, result: result.value, listsChecked: lists.value.trim(), reference: reference.value.trim() || undefined, note: note.value.trim() || undefined });
+            }
+          }).then(done('Prüfung gespeichert.'));
+        }));
         actions.push(button('Zahlung bestätigen', 'btn-primary', () => openDialog({
           title: 'Zahlung bestätigen', confirmLabel: 'Zahlung ist eingegangen',
-          text: `Ist die Überweisung über ${money(order.totalMinor)} mit dem Verwendungszweck ${ref} auf dem Konto eingegangen? Danach wird dem Hof ${money(order.itemsMinor)} gutgeschrieben und die Bestellung geht in den Versand.`,
+          text: `Ist die Überweisung über ${money(order.totalMinor)} mit dem Verwendungszweck ${ref} auf dem Konto eingegangen? Danach wird dem Hof ${money(order.farmNetMinor)} gutgeschrieben und die Bestellung geht in den Versand.`,
           onConfirm: () => api().reviewOrderPayment({ orderId: order.orderId, decision: 'approve' })
         }).then(done('Zahlung bestätigt.'))));
         actions.push(button('Ablehnen', 'btn-danger', () => {
@@ -1101,6 +1136,18 @@ async function viewMarket(view) {
         }));
       }
       if (order.status === 'paid') {
+        actions.push(button('Erstatten', 'btn-danger', () => {
+          const note = el('textarea', { rows: 3, maxlength: 300 });
+          openDialog({
+            title: `Bestellung ${ref} erstatten`, confirmLabel: 'Erstattung buchen', danger: true,
+            text: `Die Ware geht zurück in den Bestand und die Gutschrift des Hofs über ${money(order.farmNetMinor)} wird zurückgenommen. Bitte überweisen Sie dem Kunden ${money(order.totalMinor)} zurück – das geschieht nicht automatisch.`,
+            build: (body) => body.append(field('Grund (der Kunde erhält ihn per E-Mail)', note)),
+            onConfirm: () => {
+              if (note.value.trim().length < 3) throw userError('Bitte einen Grund angeben.');
+              return api().refundOrder({ orderId: order.orderId, note: note.value.trim() });
+            }
+          }).then(done('Erstattung gebucht.'));
+        }));
         actions.push(button('Als versandt markieren', 'btn-primary', () => {
           const tracking = el('input', { type: 'text', maxlength: 80, autocomplete: 'off' });
           openDialog({
@@ -1126,10 +1173,13 @@ async function viewMarket(view) {
         el('td', {}, asList(order.lines).map((line) => el('div', { text: `${fmtInt(line.quantity)} × ${line.name} (${line.unit})` }))),
         el('td', { text: money(order.itemsMinor) }),
         el('td', {}, [el('div', { text: money(order.feeMinor) }), el('div', { class: 'item-meta', text: fmtPercent(order.feeBps) })]),
+        el('td', { text: money(order.farmNetMinor) }),
         el('td', { text: money(order.shippingMinor) }),
         el('td', {}, [el('strong', { text: money(order.totalMinor) })]),
         el('td', {}, [statusBadge(ORDER_STATUS, order.status),
-          order.status === 'awaiting_payment' ? el('div', { class: 'item-meta', text: `bis ${fmtDate(order.expiresAt)}` }) : null]),
+          order.status === 'awaiting_payment' ? el('div', { class: 'item-meta', text: `bis ${fmtDate(order.expiresAt)}` }) : null,
+          order.status === 'awaiting_payment' || order.status === 'under_review'
+            ? el('div', { class: 'item-meta', text: order.screening ? `Sanktionsprüfung: ${SCREENING_LABEL[order.screening.result] || order.screening.result}${order.screening.current ? '' : ' (älter als 30 Tage)'}` : 'Sanktionsprüfung: noch keine erfasst' }) : null]),
         el('td', {}, [el('div', { class: 'row' }, actions)])
       ]);
     }))
@@ -1173,11 +1223,28 @@ async function viewMarket(view) {
   // ---- what the platform owes the farms
   const balances = asList(market.balances);
   view.append(el('h3', { text: 'Guthaben der Höfe' }),
-    el('p', { class: 'muted', text: 'Warenwert bezahlter Bestellungen abzüglich bereits gebuchter Auszahlungen. Auszahlungen werden mit dem Zahlungsanbieter ergänzt.' }));
+    el('p', { class: 'muted', text: 'Preis der bezahlten Ware abzüglich Servicegebühr, Erstattungen und gebuchter Auszahlungen. Eine Auszahlung wird hier gebucht, nachdem sie per Bank überwiesen wurde.' }));
   if (!balances.length) view.append(stateBlock('empty', 'Noch keine Gutschriften.'));
   else view.append(el('div', { class: 'table-wrap' }, [el('table', {}, [
-    el('thead', {}, [el('tr', {}, ['Hof', 'Guthaben'].map((text) => el('th', { scope: 'col', text })))]),
-    el('tbody', {}, balances.map((b) => el('tr', {}, [el('td', { text: farmLabel(b.farmId) }), el('td', { text: fmtPrice(b.amountMinor, b.currency) })])))
+    el('thead', {}, [el('tr', {}, ['Hof', 'Guthaben', 'Aktion'].map((text) => el('th', { scope: 'col', text })))]),
+    el('tbody', {}, balances.map((b) => el('tr', {}, [el('td', { text: farmLabel(b.farmId) }), el('td', { text: fmtPrice(b.amountMinor, b.currency) }),
+      el('td', {}, [Number(b.amountMinor) > 0 ? el('button', { type: 'button', class: 'btn btn-sm btn-primary', text: 'Auszahlung buchen', 'aria-label': `Auszahlung buchen: ${farmLabel(b.farmId)}`, on: { click: () => {
+        const amount = el('input', { type: 'number', min: 0, step: 'any', inputmode: 'decimal', value: (Number(b.amountMinor) || 0) / unitFactor(b.currency) });
+        const reference = el('input', { type: 'text', maxlength: 80, autocomplete: 'off' });
+        const note = el('input', { type: 'text', maxlength: 300 });
+        openDialog({
+          title: `Auszahlung an ${farmLabel(b.farmId)}`, confirmLabel: 'Auszahlung buchen',
+          text: `Guthaben: ${fmtPrice(b.amountMinor, b.currency)}. Bitte erst überweisen, dann hier mit der Referenz der Banküberweisung buchen. Jede Referenz kann nur einmal gebucht werden.`,
+          build: (body) => body.append(field(`Betrag in ${b.currency}`, amount), field('Referenz der Banküberweisung', reference), field('Notiz (optional)', note)),
+          onConfirm: () => {
+            const value = Math.round(Number(String(amount.value).replace(',', '.')) * unitFactor(b.currency));
+            if (!Number.isFinite(value) || value < 1) throw userError('Bitte einen Betrag größer als null eingeben.');
+            if (value > Number(b.amountMinor)) throw userError('Der Betrag ist höher als das Guthaben des Hofs.');
+            if (reference.value.trim().length < 3) throw userError('Bitte die Referenz der Banküberweisung angeben.');
+            return api().recordFarmPayout({ farmId: b.farmId, amountMinor: value, currency: b.currency, reference: reference.value.trim(), note: note.value.trim() });
+          }
+        }).then(done('Auszahlung gebucht.'));
+      } } }) : null])])))
   ])]));
 
   if (!isAdmin) return;
@@ -1205,7 +1272,7 @@ async function viewMarket(view) {
     const f = {
       origin: el('select', {}, origins.map((code) => el('option', { value: code, text: code, selected: rate ? code === rate.originCountry : false }))),
       dest: el('input', { type: 'text', maxlength: 2, value: rate ? rate.destCountry : '', placeholder: 'DE', autocomplete: 'off' }),
-      amount: el('input', { type: 'number', min: 0, step: 0.01, value: rate ? (Number(rate.amountMinor) || 0) / 100 : '', inputmode: 'decimal' }),
+      amount: el('input', { type: 'number', min: 0, step: 'any', value: rate ? (Number(rate.amountMinor) || 0) / unitFactor(rate.currency) : '', inputmode: 'decimal' }),
       currency: el('input', { type: 'text', maxlength: 3, value: rate ? rate.currency : 'EUR', autocomplete: 'off' }),
       active: el('input', { type: 'checkbox', checked: !rate || rate.active ? 'checked' : null })
     };
@@ -1224,7 +1291,7 @@ async function viewMarket(view) {
         if (!/^[A-Z]{2}$/.test(dest)) throw userError('Zielland: bitte den zweibuchstabigen Ländercode eingeben, z. B. DE.');
         if (!/^[A-Z]{3}$/.test(currency)) throw userError('Währung: bitte den dreibuchstabigen Code eingeben, z. B. EUR.');
         if (f.amount.value === '' || !Number.isFinite(amount) || amount < 0) throw userError('Bitte einen Preis eingeben (0 für kostenlosen Versand).');
-        return api().adminSetShippingRate({ originCountry: f.origin.value, destCountry: dest, amountMinor: Math.round(amount * 100), currency, active: f.active.checked });
+        return api().adminSetShippingRate({ originCountry: f.origin.value, destCountry: dest, amountMinor: Math.round(amount * unitFactor(currency)), currency, active: f.active.checked });
       }
     }).then(done('Versandpreis gespeichert.'));
   };

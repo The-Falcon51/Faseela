@@ -14,7 +14,7 @@
     en: {
       shop_tab: 'Farm shop',
       shop_title: 'Farm shop: products directly from the farms',
-      shop_intro: 'Every product is offered by a farm on Faseela. You pay the farm\'s price, shipping and a service fee of {fee} on the goods, shown as its own line.',
+      shop_intro: "Every product is offered by a farm on Faseela. The price you see is the price you pay, plus shipping. Faseela keeps {fee} of the product price as its service fee; the rest goes to the farm.",
       shop_loading: 'Loading the shop …',
       shop_error: 'The shop could not be loaded.',
       shop_retry: 'Try again',
@@ -32,7 +32,6 @@
       shop_basket_empty: 'Your basket is empty.',
       shop_remove: 'Remove',
       shop_goods: 'Goods',
-      shop_fee: 'Service fee ({fee})',
       shop_shipping: 'Shipping to {country}',
       shop_total: 'Total',
       shop_estimate_note: 'The final amounts are confirmed in the next step.',
@@ -82,7 +81,7 @@
       shop_err_unauthenticated: 'Please sign in again.',
       shop_err_invalid_argument: 'Please check your entries.',
       shop_farm_title: 'Your farm: {farm}',
-      shop_farm_balance: 'Credit from paid orders',
+      shop_farm_balance: "Credit from paid orders after fee and payouts",
       shop_farm_products: 'Your products',
       shop_farm_no_products: 'You have not submitted a product yet.',
       shop_farm_new: 'New product',
@@ -111,13 +110,18 @@
       shop_ps_rejected: 'Not accepted',
       shop_cat_oil: 'Oil', shop_cat_olives: 'Olives', shop_cat_dates: 'Dates', shop_cat_nuts: 'Nuts',
       shop_cat_fruit: 'Fruit', shop_cat_preserves: 'Preserves', shop_cat_other: 'Other',
+      shop_split: "Included in the price: {feeAmount} service fee ({fee}) for Faseela, {farmAmount} for the farm.",
+      shop_closed: "The farm shop is being prepared and does not take orders yet.",
+      shop_st_refunded: "Cancelled, refund on its way",
+      shop_err_shop_closed: "The farm shop does not take orders yet.",
+      shop_p_net: "You receive {net} per unit; {feeAmount} ({fee}) is the Faseela service fee.",
       shop_farm_orders: 'Paid orders for your farm',
       shop_farm_no_orders: 'No paid orders yet.'
     },
     ar: {
       shop_tab: 'متجر المزارع',
       shop_title: 'متجر المزارع: منتجات مباشرة من المزارعين',
-      shop_intro: 'كل منتج تعرضه مزرعة على فسيلة. تدفع سعر المزرعة والشحن ورسم خدمة بنسبة {fee} من قيمة البضاعة يظهر في سطر مستقل.',
+      shop_intro: "كل منتج تعرضه مزرعة على فسيلة. السعر المعروض هو ما تدفعه، يُضاف إليه الشحن فقط. تحتفظ فسيلة بنسبة {fee} من سعر المنتج رسمَ خدمة ويذهب الباقي إلى المزرعة.",
       shop_loading: 'جارٍ تحميل المتجر …',
       shop_error: 'تعذر تحميل المتجر.',
       shop_retry: 'إعادة المحاولة',
@@ -135,7 +139,6 @@
       shop_basket_empty: 'سلتك فارغة.',
       shop_remove: 'إزالة',
       shop_goods: 'البضاعة',
-      shop_fee: 'رسم الخدمة ({fee})',
       shop_shipping: 'الشحن إلى {country}',
       shop_total: 'الإجمالي',
       shop_estimate_note: 'تُؤكَّد المبالغ النهائية في الخطوة التالية.',
@@ -185,7 +188,7 @@
       shop_err_unauthenticated: 'يرجى تسجيل الدخول مجدداً.',
       shop_err_invalid_argument: 'يرجى مراجعة البيانات المدخلة.',
       shop_farm_title: 'مزرعتك: {farm}',
-      shop_farm_balance: 'رصيد من الطلبات المدفوعة',
+      shop_farm_balance: "الرصيد من الطلبات المدفوعة بعد الرسم والتحويلات",
       shop_farm_products: 'منتجاتك',
       shop_farm_no_products: 'لم تقدّم أي منتج بعد.',
       shop_farm_new: 'منتج جديد',
@@ -214,6 +217,11 @@
       shop_ps_rejected: 'لم يُقبل',
       shop_cat_oil: 'زيت', shop_cat_olives: 'زيتون', shop_cat_dates: 'تمور', shop_cat_nuts: 'مكسرات',
       shop_cat_fruit: 'فواكه', shop_cat_preserves: 'مؤونة', shop_cat_other: 'أخرى',
+      shop_split: "ضمن السعر: {feeAmount} رسم خدمة ({fee}) لفسيلة، و{farmAmount} للمزرعة.",
+      shop_closed: "متجر المزارع قيد التجهيز ولا يستقبل الطلبات بعد.",
+      shop_st_refunded: "ملغى والمبلغ في طريقه إليك",
+      shop_err_shop_closed: "متجر المزارع لا يستقبل الطلبات بعد.",
+      shop_p_net: "تحصل على {net} لكل وحدة؛ و{feeAmount} ({fee}) رسم خدمة فسيلة.",
       shop_farm_orders: 'الطلبات المدفوعة لمزرعتك',
       shop_farm_no_orders: 'لا توجد طلبات مدفوعة بعد.'
     }
@@ -228,7 +236,7 @@
   const DEST_KEY = 'faseela_shop_dest';
   const view = {
     status: 'idle',          // idle | loading | ready | error
-    products: [], rates: [], farms: [], feeBps: 1500,
+    products: [], rates: [], farms: [], feeBps: 1500, shopOpen: false,
     dest: '',
     basket: new Map(),       // productId -> quantity
     step: 'basket',          // basket | checkout
@@ -247,9 +255,14 @@
   const isArabic = () => typeof state === 'object' && state && state.currentLang === 'ar';
   const signedIn = () => typeof state === 'object' && state && !!state.currentUser && !!state.serverMode;
   const say = (message) => { if (typeof showToast === 'function') showToast(message); };
+  /** Minor units per currency as Intl knows them (EUR 2, TND 3, JPY 0); amounts travel as whole minor units. */
+  const unitFactor = (currency) => {
+    try { return 10 ** new Intl.NumberFormat('en', { style: 'currency', currency }).resolvedOptions().maximumFractionDigits; } catch (error) { return 100; }
+  };
   const money = (minor, currency) => {
+    const code = /^[A-Z]{3}$/.test(currency) ? currency : 'EUR';
     try {
-      return new Intl.NumberFormat(locale(), { style: 'currency', currency: /^[A-Z]{3}$/.test(currency) ? currency : 'EUR' }).format((Number(minor) || 0) / 100);
+      return new Intl.NumberFormat(locale(), { style: 'currency', currency: code }).format((Number(minor) || 0) / unitFactor(code));
     } catch (error) { return `${((Number(minor) || 0) / 100).toFixed(2)} ${currency || ''}`; }
   };
   const percent = (bps) => `${new Intl.NumberFormat(locale(), { maximumFractionDigits: 2 }).format((Number(bps) || 0) / 100)} %`;
@@ -312,8 +325,8 @@
     const rate = rateFor(lines[0].product);
     const items = lines.reduce((sum, line) => sum + line.product.priceMinor * line.quantity, 0);
     const fee = Math.round(items * view.feeBps / 10000);
-    return { currency: lines[0].product.currency, itemsMinor: items, feeBps: view.feeBps, feeMinor: fee,
-      shippingMinor: rate ? rate.amountMinor : null, totalMinor: rate ? items + fee + rate.amountMinor : null };
+    return { currency: lines[0].product.currency, itemsMinor: items, feeBps: view.feeBps, feeMinor: fee, farmNetMinor: items - fee,
+      shippingMinor: rate ? rate.amountMinor : null, totalMinor: rate ? items + rate.amountMinor : null };
   }
 
   // ------------------------------------------------------------------------------------------------ loading
@@ -336,6 +349,7 @@
       }));
       const bps = config && config.data ? Number(config.data.feeBps) : NaN;
       if (Number.isFinite(bps)) view.feeBps = bps;
+      view.shopOpen = !!(config && config.data && config.data.shopOpen === true);
       const destinations = [...new Set(view.rates.map((rate) => rate.destCountry))].sort();
       let saved = '';
       try { saved = localStorage.getItem(DEST_KEY) || ''; } catch (error) { saved = ''; }
@@ -375,7 +389,7 @@
   function updateTab() {
     const tab = document.getElementById('tab-market-shop');
     if (!tab) return;
-    const useful = view.status === 'ready' && (view.products.length > 0 || view.orders.length > 0 || view.myFarms.length > 0);
+    const useful = view.status === 'ready' && ((view.shopOpen && view.products.length > 0) || view.orders.length > 0 || view.myFarms.length > 0);
     tab.hidden = !useful;
     if (!useful && typeof state === 'object' && state && state.marketplaceTrack === 'shop' && typeof switchMarketplaceTrack === 'function') {
       switchMarketplaceTrack('mature');
@@ -394,7 +408,8 @@
     if (view.status === 'loading' || view.status === 'idle') parts.push(h('p', { class: CLS.muted, role: 'status', text: tr('shop_loading') }));
     else if (view.status === 'error') parts.push(h('div', { class: CLS.alert, role: 'alert' }, [h('p', { text: tr('shop_error') }), button(tr('shop_retry'), `${CLS.ghost} mt-2`, load)]));
     else {
-      if (view.step === 'checkout' && view.quote) parts.push(renderCheckout());
+      if (!view.shopOpen) parts.push(h('p', { class: CLS.muted, role: 'status', id: 'shop-closed', text: tr('shop_closed') }));
+      else if (view.step === 'checkout' && view.quote) parts.push(renderCheckout());
       else parts.push(renderCatalogue(), renderBasket());
       if (view.orders.length) parts.push(renderOrders());
       for (const farm of view.myFarms) parts.push(renderFarm(farm));
@@ -453,11 +468,12 @@
   function summaryRows(sums, country) {
     const row = (label, value, strong) => h('div', { class: `flex justify-between gap-4 text-sm ${strong ? 'font-black text-stone-900 dark:text-white' : 'text-stone-700 dark:text-stone-200'}` },
       [h('span', { text: label }), h('span', { text: value })]);
+    const farmNet = sums.farmNetMinor === undefined ? sums.itemsMinor - sums.feeMinor : sums.farmNetMinor;
     return h('div', { class: 'space-y-1', 'data-shop-summary': '' }, [
       row(tr('shop_goods'), money(sums.itemsMinor, sums.currency)),
-      row(tr('shop_fee', { fee: percent(sums.feeBps) }), money(sums.feeMinor, sums.currency)),
       row(tr('shop_shipping', { country: countryName(country) }), sums.shippingMinor === null ? '–' : money(sums.shippingMinor, sums.currency)),
-      row(tr('shop_total'), sums.totalMinor === null ? '–' : money(sums.totalMinor, sums.currency), true)
+      row(tr('shop_total'), sums.totalMinor === null ? '–' : money(sums.totalMinor, sums.currency), true),
+      h('p', { class: CLS.muted, 'data-shop-split': '', text: tr('shop_split', { fee: percent(sums.feeBps), feeAmount: money(sums.feeMinor, sums.currency), farmAmount: money(farmNet, sums.currency) }) })
     ]);
   }
 
@@ -578,7 +594,7 @@
           h('ul', {}, (order.lines || []).map((line) => h('li', { class: 'text-sm text-stone-800 dark:text-stone-100', text: `${line.quantity} × ${line.name} (${line.unit})` }))),
           summaryRows(order, order.destCountry),
           order.trackingCode ? h('p', { class: CLS.muted, text: `${tr('shop_tracking')}: ${order.trackingCode}` }) : null,
-          order.reviewNote && order.status === 'rejected' ? h('p', { class: CLS.muted, text: `${tr('shop_note')}: ${order.reviewNote}` }) : null,
+          order.reviewNote && (order.status === 'rejected' || order.status === 'refunded') ? h('p', { class: CLS.muted, text: `${tr('shop_note')}: ${order.reviewNote}` }) : null,
           waiting ? h('div', { class: 'bg-stone-50 dark:bg-stone-900 rounded-xl p-3 space-y-1' }, [
             h('p', { class: 'text-sm font-bold text-stone-900 dark:text-white', text: `${tr('shop_order_ref')}: ${order.paymentReference}` }),
             h('p', { class: CLS.muted, text: tr('shop_pay_until', { date: dateTime(order.expiresAt) }) }),
@@ -640,7 +656,7 @@
     if (!orders.length) box.append(h('p', { class: CLS.muted, text: tr('shop_farm_no_orders') }));
     else box.append(h('ul', { class: 'space-y-2' }, orders.map((order) => h('li', { class: 'text-sm text-stone-800 dark:text-stone-100' }, [
       h('span', { class: CLS.badge, text: tr(`shop_st_${order.status}`) }),
-      h('span', { class: 'ms-2', text: `${dateTime(order.createdAt)} · ${(order.lines || []).map((line) => `${line.quantity} × ${line.name} (${line.unit})`).join(', ')} · ${money(order.itemsMinor, order.currency)}` })
+      h('span', { class: 'ms-2', text: `${dateTime(order.createdAt)} · ${(order.lines || []).map((line) => `${line.quantity} × ${line.name} (${line.unit})`).join(', ')} · ${money(order.farmNetMinor === undefined ? order.itemsMinor - order.feeMinor : order.farmNetMinor, order.currency)}` })
     ]))));
     return box;
   }
@@ -654,20 +670,35 @@
       description: h('textarea', { class: CLS.input, rows: 3, maxlength: 1000, dir: 'rtl', lang: 'ar', text: draft.description || '' }),
       descriptionEn: h('textarea', { class: CLS.input, rows: 3, maxlength: 1000, dir: 'ltr', lang: 'en', text: draft.descriptionEn || '' }),
       unit: field('unit', { maxlength: 40 }),
-      price: h('input', { type: 'number', class: CLS.input, min: 0.01, step: 0.01, inputmode: 'decimal', value: draft.priceMinor ? draft.priceMinor / 100 : '' }),
+      price: h('input', { type: 'number', class: CLS.input, min: 0, step: 'any', inputmode: 'decimal', value: draft.priceMinor ? draft.priceMinor / unitFactor(draft.currency || 'EUR') : '' }),
       currency: h('input', { type: 'text', class: CLS.input, maxlength: 3, value: draft.currency || 'EUR' }),
       stock: h('input', { type: 'number', class: CLS.input, min: 0, max: 1000000, inputmode: 'numeric', value: draft.stockUnits === undefined ? 0 : draft.stockUnits })
     };
     const error = h('p', { class: CLS.alert, role: 'alert', hidden: true });
     const fail = (message) => { error.textContent = message; error.hidden = false; };
+    // What the farm keeps per unit, with the fee rate in force now (the server applies the rate of the order's day).
+    const net = h('p', { class: CLS.muted, id: 'shop-product-net', 'aria-live': 'polite' });
+    const readPrice = () => {
+      const currency = f.currency.value.trim().toUpperCase();
+      const price = Number(String(f.price.value).replace(',', '.'));
+      if (!/^[A-Z]{3}$/.test(currency) || !Number.isFinite(price) || price <= 0) return null;
+      return { currency, minor: Math.round(price * unitFactor(currency)) };
+    };
+    const showNet = () => {
+      const price = readPrice();
+      const fee = price ? Math.round(price.minor * view.feeBps / 10000) : 0;
+      net.textContent = price ? tr('shop_p_net', { net: money(price.minor - fee, price.currency), feeAmount: money(fee, price.currency), fee: percent(view.feeBps) }) : '';
+    };
+    f.price.addEventListener('input', showNet);
+    f.currency.addEventListener('input', showNet);
+    showNet();
     return h('form', { class: 'border border-stone-200 dark:border-stone-700 rounded-2xl p-4 space-y-3', id: 'shop-product-form', novalidate: true, on: { submit: async (event) => {
       event.preventDefault();
-      const price = Number(String(f.price.value).replace(',', '.'));
+      const price = readPrice();
       const stock = Math.floor(Number(f.stock.value));
-      const currency = f.currency.value.trim().toUpperCase();
-      if (f.name.value.trim().length < 2 || !f.unit.value.trim() || !Number.isFinite(price) || price <= 0 || !/^[A-Z]{3}$/.test(currency) || !Number.isFinite(stock) || stock < 0) { fail(tr('shop_p_missing')); return; }
+      if (f.name.value.trim().length < 2 || !f.unit.value.trim() || !price || price.minor < 1 || !Number.isFinite(stock) || stock < 0) { fail(tr('shop_p_missing')); return; }
       const payload = { farmId: farm.farmId, category: f.category.value, name: f.name.value.trim(), nameEn: f.nameEn.value.trim(), description: f.description.value.trim(),
-        descriptionEn: f.descriptionEn.value.trim(), unit: f.unit.value.trim(), priceMinor: Math.round(price * 100), currency, stockUnits: stock };
+        descriptionEn: f.descriptionEn.value.trim(), unit: f.unit.value.trim(), priceMinor: price.minor, currency: price.currency, stockUnits: stock };
       if (product) payload.productId = product.productId;
       try {
         await api().farmerUpsertProduct(payload);
@@ -683,6 +714,7 @@
         labelled(tr('shop_p_price'), f.price), labelled(tr('shop_p_currency'), f.currency),
         labelled(tr('shop_p_stock'), f.stock)
       ]),
+      net,
       error,
       h('div', { class: 'flex flex-wrap gap-3' }, [
         h('button', { type: 'submit', class: CLS.primary, text: tr('shop_p_submit') }),

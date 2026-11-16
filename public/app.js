@@ -11406,7 +11406,7 @@
 
     window.addEventListener('faseela-toast', (event) => {
       const d = event.detail || {};
-      showToast(state.currentLang !== 'ar' ? (d.en || d.ar || '') : (d.ar || d.en || ''));
+      showToast(state.currentLang === 'ar' ? (d.ar || d.en || '') : state.currentLang === 'de' ? (d.de || d.en || d.ar || '') : (d.en || d.ar || ''));
     });
 
     function toggleProfileEditDrawer(open) {

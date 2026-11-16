@@ -68,10 +68,23 @@ class BackendError extends Error {
   }
 }
 
+let secondFactorAnnouncedAt = 0;
+/** A team account without a confirmed second factor gets one clear message in the app instead of generic errors. */
+function announceSecondFactorNeeded() {
+  if (Date.now() - secondFactorAnnouncedAt < 15000) return;
+  secondFactorAnnouncedAt = Date.now();
+  window.dispatchEvent(new CustomEvent('faseela-toast', { detail: {
+    ar: 'هذا الحساب يحتاج إلى تأكيد بعامل ثانٍ. افتح لوحة الإدارة (‎/admin/‎) وأكّد برمز تطبيق المصادقة.',
+    en: 'This account needs a second factor. Open the admin panel (/admin/) and confirm with your authenticator app.',
+    de: 'Dieses Konto braucht einen zweiten Faktor. Öffnen Sie den Admin-Bereich (/admin/) und bestätigen Sie mit Ihrer Authenticator-App.'
+  } }));
+}
+
 function toBackendError(error, fallbackCode = 'internal') {
   if (error instanceof BackendError) return error;
   // RPC business errors use SQLSTATE P0001 with the stable code in `hint`.
   if (error && error.code === 'P0001' && typeof error.hint === 'string' && error.hint) {
+    if (error.hint === 'mfa-required') announceSecondFactorNeeded();
     return new BackendError(error.hint, error.message, error);
   }
   if (error && error.code === '42501') {
@@ -843,6 +856,11 @@ const adminSetPlatformFee = callable('admin_set_platform_fee');
 const reviewOrderPayment = callable('review_order_payment');
 const adminSetOrderFulfilment = callable('admin_set_order_fulfilment');
 const adminOrderContact = callable('admin_order_contact');
+const recordOrderScreening = callable('record_order_screening');
+const orderPayer = callable('order_payer');
+const refundOrder = callable('refund_order');
+const recordFarmPayout = callable('record_farm_payout');
+const adminSetShopOpen = callable('admin_set_shop_open');
 
 /**
  * The shop: products an admin listed, of farms that are listed, plus the destinations each origin country ships to.
@@ -1021,6 +1039,11 @@ const api = Object.freeze({
   reviewOrderPayment,
   adminSetOrderFulfilment,
   adminOrderContact,
+  recordOrderScreening,
+  orderPayer,
+  refundOrder,
+  recordFarmPayout,
+  adminSetShopOpen,
   mfaStatus,
   mfaEnroll,
   mfaVerify,

@@ -279,8 +279,22 @@ export function render(template: string, p: Record<string, unknown>): Rendered {
     case "farm_order_paid":
       return {
         subject: "طلب جديد لمزرعتك · A new paid order for your farm",
-        ar: `وصل طلب مدفوع ${shortId(p.orderId)} لمزرعتك. قيمة البضاعة: <strong>${amount}</strong>. التفاصيل في التطبيق.`,
-        en: `A paid order ${shortId(p.orderId)} arrived for your farm. Goods value: <strong>${amount}</strong>. See the app for the items.`,
+        ar: `وصل طلب مدفوع ${shortId(p.orderId)} لمزرعتك. رصيدك من هذا الطلب بعد رسم الخدمة: <strong>${amount}</strong>. التفاصيل في التطبيق.`,
+        en: `A paid order ${shortId(p.orderId)} arrived for your farm. Your credit from it after the service fee: <strong>${amount}</strong>. See the app for the items.`,
+        cta: dash,
+      };
+    case "order_refunded":
+      return {
+        subject: "تم إلغاء طلبك وسيُعاد المبلغ · Your order was cancelled and will be refunded",
+        ar: `أُلغي طلبك المدفوع ${shortId(p.orderId)} وسنعيد إليك المبلغ (${amount}) بتحويل مصرفي.${p.note ? ` السبب: ${escapeHtml(p.note)}` : ""}`,
+        en: `Your paid order ${shortId(p.orderId)} was cancelled. We return the amount (${amount}) to you by bank transfer.${p.note ? ` Reason: ${escapeHtml(p.note)}` : ""}`,
+        cta: dash,
+      };
+    case "farm_payout":
+      return {
+        subject: "تم تحويل رصيد لمزرعتك · A payout to your farm was made",
+        ar: `حوّلنا إلى مزرعتك مبلغ <strong>${amount}</strong>. مرجع التحويل: ${escapeHtml(p.reference)}.`,
+        en: `We transferred <strong>${amount}</strong> to your farm. Transfer reference: ${escapeHtml(p.reference)}.`,
         cta: dash,
       };
     default:

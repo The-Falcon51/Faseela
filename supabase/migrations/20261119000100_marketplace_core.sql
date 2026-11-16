@@ -12,22 +12,28 @@
 --                             means that destination cannot be ordered (fail-closed).
 --  * public.orders / public.order_items   one order holds products of exactly one farm in one currency. Prices,
 --                             names, shipping and the fee rate are copied into the order, so later changes of the
---                             catalogue never alter an existing order. total = items + shipping + fee (constraint).
+--                             catalogue never alter an existing order. total = items + shipping (constraint).
 --  * private.order_contacts   delivery name and address, encrypted like oil-delivery contacts. Farm members never
 --                             get it; staff read it through an audited function while the order must be shipped.
---  * private.farm_ledger      what the platform owes a farm: one 'sale' credit (the items amount) per paid order.
---                             Payouts are booked here by the payment step that follows (roadmap step 4).
+--  * private.farm_ledger      what the platform owes a farm: one 'sale' credit per paid order (items minus the
+--                             service fee), a negative 'adjustment' when a paid order is refunded, and a negative
+--                             'payout' for every transfer to the farm that finance records (bank reference, once).
+--  * private.order_screenings sanctions screening of the payer; a payment is only confirmed after a recent
+--                             screening with the result 'clear' (same rule as for sponsorship payments).
 --
 -- Money flow in this step: bank transfer, as for sponsorships. The customer orders (awaiting_payment, 72 h), reports
 -- the transfer (under_review), finance confirms it (paid) or rejects it; the reviewer must not be the customer.
--- Service fee: private.app_settings('platform_fee_bps'), default 1500 = 15 %, charged on the items amount, shown as
--- its own line. VAT is NOT calculated here. [PLATZHALTER: Umsatzsteuer, Widerrufsrecht, Sanktionsprüfung bei
--- Bestellungen – rechtlich zu klären, bevor echte Bestellungen angenommen werden.]
+-- Service fee: private.app_settings('platform_fee_bps'), default 1500 = 15 %. It is INCLUDED in the product price:
+-- the customer pays the listed price plus shipping and nothing is added at checkout; the farm is credited the price
+-- minus the fee. The split is shown openly to customer and farm, and each order keeps the rate it was placed with.
+-- The shop is CLOSED by default: private.app_settings('shop_open') must be true before anyone can order, and only
+-- an admin can set it. VAT is NOT calculated here. [PLATZHALTER: Umsatzsteuer, Widerrufsrecht und AGB für den
+-- Warenverkauf, Verkäuferstellung (Hof oder Plattform) – rechtlich zu klären, bevor der Laden geöffnet wird.]
 --
 -- Rollback: unschedule the jobs 'faseela-expire-orders' and 'faseela-purge-order-contacts'; restore
 --   private.delete_my_account from migration 20261110000210 and private.export_my_data from 20261111000100; drop the public and private functions created below;
---   drop table private.farm_ledger, private.order_contacts, public.order_items, public.orders, public.shipping_rates,
---   public.products, public.farm_members (in this order); delete the app_settings row 'platform_fee_bps'.
+--   drop table private.order_screenings, private.farm_ledger, private.order_contacts, public.order_items, public.orders, public.shipping_rates,
+--   public.products, public.farm_members (in this order); delete the app_settings rows 'platform_fee_bps' and 'shop_open'.
 --   Dropping the tables discards orders: export them first if any exist.
 
 -- ---------------------------------------------------------------------------------------------------------------
@@ -65,6 +71,16 @@ as $$
   select coalesce((select case when jsonb_typeof(s.value) = 'number' and (s.value #>> '{}')::numeric between 0 and 3000
                                then trunc((s.value #>> '{}')::numeric)::integer end
                      from private.app_settings s where s.key = 'platform_fee_bps'), 1500);
+$$;
+
+create or replace function private.shop_open()
+returns boolean
+language sql
+stable
+security definer
+set search_path = ''
+as $$
+  select coalesce((select value = 'true'::jsonb from private.app_settings where key = 'shop_open'), false);
 $$;
 
 create table if not exists public.products (
@@ -105,7 +121,7 @@ create table if not exists public.orders (
   user_id uuid not null,
   farm_id text not null references public.farms (farm_id),
   status text not null check (status in ('awaiting_payment', 'under_review', 'paid', 'shipped', 'delivered',
-                                         'cancelled', 'expired', 'rejected')),
+                                         'cancelled', 'expired', 'rejected', 'refunded')),
   currency text not null references public.currencies (code),
   items_minor bigint not null check (items_minor > 0),
   shipping_minor bigint not null check (shipping_minor >= 0),
@@ -123,7 +139,8 @@ create table if not exists public.orders (
   delivered_at timestamptz,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
-  constraint orders_total_check check (total_minor = items_minor + shipping_minor + fee_minor)
+  constraint orders_total_check check (total_minor = items_minor + shipping_minor),
+  constraint orders_fee_check check (fee_minor <= items_minor)
 );
 create index if not exists orders_user_idx on public.orders (user_id, created_at desc);
 create index if not exists orders_farm_idx on public.orders (farm_id, status);
@@ -156,11 +173,26 @@ create table if not exists private.farm_ledger (
   amount_minor bigint not null check (amount_minor <> 0),
   currency text not null references public.currencies (code),
   note text not null default '' check (char_length(note) <= 300),
+  ref text check (char_length(ref) between 3 and 80),
   created_by uuid,
   created_at timestamptz not null default now()
 );
 create unique index if not exists farm_ledger_sale_once on private.farm_ledger (order_id) where kind = 'sale';
+create unique index if not exists farm_ledger_refund_once on private.farm_ledger (order_id) where kind = 'adjustment' and order_id is not null;
+create unique index if not exists farm_ledger_ref_once on private.farm_ledger (farm_id, ref) where ref is not null;
 create index if not exists farm_ledger_farm_idx on private.farm_ledger (farm_id);
+
+create table if not exists private.order_screenings (
+  id bigint generated always as identity primary key,
+  order_id text not null references public.orders (id),
+  result text not null check (result in ('clear', 'hit', 'unclear')),
+  lists_checked text not null check (char_length(lists_checked) between 3 and 300),
+  reference text check (char_length(reference) <= 120),
+  note text not null default '' check (char_length(note) <= 500),
+  checked_by uuid not null,
+  checked_at timestamptz not null default now()
+);
+create index if not exists order_screenings_order_idx on private.order_screenings (order_id, checked_at desc);
 
 -- ---------------------------------------------------------------------------------------------------------------
 -- Row-level security: read-only for clients, every write goes through the functions below.
@@ -174,10 +206,11 @@ alter table public.orders enable row level security;
 alter table public.order_items enable row level security;
 alter table private.order_contacts enable row level security;
 alter table private.farm_ledger enable row level security;
+alter table private.order_screenings enable row level security;
 
 revoke all on public.farm_members, public.products, public.shipping_rates, public.orders, public.order_items
   from public, anon, authenticated;
-revoke all on private.order_contacts, private.farm_ledger from public, anon, authenticated;
+revoke all on private.order_contacts, private.farm_ledger, private.order_screenings from public, anon, authenticated;
 
 grant select (farm_id, user_id, added_at, revoked_at) on public.farm_members to authenticated;
 grant select (id, farm_id, category, name, name_en, description, description_en, unit, price_minor, currency,
@@ -245,6 +278,9 @@ declare
   v_bps integer := private.platform_fee_bps();
   v_fee bigint;
 begin
+  if not private.shop_open() then
+    perform private.fail('shop-closed', 'The farm shop does not take orders yet.');
+  end if;
   if jsonb_typeof(v_items) is distinct from 'array' or jsonb_array_length(v_items) not between 1 and 20 then
     perform private.fail('invalid-argument', 'An order needs between 1 and 20 different products.');
   end if;
@@ -308,10 +344,11 @@ begin
     perform private.fail('no-shipping-rate', 'This farm does not ship to the chosen country yet.');
   end if;
 
+  -- The fee is part of the listed price: nothing is added for the customer, the farm receives items minus fee.
   v_fee := round(v_items_minor * v_bps / 10000.0)::bigint;
   return jsonb_build_object('farmId', v_farm, 'originCountry', v_origin, 'destCountry', v_dest, 'currency', v_currency,
     'lines', v_lines, 'itemsMinor', v_items_minor, 'shippingMinor', v_rate.amount_minor, 'feeBps', v_bps,
-    'feeMinor', v_fee, 'totalMinor', v_items_minor + v_rate.amount_minor + v_fee);
+    'feeMinor', v_fee, 'farmNetMinor', v_items_minor - v_fee, 'totalMinor', v_items_minor + v_rate.amount_minor);
 end;
 $$;
 
@@ -337,7 +374,7 @@ set search_path = ''
 as $$
   select jsonb_build_object('orderId', o.id, 'status', o.status, 'farmId', o.farm_id, 'currency', o.currency,
     'itemsMinor', o.items_minor, 'shippingMinor', o.shipping_minor, 'feeBps', o.fee_bps, 'feeMinor', o.fee_minor,
-    'totalMinor', o.total_minor, 'destCountry', o.dest_country, 'paymentReference', o.payment_reference,
+    'farmNetMinor', o.items_minor - o.fee_minor, 'totalMinor', o.total_minor, 'destCountry', o.dest_country, 'paymentReference', o.payment_reference,
     'expiresAt', private.epoch_ms(o.expires_at), 'createdAt', private.epoch_ms(o.created_at),
     'reviewNote', o.review_note, 'trackingCode', o.tracking_code,
     'shippedAt', private.epoch_ms(o.shipped_at), 'deliveredAt', private.epoch_ms(o.delivered_at),
@@ -358,7 +395,7 @@ stable
 security definer
 set search_path = ''
 as $$
-  select jsonb_build_object('feeBps', private.platform_fee_bps());
+  select jsonb_build_object('feeBps', private.platform_fee_bps(), 'shopOpen', private.shop_open());
 $$;
 
 create or replace function private.quote_order(payload jsonb)
@@ -678,7 +715,7 @@ begin
           from public.products pr where pr.farm_id = f.farm_id), '[]'::jsonb),
       'orders', coalesce((select jsonb_agg(private.order_summary(o) - 'paymentReference' order by o.created_at desc)
           from (select * from public.orders o2 where o2.farm_id = f.farm_id
-                   and o2.status in ('paid', 'shipped', 'delivered') order by o2.created_at desc limit 100) o), '[]'::jsonb),
+                   and o2.status in ('paid', 'shipped', 'delivered', 'refunded') order by o2.created_at desc limit 100) o), '[]'::jsonb),
       'balances', coalesce((select jsonb_agg(jsonb_build_object('currency', b.currency, 'amountMinor', b.amount_minor) order by b.currency)
           from (select l.currency, sum(l.amount_minor)::bigint as amount_minor from private.farm_ledger l
                  where l.farm_id = f.farm_id group by l.currency) b), '[]'::jsonb)
@@ -828,6 +865,7 @@ declare
   v_note text := btrim(coalesce(private.opt_text(p, 'note', 500), ''));
   v_order public.orders;
   v_member record;
+  v_screening text;
 begin
   select * into v_order from public.orders where id = v_order_id for update;
   if not found then
@@ -841,18 +879,30 @@ begin
     perform private.fail('invalid-argument', 'A rejection needs a reason the customer can act on.');
   end if;
 
+  -- Sanctions gate (fail-closed), as for sponsorship payments: a latest screening 'clear', at most 30 days old.
+  if v_decision = 'approve' then
+    select sc.result into v_screening from private.order_screenings sc
+     where sc.order_id = v_order_id and sc.checked_at > now() - interval '30 days'
+     order by sc.checked_at desc, sc.id desc limit 1;
+    if v_screening is null then
+      perform private.fail('screening-required', 'Record a sanctions screening before confirming this payment.');
+    elsif v_screening <> 'clear' then
+      perform private.fail('screening-blocked', 'The latest screening is not clear; this payment cannot be confirmed.');
+    end if;
+  end if;
+
   if v_decision = 'approve' then
     update public.orders
        set status = 'paid', reviewed_by_uid = v_uid, reviewed_at = now(), review_note = v_note, updated_at = now()
      where id = v_order_id
     returning * into v_order;
     insert into private.farm_ledger (farm_id, order_id, kind, amount_minor, currency, created_by)
-    values (v_order.farm_id, v_order.id, 'sale', v_order.items_minor, v_order.currency, v_uid);
+    values (v_order.farm_id, v_order.id, 'sale', v_order.items_minor - v_order.fee_minor, v_order.currency, v_uid);
     perform private.notify_user(v_order.user_id, 'order_paid', jsonb_build_object('orderId', v_order.id,
       'amountMinor', v_order.total_minor, 'currency', v_order.currency));
     for v_member in select user_id from public.farm_members where farm_id = v_order.farm_id and revoked_at is null loop
       perform private.notify_user(v_member.user_id, 'farm_order_paid', jsonb_build_object('orderId', v_order.id,
-        'amountMinor', v_order.items_minor, 'currency', v_order.currency));
+        'amountMinor', v_order.items_minor - v_order.fee_minor, 'currency', v_order.currency));
     end loop;
   else
     perform 1 from public.products where id in (select product_id from public.order_items where order_id = v_order_id)
@@ -869,6 +919,183 @@ begin
   perform private.audit(v_uid, 'order.payment_' || v_decision, 'orders/' || v_order.id, jsonb_build_object(
     'totalMinor', v_order.total_minor, 'currency', v_order.currency, 'farmId', v_order.farm_id, 'note', v_note));
   return jsonb_build_object('orderId', v_order.id, 'status', v_order.status);
+end;
+$$;
+
+create or replace function private.record_order_screening(payload jsonb)
+returns jsonb
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  v_uid uuid := private.require_role(array['finance_admin']);
+  p jsonb := coalesce(payload, '{}'::jsonb);
+  v_order_id text := private.req_id(p, 'orderId', '^[a-f0-9]{64}$');
+  v_result text := private.req_id(p, 'result', '^(clear|hit|unclear)$');
+  v_lists text := btrim(coalesce(private.opt_text(p, 'listsChecked', 300), ''));
+  v_reference text := nullif(btrim(coalesce(private.opt_text(p, 'reference', 120), '')), '');
+  v_note text := btrim(coalesce(private.opt_text(p, 'note', 500), ''));
+  v_order public.orders;
+  v_id bigint;
+begin
+  if char_length(v_lists) < 3 then
+    perform private.fail('invalid-argument', 'State which lists were checked.');
+  end if;
+  if v_result <> 'clear' and char_length(v_note) < 3 then
+    perform private.fail('invalid-argument', 'A hit or unclear result needs a note.');
+  end if;
+  select * into v_order from public.orders where id = v_order_id;
+  if not found then
+    perform private.fail('not-found', 'Order was not found.');
+  end if;
+  perform private.assert_not_self_review(v_uid, v_order.user_id);
+  if v_order.status not in ('awaiting_payment', 'under_review') then
+    perform private.fail('failed-precondition', 'Only an order whose payment is still open can be screened.');
+  end if;
+  insert into private.order_screenings (order_id, result, lists_checked, reference, note, checked_by)
+  values (v_order_id, v_result, v_lists, v_reference, v_note, v_uid) returning id into v_id;
+  -- The audit row carries the result but not the free-text note (may name third parties).
+  perform private.audit(v_uid, 'order_screening.' || v_result, 'orders/' || v_order_id,
+    jsonb_build_object('screeningId', v_id, 'reference', v_reference));
+  return jsonb_build_object('orderId', v_order_id, 'result', v_result, 'screeningId', v_id);
+end;
+$$;
+
+/** The payer's name for matching the transfer and for the sanctions screening. Audited; open payments only. */
+create or replace function private.order_payer(payload jsonb)
+returns jsonb
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  v_uid uuid := private.require_role(array['finance_admin']);
+  v_order_id text := private.req_id(coalesce(payload, '{}'::jsonb), 'orderId', '^[a-f0-9]{64}$');
+  v_order public.orders;
+  v_contact jsonb;
+begin
+  select * into v_order from public.orders where id = v_order_id;
+  if not found then
+    perform private.fail('not-found', 'Order was not found.');
+  end if;
+  if v_order.status not in ('awaiting_payment', 'under_review') then
+    perform private.fail('failed-precondition', 'The payer is only shown while the payment is open.');
+  end if;
+  select extensions.pgp_sym_decrypt(c.contact_enc, private.pii_key())::jsonb into v_contact
+    from private.order_contacts c where c.order_id = v_order_id;
+  perform private.audit(v_uid, 'order.payer_read', 'orders/' || v_order_id, '{}'::jsonb);
+  return jsonb_build_object('orderId', v_order_id,
+    'accountName', coalesce((select pf.display_name from public.profiles pf where pf.id = v_order.user_id), ''),
+    'deliveryName', coalesce(v_contact ->> 'name', ''), 'country', coalesce(v_contact ->> 'country', v_order.dest_country));
+end;
+$$;
+
+/** A paid order that will not be sent: goods back to the shop, the farm's credit reversed. The money itself is
+    returned to the customer by bank transfer outside this system; this function records the decision. */
+create or replace function private.refund_order(payload jsonb)
+returns jsonb
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  v_uid uuid := private.require_role(array['finance_admin']);
+  p jsonb := coalesce(payload, '{}'::jsonb);
+  v_order_id text := private.req_id(p, 'orderId', '^[a-f0-9]{64}$');
+  v_note text := btrim(coalesce(private.opt_text(p, 'note', 300), ''));
+  v_order public.orders;
+begin
+  select * into v_order from public.orders where id = v_order_id for update;
+  if not found then
+    perform private.fail('not-found', 'Order was not found.');
+  end if;
+  perform private.assert_not_self_review(v_uid, v_order.user_id);
+  if v_order.status <> 'paid' then
+    perform private.fail('failed-precondition', 'Only a paid order that has not been shipped can be refunded here.');
+  end if;
+  if char_length(v_note) < 3 then
+    perform private.fail('invalid-argument', 'A refund needs a reason.');
+  end if;
+  perform 1 from public.products where id in (select product_id from public.order_items where order_id = v_order_id)
+    order by id for update;
+  perform private.order_release_stock(v_order_id);
+  update public.orders set status = 'refunded', review_note = v_note, updated_at = now()
+   where id = v_order_id returning * into v_order;
+  insert into private.farm_ledger (farm_id, order_id, kind, amount_minor, currency, note, created_by)
+  values (v_order.farm_id, v_order.id, 'adjustment', -(v_order.items_minor - v_order.fee_minor), v_order.currency, v_note, v_uid);
+  perform private.notify_user(v_order.user_id, 'order_refunded', jsonb_build_object('orderId', v_order.id,
+    'amountMinor', v_order.total_minor, 'currency', v_order.currency, 'note', v_note));
+  perform private.audit(v_uid, 'order.refunded', 'orders/' || v_order.id, jsonb_build_object(
+    'totalMinor', v_order.total_minor, 'currency', v_order.currency, 'farmId', v_order.farm_id, 'note', v_note));
+  return jsonb_build_object('orderId', v_order.id, 'status', v_order.status);
+end;
+$$;
+
+/** Books a transfer that was made to a farm. Never more than the farm's credit; one booking per bank reference. */
+create or replace function private.record_farm_payout(payload jsonb)
+returns jsonb
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  v_uid uuid := private.require_role(array['finance_admin']);
+  p jsonb := coalesce(payload, '{}'::jsonb);
+  v_farm text := private.req_id(p, 'farmId', '^[A-Za-z0-9_-]{1,80}$');
+  v_amount bigint := private.opt_int(p, 'amountMinor', 1, 100000000000);
+  v_currency text := private.req_id(p, 'currency', '^[A-Z]{3}$');
+  v_ref text := btrim(coalesce(private.opt_text(p, 'reference', 80), ''));
+  v_note text := btrim(coalesce(private.opt_text(p, 'note', 300), ''));
+  v_balance bigint;
+  v_member record;
+begin
+  if v_amount is null or char_length(v_ref) < 3 then
+    perform private.fail('invalid-argument', 'A payout needs an amount and the bank reference of the transfer.');
+  end if;
+  if not exists (select 1 from public.farms where farm_id = v_farm) then
+    perform private.fail('not-found', 'Farm was not found.');
+  end if;
+  -- A farm member must not book a payout to the own farm.
+  if private.is_farm_member(v_farm) then
+    perform private.fail('permission-denied', 'A payout to your own farm must be booked by another account.');
+  end if;
+  perform pg_advisory_xact_lock(hashtextextended('faseela:farm-ledger:' || v_farm, 0));
+  if exists (select 1 from private.farm_ledger where farm_id = v_farm and ref = v_ref) then
+    perform private.fail('already-exists', 'A booking with this bank reference already exists for this farm.');
+  end if;
+  select coalesce(sum(amount_minor), 0) into v_balance from private.farm_ledger where farm_id = v_farm and currency = v_currency;
+  if v_amount > v_balance then
+    perform private.fail('failed-precondition', 'The payout is larger than the farm''s credit in this currency.');
+  end if;
+  insert into private.farm_ledger (farm_id, kind, amount_minor, currency, note, ref, created_by)
+  values (v_farm, 'payout', -v_amount, v_currency, v_note, v_ref, v_uid);
+  for v_member in select user_id from public.farm_members where farm_id = v_farm and revoked_at is null loop
+    perform private.notify_user(v_member.user_id, 'farm_payout', jsonb_build_object('amountMinor', v_amount, 'currency', v_currency, 'reference', v_ref));
+  end loop;
+  perform private.audit(v_uid, 'farm.payout_recorded', 'farms/' || v_farm, jsonb_build_object(
+    'amountMinor', v_amount, 'currency', v_currency, 'reference', v_ref));
+  return jsonb_build_object('farmId', v_farm, 'amountMinor', v_amount, 'currency', v_currency, 'balanceMinor', v_balance - v_amount);
+end;
+$$;
+
+create or replace function private.admin_set_shop_open(payload jsonb)
+returns jsonb
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  v_uid uuid := private.require_role('{}'::text[]);
+  v_open jsonb := coalesce(payload, '{}'::jsonb) -> 'open';
+begin
+  if v_open is null or jsonb_typeof(v_open) <> 'boolean' then
+    perform private.fail('invalid-argument', 'Field open must be true or false.');
+  end if;
+  insert into private.app_settings (key, value, updated_by) values ('shop_open', v_open, v_uid)
+  on conflict (key) do update set value = excluded.value, updated_at = now(), updated_by = excluded.updated_by;
+  perform private.audit(v_uid, case when v_open = 'true'::jsonb then 'shop.opened' else 'shop.closed' end, 'app_settings/shop_open', '{}'::jsonb);
+  return jsonb_build_object('shopOpen', v_open = 'true'::jsonb);
 end;
 $$;
 
@@ -946,6 +1173,7 @@ declare
 begin
   return jsonb_build_object(
     'feeBps', private.platform_fee_bps(),
+    'shopOpen', private.shop_open(),
     'farms', coalesce((select jsonb_agg(jsonb_build_object('farmId', f.farm_id, 'name', f.name, 'nameEn', f.name_en,
         'countryCode', f.country_code, 'listed', f.status = 'listed') order by f.farm_id) from public.farms f), '[]'::jsonb),
     'products', coalesce((select jsonb_agg(jsonb_build_object('productId', pr.id, 'farmId', pr.farm_id,
@@ -963,7 +1191,11 @@ begin
         order by m.farm_id, m.added_at)
         from public.farm_members m left join public.profiles pf on pf.id = m.user_id
        where m.revoked_at is null), '[]'::jsonb),
-    'orders', coalesce((select jsonb_agg(private.order_summary(o) order by o.created_at desc)
+    'orders', coalesce((select jsonb_agg(private.order_summary(o) || jsonb_build_object('screening',
+          (select jsonb_build_object('result', sc.result, 'listsChecked', sc.lists_checked, 'checkedAt', private.epoch_ms(sc.checked_at),
+                    'current', sc.checked_at > now() - interval '30 days')
+             from private.order_screenings sc where sc.order_id = o.id order by sc.checked_at desc, sc.id desc limit 1))
+        order by o.created_at desc)
         from (select * from public.orders order by created_at desc limit 200) o), '[]'::jsonb),
     'balances', coalesce((select jsonb_agg(jsonb_build_object('farmId', b.farm_id, 'currency', b.currency,
         'amountMinor', b.amount_minor) order by b.farm_id, b.currency)
@@ -1145,7 +1377,7 @@ begin
   delete from private.order_contacts c
    using public.orders o
    where c.order_id = o.id
-     and o.status in ('delivered', 'cancelled', 'expired', 'rejected')
+     and o.status in ('delivered', 'cancelled', 'expired', 'rejected', 'refunded')
      and o.updated_at < now() - interval '90 days';
   get diagnostics v_count = row_count;
   return v_count;
@@ -1188,6 +1420,16 @@ create or replace function public.admin_set_platform_fee(payload jsonb) returns 
 language sql security invoker set search_path = '' as $$ select private.admin_set_platform_fee(payload); $$;
 create or replace function public.review_order_payment(payload jsonb) returns jsonb
 language sql security invoker set search_path = '' as $$ select private.review_order_payment(payload); $$;
+create or replace function public.record_order_screening(payload jsonb) returns jsonb
+language sql security invoker set search_path = '' as $$ select private.record_order_screening(payload); $$;
+create or replace function public.order_payer(payload jsonb) returns jsonb
+language sql security invoker set search_path = '' as $$ select private.rate_limit('order_contact', 60, 3600); select private.order_payer(payload); $$;
+create or replace function public.refund_order(payload jsonb) returns jsonb
+language sql security invoker set search_path = '' as $$ select private.refund_order(payload); $$;
+create or replace function public.record_farm_payout(payload jsonb) returns jsonb
+language sql security invoker set search_path = '' as $$ select private.record_farm_payout(payload); $$;
+create or replace function public.admin_set_shop_open(payload jsonb) returns jsonb
+language sql security invoker set search_path = '' as $$ select private.admin_set_shop_open(payload); $$;
 create or replace function public.admin_set_order_fulfilment(payload jsonb) returns jsonb
 language sql security invoker set search_path = '' as $$ select private.admin_set_order_fulfilment(payload); $$;
 create or replace function public.admin_order_contact(payload jsonb) returns jsonb
@@ -1196,6 +1438,8 @@ create or replace function public.admin_list_marketplace() returns jsonb
 language sql security invoker set search_path = '' as $$ select private.rate_limit('admin_read', 240, 60); select private.admin_list_marketplace(); $$;
 
 revoke all on function
+  private.shop_open(), private.record_order_screening(jsonb), private.order_payer(jsonb), private.refund_order(jsonb), private.record_farm_payout(jsonb), private.admin_set_shop_open(jsonb),
+  public.record_order_screening(jsonb), public.order_payer(jsonb), public.refund_order(jsonb), public.record_farm_payout(jsonb), public.admin_set_shop_open(jsonb),
   private.is_farm_member(text), private.platform_fee_bps(), private.order_quote(jsonb, boolean),
   private.order_release_stock(text), private.order_summary(public.orders), private.own_order_for_update(jsonb, uuid),
   private.marketplace_config(), private.quote_order(jsonb), private.create_order(jsonb),
@@ -1219,6 +1463,8 @@ grant execute on function private.is_farm_member(text) to authenticated;
 grant execute on function private.marketplace_config(), public.marketplace_config() to anon, authenticated;
 
 grant execute on function
+  private.record_order_screening(jsonb), private.order_payer(jsonb), private.refund_order(jsonb), private.record_farm_payout(jsonb), private.admin_set_shop_open(jsonb),
+  public.record_order_screening(jsonb), public.order_payer(jsonb), public.refund_order(jsonb), public.record_farm_payout(jsonb), public.admin_set_shop_open(jsonb),
   private.quote_order(jsonb), private.create_order(jsonb), private.report_order_payment(jsonb),
   private.cancel_my_order(jsonb), private.list_my_orders(), private.farmer_upsert_product(jsonb),
   private.farmer_set_product_stock(jsonb), private.farm_overview(), private.admin_set_farm_member(jsonb),

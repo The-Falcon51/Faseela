@@ -26,7 +26,7 @@ const role = q.get('mockRole') || '';
 const fail = (code) => Object.assign(new Error(code), { code });
 const watch = (rows) => (cb) => { setTimeout(() => cb(rows), 30); return () => {}; };
 const product = (id, farmId, extra) => ({ id, farmId, category: 'oil', name: 'زيت ' + id, nameEn: 'Oil ' + id, description: '', descriptionEn: 'Cold pressed', unit: '500 ml', priceMinor: 1200, currency: 'EUR', stockUnits: 10, ...extra });
-const order = (status, extra) => ({ orderId: 'a'.repeat(64), status, farmId: 'farm_a', currency: 'EUR', itemsMinor: 2400, shippingMinor: 900, feeBps: 1500, feeMinor: 360, totalMinor: 3660, destCountry: 'DE',
+const order = (status, extra) => ({ orderId: 'a'.repeat(64), status, farmId: 'farm_a', currency: 'EUR', itemsMinor: 2400, shippingMinor: 900, feeBps: 1500, feeMinor: 360, farmNetMinor: 2040, totalMinor: 3300, destCountry: 'DE',
   paymentReference: 'FO-AAAAAAAAAA', expiresAt: Date.now() + 86400000, createdAt: Date.now(), reviewNote: '', trackingCode: '', lines: [{ productId: 'p1', name: ${JSON.stringify(XSS)}, unit: '500 ml', unitPriceMinor: 1200, quantity: 2, lineMinor: 2400 }], ...extra });
 const S = window.__shop = { calls: [], orders: [], quotes: 0, channels: q.get('accounts') === 'none' ? [] : [{ id: 'bank_iban', titleAr: 'حساب', titleEn: 'Bank account', account: 'DE00 1234' }],
   farmProducts: [{ productId: 'own1', category: 'oil', name: 'زيت المزرعة', nameEn: 'Farm oil', description: '', descriptionEn: '', unit: '1 l', priceMinor: 2000, currency: 'EUR', stockUnits: 4, status: 'listed', reviewNote: '' },
@@ -39,10 +39,10 @@ window.FaseelaFirebase = window.FaseelaBackend = {
       product('p1', 'farm_a', { nameEn: ${JSON.stringify(XSS)} }), product('p2', 'farm_a', { nameEn: 'Green olives', category: 'olives', priceMinor: 500, stockUnits: 3 }),
       product('p3', 'farm_b', { nameEn: 'Farm B oil' }), product('p4', 'farm_a', { nameEn: 'Sold out oil', stockUnits: 0 }), product('p5', 'farm_es', { nameEn: 'Spanish oil' })],
     shippingRates: [{ originCountry: 'SY', destCountry: 'DE', amountMinor: 900, currency: 'EUR' }, { originCountry: 'SY', destCountry: 'FR', amountMinor: 1200, currency: 'EUR' }] },
-  marketplaceConfig: async () => ({ data: { feeBps: 1500 } }),
+  marketplaceConfig: async () => ({ data: { feeBps: 1500, shopOpen: q.get('shop') !== 'closed' } }),
   quoteOrder: async (p) => { S.calls.push(['quoteOrder', p]); S.quotes += 1; const items = p.items.reduce((sum, i) => sum + (i.productId === 'p2' ? 500 : 1200) * i.quantity, 0) + (window.__priceUp && S.quotes > 1 ? 100 : 0);
     const fee = Math.round(items * 0.15); const ship = p.destCountry === 'FR' ? 1200 : 900;
-    return { data: { farmId: 'farm_a', destCountry: p.destCountry, currency: 'EUR', itemsMinor: items, feeBps: 1500, feeMinor: fee, shippingMinor: ship, totalMinor: items + fee + ship,
+    return { data: { farmId: 'farm_a', destCountry: p.destCountry, currency: 'EUR', itemsMinor: items, feeBps: 1500, feeMinor: fee, farmNetMinor: items - fee, shippingMinor: ship, totalMinor: items + ship,
       lines: p.items.map((i) => ({ productId: i.productId, name: 'Oil', unit: '500 ml', unitPriceMinor: 1200, quantity: i.quantity, lineMinor: 1200 * i.quantity })) } }; },
   createOrder: async (p) => { S.calls.push(['createOrder', p]); if (window.__orderFails) throw fail('out-of-stock'); S.orders = [order('awaiting_payment')]; return { data: S.orders[0] }; },
   listMyOrders: async () => ({ data: { orders: S.orders } }),
@@ -50,8 +50,8 @@ window.FaseelaFirebase = window.FaseelaBackend = {
   cancelMyOrder: async (p) => { S.calls.push(['cancelMyOrder', p]); S.orders = [order('cancelled')]; return { data: {} }; },
   paymentInstructions: async () => ({ data: { channels: S.channels } }),
   farmOverview: async () => ({ data: { farms: role === 'farmer' ? [{ farmId: 'farm_a', name: 'مزرعة أ', nameEn: 'Farm A', countryCode: 'SY', listed: true, products: S.farmProducts,
-    orders: [{ ...order('paid'), paymentReference: undefined, lines: [{ productId: 'own1', name: 'Farm oil', unit: '1 l', unitPriceMinor: 2000, quantity: 1, lineMinor: 2000 }], itemsMinor: 2000 }],
-    balances: [{ currency: 'EUR', amountMinor: 2000 }] }] : [] } }),
+    orders: [{ ...order('paid'), paymentReference: undefined, lines: [{ productId: 'own1', name: 'Farm oil', unit: '1 l', unitPriceMinor: 2000, quantity: 1, lineMinor: 2000 }], itemsMinor: 2000, feeMinor: 300, farmNetMinor: 1700 }],
+    balances: [{ currency: 'EUR', amountMinor: 1700 }] }] : [] } }),
   farmerUpsertProduct: async (p) => { S.calls.push(['farmerUpsertProduct', p]); if (p.name === 'خطأ') throw fail('invalid-argument'); return { data: { productId: 'new', status: 'pending_review' } }; },
   farmerSetProductStock: async (p) => { S.calls.push(['farmerSetProductStock', p]); return { data: p }; },
   watchMyInvestments: watch([]), watchMyShares: watch([]), watchMyTransactions: watch([]), watchMyOilAllocations: watch([]), watchMyOilRequests: watch([]),
@@ -101,7 +101,7 @@ try {
     assert.equal(await page.$$eval('#shop-grid article', (n) => n.length), 5);
     assert.equal(await page.evaluate(() => window.__xss === undefined && !document.querySelector('#shop-container img')), true, 'product names render as text');
     assert.match(await page.textContent('#shop-grid'), /<img src=x/);
-    assert.match(await page.textContent('#shop-container'), /service fee of 15 % on the goods/);
+    assert.match(await page.textContent('#shop-container'), /Faseela keeps 15 % of the product price as its service fee/);
     assert.equal(await page.$eval('[data-product="p4"] button', (b) => b.disabled), true, 'sold-out product cannot be added');
     assert.match(await page.textContent('[data-product="p4"]'), /Sold out/);
     assert.equal(await page.$eval('[data-product="p5"] button', (b) => b.disabled), true, 'no delivery from that country, no basket');
@@ -110,7 +110,7 @@ try {
     assert.equal(await page.$eval('#shop-checkout', () => true).catch(() => false), false, 'an empty basket offers no order button');
     await page.fill('[data-product="p1"] input', '2');
     await page.click('[data-product="p1"] button');
-    assert.match(await summary(page), /Goods€24\.00Service fee \(15 %\)€3\.60Shipping to Germany€9\.00Total€36\.60/, 'goods, fee, shipping and total are separate lines');
+    assert.match(await summary(page), /Goods€24\.00Shipping to Germany€9\.00Total€33\.00Included in the price: €3\.60 service fee \(15 %\) for Faseela, €20\.40 for the farm\./, 'nothing is added to the price; the split is shown openly');
     await page.click('[data-product="p3"] button');
     assert.equal(await page.$$eval('#shop-basket li', (n) => n.length), 1, 'a second farm does not enter the basket');
     await page.fill('[data-product="p2"] input', '99');
@@ -137,7 +137,7 @@ try {
     await page.click('#shop-checkout');
     await page.waitForSelector('#shop-checkout-form');
     assert.deepEqual(await calls(page, 'quoteOrder'), [{ items: [{ productId: 'p1', quantity: 2 }], destCountry: 'DE' }]);
-    assert.match(await summary(page, '#shop-checkout-form'), /Total€36\.60/);
+    assert.match(await summary(page, '#shop-checkout-form'), /Total€33\.00[\s\S]*€3\.60 service fee/);
     assert.match(await page.textContent('#shop-checkout-form'), /bank transfer[\s\S]*72 hours/);
     await page.click('#shop-checkout-form button[type=submit]');
     assert.match(await page.textContent('#shop-checkout-form [role=alert]'), /name, street, city and country/);
@@ -150,7 +150,7 @@ try {
     await page.click('#shop-checkout-form button[type=submit]');
     await page.waitForFunction(() => /price changed/.test(document.querySelector('#shop-checkout-form [role=alert]')?.textContent || ''));
     assert.deepEqual(await calls(page, 'createOrder'), [], 'a changed total is shown before the order is sent');
-    assert.match(await summary(page, '#shop-checkout-form'), /Total€37\.75/);
+    assert.match(await summary(page, '#shop-checkout-form'), /Total€34\.00/);
     assert.equal(await page.inputValue('[name=shop-city]'), 'Berlin', 'the address survives the re-pricing');
     await page.evaluate(() => { window.__orderFails = true; });
     await page.click('#shop-checkout-form button[type=submit]');
@@ -209,9 +209,9 @@ try {
     await toShop(page);
     await page.waitForSelector('[data-farm="farm_a"]');
     const farm = await page.textContent('[data-farm="farm_a"]');
-    assert.match(farm, /Your farm: Farm A[\s\S]*Credit from paid orders: €20\.00/);
+    assert.match(farm, /Your farm: Farm A[\s\S]*Credit from paid orders after fee and payouts: €17\.00/);
     assert.match(farm, /Dates[\s\S]*Not accepted[\s\S]*Please add the harvest year/, 'the farm sees why a product was not accepted');
-    assert.match(farm, /Paid orders for your farm[\s\S]*1 × Farm oil \(1 l\)/);
+    assert.match(farm, /Paid orders for your farm[\s\S]*1 × Farm oil \(1 l\) · €17\.00/);
     assert.doesNotMatch(farm, /FO-AAAAAAAAAA|Kunde|Weg 1/, 'no payment reference and no customer data for the farm');
     await page.getByRole('button', { name: 'New product' }).click();
     await page.click('#shop-product-form button[type=submit]');
@@ -223,6 +223,7 @@ try {
     await page.click('#shop-product-form button[type=submit]');
     await page.waitForFunction(() => /check your entries/.test(document.querySelector('#shop-product-form [role=alert]')?.textContent || ''));
     await form.getByLabel('Name (Arabic)').fill('زيت معصور');
+    assert.match(await page.textContent('#shop-product-net'), /You receive €12\.32 per unit; €2\.18 \(15 %\) is the Faseela service fee/, 'the farm sees its share before submitting');
     await axe(page, 'farmer/light');
     await page.click('#shop-product-form button[type=submit]');
     await page.waitForFunction(() => !document.getElementById('shop-product-form'));
@@ -256,6 +257,25 @@ try {
     await page.evaluate(() => { navigateTo('marketplace'); switchMarketplaceTrack('shop'); });
     assert.equal(await page.evaluate(() => state.marketplaceTrack), 'mature');
     assert.equal(await page.$eval('#shop-container', (n) => n.classList.contains('hidden')), true);
+    await ctx.close();
+  }
+
+  // ---- 5. closed shop: no tab for customers; a farm account can still prepare its products ----------------------
+  {
+    const visitor = await open('?shop=closed');
+    await visitor.page.waitForFunction(() => typeof window.FaseelaShop === 'object');
+    await visitor.page.waitForTimeout(1500);
+    assert.equal(await visitor.page.$eval('#tab-market-shop', (tab) => tab.hidden), true, 'a closed shop is not offered to visitors');
+    await visitor.ctx.close();
+    const { ctx, page } = await open('?mockRole=farmer&shop=closed');
+    await page.waitForFunction(() => state.currentUser && state.serverMode, null, { timeout: 20000 });
+    await page.waitForFunction(() => { const tab = document.getElementById('tab-market-shop'); return tab && !tab.hidden; }, null, { timeout: 20000 });
+    await page.evaluate(() => { navigateTo('marketplace'); switchMarketplaceTrack('shop'); });
+    await page.waitForSelector('[data-farm="farm_a"]');
+    assert.match(await page.textContent('#shop-closed'), /does not take orders yet/);
+    assert.equal(await page.$('#shop-grid'), null, 'no products to order while closed');
+    assert.equal(await page.$('#shop-basket'), null);
+    assert.equal(!!(await page.$('[data-own-product="own1"]')), true, 'the farm can keep preparing its products');
     await ctx.close();
   }
 
