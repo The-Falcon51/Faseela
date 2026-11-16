@@ -737,6 +737,13 @@ try {
         await loadFounderSystemStatus(); await wait(100);
         out.statusTiles = document.querySelectorAll('#fndr-system-status-body > div').length;
         out.statusVisible = !document.getElementById('fndr-system-status').classList.contains('hidden');
+        const shown = (n) => !!n && n.getClientRects().length > 0;
+        out.sampleTabs = ['fleet', 'telemetry', 'audit', 'decisions', 'contracts_editor'].filter((tab) => shown(document.getElementById('btn-fndr-tab-' + tab)));
+        switchFounderSubTab('telemetry');
+        out.sampleTabForced = shown(document.getElementById('panel-fndr-telemetry'));
+        out.sampleBlocks = [...document.querySelectorAll('#page-founder-control [data-demo]')].filter(shown).length;
+        out.adminLink = document.querySelector('#fndr-preview-banner a')?.getAttribute('href') || '';
+        out.bannerShown = shown(document.getElementById('fndr-preview-banner'));
         openFounderManageUserModal(state.users[0].id); await wait(300);
         out.assignBoxVisible = !document.getElementById('fndr-assign-box').classList.contains('hidden');
         out.assignChips = document.querySelectorAll('#fndr-assign-trees [data-click^="founderRemoveAssignment"]').length;
@@ -934,6 +941,10 @@ try {
       assert.equal(result.assignChips, 1, 'assigned tree rendered');
       assert.equal(result.impersonateHidden, true, 'demo impersonation hidden in server mode');
       assert.equal(result.statusVisible, true, 'system status shown for admins');
+      assert.deepEqual(result.sampleTabs, [], 'illustrative tabs are not offered in a real session');
+      assert.equal(result.sampleTabForced, false, 'an illustrative panel cannot be opened in a real session');
+      assert.equal(result.sampleBlocks, 0, 'no sample figures next to live data');
+      assert.equal(result.bannerShown && result.adminLink === 'admin/', true, 'the page points to the admin panel');
       assert.equal(result.statusTiles, 6, 'system status renders all tiles');
       assert.equal(result.queueHasReport, true, 'farmer update reaches the approvals desk');
       assert.equal(result.blindApproveBlocked, true, 'approve without inspection is refused');

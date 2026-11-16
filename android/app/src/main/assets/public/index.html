@@ -42,13 +42,13 @@
   <title>فسيلة | المنصة التشاركية لأشجار الزيتون في سوريا</title>
   <!-- Fonts: self-hosted (scripts/build-web.cjs), no Google Fonts requests -->
   <link rel="preload" href="fonts/cairo-arabic-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
-  <meta name="faseela-build" content="a18135d386b2">
+  <meta name="faseela-build" content="7fc1b213c858">
   <link rel="stylesheet" href="fonts/fonts.css">
   <!-- Styles: Tailwind is prebuilt by scripts/build-web.cjs (no runtime CDN) -->
-  <link rel="stylesheet" href="assets/tailwind.css?v=a18135d386b2">
+  <link rel="stylesheet" href="assets/tailwind.css?v=7fc1b213c858">
   <!-- Lucide Icons (self-hosted, version pinned in package.json) -->
   <script src="vendor/lucide.min.js"></script>
-  <script src="events.js?v=a18135d386b2"></script>
+  <script src="events.js?v=7fc1b213c858"></script>
   <style>
     :root {
       --sat: env(safe-area-inset-top, 0px);
@@ -6481,7 +6481,7 @@
     <section id="page-founder-control" class="page-content hidden py-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 text-start">
       <div id="fndr-preview-banner" class="hidden mb-6 p-3 rounded-2xl border border-amber-300 dark:border-amber-700 bg-amber-50 dark:bg-amber-950/40 text-amber-950 dark:text-amber-100 text-xs flex items-start gap-2" role="note">
         <i data-lucide="info" class="w-4 h-4 flex-shrink-0 mt-0.5" aria-hidden="true"></i>
-        <span data-i18n="preview_banner_founder">معاينة: مؤشرات الأسطول والقياسات والنزاعات بيانات توضيحية. المراجعات ودليل المستخدمين بيانات حقيقية من الخادم.</span>
+        <span data-i18n="preview_banner_founder">هذه الصفحة تعرض بيانات حقيقية من الخادم فقط: حالة النظام، التصدير المالي، حسابات الاستلام، دليل المستخدمين والمراجعات. بقية أدوات الفريق في <a href="admin/" class="underline font-bold">لوحة الإدارة</a>.</span>
       </div>
       
       <!-- Top Executive Operations Header -->
@@ -6493,7 +6493,7 @@
             <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
             <span id="founder-clock-live">12:00:00 UTC+3</span>
           </div>
-          <div class="bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 text-xs font-bold px-3 py-1.5 rounded-2xl flex items-center gap-1.5">
+          <div data-demo class="bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 text-xs font-bold px-3 py-1.5 rounded-2xl flex items-center gap-1.5">
             <i data-lucide="shield-check" class="w-4 h-4"></i>
             <span data-i18n="fndr_system_nominal">جميع الأنظمة تعمل بكفاءة 100%</span>
           </div>
@@ -6641,8 +6641,8 @@
             <i data-lucide="save" class="w-4 h-4" aria-hidden="true"></i><span data-i18n="fndr_pay_save">حفظ حسابات الدفع</span>
           </button>
         </section>
-        <!-- Executive KPI Metrics Radar Strip -->
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
+        <!-- Executive KPI Metrics Radar Strip (sample figures: hidden in real sessions) -->
+        <div data-demo class="grid grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
           <div class="bg-white dark:bg-stone-900 dark:border-stone-800 dark:text-stone-100 p-5 rounded-3xl border border-stone-200 shadow-sm space-y-2">
             <div class="flex items-center justify-between text-stone-500 dark:text-stone-400">
               <span class="font-bold text-[11px]" data-i18n="fndr_kpi_escrow">إجمالي أصول مراجعة الدفعات (Payment Review)</span>
@@ -6700,8 +6700,8 @@
           </div>
         </div>
 
-        <!-- Commercial Monetization & Revenue Streams Card for Founder & Platform -->
-        <div class="bg-gradient-to-br from-purple-950 via-stone-900 to-purple-950 text-white rounded-3xl p-6 sm:p-7 border-2 border-purple-500/50 shadow-xl space-y-5 text-start">
+        <!-- Commercial Monetization & Revenue Streams Card (sample figures: hidden in real sessions) -->
+        <div data-demo class="bg-gradient-to-br from-purple-950 via-stone-900 to-purple-950 text-white rounded-3xl p-6 sm:p-7 border-2 border-purple-500/50 shadow-xl space-y-5 text-start">
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/10 pb-4">
             <div class="flex items-center gap-3">
               <div class="w-10 h-10 rounded-2xl bg-amber-400 text-purple-950 font-black flex items-center justify-center shadow-md">
@@ -6765,8 +6765,8 @@
           </div>
         </div>
 
-        <!-- Financial Payment Review & Liquidity Monitor (مرصد السيولة ومراجعة الدفعات) -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+        <!-- Financial Payment Review & Liquidity Monitor (sample figures: hidden in real sessions) -->
+        <div data-demo class="grid grid-cols-1 lg:grid-cols-3 gap-5">
           <div class="lg:col-span-2 bg-gradient-to-br from-stone-900 to-stone-950 text-white p-6 sm:p-7 rounded-3xl shadow-sm border border-stone-800 space-y-4 text-xs">
             <div class="flex items-center justify-between border-b border-stone-800 pb-3">
               <div class="flex items-center gap-2.5">
@@ -6842,7 +6842,7 @@
       <!-- ================= PANEL 2: USER DIRECTORY & VERIFICATION HUB ================= -->
             <div id="panel-fndr-users" class="hidden space-y-6">
         <!-- Executive Intelligence & Founder Suggestions Card -->
-        <div id="fndr-users-intel-card" class="bg-gradient-to-br from-purple-950 via-stone-900 to-indigo-950 text-white rounded-3xl p-6 border-2 border-purple-500/40 shadow-xl space-y-5 text-start">
+        <div id="fndr-users-intel-card" data-demo class="bg-gradient-to-br from-purple-950 via-stone-900 to-indigo-950 text-white rounded-3xl p-6 border-2 border-purple-500/40 shadow-xl space-y-5 text-start">
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/10 pb-4">
             <div class="flex items-center gap-3">
               <div class="w-10 h-10 rounded-2xl bg-amber-400 text-purple-950 font-black flex items-center justify-center shadow-md">
@@ -9254,8 +9254,8 @@
   </nav>
 
   <!-- ================= JAVASCRIPT LOGIC & STATE ================= -->
-  <script src="app.js?v=a18135d386b2"></script>
-  <script src="shop.js?v=a18135d386b2"></script>
+  <script src="app.js?v=7fc1b213c858"></script>
+  <script src="shop.js?v=7fc1b213c858"></script>
 
   <!-- ================= 1. MODAL: FOUNDER EDIT TREE & PRICING ================= -->
   <div id="modal-fndr-edit-tree" role="dialog" aria-modal="true" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 mobile-sheet-overlay">
@@ -10669,6 +10669,6 @@
     </div>
   </div>
 
-  <script type="module" src="./supabase-client.mjs?v=a18135d386b2"></script>
+  <script type="module" src="./supabase-client.mjs?v=7fc1b213c858"></script>
 </body>
 </html>

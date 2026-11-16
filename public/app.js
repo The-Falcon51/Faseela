@@ -219,7 +219,7 @@
         fx_truncated: "تنبيه: الحد 5000 صف — قسّم الفترة.",
         footer_link_imprint: "بيانات الناشر (Impressum)",
         footer_link_privacy: "سياسة الخصوصية (Datenschutz)",
-        preview_banner_founder: "معاينة: مؤشرات الأسطول والقياسات والنزاعات بيانات توضيحية. المراجعات ودليل المستخدمين بيانات حقيقية من الخادم.",
+        preview_banner_founder: "هذه الصفحة تعرض بيانات حقيقية من الخادم فقط: حالة النظام، التصدير المالي، حسابات الاستلام، دليل المستخدمين والمراجعات. بقية أدوات الفريق في <a href=\"admin/\" class=\"underline font-bold\">لوحة الإدارة</a>.",
         preview_banner_farmer: "معاينة: المحفظة والسلف بيانات توضيحية. تقاريرك الميدانية المرسلة تُحفظ على الخادم وتظهر أدناه.",
         preview_banner_mill: "معاينة: الخزانات والتعبئة بيانات توضيحية. دفعات العصر المرسلة تُحفظ على الخادم وتظهر أدناه.",
         privacy_box_title: "بياناتي وخصوصيتي",
@@ -4022,7 +4022,7 @@
         fx_truncated: "Note: limited to 5,000 rows — split the period.",
         footer_link_imprint: "Legal notice (Impressum)",
         footer_link_privacy: "Privacy policy (Datenschutz)",
-        preview_banner_founder: "Preview: fleet, telemetry and dispute widgets show sample data. Reviews and the user directory are live server data.",
+        preview_banner_founder: "This page shows live server data only: system status, finance export, receiving accounts, the user directory and reviews. All other team tools are in the <a href=\"admin/\" class=\"underline font-bold\">admin panel</a>.",
         preview_banner_farmer: "Preview: wallet and advances show sample data. Field reports you submit are stored on the server and listed below.",
         preview_banner_mill: "Preview: tanks and bottling show sample data. Pressing batches you submit are stored on the server and listed below.",
         privacy_box_title: "My data & privacy",
@@ -18819,6 +18819,7 @@ function setMarketplaceViewMode(mode) {
     // =========================================================
     let currentAuditFilter = 'all';
     let currentFounderSubTab = 'overview';
+    const FOUNDER_SAMPLE_TABS = ['fleet', 'telemetry', 'audit', 'decisions', 'contracts_editor'];
     let currentFleetTrack = 'mature';
 
     // Telemetry Stations Model
@@ -18881,6 +18882,9 @@ function setMarketplaceViewMode(mode) {
 
     function switchFounderSubTab(tabName) {
       if (state.currentUser && ['finance_admin', 'quality_auditor'].includes(state.currentUser.role)) tabName = 'approvals';
+      // These tabs hold illustrations only (invented fleet figures, sensor readings, audit events, disputes, contract
+      // drafts). A real session never shows them; the team works in the admin panel.
+      if (state.serverMode && FOUNDER_SAMPLE_TABS.includes(tabName)) tabName = 'overview';
       currentFounderSubTab = tabName;
       const tabs = ['overview', 'users', 'fleet', 'telemetry', 'audit', 'decisions', 'approvals', 'contracts_editor'];
       tabs.forEach(tName => {
@@ -18929,8 +18933,9 @@ function setMarketplaceViewMode(mode) {
     function applyFounderRoleScope() {
       const reviewerOnly = !!state.currentUser && REVIEWER_ONLY_ROLES.includes(state.currentUser.role);
       ['overview', 'users', 'fleet', 'telemetry', 'audit', 'decisions', 'contracts_editor'].forEach(tab => {
-        document.getElementById(`btn-fndr-tab-${tab}`)?.classList.toggle('hidden', reviewerOnly);
+        document.getElementById(`btn-fndr-tab-${tab}`)?.classList.toggle('hidden', reviewerOnly || (!!state.serverMode && FOUNDER_SAMPLE_TABS.includes(tab)));
       });
+      if (state.serverMode && FOUNDER_SAMPLE_TABS.includes(currentFounderSubTab)) switchFounderSubTab('overview');
       const banner = document.getElementById('fndr-preview-banner');
       if (banner) banner.classList.toggle('hidden', !state.serverMode || reviewerOnly);
       return reviewerOnly;
