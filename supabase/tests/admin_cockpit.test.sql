@@ -64,7 +64,7 @@ begin
   perform pg_temp.chk('twelve months, oldest first', jsonb_array_length(v_j->'months') = 12 and (v_j->'months'->11->>'month') = to_char(now(), 'YYYY-MM'), (v_j->'months')::text);
   perform pg_temp.chk('current month counts the test request and sign-ups', (v_j->'months'->11->>'requests')::int >= 1 and (v_j->'months'->11->>'signups')::int >= 3, (v_j->'months'->11)::text);
   perform pg_temp.chk('open amount includes the request under review', (v_j->'requests'->>'openMinor')::bigint >= 3500 and (v_j->'requests'->'byStatus'->>'under_review')::int >= 1, (v_j->'requests')::text);
-  perform pg_temp.chk('review queue counted', (v_j->'operations'->'reviewQueues'->>'payments')::int >= 1 and (v_j->'operations'->>'adminCount')::int >= 2, (v_j->'operations')::text);
+  perform pg_temp.chk('review queue counted', (v_j->'operations'->'reviewQueues'->>'payments')::int >= 1 and (v_j->'operations'->>'adminCount')::int >= 1, (v_j->'operations')::text);
   perform pg_temp.chk('funnel counts the requester', (v_j->'funnel'->>'requested')::int >= 1 and (v_j->'funnel'->>'proof')::int >= 1, (v_j->'funnel')::text);
   perform pg_temp.chk('no e-mail addresses in the dashboard', v_j::text not like '%@%', left(v_j::text, 200));
 

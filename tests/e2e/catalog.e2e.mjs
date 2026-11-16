@@ -23,7 +23,7 @@ setTimeout(() => window.dispatchEvent(new CustomEvent('faseela-auth-state', { de
 const browser = await chromium.launch({ executablePath: process.env.CHR || undefined });
 try {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, serviceWorkers: 'block' });
-  await ctx.route('**/supabase-client.mjs', (r) => r.fulfill({ contentType: 'text/javascript', body: MOCK }));
+  await ctx.route('**/supabase-client.mjs*', (r) => r.fulfill({ contentType: 'text/javascript', body: MOCK }));
   const page = await ctx.newPage();
   const errors = [];
   page.on('pageerror', (e) => errors.push(String(e).slice(0, 200)));

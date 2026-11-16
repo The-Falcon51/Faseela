@@ -36,6 +36,8 @@ declare
   v_req_i2 text := encode(sha256(convert_to('22222222-2222-4222-8222-222222222222:key-i2-treet4-000001', 'UTF8')), 'hex');
   v_upload_sql text;
 begin
+  -- The land option is off by default (migration 46); this suite exercises it, so it is switched on for this transaction.
+  insert into private.app_settings (key, value) values ('land_offer_enabled', 'true') on conflict (key) do update set value = 'true';
   -- ---------------------------------------------------------------- setup (as postgres)
   insert into auth.users (instance_id, id, aud, role, email, encrypted_password, email_confirmed_at,
                           raw_app_meta_data, raw_user_meta_data, created_at, updated_at)
@@ -324,7 +326,9 @@ begin
     jsonb_build_array('anon', 'anon cannot enqueue mail', 'select private.enqueue_email(''x@test.faseela.invalid'', ''ops_alert'', ''{}'')::text', 'err'),
     jsonb_build_array('anon', 'anon can report an error', 'select public.report_client_error(''{"message":"TypeError: probe","source":"app.js:1"}'')->>''stored''', 'eq:true'),
     jsonb_build_array('anon', 'empty report dropped', 'select public.report_client_error(''{"message":""}'')->>''stored''', 'eq:false'),
+    jsonb_build_array('postgres', 'limiter reset before the fingerprint test', 'with d as (delete from private.rate_limits where bucket = ''report_client_error'' returning 1) select ''ok''::text', 'eq:ok'),
     jsonb_build_array('anon', 'per-fingerprint cap', 'select (select bool_and((public.report_client_error(''{"message":"TypeError: flood","source":"x"}'')->>''stored'')::boolean) from generate_series(1, 20))::text', 'eq:true'),
+    jsonb_build_array('postgres', 'limiter reset before the 21st report', 'with d as (delete from private.rate_limits where bucket = ''report_client_error'' returning 1) select ''ok''::text', 'eq:ok'),
     jsonb_build_array('anon', 'per-fingerprint cap (21st dropped)', 'select public.report_client_error(''{"message":"TypeError: flood","source":"x"}'')->>''stored''', 'eq:false'),
     jsonb_build_array(c_i1, 'system status admin only', 'select public.admin_system_status()::text', 'err:permission-denied'),
     jsonb_build_array(c_f, 'system status not for finance', 'select public.admin_system_status()::text', 'err:permission-denied'),
@@ -446,6 +450,7 @@ begin
     (repeat('d', 64), c_i2, 'tree_oil', 1, 1000, 'USD', 'approved', now()), (repeat('e', 64), c_o2, 'tree_oil', 2, 2000, 'USD', 'approved', now());
   insert into public.shares (id, request_id, user_id, tree_id, share_count, purchase_price_minor, currency) values
     (repeat('d', 64), repeat('d', 64), c_i2, 'tree_oil', 1, 1000, 'USD'), (repeat('e', 64), repeat('e', 64), c_o2, 'tree_oil', 2, 2000, 'USD');
+  insert into public.mills (mill_id, country_code, name, name_en) values ('mill_oil', 'SY', 'معصرة الزيت', 'Oil test mill') on conflict (mill_id) do nothing; -- assignments reference mill records (migration 49)
   perform private.admin_assign_mill('m@test.faseela.invalid', 'mill_oil');
   perform set_config('request.jwt.claims', json_build_object('sub', c_m, 'role', 'authenticated')::text, true);
   perform set_config('role', 'authenticated', true);

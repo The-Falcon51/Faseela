@@ -6,7 +6,7 @@ import '../supabase-client.mjs';
 const SUPABASE_ORIGIN = 'https://riyvlhlhzxxerlwqoxsy.supabase.co';
 const IDLE_LIMIT_MS = 30 * 60 * 1000;
 const ROLES = ['investor', 'farmer', 'mill_operator', 'finance_admin', 'quality_auditor', 'admin'];
-const ROLE_LABEL = { investor: 'Investor', farmer: 'Landwirt', mill_operator: 'Ölmühle', mill_owner: 'Ölmühle', finance_admin: 'Finanz-Admin', quality_auditor: 'Qualitätsprüfer', admin: 'Admin' };
+const ROLE_LABEL = { investor: 'Baumpate', farmer: 'Landwirt', mill_operator: 'Ölmühle', mill_owner: 'Ölmühle', finance_admin: 'Finanz-Admin', quality_auditor: 'Qualitätsprüfer', admin: 'Admin' };
 const CHANNEL_TYPES = ['syriatel_cash', 'mtn_cash', 'bank_iban', 'exchange_office', 'other'];
 const CHANNEL_LABEL = { syriatel_cash: 'Syriatel Cash', mtn_cash: 'MTN Cash', bank_iban: 'Bankkonto / IBAN', exchange_office: 'Wechselstube', other: 'Sonstiges' };
 const FINANCE_COLUMNS = ['requestId', 'createdAt', 'status', 'payerName', 'payerEmail', 'userId', 'treeId', 'shareCount', 'includesLand', 'amountMinor', 'currency'];
@@ -19,7 +19,10 @@ const ERROR_TEXT = {
   'failed-precondition': 'Der Vorgang ist in diesem Zustand nicht möglich (bereits entschieden oder Voraussetzung fehlt).',
   'invalid-argument': 'Die Eingabe ist ungültig. Bitte Felder prüfen.',
   'not-found': 'Der Eintrag wurde nicht gefunden.',
+  'mfa-required': 'Für dieses Konto ist eine Bestätigung mit der Authenticator-App nötig.',
+  'mfa-invalid-code': 'Der Code wurde nicht akzeptiert. Bitte den aktuellen Code aus der App eingeben.',
   'already-exists': 'Der Eintrag existiert bereits.',
+  'shop-closed': 'Der Hofladen ist geschlossen.',
   'auth/invalid-credential': 'E-Mail oder Passwort stimmt nicht.',
   'auth/invalid-credentials': 'E-Mail oder Passwort stimmt nicht.',
   'auth/invalid_credentials': 'E-Mail oder Passwort stimmt nicht.',
@@ -32,8 +35,10 @@ const TABS = [
   { id: 'payments', label: 'Zahlungen', roles: ['admin', 'finance_admin'] },
   { id: 'reviews', label: 'Weitere Prüfungen', roles: ['admin', 'finance_admin'] },
   { id: 'roles', label: 'Rollenanträge', roles: ['admin'] },
-  { id: 'investments', label: 'Investitionen', roles: ['admin', 'finance_admin'] },
+  { id: 'investments', label: 'Patenschaften', roles: ['admin', 'finance_admin'] },
   { id: 'trees', label: 'Bäume', roles: ['admin', 'finance_admin'] },
+  { id: 'master', label: 'Stammdaten', roles: ['admin'] },
+  { id: 'market', label: 'Marktplatz', roles: ['admin', 'finance_admin'] },
   { id: 'register', label: 'Besitzregister', roles: ['admin', 'finance_admin'] },
   { id: 'users', label: 'Nutzer', roles: ['admin'] },
   { id: 'accounts', label: 'Empfangskonten', roles: ['admin'] },
@@ -486,7 +491,7 @@ async function viewOverview(view) {
     mini('Geschenke', d.gifts, { open: 'offen', redeemed: 'eingelöst', cancelled: 'storniert', expired: 'abgelaufen' }),
     mini('Empfehlungen', d.referrals, { pending: 'offen', rewarded: 'belohnt', void: 'verfallen' }),
     mini('Olivenöl', d.oil, { requestsPending: 'Anfragen offen', requestsApproved: 'freigegeben' }),
-    mini('Rollen', d.roles, { investor: 'Investoren', farmer: 'Landwirte', mill_operator: 'Ölmühlen', finance_admin: 'Finanz-Admins', quality_auditor: 'Qualitätsprüfer', admin: 'Admins' })
+    mini('Rollen', d.roles, { investor: 'Baumpaten', farmer: 'Landwirte', mill_operator: 'Ölmühlen', finance_admin: 'Finanz-Admins', quality_auditor: 'Qualitätsprüfer', admin: 'Admins' })
   ]));
   view.append(el('p', { class: 'muted', text: `Stand ${fmtDate(d.generatedAt)}` }));
 }
@@ -920,7 +925,7 @@ async function viewInvestments(view) {
     el('span', { class: 'muted', text: total ? `${investmentFilter.offset + 1}–${Math.min(investmentFilter.offset + rows.length, total)} von ${total}` : '0 Einträge' }),
     el('button', { type: 'button', class: 'btn btn-sm btn-ghost', text: 'Weiter', disabled: investmentFilter.offset + rows.length >= total, on: { click: () => { investmentFilter.offset += PAGE; show('investments'); } } })
   ]);
-  view.append(el('h2', { text: 'Investitionen' }), el('div', { class: 'row row-between' }, [el('div', { class: 'field' }, [select]), pager]));
+  view.append(el('h2', { text: 'Patenschaften' }), el('div', { class: 'row row-between' }, [el('div', { class: 'field' }, [select]), pager]));
   if (!rows.length) { view.append(stateBlock('empty', investmentFilter.status ? 'Keine Anfragen mit diesem Status.' : 'Noch keine Investitionsanfragen.')); return; }
   view.append(el('div', { class: 'table-wrap' }, [el('table', {}, [
     el('thead', {}, [el('tr', {}, ['Datum', 'Zahler', 'Baum', 'Anteile', 'Betrag', 'Status', 'Beleg'].map((text) => el('th', { scope: 'col', text })))]),
@@ -932,6 +937,407 @@ async function viewInvestments(view) {
       el('td', {}, [el('span', { class: `badge ${STATUS_TONE[row.status] || ''}`, text: STATUS_LABEL[row.status] || row.status }), row.slaBreached && row.status === 'under_review' ? el('span', { class: 'badge badge-bad', text: 'überfällig' }) : null]),
       el('td', {}, [row.hasProof ? el('button', { type: 'button', class: 'btn btn-sm btn-ghost', text: 'Ansehen', on: { click: () => openProof({ id: row.id }) } }) : el('span', { class: 'muted', text: '–' })])
     ])))
+  ])]));
+}
+
+/** Countries, farms and mills: the records trees point to. Planned countries stay invisible to visitors. */
+async function viewMaster(view) {
+  const { data } = await api().adminListMasterData();
+  const master = data || {};
+  const countries = Array.isArray(master.countries) ? master.countries : [];
+  const countryLabel = (code) => { const c = countries.find((x) => x.code === code); return c ? `${c.nameDe || c.nameEn} (${code})` : code; };
+  view.append(el('h2', { text: 'Stammdaten' }),
+    el('p', { class: 'muted', text: 'Länder, Höfe und Mühlen, auf die Bäume verweisen. Ein geplantes Land ist für Besucher unsichtbar, bis es aktiviert wird. Höfe und Mühlen starten ausgeblendet.' }));
+
+  view.append(el('h3', { text: 'Herkunftsländer' }));
+  view.append(el('div', { class: 'table-wrap' }, [el('table', {}, [
+    el('thead', {}, [el('tr', {}, ['Land', 'Angebotswährung', 'Bäume', 'Status'].map((text) => el('th', { scope: 'col', text })))]),
+    el('tbody', {}, countries.map((c) => {
+      const active = c.status === 'active';
+      const toggle = el('button', { type: 'button', class: `btn btn-sm ${active ? 'btn-ghost' : 'btn-primary'}`, text: active ? 'Zurückstellen' : 'Aktivieren', 'aria-label': `${c.nameDe || c.code} ${active ? 'zurückstellen' : 'aktivieren'}`, on: { click: () => openDialog({
+        title: active ? 'Land zurückstellen' : 'Land aktivieren',
+        text: `${c.nameDe || c.nameEn} (${c.code}): ${active ? 'Das Land verschwindet aus dem Länderfilter. Das geht nur, solange dort kein Baum im Katalog steht.' : 'Das Land erscheint für Besucher, sobald dort ein Baum im Katalog steht.'}`,
+        confirmLabel: active ? 'Zurückstellen' : 'Aktivieren',
+        onConfirm: () => api().adminSetCountryStatus({ code: c.code, status: active ? 'planned' : 'active' })
+      }).then((ok) => { if (ok) { toast('Status des Landes geändert.'); show('master'); } }) } });
+      return el('tr', {}, [
+        el('td', {}, [el('div', { text: c.nameDe || c.nameEn || c.code }), el('div', { class: 'mono item-meta', text: c.code })]),
+        el('td', { class: 'mono', text: c.currency || '–' }), el('td', { text: fmtInt(c.trees) }),
+        el('td', {}, [el('div', { class: 'row' }, [el('span', { class: `badge ${active ? 'badge-ok' : 'badge-warn'}`, text: active ? 'aktiv' : 'geplant' }), toggle])])
+      ]);
+    }))
+  ])]));
+
+  const siteTable = (kind, title, addLabel, items) => {
+    const idKey = kind === 'farm' ? 'farmId' : 'millId';
+    view.append(el('div', { class: 'row row-between' }, [el('h3', { text: title }),
+      el('button', { type: 'button', class: 'btn btn-primary', text: addLabel, on: { click: () => editSite(kind, null, countries) } })]));
+    if (!items.length) { view.append(stateBlock('empty', kind === 'farm' ? 'Noch keine Höfe angelegt.' : 'Noch keine Mühlen angelegt.')); return; }
+    view.append(el('div', { class: 'table-wrap' }, [el('table', {}, [
+      el('thead', {}, [el('tr', {}, ['Name', 'Land', 'Region', 'Bäume', 'Sichtbarkeit'].map((text) => el('th', { scope: 'col', text })))]),
+      el('tbody', {}, items.map((site) => el('tr', {}, [
+        el('td', {}, [el('div', { text: site.nameEn || site.name || '(ohne Namen)' }), el('div', { class: 'mono item-meta', text: site[idKey] })]),
+        el('td', { text: countryLabel(site.countryCode) }), el('td', { text: site.regionEn || site.region || '–' }), el('td', { text: fmtInt(site.trees) }),
+        el('td', {}, [el('div', { class: 'row' }, [el('span', { class: `badge ${site.status === 'listed' ? 'badge-ok' : 'badge-warn'}`, text: site.status === 'listed' ? 'sichtbar' : 'ausgeblendet' }),
+          el('button', { type: 'button', class: 'btn btn-sm btn-ghost', text: 'Bearbeiten', 'aria-label': `${site.nameEn || site[idKey]} bearbeiten`, on: { click: () => editSite(kind, site, countries) } })])])
+      ])))
+    ])]));
+  };
+  siteTable('farm', 'Höfe', 'Neuer Hof', Array.isArray(master.farms) ? master.farms : []);
+  siteTable('mill', 'Mühlen', 'Neue Mühle', Array.isArray(master.mills) ? master.mills : []);
+}
+
+async function editSite(kind, site, countries) {
+  const isFarm = kind === 'farm';
+  const noun = isFarm ? 'Hof' : 'Mühle';
+  const idKey = isFarm ? 'farmId' : 'millId';
+  const text = (value, extra = {}) => el('input', { type: 'text', maxlength: 120, value: value || '', autocomplete: 'off', ...extra });
+  const f = {
+    id: text('', { maxlength: 40, placeholder: isFarm ? 'farm_04' : 'mill_03' }),
+    country: el('select', {}, countries.map((c) => el('option', { value: c.code, text: `${c.nameDe || c.nameEn || c.code} (${c.code})${c.status === 'planned' ? ' – geplant' : ''}`, selected: c.code === ((site && site.countryCode) || 'SY') }))),
+    name: text(site && site.name, { dir: 'rtl', lang: 'ar' }), nameEn: text(site && site.nameEn),
+    region: text(site && site.region, { dir: 'rtl', lang: 'ar' }), regionEn: text(site && site.regionEn),
+    listed: el('input', { type: 'checkbox', checked: site && site.status === 'listed' ? 'checked' : null })
+  };
+  const readText = (control, label, required) => {
+    const value = control.value.trim();
+    if (!value && !required) return '';
+    if (value.length < 2 || /[<>]/.test(value)) throw userError(`${label} fehlt oder enthält unzulässige Zeichen.`);
+    return value;
+  };
+  const ok = await openDialog({
+    title: site ? `${noun} bearbeiten: ${site[idKey]}` : (isFarm ? 'Neuer Hof' : 'Neue Mühle'), confirmLabel: site ? 'Änderungen speichern' : `${noun} anlegen`,
+    build: (body) => {
+      body.append(
+        site ? null : field('Kennung (klein, a–z, 0–9, _ ; später nicht änderbar)', f.id),
+        el('div', { class: 'form-grid' }, [
+          field('Land', f.country), el('span'),
+          field('Name (Arabisch)', f.name), field('Name (Englisch)', f.nameEn),
+          field('Region (Arabisch, optional)', f.region), field('Region (Englisch, optional)', f.regionEn)
+        ]),
+        el('label', { class: 'row' }, [f.listed, el('span', { text: 'Für Besucher sichtbar' })])
+      );
+    },
+    onConfirm: async () => {
+      const id = site ? site[idKey] : f.id.value.trim();
+      if (!site && !/^[a-z0-9_]{3,40}$/.test(id)) throw userError('Kennung: 3 bis 40 Zeichen, nur Kleinbuchstaben, Ziffern und _.');
+      const payload = {
+        [idKey]: id, countryCode: f.country.value,
+        name: readText(f.name, 'Name (Arabisch)', true), nameEn: readText(f.nameEn, 'Name (Englisch)', true),
+        region: readText(f.region, 'Region (Arabisch)', false), regionEn: readText(f.regionEn, 'Region (Englisch)', false),
+        status: f.listed.checked ? 'listed' : 'unlisted'
+      };
+      await (isFarm ? api().adminUpsertFarm(payload) : api().adminUpsertMill(payload));
+    }
+  });
+  if (ok) { toast(`${noun} gespeichert.`); show('master'); }
+}
+
+const ORDER_STATUS = {
+  awaiting_payment: ['wartet auf Zahlung', 'badge-warn'], under_review: ['Zahlung gemeldet', 'badge-warn'], paid: ['bezahlt', 'badge-ok'],
+  shipped: ['versandt', 'badge-ok'], delivered: ['zugestellt', 'badge-ok'], cancelled: ['storniert', ''], expired: ['abgelaufen', ''], rejected: ['abgelehnt', 'badge-bad'], refunded: ['erstattet', 'badge-bad']
+};
+const PRODUCT_STATUS = { pending_review: ['wartet auf Prüfung', 'badge-warn'], listed: ['im Shop', 'badge-ok'], unlisted: ['ausgeblendet', ''], rejected: ['abgelehnt', 'badge-bad'] };
+const PRODUCT_CATEGORY = { oil: 'Öl', olives: 'Oliven', dates: 'Datteln', nuts: 'Nüsse', fruit: 'Obst', preserves: 'Eingemachtes', other: 'Sonstiges' };
+/** Minor units per currency as Intl knows them (EUR 2, TND 3, JPY 0). */
+const unitFactor = (currency) => { try { return 10 ** new Intl.NumberFormat('en', { style: 'currency', currency }).resolvedOptions().maximumFractionDigits; } catch (error) { return 100; } };
+const fmtPrice = (minor, currency) => { const code = /^[A-Z]{3}$/.test(currency) ? currency : 'EUR'; return new Intl.NumberFormat('de-DE', { style: 'currency', currency: code }).format((Number(minor) || 0) / unitFactor(code)); };
+const SCREENING_LABEL = { clear: 'unauffällig', unclear: 'unklar', hit: 'Treffer' };
+const fmtPercent = (bps) => `${new Intl.NumberFormat('de-DE', { maximumFractionDigits: 2 }).format((Number(bps) || 0) / 100)} %`;
+const asList = (value) => (Array.isArray(value) ? value : []);
+const statusBadge = (map, status) => { const [text, tone] = map[status] || [status, '']; return el('span', { class: `badge ${tone}`, text }); };
+
+/** Marketplace: orders with their payment decision and shipping, the farms' products, fee, shipping prices, farm access. */
+async function viewMarket(view) {
+  const isAdmin = session.user.role === 'admin';
+  const [{ data }, users] = await Promise.all([api().adminListMarketplace(), isAdmin ? api().adminListUsers() : Promise.resolve([])]);
+  const market = data || {};
+  const farms = asList(market.farms);
+  const farmLabel = (farmId) => { const farm = farms.find((f) => f.farmId === farmId); return farm ? (farm.nameEn || farm.name || farmId) : farmId; };
+  const done = (message) => (ok) => { if (ok) { toast(message); show('market'); } };
+
+  view.append(el('h2', { text: 'Marktplatz' }),
+    el('p', { class: 'muted', text: `Höfe bieten Produkte an, Kunden bestellen und zahlen per Überweisung. Die Servicegebühr von ${fmtPercent(market.feeBps)} ist im Produktpreis enthalten: Der Kunde zahlt den angezeigten Preis plus Versand, der Hof erhält den Preis abzüglich der Gebühr. Umsatzsteuer wird hier noch nicht berechnet.` }));
+
+  // ---- the switch that lets customers order at all
+  const shopOpen = market.shopOpen === true;
+  view.append(el('div', { class: 'item row row-between', id: 'shop-switch' }, [
+    el('div', {}, [el('div', { class: 'row' }, [el('strong', { text: 'Hofladen' }), el('span', { class: `badge ${shopOpen ? 'badge-ok' : 'badge-warn'}`, text: shopOpen ? 'geöffnet' : 'geschlossen' })]),
+      el('div', { class: 'item-meta', text: shopOpen ? 'Kunden können bestellen.' : 'Niemand kann bestellen. Höfe können Produkte einreichen, Sie können sie prüfen und Versandpreise hinterlegen.' })]),
+    isAdmin ? el('button', { type: 'button', class: `btn ${shopOpen ? 'btn-danger' : 'btn-primary'}`, text: shopOpen ? 'Hofladen schließen' : 'Hofladen öffnen', on: { click: () => openDialog({
+      title: shopOpen ? 'Hofladen schließen' : 'Hofladen öffnen', confirmLabel: shopOpen ? 'Schließen' : 'Jetzt öffnen', danger: shopOpen,
+      text: shopOpen ? 'Neue Bestellungen sind danach nicht mehr möglich. Bestehende Bestellungen laufen weiter.'
+        : 'Ab dann können Kunden verbindlich bestellen. Bitte erst öffnen, wenn rechtlich geklärt ist: Umsatzsteuer und Preisangabe, Widerrufsbelehrung und AGB für den Warenverkauf, wer Verkäufer ist (Hof oder Plattform), und wenn Empfangskonto und Versandpreise hinterlegt sind.',
+      onConfirm: () => api().adminSetShopOpen({ open: !shopOpen })
+    }).then(done(shopOpen ? 'Hofladen geschlossen.' : 'Hofladen geöffnet.')) } }) : null
+  ]));
+
+  // ---- orders
+  const orders = asList(market.orders);
+  view.append(el('h3', { text: 'Bestellungen' }));
+  if (!orders.length) view.append(stateBlock('empty', 'Noch keine Bestellungen.'));
+  else view.append(el('div', { class: 'table-wrap' }, [el('table', {}, [
+    el('thead', {}, [el('tr', {}, ['Bestellung', 'Hof', 'Artikel', 'Ware', 'davon Gebühr', 'Hof erhält', 'Versand', 'Gesamt', 'Status', 'Aktionen'].map((text) => el('th', { scope: 'col', text })))]),
+    el('tbody', {}, orders.map((order) => {
+      const ref = order.paymentReference || String(order.orderId).slice(0, 10);
+      const money = (minor) => fmtPrice(minor, order.currency);
+      const button = (text, tone, handler) => el('button', { type: 'button', class: `btn btn-sm ${tone}`, text, 'aria-label': `${text}: ${ref}`, on: { click: handler } });
+      const actions = [];
+      if (order.status === 'awaiting_payment' || order.status === 'under_review') {
+        actions.push(button('Prüfung erfassen', 'btn-ghost', async () => {
+          let payer;
+          try { payer = (await api().orderPayer({ orderId: order.orderId })).data || {}; } catch (error) { logError('order payer', error); toast(errorText(error), true); return; }
+          const result = el('select', {}, Object.entries(SCREENING_LABEL).map(([value, text]) => el('option', { value, text })));
+          const lists = el('input', { type: 'text', maxlength: 300, placeholder: 'z. B. EU, UN, OFAC' });
+          const reference = el('input', { type: 'text', maxlength: 120 });
+          const note = el('textarea', { maxlength: 500 });
+          openDialog({
+            title: `Sanktionsprüfung ${ref}`, confirmLabel: 'Speichern',
+            text: `Besteller: ${payer.deliveryName || 'unbekannt'}${payer.accountName && payer.accountName !== payer.deliveryName ? ` (Konto: ${payer.accountName})` : ''}, Lieferland ${payer.country || '–'}. Erfasst wird, dass und gegen welche Listen geprüft wurde.`,
+            build: (body) => body.append(field('Ergebnis', result), field('Geprüfte Listen', lists), field('Referenz (optional)', reference), field('Notiz (Pflicht bei „unklar" oder „Treffer")', note)),
+            onConfirm: () => {
+              if (lists.value.trim().length < 3) throw userError('Bitte angeben, welche Listen geprüft wurden.');
+              if (result.value !== 'clear' && note.value.trim().length < 3) throw userError('Bei „unklar" oder „Treffer" ist eine Notiz nötig.');
+              return api().recordOrderScreening({ orderId: order.orderId, result: result.value, listsChecked: lists.value.trim(), reference: reference.value.trim() || undefined, note: note.value.trim() || undefined });
+            }
+          }).then(done('Prüfung gespeichert.'));
+        }));
+        actions.push(button('Zahlung bestätigen', 'btn-primary', () => openDialog({
+          title: 'Zahlung bestätigen', confirmLabel: 'Zahlung ist eingegangen',
+          text: `Ist die Überweisung über ${money(order.totalMinor)} mit dem Verwendungszweck ${ref} auf dem Konto eingegangen? Danach wird dem Hof ${money(order.farmNetMinor)} gutgeschrieben und die Bestellung geht in den Versand.`,
+          onConfirm: () => api().reviewOrderPayment({ orderId: order.orderId, decision: 'approve' })
+        }).then(done('Zahlung bestätigt.'))));
+        actions.push(button('Ablehnen', 'btn-danger', () => {
+          const note = el('textarea', { rows: 3, maxlength: 500 });
+          openDialog({
+            title: 'Zahlung ablehnen', confirmLabel: 'Bestellung ablehnen', danger: true,
+            text: `Bestellung ${ref} wird storniert, die Ware geht zurück in den Bestand. Der Kunde bekommt die Begründung per E-Mail.`,
+            build: (body) => body.append(field('Begründung für den Kunden', note)),
+            onConfirm: () => {
+              if (note.value.trim().length < 3) throw userError('Bitte eine Begründung angeben.');
+              return api().reviewOrderPayment({ orderId: order.orderId, decision: 'reject', note: note.value.trim() });
+            }
+          }).then(done('Bestellung abgelehnt.'));
+        }));
+      }
+      if (order.status === 'paid' || order.status === 'shipped') {
+        actions.push(button('Lieferadresse', 'btn-ghost', async () => {
+          try {
+            const contact = ((await api().adminOrderContact({ orderId: order.orderId })).data || {}).contact || {};
+            const lines = [contact.name, contact.addressLine1, contact.addressLine2, [contact.postalCode, contact.city].filter(Boolean).join(' '), contact.country, contact.phone ? `Tel. ${contact.phone}` : '']
+              .filter((line) => typeof line === 'string' && line.trim());
+            await openDialog({
+              title: `Lieferadresse ${ref}`, confirmLabel: 'Schließen',
+              text: 'Nur für den Versand dieser Bestellung verwenden. Der Abruf wird im Audit-Log festgehalten.',
+              build: (body) => body.append(el('address', { class: 'item' }, lines.map((line) => el('div', { text: line })))),
+              onConfirm: async () => {}
+            });
+          } catch (error) { logError('order contact', error); toast(errorText(error), true); }
+        }));
+      }
+      if (order.status === 'paid') {
+        actions.push(button('Erstatten', 'btn-danger', () => {
+          const note = el('textarea', { rows: 3, maxlength: 300 });
+          openDialog({
+            title: `Bestellung ${ref} erstatten`, confirmLabel: 'Erstattung buchen', danger: true,
+            text: `Die Ware geht zurück in den Bestand und die Gutschrift des Hofs über ${money(order.farmNetMinor)} wird zurückgenommen. Bitte überweisen Sie dem Kunden ${money(order.totalMinor)} zurück – das geschieht nicht automatisch.`,
+            build: (body) => body.append(field('Grund (der Kunde erhält ihn per E-Mail)', note)),
+            onConfirm: () => {
+              if (note.value.trim().length < 3) throw userError('Bitte einen Grund angeben.');
+              return api().refundOrder({ orderId: order.orderId, note: note.value.trim() });
+            }
+          }).then(done('Erstattung gebucht.'));
+        }));
+        actions.push(button('Als versandt markieren', 'btn-primary', () => {
+          const tracking = el('input', { type: 'text', maxlength: 80, autocomplete: 'off' });
+          openDialog({
+            title: 'Versand eintragen', confirmLabel: 'Versandt',
+            text: `Bestellung ${ref} wurde dem Versanddienst übergeben. Der Kunde wird benachrichtigt.`,
+            build: (body) => body.append(field('Sendungsnummer (optional)', tracking)),
+            onConfirm: () => api().adminSetOrderFulfilment({ orderId: order.orderId, step: 'shipped', trackingCode: tracking.value.trim() })
+          }).then(done('Versand eingetragen.'));
+        }));
+      }
+      if (order.status === 'shipped') {
+        actions.push(button('Als zugestellt markieren', 'btn-primary', () => openDialog({
+          title: 'Zustellung eintragen', confirmLabel: 'Zugestellt',
+          text: `Bestellung ${ref} ist beim Kunden angekommen. Danach ist die Lieferadresse nicht mehr abrufbar.`,
+          onConfirm: () => api().adminSetOrderFulfilment({ orderId: order.orderId, step: 'delivered' })
+        }).then(done('Zustellung eingetragen.'))));
+      }
+      return el('tr', {}, [
+        el('td', {}, [el('div', { class: 'mono', text: ref }), el('div', { class: 'item-meta', text: `${fmtDate(order.createdAt)} · nach ${order.destCountry || '–'}` }),
+          order.trackingCode ? el('div', { class: 'item-meta', text: `Sendung: ${order.trackingCode}` }) : null,
+          order.reviewNote ? el('div', { class: 'item-meta', text: `Notiz: ${order.reviewNote}` }) : null]),
+        el('td', { text: farmLabel(order.farmId) }),
+        el('td', {}, asList(order.lines).map((line) => el('div', { text: `${fmtInt(line.quantity)} × ${line.name} (${line.unit})` }))),
+        el('td', { text: money(order.itemsMinor) }),
+        el('td', {}, [el('div', { text: money(order.feeMinor) }), el('div', { class: 'item-meta', text: fmtPercent(order.feeBps) })]),
+        el('td', { text: money(order.farmNetMinor) }),
+        el('td', { text: money(order.shippingMinor) }),
+        el('td', {}, [el('strong', { text: money(order.totalMinor) })]),
+        el('td', {}, [statusBadge(ORDER_STATUS, order.status),
+          order.status === 'awaiting_payment' ? el('div', { class: 'item-meta', text: `bis ${fmtDate(order.expiresAt)}` }) : null,
+          order.status === 'awaiting_payment' || order.status === 'under_review'
+            ? el('div', { class: 'item-meta', text: order.screening ? `Sanktionsprüfung: ${SCREENING_LABEL[order.screening.result] || order.screening.result}${order.screening.current ? '' : ' (älter als 30 Tage)'}` : 'Sanktionsprüfung: noch keine erfasst' }) : null]),
+        el('td', {}, [el('div', { class: 'row' }, actions)])
+      ]);
+    }))
+  ])]));
+
+  // ---- products
+  const products = asList(market.products);
+  view.append(el('h3', { text: 'Produkte der Höfe' }));
+  if (!products.length) view.append(stateBlock('empty', 'Noch kein Hof hat ein Produkt eingereicht.'));
+  else view.append(el('div', { class: 'table-wrap' }, [el('table', {}, [
+    el('thead', {}, [el('tr', {}, ['Produkt', 'Hof', 'Preis', 'Bestand', 'Status', isAdmin ? 'Aktionen' : null].filter(Boolean).map((text) => el('th', { scope: 'col', text })))]),
+    el('tbody', {}, products.map((product) => {
+      const title = product.nameEn || product.name;
+      const review = (decision, label, tone, text, needsNote) => el('button', { type: 'button', class: `btn btn-sm ${tone}`, text: label, 'aria-label': `${label}: ${title}`, on: { click: () => {
+        const note = el('textarea', { rows: 3, maxlength: 500 });
+        openDialog({
+          title: `${label}: ${title}`, confirmLabel: label, danger: decision !== 'list', text,
+          build: (body) => { if (decision !== 'list') body.append(field(needsNote ? 'Begründung für den Hof' : 'Notiz für den Hof (optional)', note)); },
+          onConfirm: () => {
+            if (needsNote && note.value.trim().length < 3) throw userError('Bitte eine Begründung angeben.');
+            return api().adminReviewProduct({ productId: product.productId, decision, note: note.value.trim() });
+          }
+        }).then(done('Produkt aktualisiert.'));
+      } } });
+      const actions = [];
+      if (product.status !== 'listed') actions.push(review('list', 'Freigeben', 'btn-primary', `Das Produkt erscheint danach mit ${fmtPrice(product.priceMinor, product.currency)} je ${product.unit} im Shop, sofern der Hof sichtbar ist.`, false));
+      if (product.status === 'pending_review') actions.push(review('reject', 'Ablehnen', 'btn-danger', 'Der Hof sieht die Begründung und kann das Produkt überarbeiten.', true));
+      if (product.status === 'listed') actions.push(review('unlist', 'Ausblenden', 'btn-danger', 'Das Produkt verschwindet aus dem Shop. Bestehende Bestellungen bleiben unberührt.', false));
+      return el('tr', {}, [
+        el('td', {}, [el('div', { text: title }), el('div', { class: 'item-meta', text: `${PRODUCT_CATEGORY[product.category] || product.category} · ${product.unit}` }),
+          product.reviewNote ? el('div', { class: 'item-meta', text: `Notiz: ${product.reviewNote}` }) : null]),
+        el('td', { text: product.farmNameEn || product.farmName || product.farmId }),
+        el('td', { text: fmtPrice(product.priceMinor, product.currency) }),
+        el('td', { text: fmtInt(product.stockUnits) }),
+        el('td', {}, [statusBadge(PRODUCT_STATUS, product.status)]),
+        isAdmin ? el('td', {}, [el('div', { class: 'row' }, actions)]) : null
+      ]);
+    }))
+  ])]));
+
+  // ---- what the platform owes the farms
+  const balances = asList(market.balances);
+  view.append(el('h3', { text: 'Guthaben der Höfe' }),
+    el('p', { class: 'muted', text: 'Preis der bezahlten Ware abzüglich Servicegebühr, Erstattungen und gebuchter Auszahlungen. Eine Auszahlung wird hier gebucht, nachdem sie per Bank überwiesen wurde.' }));
+  if (!balances.length) view.append(stateBlock('empty', 'Noch keine Gutschriften.'));
+  else view.append(el('div', { class: 'table-wrap' }, [el('table', {}, [
+    el('thead', {}, [el('tr', {}, ['Hof', 'Guthaben', 'Aktion'].map((text) => el('th', { scope: 'col', text })))]),
+    el('tbody', {}, balances.map((b) => el('tr', {}, [el('td', { text: farmLabel(b.farmId) }), el('td', { text: fmtPrice(b.amountMinor, b.currency) }),
+      el('td', {}, [Number(b.amountMinor) > 0 ? el('button', { type: 'button', class: 'btn btn-sm btn-primary', text: 'Auszahlung buchen', 'aria-label': `Auszahlung buchen: ${farmLabel(b.farmId)}`, on: { click: () => {
+        const amount = el('input', { type: 'number', min: 0, step: 'any', inputmode: 'decimal', value: (Number(b.amountMinor) || 0) / unitFactor(b.currency) });
+        const reference = el('input', { type: 'text', maxlength: 80, autocomplete: 'off' });
+        const note = el('input', { type: 'text', maxlength: 300 });
+        openDialog({
+          title: `Auszahlung an ${farmLabel(b.farmId)}`, confirmLabel: 'Auszahlung buchen',
+          text: `Guthaben: ${fmtPrice(b.amountMinor, b.currency)}. Bitte erst überweisen, dann hier mit der Referenz der Banküberweisung buchen. Jede Referenz kann nur einmal gebucht werden.`,
+          build: (body) => body.append(field(`Betrag in ${b.currency}`, amount), field('Referenz der Banküberweisung', reference), field('Notiz (optional)', note)),
+          onConfirm: () => {
+            const value = Math.round(Number(String(amount.value).replace(',', '.')) * unitFactor(b.currency));
+            if (!Number.isFinite(value) || value < 1) throw userError('Bitte einen Betrag größer als null eingeben.');
+            if (value > Number(b.amountMinor)) throw userError('Der Betrag ist höher als das Guthaben des Hofs.');
+            if (reference.value.trim().length < 3) throw userError('Bitte die Referenz der Banküberweisung angeben.');
+            return api().recordFarmPayout({ farmId: b.farmId, amountMinor: value, currency: b.currency, reference: reference.value.trim(), note: note.value.trim() });
+          }
+        }).then(done('Auszahlung gebucht.'));
+      } } }) : null])])))
+  ])]));
+
+  if (!isAdmin) return;
+
+  // ---- fee
+  view.append(el('div', { class: 'row row-between' }, [el('h3', { text: `Servicegebühr: ${fmtPercent(market.feeBps)}` }),
+    el('button', { type: 'button', class: 'btn btn-ghost', text: 'Gebühr ändern', on: { click: () => {
+      const percent = el('input', { type: 'number', min: 0, max: 30, step: 0.5, value: (Number(market.feeBps) || 0) / 100, inputmode: 'decimal' });
+      openDialog({
+        title: 'Servicegebühr ändern', confirmLabel: 'Gebühr speichern',
+        text: 'Gilt für neue Bestellungen. Bestehende Bestellungen behalten den Satz, mit dem sie aufgegeben wurden.',
+        build: (body) => body.append(field('Servicegebühr in Prozent des Warenwerts (0 bis 30)', percent)),
+        onConfirm: () => {
+          const value = Number(String(percent.value).replace(',', '.'));
+          if (!Number.isFinite(value) || value < 0 || value > 30 || Math.round(value * 100) !== value * 100) throw userError('Bitte einen Wert zwischen 0 und 30 mit höchstens zwei Nachkommastellen eingeben.');
+          return api().adminSetPlatformFee({ feeBps: Math.round(value * 100) });
+        }
+      }).then(done('Servicegebühr gespeichert.'));
+    } } })]));
+
+  // ---- shipping prices
+  const rates = asList(market.shippingRates);
+  const editRate = (rate) => {
+    const origins = [...new Set(farms.map((farm) => farm.countryCode).filter(Boolean))];
+    const f = {
+      origin: el('select', {}, origins.map((code) => el('option', { value: code, text: code, selected: rate ? code === rate.originCountry : false }))),
+      dest: el('input', { type: 'text', maxlength: 2, value: rate ? rate.destCountry : '', placeholder: 'DE', autocomplete: 'off' }),
+      amount: el('input', { type: 'number', min: 0, step: 'any', value: rate ? (Number(rate.amountMinor) || 0) / unitFactor(rate.currency) : '', inputmode: 'decimal' }),
+      currency: el('input', { type: 'text', maxlength: 3, value: rate ? rate.currency : 'EUR', autocomplete: 'off' }),
+      active: el('input', { type: 'checkbox', checked: !rate || rate.active ? 'checked' : null })
+    };
+    openDialog({
+      title: rate ? `Versandpreis ${rate.originCountry} → ${rate.destCountry}` : 'Neuer Versandpreis', confirmLabel: 'Versandpreis speichern',
+      text: 'Pauschale je Bestellung. Ohne aktiven Versandpreis kann in ein Land nicht bestellt werden.',
+      build: (body) => body.append(el('div', { class: 'form-grid' }, [
+        field('Herkunftsland des Hofs', f.origin), field('Zielland (zwei Buchstaben, z. B. DE)', f.dest),
+        field('Preis je Bestellung', f.amount), field('Währung (drei Buchstaben)', f.currency)
+      ]), el('label', { class: 'row' }, [f.active, el('span', { text: 'Aktiv' })])),
+      onConfirm: () => {
+        const dest = f.dest.value.trim().toUpperCase();
+        const currency = f.currency.value.trim().toUpperCase();
+        const amount = Number(String(f.amount.value).replace(',', '.'));
+        if (!f.origin.value) throw userError('Bitte zuerst einen Hof anlegen: das Herkunftsland kommt vom Hof.');
+        if (!/^[A-Z]{2}$/.test(dest)) throw userError('Zielland: bitte den zweibuchstabigen Ländercode eingeben, z. B. DE.');
+        if (!/^[A-Z]{3}$/.test(currency)) throw userError('Währung: bitte den dreibuchstabigen Code eingeben, z. B. EUR.');
+        if (f.amount.value === '' || !Number.isFinite(amount) || amount < 0) throw userError('Bitte einen Preis eingeben (0 für kostenlosen Versand).');
+        return api().adminSetShippingRate({ originCountry: f.origin.value, destCountry: dest, amountMinor: Math.round(amount * unitFactor(currency)), currency, active: f.active.checked });
+      }
+    }).then(done('Versandpreis gespeichert.'));
+  };
+  view.append(el('div', { class: 'row row-between' }, [el('h3', { text: 'Versandpreise' }),
+    el('button', { type: 'button', class: 'btn btn-primary', text: 'Neuer Versandpreis', on: { click: () => editRate(null) } })]));
+  if (!rates.length) view.append(stateBlock('empty', 'Noch kein Versandpreis hinterlegt – niemand kann bestellen.'));
+  else view.append(el('div', { class: 'table-wrap' }, [el('table', {}, [
+    el('thead', {}, [el('tr', {}, ['Von', 'Nach', 'Preis je Bestellung', 'Status'].map((text) => el('th', { scope: 'col', text })))]),
+    el('tbody', {}, rates.map((rate) => el('tr', {}, [
+      el('td', { class: 'mono', text: rate.originCountry }), el('td', { class: 'mono', text: rate.destCountry }), el('td', { text: fmtPrice(rate.amountMinor, rate.currency) }),
+      el('td', {}, [el('div', { class: 'row' }, [el('span', { class: `badge ${rate.active ? 'badge-ok' : ''}`, text: rate.active ? 'aktiv' : 'inaktiv' }),
+        el('button', { type: 'button', class: 'btn btn-sm btn-ghost', text: 'Bearbeiten', 'aria-label': `Versandpreis ${rate.originCountry} nach ${rate.destCountry} bearbeiten`, on: { click: () => editRate(rate) } })])])
+    ])))
+  ])]));
+
+  // ---- which accounts act for a farm
+  const members = asList(market.members);
+  const farmers = asList(users).filter((user) => user.role === 'farmer');
+  view.append(el('div', { class: 'row row-between' }, [el('h3', { text: 'Zugänge der Höfe' }),
+    el('button', { type: 'button', class: 'btn btn-primary', text: 'Zugang vergeben', on: { click: () => {
+      const farm = el('select', {}, farms.map((f) => el('option', { value: f.farmId, text: `${f.nameEn || f.name || f.farmId} (${f.farmId})` })));
+      const account = el('select', {}, farmers.map((user) => el('option', { value: user.id, text: `${user.name} · ${user.email}` })));
+      openDialog({
+        title: 'Zugang zu einem Hof vergeben', confirmLabel: 'Zugang vergeben',
+        text: 'Das Konto darf danach Produkte dieses Hofs einreichen, den Bestand pflegen und die Bestellungen des Hofs ohne Kundendaten sehen. Nur Konten mit der Rolle Landwirt stehen zur Auswahl.',
+        build: (body) => body.append(field('Hof', farm), field('Konto', account)),
+        onConfirm: () => {
+          if (!farm.value || !account.value) throw userError('Es braucht einen Hof und ein Konto mit der Rolle Landwirt.');
+          return api().adminSetFarmMember({ farmId: farm.value, userId: account.value, active: true });
+        }
+      }).then(done('Zugang vergeben.'));
+    } } })]));
+  if (!members.length) view.append(stateBlock('empty', 'Noch kein Konto ist einem Hof zugeordnet.'));
+  else view.append(el('div', { class: 'table-wrap' }, [el('table', {}, [
+    el('thead', {}, [el('tr', {}, ['Hof', 'Konto', 'Seit', 'Aktion'].map((text) => el('th', { scope: 'col', text })))]),
+    el('tbody', {}, members.map((member) => {
+      const name = member.displayName || member.userId;
+      return el('tr', {}, [
+        el('td', { text: farmLabel(member.farmId) }), el('td', { text: name }), el('td', { text: fmtDate(member.addedAt) }),
+        el('td', {}, [el('button', { type: 'button', class: 'btn btn-sm btn-danger', text: 'Entziehen', 'aria-label': `Zugang entziehen: ${name}`, on: { click: () => openDialog({
+          title: 'Zugang entziehen', confirmLabel: 'Entziehen', danger: true,
+          text: `${name} kann danach für ${farmLabel(member.farmId)} keine Produkte mehr pflegen und sieht dessen Bestellungen nicht mehr.`,
+          onConfirm: () => api().adminSetFarmMember({ farmId: member.farmId, userId: member.userId, active: false })
+        }).then(done('Zugang entzogen.')) } })])
+      ]);
+    }))
   ])]));
 }
 
@@ -971,23 +1377,50 @@ async function viewTrees(view) {
 }
 
 const TREE_IMAGE = /^images\/[A-Za-z0-9_-]{1,80}\.(webp|png|jpg|jpeg)$/;
+// Same list as the database check constraint (trees_public_crop_category_check).
+const TREE_CROPS = [['olive', 'Olive'], ['pistachio', 'Pistazie'], ['almond', 'Mandel'], ['pomegranate', 'Granatapfel'], ['date', 'Dattelpalme'], ['walnut', 'Walnuss']];
 /** Create (treeId = null) or edit a tree. The server validates again; this form only catches obvious slips early. */
 async function editTree(treeId) {
   let tree = null;
-  if (treeId) {
-    try {
+  let master = { countries: [], farms: [], mills: [] };
+  try {
+    master = (await api().adminListMasterData()).data || master;
+    if (treeId) {
       ({ data: tree } = await api().adminGetTree({ treeId }));
       const mill = await api().adminGetTreeMill({ treeId });
       tree.millId = (mill.data && mill.data.millId) || '';
-    } catch (error) {
-      logError('tree load', error);
-      toast(errorText(error), true);
-      return;
+      const crop = await api().adminGetTreeCrop({ treeId });
+      tree.cropCategory = (crop.data && crop.data.cropCategory) || 'olive';
+      const origin = await api().adminGetTreeOrigin({ treeId });
+      tree.countryCode = (origin.data && origin.data.countryCode) || 'SY';
+      tree.farmId = (origin.data && origin.data.farmId) || '';
     }
+  } catch (error) {
+    logError('tree load', error);
+    toast(errorText(error), true);
+    return;
   }
+  const countries = Array.isArray(master.countries) ? master.countries : [];
+  const farms = Array.isArray(master.farms) ? master.farms : [];
+  // The server refuses a parcel option while the land offer is off, so the form does not offer one then.
+  const landOffered = master.landOfferEnabled === true || Boolean(tree && tree.hasLandOption);
   const text = (value, extra = {}) => el('input', { type: 'text', maxlength: 120, value: value || '', autocomplete: 'off', ...extra });
   const number = (value, extra = {}) => el('input', { type: 'text', inputmode: 'decimal', value: value === null || value === undefined ? '' : String(value), autocomplete: 'off', ...extra });
   const hasLand = el('input', { type: 'checkbox', checked: tree && tree.hasLandOption ? 'checked' : null, disabled: Boolean(tree) });
+  // The crop is fixed once anything is sold or reserved (the server refuses the change as well).
+  const cropLocked = Boolean(tree) && (Number(tree.soldShares) + Number(tree.reservedShares)) > 0;
+  const currentCrop = (tree && tree.cropCategory) || 'olive';
+  const currentCountry = (tree && tree.countryCode) || 'SY';
+  const currentFarm = (tree && tree.farmId) || '';
+  const countrySelect = el('select', { disabled: cropLocked }, countries.map((c) => el('option', { value: c.code, text: `${c.nameDe || c.nameEn || c.code} (${c.code})${c.status === 'planned' ? ' – geplant' : ''}`, selected: c.code === currentCountry })));
+  const farmSelect = el('select', {});
+  // Only farms of the chosen country can be picked; the server enforces the same rule.
+  const fillFarms = (keep) => {
+    farmSelect.replaceChildren(el('option', { value: '', text: '— kein Hof —' }),
+      ...farms.filter((f) => f.countryCode === countrySelect.value).map((f) => el('option', { value: f.farmId, text: `${f.nameEn || f.name || f.farmId} (${f.farmId})`, selected: f.farmId === keep })));
+  };
+  fillFarms(currentFarm);
+  countrySelect.addEventListener('change', () => fillFarms(''));
   const f = {
     treeId: text('', { maxlength: 40, placeholder: 'tree_04' }),
     name: text(tree && tree.name, { dir: 'rtl', lang: 'ar' }), nameEn: text(tree && tree.nameEn),
@@ -1000,6 +1433,7 @@ async function editTree(treeId) {
     landPrice: number(tree && tree.hasLandOption ? (Number(tree.landPriceMinor) / 100).toFixed(2) : ''),
     landArea: number(tree && tree.hasLandOption ? tree.landAreaSqm : ''),
     millId: text(tree && tree.millId, { maxlength: 80, placeholder: 'mill_01' }),
+    crop: el('select', { disabled: cropLocked }, TREE_CROPS.map(([value, label]) => el('option', { value, text: label, selected: value === currentCrop }))),
     images: el('textarea', { rows: 3, class: 'mono', text: ((tree && tree.images) || ['images/olive_branches_macro.webp']).join('\n') })
   };
   const landFields = el('div', { class: 'form-grid', hidden: !(tree && tree.hasLandOption) }, [field('Preis der Parzelle (USD)', f.landPrice), field('Fläche der Parzelle (m²)', f.landArea)]);
@@ -1014,6 +1448,11 @@ async function editTree(treeId) {
   const readText = (control, label) => {
     const value = control.value.trim();
     if (value.length < 2 || /[<>]/.test(value)) throw userError(`${label} fehlt oder enthält unzulässige Zeichen.`);
+    return value;
+  };
+  const cropValue = () => {
+    const value = f.crop.value;
+    if (!TREE_CROPS.some(([id]) => id === value)) throw userError('Kultur: Bitte eine der angebotenen Kulturen wählen.');
     return value;
   };
   const collect = () => {
@@ -1045,14 +1484,16 @@ async function editTree(treeId) {
         el('div', { class: 'form-grid' }, [
           field('Name (Arabisch)', f.name), field('Name (Englisch)', f.nameEn),
           field('Region (Arabisch)', f.region), field('Region (Englisch)', f.regionEn),
+          field(cropLocked ? 'Kultur (nach dem ersten Verkauf nicht änderbar)' : 'Kultur', f.crop), el('span'),
+          field(cropLocked ? 'Herkunftsland (nach dem ersten Verkauf nicht änderbar)' : 'Herkunftsland', countrySelect), field('Hof', farmSelect),
           field('Sorte (Arabisch)', f.treeType), field('Sorte (Englisch)', f.treeTypeEn),
           field('Anzahl Anteile', f.totalShares), field('Preis je Anteil (USD)', f.price),
           field('Pflanzjahr (optional)', f.plantedYear), field('Ertrag pro Jahr in kg (optional)', f.yieldKg)
         ]),
         field('Bilder (ein Pfad je Zeile)', f.images),
         tree ? field('Ölmühle (Kennung, leer = keine)', f.millId) : null,
-        el('label', { class: 'row' }, [hasLand, el('span', { text: tree ? 'Mit Parzellen-Option (nach dem Anlegen nicht änderbar)' : 'Mit Parzellen-Option' })]),
-        landFields
+        landOffered ? el('label', { class: 'row' }, [hasLand, el('span', { text: tree ? 'Mit Parzellen-Option (nach dem Anlegen nicht änderbar)' : 'Mit Parzellen-Option' })]) : null,
+        landOffered ? landFields : null
       );
     },
     onConfirm: async () => {
@@ -1060,7 +1501,12 @@ async function editTree(treeId) {
       if (!tree) {
         const id = f.treeId.value.trim();
         if (!/^[a-z0-9_]{3,40}$/.test(id)) throw userError('Kennung: 3 bis 40 Zeichen, nur Kleinbuchstaben, Ziffern und _.');
+        const crop = cropValue();
         await api().adminCreateTree({ ...payload, treeId: id, hasLandOption: hasLand.checked });
+        // New trees are stored as olive; any other crop is set in a second, separately audited step.
+        if (crop !== 'olive') await api().adminSetTreeCrop({ treeId: id, cropCategory: crop });
+        // Likewise the origin: a new tree is stored for Syria without a farm.
+        if (countrySelect.value && (countrySelect.value !== 'SY' || farmSelect.value)) await api().adminSetTreeOrigin({ treeId: id, countryCode: countrySelect.value, farmId: farmSelect.value || null });
         return;
       }
       // Send only what changed, so the audit log names the real change.
@@ -1071,7 +1517,12 @@ async function editTree(treeId) {
       const millId = f.millId.value.trim();
       if (millId && !/^[A-Za-z0-9_-]{1,80}$/.test(millId)) throw userError('Ölmühle: Die Kennung darf nur Buchstaben, Ziffern, _ und - enthalten.');
       const millChanged = millId !== (tree.millId || '');
-      if (!Object.keys(changed).length && !millChanged) throw userError('Es wurde nichts geändert.');
+      const crop = cropValue();
+      const cropChanged = !cropLocked && crop !== currentCrop;
+      const originChanged = Boolean(countrySelect.value) && (countrySelect.value !== currentCountry || farmSelect.value !== currentFarm);
+      if (!Object.keys(changed).length && !millChanged && !cropChanged && !originChanged) throw userError('Es wurde nichts geändert.');
+      if (cropChanged) await api().adminSetTreeCrop({ treeId: tree.treeId, cropCategory: crop });
+      if (originChanged) await api().adminSetTreeOrigin({ treeId: tree.treeId, countryCode: countrySelect.value, farmId: farmSelect.value || null });
       if (Object.keys(changed).length) await api().adminUpdateTree({ ...changed, treeId: tree.treeId });
       if (millChanged) await api().adminSetTreeMill({ treeId: tree.treeId, millId: millId || null });
     }
@@ -1159,6 +1610,78 @@ async function viewErrors(view) {
   ])]));
 }
 
+/**
+ * Second factor of the signed-in account: confirm a code when an authenticator is set up, otherwise set one up
+ * (QR code and key for the app, then a first code to prove it works). Used when the server answers
+ * 'mfa-required' and in the settings.
+ */
+function mfaPanel({ required = false, onDone }) {
+  const box = el('section', { class: 'item stack' }, [el('h3', { text: 'Zwei-Faktor-Anmeldung' }), el('p', { class: 'muted', text: 'Wird geladen …' })]);
+  const fail = (target, error) => { logError('mfa', error); target.textContent = errorText(error); target.hidden = false; };
+  const codeForm = (factorId, intro, extra = []) => {
+    const code = el('input', { type: 'text', inputmode: 'numeric', autocomplete: 'one-time-code', maxlength: 6, pattern: '[0-9]{6}' });
+    const error = el('p', { class: 'form-error', role: 'alert', hidden: true });
+    const submit = el('button', { type: 'submit', class: 'btn btn-primary', text: 'Code bestätigen' });
+    // novalidate: the message below replaces the browser's own tooltip, so the hint is the same everywhere.
+    const form = el('form', { class: 'stack', novalidate: 'novalidate', on: { submit: async (event) => {
+      event.preventDefault();
+      error.hidden = true;
+      if (!/^[0-9]{6}$/.test(code.value.trim())) { error.textContent = 'Bitte den sechsstelligen Code aus der App eingeben.'; error.hidden = false; return; }
+      submit.disabled = true;
+      try {
+        await api().mfaVerify(factorId, code.value.trim());
+        toast('Zweiter Faktor bestätigt.');
+        if (onDone) onDone();
+      } catch (err) {
+        fail(error, err);
+      } finally {
+        submit.disabled = false;
+      }
+    } } }, [el('p', { text: intro }), ...extra, field('Sechsstelliger Code', code), error, submit]);
+    return form;
+  };
+  const render = async () => {
+    let status;
+    try {
+      status = await api().mfaStatus();
+    } catch (error) {
+      box.replaceChildren(el('h3', { text: 'Zwei-Faktor-Anmeldung' }), stateBlock('error', errorText(error), render));
+      return;
+    }
+    const head = el('h3', { text: 'Zwei-Faktor-Anmeldung' });
+    if (status.factorId && status.currentLevel === 'aal2') {
+      box.replaceChildren(head, el('p', {}, [el('span', { class: 'badge badge-ok', text: 'eingerichtet' }), ' · Diese Sitzung ist mit der Authenticator-App bestätigt.']));
+      return;
+    }
+    if (status.factorId) {
+      box.replaceChildren(head, codeForm(status.factorId, required
+        ? 'Für dieses Konto ist ein zweiter Faktor vorgeschrieben. Bitte den aktuellen Code aus Ihrer Authenticator-App eingeben.'
+        : 'Ein Authenticator ist eingerichtet. Mit dem aktuellen Code bestätigen Sie diese Sitzung.'));
+      return;
+    }
+    const error = el('p', { class: 'form-error', role: 'alert', hidden: true });
+    const start = el('button', { type: 'button', class: 'btn btn-primary', text: 'Authenticator einrichten', on: { click: async () => {
+      start.disabled = true;
+      error.hidden = true;
+      try {
+        const enrolment = await api().mfaEnroll();
+        // The QR code arrives as an SVG data URL; anything else is not shown as an image.
+        const qr = typeof enrolment.qr === 'string' && enrolment.qr.startsWith('data:image/svg+xml') ? el('img', { src: enrolment.qr, alt: 'QR-Code für die Authenticator-App', width: 180, height: 180, class: 'qr' }) : null;
+        box.replaceChildren(head, codeForm(enrolment.factorId, 'Scannen Sie den QR-Code mit einer Authenticator-App (oder geben Sie den Schlüssel von Hand ein) und bestätigen Sie mit dem angezeigten Code.',
+          [qr, el('p', {}, ['Schlüssel: ', el('code', { class: 'mono', text: String(enrolment.secret || '') })])]));
+      } catch (err) {
+        fail(error, err);
+        start.disabled = false;
+      }
+    } } });
+    box.replaceChildren(head, el('p', { text: required
+      ? 'Für dieses Konto ist ein zweiter Faktor vorgeschrieben, es ist aber noch keiner eingerichtet. Richten Sie jetzt eine Authenticator-App ein, um weiterzuarbeiten.'
+      : 'Noch nicht eingerichtet. Ein zweiter Faktor schützt Freigaben und Kontodaten, falls das Passwort in falsche Hände gerät.' }), error, start);
+  };
+  render();
+  return box;
+}
+
 async function viewSettings(view) {
   const { data } = await api().adminDashboard();
   const push = (data && data.push) || {};
@@ -1169,7 +1692,18 @@ async function viewSettings(view) {
     confirmLabel: push.enabled ? 'Ausschalten' : 'Einschalten', danger: true,
     onConfirm: () => api().adminSetPushEnabled({ enabled: !push.enabled })
   }).then((ok) => { if (ok) { toast('Einstellung gespeichert.'); show('settings'); } }) } });
+  const security = (await api().staffSecurityState()).data || {};
+  const mfaOn = security.mfaRequired === true;
+  const mfaToggle = el('button', { type: 'button', class: `btn ${mfaOn ? 'btn-danger' : 'btn-primary'}`, 'aria-pressed': mfaOn ? 'true' : 'false', text: mfaOn ? 'Pflicht aufheben' : 'Für alle Team-Konten verlangen', on: { click: () => openDialog({
+    title: mfaOn ? 'Zwei-Faktor-Pflicht aufheben' : 'Zwei-Faktor-Pflicht einschalten',
+    text: mfaOn ? 'Admin-, Finanz- und Prüferkonten können danach wieder mit dem Passwort allein arbeiten.' : 'Admin-, Finanz- und Prüferkonten brauchen danach bei jeder Anmeldung einen Code aus ihrer Authenticator-App. Wer noch keinen eingerichtet hat, wird beim nächsten Aufruf dazu aufgefordert. Einschalten können Sie die Pflicht nur, wenn Ihre eigene Sitzung bereits mit einem Code bestätigt ist.',
+    confirmLabel: mfaOn ? 'Aufheben' : 'Einschalten', danger: true,
+    onConfirm: () => api().adminSetStaffMfa({ required: !mfaOn })
+  }).then((ok) => { if (ok) { toast('Einstellung gespeichert.'); show('settings'); } }) } });
   view.append(el('h2', { text: 'Einstellungen' }),
+    mfaPanel({ required: mfaOn, onDone: () => show('settings') }),
+    el('section', { class: 'item stack' }, [el('h3', { text: 'Zwei-Faktor-Pflicht für das Team' }),
+      el('p', {}, [el('span', { class: `badge ${mfaOn ? 'badge-ok' : 'badge-warn'}`, text: mfaOn ? 'eingeschaltet' : 'ausgeschaltet' }), ' · gilt für Admin-, Finanz- und Prüferkonten']), mfaToggle]),
     el('section', { class: 'item stack' }, [el('h3', { text: 'Push-Benachrichtigungen' }),
       el('p', {}, [el('span', { class: `badge ${push.enabled ? 'badge-ok' : 'badge-warn'}`, text: push.enabled ? 'eingeschaltet' : 'ausgeschaltet' }), ` · ${fmtInt(push.activeDevices)} aktive Geräte`]), toggle]),
     el('section', { class: 'item' }, [el('h3', { text: 'Betrieb' }), el('ul', {}, [
@@ -1180,7 +1714,7 @@ async function viewSettings(view) {
     ])]));
 }
 
-const VIEWS = { tasks: viewTasks, automation: viewAutomation, readiness: viewReadiness, overview: viewOverview, payments: viewPayments, reviews: viewReviews, roles: viewRoles, investments: viewInvestments, trees: viewTrees, register: viewRegister, users: viewUsers, accounts: viewAccounts, export: viewExport, mail: viewMail, errors: viewErrors, audit: viewAudit, settings: viewSettings, system: viewSystem };
+const VIEWS = { master: viewMaster, market: viewMarket, tasks: viewTasks, automation: viewAutomation, readiness: viewReadiness, overview: viewOverview, payments: viewPayments, reviews: viewReviews, roles: viewRoles, investments: viewInvestments, trees: viewTrees, register: viewRegister, users: viewUsers, accounts: viewAccounts, export: viewExport, mail: viewMail, errors: viewErrors, audit: viewAudit, settings: viewSettings, system: viewSystem };
 
 // ---------------------------------------------------------------- shell
 async function show(tabId) {
@@ -1201,7 +1735,9 @@ async function show(tabId) {
   } catch (error) {
     if (token !== session.loadToken) return;
     logError(`view ${tab.id}`, error);
-    view.replaceChildren(stateBlock('error', errorText(error), () => show(tab.id)));
+    // The server demands a second factor: offer the code prompt (or the set-up) right here instead of a dead end.
+    if (error && error.code === 'mfa-required') view.replaceChildren(mfaPanel({ required: true, onDone: () => show(tab.id) }));
+    else view.replaceChildren(stateBlock('error', errorText(error), () => show(tab.id)));
     if (error && error.code === 'unauthenticated') signOut();
   } finally {
     if (token === session.loadToken) view.setAttribute('aria-busy', 'false');

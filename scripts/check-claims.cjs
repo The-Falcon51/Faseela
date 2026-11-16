@@ -50,3 +50,56 @@ if (findings > 0) {
   process.exit(1);
 }
 console.log('✅ No unbacked financial claims in shipped HTML.');
+
+// ---- Wording ratchet --------------------------------------------------------------------
+// Most copy lives outside index.html (public/app.js dictionaries, the German dictionary, the
+// manifest). Investment / land-title / return wording there is a regulatory risk (prospectus
+// duty for "investments", land sales). It cannot be removed in one step, so the count per
+// term and file is frozen in scripts/claims-baseline.json: a build fails when any count
+// rises, and the baseline is lowered as copy is rewritten (`node scripts/check-claims.cjs
+// --update-baseline` after a clean-up). Counts include identifiers in app.js; only the
+// direction matters.
+const RATCHET_FILES = ['public/index.html', 'public/app.js', 'src/i18n/de.json', 'public/manifest.json'];
+const RATCHET_TERMS = [
+  { label: 'land title (ar)', pattern: /طابو/g },
+  { label: 'land title', pattern: /\bTabu\b|\bGrundbuch|\bcadastral\b|كاداستر/gi },
+  { label: 'deed / usufruct', pattern: /\busufruct\b|\bdeeds?\b|\bNießbrauch|سند حيازة|(?<![ء-ي])(?:[وبل]|ال)*صك/gi },
+  { label: 'investment wording', pattern: /\binvest(?:or|ors|ment|ments|ing)?\b|\bInvestition|\bAnleger|استثمار|مستثمر/gi },
+  { label: 'return / profit wording', pattern: /\bROI\b|\bdividends?\b|\bcapital gains?\b|\bappreciation\b|\bRendite|أرباح|عوائد|ربح رأسمالي/gi },
+  { label: 'escrow', pattern: /\bescrow\b|\bTreuhand|حساب الضمان/gi }
+];
+const baselinePath = path.resolve(__dirname, 'claims-baseline.json');
+const current = {};
+for (const relativePath of RATCHET_FILES) {
+  const filePath = path.resolve(__dirname, '..', relativePath);
+  if (!fs.existsSync(filePath)) continue;
+  // Text between the two markers is not counted: the assistant has to name these words to say that
+  // sponsorship is NOT an investment and that land is NOT offered, and to recognise such questions.
+  const text = fs.readFileSync(filePath, 'utf8').replace(/\/\/ claims-ratchet:off[\s\S]*?\/\/ claims-ratchet:on/g, '');
+  current[relativePath] = {};
+  for (const { label, pattern } of RATCHET_TERMS) current[relativePath][label] = (text.match(pattern) || []).length;
+}
+if (process.argv.includes('--update-baseline')) {
+  fs.writeFileSync(baselinePath, `${JSON.stringify(current, null, 2)}\n`);
+  console.log('claims-baseline.json updated.');
+  process.exit(0);
+}
+if (!fs.existsSync(baselinePath)) {
+  process.stderr.write('scripts/claims-baseline.json is missing. Run: node scripts/check-claims.cjs --update-baseline\n');
+  process.exit(1);
+}
+const baseline = JSON.parse(fs.readFileSync(baselinePath, 'utf8'));
+let regressions = 0;
+let remaining = 0;
+for (const [file, counts] of Object.entries(current)) {
+  for (const [label, count] of Object.entries(counts)) {
+    const allowed = (baseline[file] && baseline[file][label]) || 0;
+    remaining += count;
+    if (count > allowed) {
+      process.stderr.write(`[WORDING] ${file}: "${label}" rose from ${allowed} to ${count}. Use sponsorship / pre-purchase wording instead.\n`);
+      regressions += 1;
+    }
+  }
+}
+if (regressions > 0) process.exit(1);
+console.log(`✅ Wording ratchet held (${remaining} legacy occurrences still to rewrite).`);

@@ -2,7 +2,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  toMillis, normalizeDoc, minorToMajor, statusLabel, mapPublicTree, mapShare,
+  toMillis, normalizeDoc, minorToMajor, statusLabel, mapPublicTree, mapCountry, mapFarm, mapShare,
   mapTransaction, mapInvestment, portfolioTotals, mapReviewItem, investmentTimeline, REVIEW_SLA_MS
 } from '../public/data-mappers.mjs';
 
@@ -33,7 +33,7 @@ test('minorToMajor rejects non-integers instead of producing NaN', () => {
 test('mapPublicTree uses minor-unit server prices (regression: pricePerShareCents was never set)', () => {
   const t = mapPublicTree({ id: 'tree_01', status: 'listed', pricePerShareMinor: 3500, landPriceMinor: 1500, availableShares: 3, totalShares: 4, hasLandOption: true });
   const { catalog, ...core } = t;
-  assert.deepEqual(core, { id: 'tree_01', server_listed: true, total_shares: 4, shares_available: 3, price_per_share: 35, land_price: 15, has_land_option: true, currency: 'USD' });
+  assert.deepEqual(core, { id: 'tree_01', server_listed: true, total_shares: 4, shares_available: 3, price_per_share: 35, land_price: 15, has_land_option: true, currency: 'USD', country_code: 'SY', farm_id: null });
 });
 
 test('mapPublicTree carries catalogue texts from the server and strips markup', () => {
@@ -136,4 +136,28 @@ test('investmentTimeline: steps, SLA due date, overdue flag and outcomes', () =>
   assert.deepEqual(expired.steps.map((s) => s.state), ['done', 'failed', 'todo', 'failed']);
   assert.equal(expired.outcome, 'expired');
   assert.doesNotThrow(() => investmentTimeline(null));
+});
+
+test('origin: country and farm of a tree are validated, with Syria as the fallback', () => {
+  const es = mapPublicTree({ id: 'tree_es', status: 'listed', pricePerShareMinor: 4000, countryCode: 'ES', farmId: 'farm_es' });
+  assert.equal(es.country_code, 'ES');
+  assert.equal(es.farm_id, 'farm_es');
+  const legacy = mapPublicTree({ id: 'tree_01', status: 'listed', pricePerShareMinor: 3500 });
+  assert.equal(legacy.country_code, 'SY', 'rows from a project without migration 48 default to Syria');
+  assert.equal(legacy.farm_id, null);
+  const bad = mapPublicTree({ id: 'tree_x', countryCode: 'spain', farmId: 'farm <1>' });
+  assert.equal(bad.country_code, 'SY');
+  assert.equal(bad.farm_id, null);
+});
+
+test('mapCountry and mapFarm drop unusable rows and strip markup from names', () => {
+  assert.deepEqual(mapCountry({ code: 'ES', name: 'إسبانيا', nameEn: 'Spain', nameDe: 'Spanien', currency: 'EUR' }),
+    { code: 'ES', name: 'إسبانيا', name_en: 'Spain', name_de: 'Spanien', currency: 'EUR' });
+  assert.equal(mapCountry({ code: 'es', nameEn: 'Spain' }), null);
+  assert.equal(mapCountry({ code: 'ES', nameEn: 'Spain', currency: 'euro' }).currency, 'USD');
+  const farm = mapFarm({ farmId: 'farm_es', countryCode: 'ES', name: 'مزرعة', nameEn: '<img src=x onerror=1>Finca', region: '', regionEn: 'Jaen' });
+  assert.equal(farm.id, 'farm_es');
+  assert.equal(/[<>]/.test(farm.name_en), false);
+  assert.equal(mapFarm({ farmId: 'farm es', countryCode: 'ES' }), null);
+  assert.equal(mapFarm({ farmId: 'farm_es', countryCode: 'Spain' }), null);
 });

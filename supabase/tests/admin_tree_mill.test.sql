@@ -9,6 +9,8 @@ begin
   select '00000000-0000-0000-0000-000000000000', u.id, 'authenticated', 'authenticated', u.email, '', now(), '{}'::jsonb, jsonb_build_object('display_name', u.n, 'requested_role', 'investor'), now(), now()
   from (values (c_a, 'ma@t.faseela.invalid', 'Mill Admin'), (c_i, 'mi@t.faseela.invalid', 'Mill Investor')) u(id, email, n);
   insert into private.user_roles (user_id, role) values (c_a, 'admin');
+  -- Since migration 48 a mill must exist as a record before a tree can point to it.
+  insert into public.mills (mill_id, country_code, name, name_en) values ('mill_09', 'SY', 'معصرة اختبار', 'Test mill');
   perform set_config('request.jwt.claims', json_build_object('sub', c_i, 'role', 'authenticated')::text, true);
   begin perform private.admin_set_tree_mill('{"treeId":"tree_03","millId":"mill_09"}'::jsonb); v_r := v_r || 'FAIL investor allowed';
   exception when others then get stacked diagnostics v_e = pg_exception_hint; v_r := v_r || ('investor=' || v_e); end;
@@ -22,6 +24,10 @@ begin
   v_j := private.admin_set_tree_mill('{"treeId":"tree_03","millId":null}'::jsonb);
   v_r := v_r || ('cleared=' || coalesce((select mill_id from private.trees where tree_id = 'tree_03'), 'NULL'))
              || ('audit=' || (select count(*) from public.audit_logs where actor_uid = c_a and action = 'tree.mill_changed'));
-  raise exception 'TEST RESULT %', array_to_string(v_r, ' | ');
+  -- Same summary line as the other suites, so scripts/run-sql-tests.cjs can read the result.
+  if array_to_string(v_r, ' | ') = 'investor=permission-denied | badid=invalid-argument | unknown=not-found | set=mill_09 | get=mill_09 | cleared=NULL | audit=2' then
+    raise exception 'TEST SUMMARY passed=7 failed=0 :: all good';
+  end if;
+  raise exception 'TEST SUMMARY passed=0 failed=7 :: %', array_to_string(v_r, ' | ');
 end
 $t$;

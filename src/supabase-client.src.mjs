@@ -46,7 +46,7 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
 });
 
 const roleNames = {
-  investor: { ar: 'مستثمر زراعي', en: 'Agricultural Investor' },
+  investor: { ar: 'كافل شجرة', en: 'Tree Sponsor' },
   farmer: { ar: 'مزارع شريك', en: 'Partner Farmer' },
   mill_operator: { ar: 'صاحب معصرة', en: 'Mill Operator' },
   finance_admin: { ar: 'مدقق مالي', en: 'Finance Administrator' },
@@ -68,10 +68,23 @@ class BackendError extends Error {
   }
 }
 
+let secondFactorAnnouncedAt = 0;
+/** A team account without a confirmed second factor gets one clear message in the app instead of generic errors. */
+function announceSecondFactorNeeded() {
+  if (Date.now() - secondFactorAnnouncedAt < 15000) return;
+  secondFactorAnnouncedAt = Date.now();
+  window.dispatchEvent(new CustomEvent('faseela-toast', { detail: {
+    ar: 'هذا الحساب يحتاج إلى تأكيد بعامل ثانٍ. افتح لوحة الإدارة (‎/admin/‎) وأكّد برمز تطبيق المصادقة.',
+    en: 'This account needs a second factor. Open the admin panel (/admin/) and confirm with your authenticator app.',
+    de: 'Dieses Konto braucht einen zweiten Faktor. Öffnen Sie den Admin-Bereich (/admin/) und bestätigen Sie mit Ihrer Authenticator-App.'
+  } }));
+}
+
 function toBackendError(error, fallbackCode = 'internal') {
   if (error instanceof BackendError) return error;
   // RPC business errors use SQLSTATE P0001 with the stable code in `hint`.
   if (error && error.code === 'P0001' && typeof error.hint === 'string' && error.hint) {
+    if (error.hint === 'mfa-required') announceSecondFactorNeeded();
     return new BackendError(error.hint, error.message, error);
   }
   if (error && error.code === '42501') {
@@ -196,7 +209,7 @@ async function publishSessionNow(user) {
   const appRole = claimRole === 'mill_operator' ? 'mill_owner' : claimRole;
   const labels = roleNames[claimRole] || roleNames.investor;
   const displayName = profile.displayName || user.user_metadata?.display_name
-    || user.user_metadata?.full_name || user.email?.split('@')[0] || 'Investor';
+    || user.user_metadata?.full_name || user.email?.split('@')[0] || 'Sponsor';
   const avatar = displayName.trim().charAt(0) || '؟';
 
   dispatchAuthState({
@@ -427,6 +440,31 @@ async function listPublicTrees() {
   const { data, error } = await supabase.from('trees_public').select('*').eq('status', 'listed');
   if (error) throw toBackendError(error);
   return (data || []).map((row) => mappers.mapPublicTree(camelize(row)));
+}
+
+/**
+ * Active origin countries and listed farms (public reference data, migration 48). A project that does not have
+ * these tables yet answers with an error; the catalogue then simply has no country filter and no farm names.
+ */
+async function listOrigins() {
+  const [countries, farms] = await Promise.all([
+    supabase.from('countries').select('code,name,name_en,name_de,currency'),
+    supabase.from('farms').select('farm_id,country_code,name,name_en,region,region_en')
+  ]);
+  if (countries.error || farms.error) {
+    console.warn('origins unavailable', (countries.error || farms.error).message);
+    return { countries: [], farms: [] };
+  }
+  return {
+    countries: (countries.data || []).map((row) => mappers.mapCountry(camelize(row))).filter(Boolean),
+    farms: (farms.data || []).map((row) => mappers.mapFarm(camelize(row))).filter(Boolean)
+  };
+}
+
+/** Stores the interface language on the profile of the signed-in user (ar | en | de). */
+async function setMyLocale(locale) {
+  const { data } = await callable('set_my_locale')({ locale });
+  return data;
 }
 
 /**
@@ -795,6 +833,91 @@ const adminSetJobActive = callable('admin_set_job_active');
 const adminSetReadiness = callable('admin_set_readiness');
 const adminSetTreeMill = callable('admin_set_tree_mill');
 const adminGetTreeMill = callable('admin_get_tree_mill');
+const adminSetTreeCrop = callable('admin_set_tree_crop');
+const adminListMasterData = callable('admin_list_master_data');
+const staffSecurityState = callable('staff_security_state');
+const adminSetStaffMfa = callable('admin_set_staff_mfa');
+
+// ---- Marketplace (migration 50): farm products, orders, service fee ----
+const marketplaceConfig = callableNoArg('marketplace_config');
+const quoteOrder = callable('quote_order');
+const createOrder = callable('create_order');
+const reportOrderPayment = callable('report_order_payment');
+const cancelMyOrder = callable('cancel_my_order');
+const listMyOrders = callableNoArg('list_my_orders');
+const farmerUpsertProduct = callable('farmer_upsert_product');
+const farmerSetProductStock = callable('farmer_set_product_stock');
+const farmOverview = callableNoArg('farm_overview');
+const adminListMarketplace = callableNoArg('admin_list_marketplace');
+const adminSetFarmMember = callable('admin_set_farm_member');
+const adminReviewProduct = callable('admin_review_product');
+const adminSetShippingRate = callable('admin_set_shipping_rate');
+const adminSetPlatformFee = callable('admin_set_platform_fee');
+const reviewOrderPayment = callable('review_order_payment');
+const adminSetOrderFulfilment = callable('admin_set_order_fulfilment');
+const adminOrderContact = callable('admin_order_contact');
+const recordOrderScreening = callable('record_order_screening');
+const orderPayer = callable('order_payer');
+const refundOrder = callable('refund_order');
+const recordFarmPayout = callable('record_farm_payout');
+const adminSetShopOpen = callable('admin_set_shop_open');
+
+/**
+ * The shop: products an admin listed, of farms that are listed, plus the destinations each origin country ships to.
+ * Row policies decide what comes back; a project without these tables answers with an error and the shop stays empty.
+ */
+async function listProducts() {
+  const [products, rates] = await Promise.all([
+    supabase.from('products').select('id,farm_id,category,name,name_en,description,description_en,unit,price_minor,currency,stock_units')
+      .eq('status', 'listed').order('name').limit(500),
+    supabase.from('shipping_rates').select('origin_country,dest_country,amount_minor,currency')
+  ]);
+  if (products.error || rates.error) {
+    console.warn('shop unavailable', (products.error || rates.error).message);
+    return { products: [], shippingRates: [] };
+  }
+  return { products: camelize(products.data || []), shippingRates: camelize(rates.data || []) };
+}
+
+// ---- Second factor (TOTP authenticator app) of the signed-in user ----
+/** { currentLevel, nextLevel, factorId }: factorId is the verified authenticator, or null when none is set up. */
+async function mfaStatus() {
+  const [level, factors] = await Promise.all([supabase.auth.mfa.getAuthenticatorAssuranceLevel(), supabase.auth.mfa.listFactors()]);
+  if (level.error || factors.error) throw toBackendError(level.error || factors.error);
+  const verified = ((factors.data && factors.data.totp) || []).filter((factor) => factor.status === 'verified');
+  return {
+    currentLevel: (level.data && level.data.currentLevel) || 'aal1',
+    nextLevel: (level.data && level.data.nextLevel) || 'aal1',
+    factorId: verified.length ? verified[0].id : null
+  };
+}
+/** Starts enrolment and returns what the user needs to add the account to an authenticator app. */
+async function mfaEnroll() {
+  // An abandoned earlier attempt leaves an unverified factor behind; remove it so a new one can be created.
+  const existing = await supabase.auth.mfa.listFactors();
+  if (existing.error) throw toBackendError(existing.error);
+  for (const factor of ((existing.data && existing.data.all) || []).filter((entry) => entry.factor_type === 'totp' && entry.status !== 'verified')) {
+    const removed = await supabase.auth.mfa.unenroll({ factorId: factor.id });
+    if (removed.error) throw toBackendError(removed.error);
+  }
+  const { data, error } = await supabase.auth.mfa.enroll({ factorType: 'totp' });
+  if (error) throw toBackendError(error);
+  return { factorId: data.id, qr: data.totp.qr_code, secret: data.totp.secret };
+}
+/** Confirms a six-digit code for the given factor; on success the session becomes aal2. */
+async function mfaVerify(factorId, code) {
+  const challenge = await supabase.auth.mfa.challenge({ factorId });
+  if (challenge.error) throw toBackendError(challenge.error);
+  const verify = await supabase.auth.mfa.verify({ factorId, challengeId: challenge.data.id, code: String(code || '').trim() });
+  if (verify.error) throw new BackendError('mfa-invalid-code', verify.error.message || 'The code was not accepted.', verify.error);
+  return { ok: true };
+}
+const adminSetCountryStatus = callable('admin_set_country_status');
+const adminUpsertFarm = callable('admin_upsert_farm');
+const adminUpsertMill = callable('admin_upsert_mill');
+const adminSetTreeOrigin = callable('admin_set_tree_origin');
+const adminGetTreeOrigin = callable('admin_get_tree_origin');
+const adminGetTreeCrop = callable('admin_get_tree_crop');
 
 const myReferralCode = callableNoArg('my_referral_code');
 const myGifts = callableNoArg('my_gifts');
@@ -894,6 +1017,44 @@ const api = Object.freeze({
   adminSetReadiness,
   adminSetTreeMill,
   adminGetTreeMill,
+  adminSetTreeCrop,
+  adminListMasterData,
+  staffSecurityState,
+  adminSetStaffMfa,
+  marketplaceConfig,
+  quoteOrder,
+  createOrder,
+  reportOrderPayment,
+  cancelMyOrder,
+  listMyOrders,
+  listProducts,
+  farmerUpsertProduct,
+  farmerSetProductStock,
+  farmOverview,
+  adminListMarketplace,
+  adminSetFarmMember,
+  adminReviewProduct,
+  adminSetShippingRate,
+  adminSetPlatformFee,
+  reviewOrderPayment,
+  adminSetOrderFulfilment,
+  adminOrderContact,
+  recordOrderScreening,
+  orderPayer,
+  refundOrder,
+  recordFarmPayout,
+  adminSetShopOpen,
+  mfaStatus,
+  mfaEnroll,
+  mfaVerify,
+  adminSetCountryStatus,
+  adminUpsertFarm,
+  adminUpsertMill,
+  adminSetTreeOrigin,
+  adminGetTreeOrigin,
+  listOrigins,
+  setMyLocale,
+  adminGetTreeCrop,
   signIn,
   register,
   signInWithGoogle,

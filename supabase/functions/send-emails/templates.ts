@@ -241,6 +241,62 @@ export function render(template: string, p: Record<string, unknown>): Rendered {
         en: `Failed e-mails in 24 h: ${escapeHtml(p.failedEmails)} · client errors in the last hour: ${escapeHtml(p.clientErrorsLastHour)}. Open the system status in the admin panel.`,
         cta: dash,
       };
+    case "order_placed":
+      return {
+        subject: "طلبك بانتظار الدفع · Your order is waiting for payment",
+        ar: `استلمنا طلبك ${shortId(p.orderId)}. المبلغ الإجمالي: <strong>${amount}</strong>. يرجى التحويل مع ذكر المرجع <strong>${escapeHtml(p.paymentReference)}</strong> قبل <strong>${when(p.expiresAt)}</strong>، ثم أكّد التحويل في التطبيق. بيانات الحساب المصرفي تجدها في التطبيق.`,
+        en: `We received your order ${shortId(p.orderId)}. Total: <strong>${amount}</strong>. Please transfer it with the reference <strong>${escapeHtml(p.paymentReference)}</strong> before <strong>${when(p.expiresAt)}</strong>, then confirm the transfer in the app. You find the bank details in the app.`,
+        cta: dash,
+      };
+    case "order_paid":
+      return {
+        subject: "تم تأكيد الدفع · Your payment was confirmed",
+        ar: `تم تأكيد دفعتك (${amount}) للطلب ${shortId(p.orderId)}. نجهّز الشحنة الآن.`,
+        en: `Your payment (${amount}) for order ${shortId(p.orderId)} was confirmed. We are preparing the shipment.`,
+        cta: dash,
+      };
+    case "order_rejected":
+      return {
+        subject: "تعذّر تأكيد الدفع · Your payment could not be confirmed",
+        ar: `تعذّر تأكيد الدفع للطلب ${shortId(p.orderId)} (${amount}) وأُلغي الطلب.${p.note ? ` السبب: ${escapeHtml(p.note)}` : ""}`,
+        en: `The payment for order ${shortId(p.orderId)} (${amount}) could not be confirmed and the order was cancelled.${p.note ? ` Reason: ${escapeHtml(p.note)}` : ""}`,
+        cta: dash,
+      };
+    case "order_shipped":
+      return {
+        subject: "طلبك في الطريق · Your order is on its way",
+        ar: `تم شحن طلبك ${shortId(p.orderId)}.${p.trackingCode ? ` رقم التتبع: <strong>${escapeHtml(p.trackingCode)}</strong>` : ""}`,
+        en: `Your order ${shortId(p.orderId)} was shipped.${p.trackingCode ? ` Tracking code: <strong>${escapeHtml(p.trackingCode)}</strong>` : ""}`,
+        cta: dash,
+      };
+    case "order_expired":
+      return {
+        subject: "انتهت مهلة الطلب · Your order expired",
+        ar: `انتهت مهلة الدفع للطلب ${shortId(p.orderId)} (${amount}) وأُلغي تلقائياً. يمكنك الطلب مجدداً في أي وقت.`,
+        en: `The payment window for order ${shortId(p.orderId)} (${amount}) has closed and the order was released. You can order again at any time.`,
+        cta: dash,
+      };
+    case "farm_order_paid":
+      return {
+        subject: "طلب جديد لمزرعتك · A new paid order for your farm",
+        ar: `وصل طلب مدفوع ${shortId(p.orderId)} لمزرعتك. رصيدك من هذا الطلب بعد رسم الخدمة: <strong>${amount}</strong>. التفاصيل في التطبيق.`,
+        en: `A paid order ${shortId(p.orderId)} arrived for your farm. Your credit from it after the service fee: <strong>${amount}</strong>. See the app for the items.`,
+        cta: dash,
+      };
+    case "order_refunded":
+      return {
+        subject: "تم إلغاء طلبك وسيُعاد المبلغ · Your order was cancelled and will be refunded",
+        ar: `أُلغي طلبك المدفوع ${shortId(p.orderId)} وسنعيد إليك المبلغ (${amount}) بتحويل مصرفي.${p.note ? ` السبب: ${escapeHtml(p.note)}` : ""}`,
+        en: `Your paid order ${shortId(p.orderId)} was cancelled. We return the amount (${amount}) to you by bank transfer.${p.note ? ` Reason: ${escapeHtml(p.note)}` : ""}`,
+        cta: dash,
+      };
+    case "farm_payout":
+      return {
+        subject: "تم تحويل رصيد لمزرعتك · A payout to your farm was made",
+        ar: `حوّلنا إلى مزرعتك مبلغ <strong>${amount}</strong>. مرجع التحويل: ${escapeHtml(p.reference)}.`,
+        en: `We transferred <strong>${amount}</strong> to your farm. Transfer reference: ${escapeHtml(p.reference)}.`,
+        cta: dash,
+      };
     default:
       throw new Error(`unknown template ${template}`);
   }

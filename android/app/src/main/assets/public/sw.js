@@ -1,6 +1,7 @@
 // Faseela service worker (review F-14): small app-shell precache, bounded image cache.
-// Bump CACHE_VERSION whenever shell assets change so clients pick up the new build.
-const CACHE_VERSION = 'v13';
+// CACHE_VERSION and the ?v= of the code files below are written by scripts/version-assets.cjs on every build:
+// a cached file only ever answers for the build it belongs to, so page and code cannot drift apart.
+const CACHE_VERSION = 'ba18135d386b2';
 const SHELL_CACHE = `faseela-shell-${CACHE_VERSION}`;
 const IMAGE_CACHE = `faseela-images-${CACHE_VERSION}`;
 const IMAGE_CACHE_LIMIT = 40;
@@ -8,15 +9,16 @@ const IMAGE_CACHE_LIMIT = 40;
 const SHELL_ASSETS = [
   './',
   './index.html',
-  './app.js',
-  './events.js',
+  './app.js?v=a18135d386b2',
+  './events.js?v=a18135d386b2',
+  './shop.js?v=a18135d386b2',
   './manifest.json',
-  './assets/tailwind.css',
+  './assets/tailwind.css?v=a18135d386b2',
   './fonts/fonts.css',
   './fonts/cairo-arabic-wght-normal.woff2',
   './fonts/cairo-latin-wght-normal.woff2',
   './vendor/lucide.min.js',
-  './supabase-client.mjs',
+  './supabase-client.mjs?v=a18135d386b2',
   './images/faseela-olive-tree-logo.svg',
   './images/icon-192.png'
 ];

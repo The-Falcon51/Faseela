@@ -104,8 +104,63 @@ try {
   const errors = [];
   page.on('pageerror', (e) => errors.push(`pageerror: ${e.message}`));
   page.on('console', (m) => { if (m.type() === 'error' && !/40[14]/.test(m.text())) errors.push(`console: ${m.text().slice(0, 200)}`); });
+  // The catalogue is what the database lists, so the anonymous page gets a fixed catalogue instead of live data.
+  const tree = (id, crop, nameEn, extra = {}) => ({ tree_id: id, status: 'listed', crop_category: crop, name: 'شجرة ' + id, name_en: nameEn, region: 'طرطوس', region_en: 'Tartus',
+    tree_type: 'خضيري', tree_type_en: 'Khodairi', planted_year: 1990, estimated_annual_yield_kg: 60, images: ['images/olive_branches_macro.webp'], total_shares: 4, available_shares: 3,
+    price_per_share_minor: 3500, land_price_minor: 0, has_land_option: false, land_area_sqm: 0, currency: 'USD', country_code: 'SY', farm_id: 'farm_01', ...extra });
+  const CATALOG = [tree('tree_01', 'olive', 'Fixture Olive One'), tree('tree_02', 'olive', 'Fixture Olive Two', { farm_id: null }), tree('tree_15', 'pomegranate', 'Fixture Pomegranate', { farm_id: null })];
+  await page.route('**/rest/v1/trees_public*', (r) => r.fulfill({ contentType: 'application/json', body: JSON.stringify(CATALOG) }));
+  await page.route('**/rest/v1/countries*', (r) => r.fulfill({ contentType: 'application/json', body: JSON.stringify([{ code: 'SY', name: 'سوريا', name_en: 'Syria', name_de: 'Syrien', currency: 'USD' }]) }));
+  await page.route('**/rest/v1/farms*', (r) => r.fulfill({ contentType: 'application/json', body: JSON.stringify([{ farm_id: 'farm_01', country_code: 'SY', name: 'مزرعة الاختبار', name_en: 'Fixture Farm', region: '', region_en: '' }]) }));
   await page.goto(base, { waitUntil: 'load' });
   await page.waitForFunction(() => window.FaseelaEvents && typeof navigateTo === 'function', null, { timeout: 20000 });
+  await page.waitForFunction(() => state.catalogState === 'ready', null, { timeout: 20000 });
+
+  // ---- 1b. database-only catalogue: built-in entries are templates, never offers ----
+  const catalog = await page.evaluate(async () => {
+    navigateTo('marketplace'); await new Promise((r) => setTimeout(r, 200));
+    const offered = catalogTrees();
+    const grid = document.getElementById('trees-grid');
+    const first = offered.find((tr) => tr.id === 'tree_01');
+    const out = {
+      builtIn: state.treeTemplates.length, offered: offered.map((tr) => tr.id).sort(),
+      cards: grid.querySelectorAll('[data-click^="viewTreeDetails"]').length > 0, text: ['شجرة tree_01', 'شجرة tree_15'].every((n) => grid.textContent.includes(n)), // the page starts in Arabic
+      sampleGone: [first.mill_name, first.mill_batch_serial, first.harvest_batch_acidity, first.health_status].join('') === '' && first.maintenance_logs.length === 0 && first.harvest_status === 'growing',
+      farmFromDb: first.farm_name_en, farmless: offered.find((tr) => tr.id === 'tree_02').farm_name_en,
+      counts: Object.fromEntries([...document.querySelectorAll('[data-crop-count]')].map((el) => [el.getAttribute('data-crop-count'), el.classList.contains('hidden') ? 'hidden' : el.textContent])),
+      featured: state.featuredSeasonTreeId, calculator: [...document.getElementById('roi-region-select').options].map((o) => o.value)
+    };
+    return out;
+  });
+  // error and retry (the client object is frozen, so the failure is produced at the network level; 404 is the status the error filter above ignores)
+  const failing = (r) => r.fulfill({ status: 404, contentType: 'application/json', body: '{"message":"not found"}' });
+  await page.route('**/rest/v1/trees_public*', failing);
+  catalog.error = await page.evaluate(async () => {
+    await loadServerCatalog();
+    const grid = document.getElementById('trees-grid');
+    return { state: state.catalogState, shown: !!grid.querySelector('[data-catalog-state="error"]'), offered: catalogTrees().length, cards: grid.querySelectorAll('[data-click^="viewTreeDetails"]').length };
+  });
+  await page.unroute('**/rest/v1/trees_public*', failing);
+  await page.click('#trees-grid [data-click="retryCatalog()"]');
+  await page.waitForFunction(() => state.catalogState === 'ready');
+  catalog.retry = await page.evaluate(() => ({ state: state.catalogState, offered: catalogTrees().length }));
+  // empty catalogue: nothing on offer, no featured tree, no calculator
+  const nothing = (r) => r.fulfill({ contentType: 'application/json', body: '[]' });
+  await page.route('**/rest/v1/trees_public*', nothing);
+  catalog.empty = await page.evaluate(async () => {
+    await loadServerCatalog();
+    const grid = document.getElementById('trees-grid');
+    return { offered: catalogTrees().length, emptyState: /No trees found|لم يتم العثور/.test(grid.textContent), heroHidden: document.getElementById('hero-featured-tree-container').classList.contains('hidden'),
+      calculatorHidden: document.getElementById('section-harvest-calculator').classList.contains('hidden'), templatesKept: state.trees.length >= 16 };
+  });
+  await page.unroute('**/rest/v1/trees_public*', nothing);
+  catalog.restored = await page.evaluate(async () => { await loadServerCatalog(); const n = catalogTrees().length; navigateTo('home'); return n; });
+  assert.deepEqual(catalog, {
+    builtIn: 16, offered: ['tree_01', 'tree_02', 'tree_15'], cards: true, text: true, sampleGone: true, farmFromDb: 'Fixture Farm', farmless: '',
+    counts: { olive: '2', pistachio: 'hidden', almond_walnut: 'hidden', pomegranate: '1' }, featured: 'tree_01', calculator: ['tree_01', 'tree_02', 'tree_15'],
+    error: { state: 'error', shown: true, offered: 0, cards: 0 }, retry: { state: 'ready', offered: 3 },
+    empty: { offered: 0, emptyState: true, heroHidden: true, calculatorHidden: true, templatesKept: true }, restored: 3
+  }, 'only database trees are on offer');
   const inventory = await page.evaluate((list) => {
     const bad = [];
     for (const src of list) {
@@ -135,13 +190,124 @@ try {
     return out;
   });
   assert.deepEqual(smoke, { nav: true, page: 'marketplace', lang: true, langState: 'en', auth: true, authOpen: true, close: true, authClosed: true });
+
+  // ---- 2a. page and code belong together; a missing text never shows its key ----
+  {
+    const versions = await page.evaluate(() => ({ build: document.querySelector('meta[name="faseela-build"]').content,
+      urls: [...document.querySelectorAll('script[src], link[rel=stylesheet]')].map((n) => n.getAttribute('src') || n.getAttribute('href')).filter((u) => /(app|shop|events)\.js|supabase-client\.mjs|tailwind\.css/.test(u)) }));
+    assert.match(versions.build, /^[0-9a-f]{12}$/);
+    assert.equal(versions.urls.length, 5);
+    assert.ok(versions.urls.every((u) => u.endsWith(`?v=${versions.build}`)), `every code URL carries the build id: ${versions.urls}`);
+    const kept = await page.evaluate(() => {
+      const before = state.currentLang;
+      const saved = { ar: i18n.ar.crop_name_date, en: i18n.en.crop_name_date };
+      delete i18n.ar.crop_name_date; delete i18n.en.crop_name_date; // what an outdated dictionary looks like
+      setLanguage('ar');
+      const label = document.querySelector('[data-i18n="crop_name_date"]').textContent.trim();
+      i18n.ar.crop_name_date = saved.ar; i18n.en.crop_name_date = saved.en;
+      setLanguage(before);
+      return label;
+    });
+    assert.notEqual(kept, 'crop_name_date', 'a label never falls back to its key');
+    assert.ok(kept.length > 3);
+    const raw = {};
+    for (const lang of ['ar', 'en']) {
+      raw[lang] = await page.evaluate((l) => { setLanguage(l); return [...document.querySelectorAll('[data-i18n]')].filter((n) => n.textContent.trim() === n.getAttribute('data-i18n')).map((n) => n.getAttribute('data-i18n')); }, lang);
+    }
+    assert.deepEqual(raw, { ar: [], en: [] }, 'no label on the page shows a raw key');
+    await page.evaluate(() => setLanguage('ar'));
+  }
+
+  // ---- 2b. land / greenfield offer switch (legal): off = no surface, no purchase path -----
+  const land = await page.evaluate(() => {
+    const shown = (sel) => { const host = document.querySelector(sel)?.closest('[data-feature="land"]'); return !host || getComputedStyle(host).display !== 'none'; };
+    const toasts = [];
+    const orig = window.showToast; window.showToast = (m) => toasts.push(m);
+    setModalPackageChoice(true); toggleROILandOption(true); selectDetailPackage(true);
+    switchMarketplaceTrack('virgin');
+    investInVirginPackage('vg_01', 1, 55, 25);
+    investInAgroforestryBundle();
+    document.getElementById('filter-land').value = 'with_land';
+    renderMarketplace();
+    const cards = document.querySelectorAll('#marketplace-cards-container [data-feature="land"]');
+    window.showToast = orig;
+    return {
+      enabled: landOfferEnabled(),
+      flags: [state.includeLandInModal, state.includeLandInCalc],
+      track: state.marketplaceTrack,
+      blocked: toasts.filter((m) => m === t('land_offer_unavailable')).length,
+      investModalOpen: !document.getElementById('modal-invest').classList.contains('hidden'),
+      treeOptions: state.trees.filter((tr) => tr.land_parcel && tr.land_parcel.has_land_option).length,
+      surfaces: ['#hero-feat-land-pkg', '#sec-land-tenure-showcase', '#tab-market-virgin', '#virgin-groves-container', '#modal-pkg-card-land', '#filter-land'].filter(shown),
+      cardPricesShown: [...cards].filter((el) => getComputedStyle(el).display !== 'none').length
+    };
+  });
+  await page.evaluate(() => { document.getElementById('filter-land').value = 'all'; renderMarketplace(); });
+
+  // ---- 2b2. country filter: hidden with one origin country, data-driven with more -----
+  const origin = await page.evaluate(() => {
+    const visible = () => !document.getElementById('filter-country-wrapper').classList.contains('hidden');
+    const cards = () => [...document.querySelectorAll('#trees-grid [data-click^="viewTreeDetails"]')].length;
+    state.currentLang = 'de'; // country names come from the data; the German dictionary is not loaded here, so labels fall back to English
+    renderCountryFilter();
+    const single = { visible: visible(), options: document.getElementById('filter-country').options.length };
+    state.origins = { countries: [{ code: 'ES', name: 'إسبانيا', name_en: 'Spain', name_de: 'Spanien', currency: 'EUR' }], farms: [] };
+    state.trees.push({ ...JSON.parse(JSON.stringify(state.trees[0])), id: 'tree_es_x', country_code: 'ES', tree_name_en: 'Picual Test', server_listed: true, region: 'خاين', region_en: 'Jaen' });
+    renderCountryFilter(); renderMarketplace();
+    const all = cards();
+    const options = [...document.getElementById('filter-country').options].map((o) => `${o.value}:${o.textContent}`);
+    const regionsAll = [...document.getElementById('filter-region').options].map((o) => `${o.value}:${o.textContent}`);
+    document.getElementById('filter-country').value = 'ES'; renderRegionFilter(); renderMarketplace();
+    const regionsSpain = [...document.getElementById('filter-region').options].map((o) => o.textContent);
+    const onlySpain = { cards: cards(), names: document.getElementById('trees-grid').textContent.includes('Picual Test') };
+    resetMarketplaceFilters();
+    const afterReset = document.getElementById('filter-country').value;
+    state.trees = state.trees.filter((tr) => tr.id !== 'tree_es_x'); state.origins = null;
+    renderCountryFilter(); renderMarketplace();
+    const back = visible();
+    state.currentLang = 'en';
+    return { single, regionsAll, regionsSpain, twoVisible: options.length === 3, options, fewer: onlySpain.cards > 0 && onlySpain.cards < all, names: onlySpain.names, afterReset, back };
+  });
+  assert.deepEqual(origin, { single: { visible: false, options: 2 }, regionsAll: ['all:All Provinces', 'خاين:Jaen', 'طرطوس:Tartus'], regionsSpain: ['All Provinces', 'Jaen'], twoVisible: true, options: ['all:All countries', 'ES:Spanien', 'SY:Syrien'], fewer: true, names: true, afterReset: 'all', back: false }, 'country filter follows the catalogue');
+
+  // ---- 2c. assistant knowledge layer: truthful topics first, in the language of the question ----
+  const faq = await page.evaluate(() => {
+    const ask = (lang, q) => { state.currentLang = lang; const html = generateFaseelaResponse(q); return `${(/data-faq="([a-z_]+)"/.exec(html) || [])[1] || 'legacy'}/${(/ lang="([a-z]+)"/.exec(html) || [])[1] || '-'}`; };
+    const out = {
+      dates: [ask('de', 'Gibt es auch Dattelpalmen?'), ask('en', 'Do you have date palms?'), ask('ar', 'هل يوجد نخيل تمر؟')],
+      land: [ask('de', 'Kann ich ein Grundstück dazu kaufen?'), ask('en', 'Can I buy the land parcel?'), ask('ar', 'هل أستطيع شراء قطعة أرض مع الشجرة؟')],
+      money: [ask('de', 'Ist das eine Geldanlage mit Rendite?'), ask('en', 'Can I sell my share on the P2P market?'), ask('en', 'Is there a cash payout?')],
+      flow: [ask('de', 'Wie kann ich bezahlen?'), ask('ar', 'كيف أستلم الزيت؟'), ask('en', 'How do I delete my account?')],
+      noFalseHit: [ask('ar', 'هل يجوز لي التسجيل؟'), ask('ar', 'كم ينتج الزيتون؟'), ask('de', 'Ich bin Landwirt, wie mache ich mit?')],
+      landText: (() => { state.currentLang = 'en'; return /currently not offered/.test(generateFaseelaResponse('Can I buy the land parcel?')); })(),
+      chips: {}
+    };
+    for (const lang of ['ar', 'en', 'de']) {
+      state.currentLang = lang; renderChatQuickChips();
+      const queries = [...document.querySelectorAll('#chat-quick-chips button')].map((b) => b.dataset.query);
+      out.chips[lang] = [queries.length, queries.filter((q) => !/data-faq=/.test(generateFaseelaResponse(q))).length];
+    }
+    state.currentLang = 'en';
+    return out;
+  });
+  assert.deepEqual(faq, {
+    dates: ['dates/de', 'dates/en', 'dates/ar'],
+    land: ['land_off/de', 'land_off/en', 'land_off/ar'],
+    money: ['not_investment/de', 'resale_off/en', 'reinvest_off/en'],
+    flow: ['payment/de', 'oil/ar', 'account/en'],
+    noFalseHit: ['signup/ar', 'legacy/-', 'farmer/de'],
+    landText: true,
+    chips: { ar: [10, 0], en: [10, 0], de: [10, 0] }
+  }, 'assistant answers from the knowledge layer');
+  assert.deepEqual(land, { enabled: false, flags: [false, false], track: 'mature', blocked: 2, investModalOpen: false,
+    treeOptions: 0, surfaces: [], cardPricesShown: 0 }, 'land offer is off everywhere');
   assert.deepEqual(errors, [], `page errors:\n${errors.join('\n')}`);
   await page.close();
 
   // ---- 2b. gift landing for signed-out visitors ------------------------------------------
   {
     const ctx = await browser.newContext({ viewport: { width: 390, height: 844 } });
-    await ctx.route('**/supabase-client.mjs', (r) => r.fulfill({ contentType: 'text/javascript', body: `
+    await ctx.route('**/supabase-client.mjs*', (r) => r.fulfill({ contentType: 'text/javascript', body: `
       const params = new URLSearchParams(location.search);
       const gift = (params.get('gift') || '').toUpperCase();
       history.replaceState(null, '', location.pathname);
@@ -168,14 +334,14 @@ try {
   // ---- 2c. German as third language (lazy dictionary, fallback chain, no Arabic leakage) -----
   {
     const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
-    await ctx.route('**/supabase-client.mjs', (r) => r.fulfill({ contentType: 'text/javascript', body: `
+    await ctx.route('**/supabase-client.mjs*', (r) => r.fulfill({ contentType: 'text/javascript', body: `
       window.FaseelaFirebase = window.FaseelaBackend = { backend: 'supabase', listPublicTrees: async () => [], pendingGiftCode: () => '', pendingReferralCode: () => '' };
       setTimeout(() => window.dispatchEvent(new CustomEvent('faseela-auth-state', { detail: null })), 200);` }));
     const d = await ctx.newPage();
     const dErrs = [];
     const dRequests = [];
     d.on('pageerror', (e) => dErrs.push(e.message));
-    d.on('request', (req) => { if (req.url().endsWith('i18n-de.js')) dRequests.push(req.url()); });
+    d.on('request', (req) => { if (/i18n-de\.js(\?v=[0-9a-f]+)?$/.test(req.url())) dRequests.push(req.url()); });
     await d.goto(base, { waitUntil: 'load' });
     await d.waitForTimeout(600);
     assert.equal(dRequests.length, 0, 'German dictionary is not downloaded for Arabic visitors');
@@ -240,9 +406,9 @@ try {
     assert.deepEqual(cycle, ['de', 'ar:rtl', 'en:ltr', 'de:ltr', 'ar']);
     // Error state: dictionary unreachable -> stays usable in English, user is told.
     const ctx2 = await browser.newContext({ viewport: { width: 390, height: 844 } });
-    await ctx2.route('**/supabase-client.mjs', (r) => r.fulfill({ contentType: 'text/javascript', body: `
+    await ctx2.route('**/supabase-client.mjs*', (r) => r.fulfill({ contentType: 'text/javascript', body: `
       window.FaseelaFirebase = window.FaseelaBackend = { backend: 'supabase', listPublicTrees: async () => [], pendingGiftCode: () => '', pendingReferralCode: () => '' };` }));
-    await ctx2.route('**/i18n-de.js', (r) => r.abort());
+    await ctx2.route('**/i18n-de.js*', (r) => r.abort());
     const f = await ctx2.newPage();
     const fErrs = [];
     f.on('pageerror', (e) => fErrs.push(e.message));
@@ -274,7 +440,7 @@ try {
     const TOKEN = 'fcmTok_' + 'p'.repeat(60);
     // Browser (no Capacitor): the card stays hidden and nothing is registered.
     const webCtx = await browser.newContext({ viewport: { width: 390, height: 844 } });
-    await webCtx.route('**/supabase-client.mjs', (r) => r.fulfill({ contentType: 'text/javascript', body: MOCK_CLIENT }));
+    await webCtx.route('**/supabase-client.mjs*', (r) => r.fulfill({ contentType: 'text/javascript', body: MOCK_CLIENT }));
     const w = await webCtx.newPage();
     await w.goto(`${base}?mockRole=investor`, { waitUntil: 'load' });
     await w.waitForFunction(() => state.currentUser && state.serverMode, null, { timeout: 20000 });
@@ -286,7 +452,7 @@ try {
     await webCtx.close();
 
     const ctx = await browser.newContext({ viewport: { width: 390, height: 844 } });
-    await ctx.route('**/supabase-client.mjs', (r) => r.fulfill({ contentType: 'text/javascript', body: MOCK_CLIENT }));
+    await ctx.route('**/supabase-client.mjs*', (r) => r.fulfill({ contentType: 'text/javascript', body: MOCK_CLIENT }));
     await ctx.addInitScript((token) => {
       const listeners = {};
       window.__push = { permission: localStorage.getItem('__pushPerm') || 'prompt', afterRequest: 'granted', token, log: [], listeners }; // the OS remembers the permission across app starts
@@ -403,7 +569,7 @@ try {
   // ---- 3. mocked sessions ---------------------------------------------------------------
   for (const role of ['investor', 'admin', 'farmer']) {
     const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
-    await ctx.route('**/supabase-client.mjs', (r) => r.fulfill({ contentType: 'text/javascript', body: MOCK_CLIENT }));
+    await ctx.route('**/supabase-client.mjs*', (r) => r.fulfill({ contentType: 'text/javascript', body: MOCK_CLIENT }));
     const p = await ctx.newPage();
     const errs = [];
     const navs = [];
@@ -669,6 +835,24 @@ try {
       }
       return out;
     }, role);
+    // Real session: no sample widgets, no built-in sample notifications, no shop.
+    const demo = await p.evaluate(() => {
+      const blocks = [...document.querySelectorAll('[data-demo]')];
+      const shop = [...document.querySelectorAll('[data-feature="boutique"]')];
+      const toasts = []; const orig = window.showToast; window.showToast = (m) => toasts.push(m);
+      switchMarketplaceTrack('boutique'); openBoutiqueCheckout('prod_01'); confirmBoutiqueOrder();
+      window.showToast = orig;
+      return {
+        serverClass: document.documentElement.classList.contains('server-mode'),
+        blocks: blocks.length >= 15, visibleBlocks: blocks.filter((el) => getComputedStyle(el).display !== 'none').map((el) => el.id || el.className.slice(0, 30)),
+        shopBlocks: shop.length, visibleShop: shop.filter((el) => getComputedStyle(el).display !== 'none').length,
+        track: state.marketplaceTrack, shopRefused: toasts.length, checkoutOpen: !document.getElementById('modal-boutique-checkout').classList.contains('hidden'),
+        sampleNotifications: (state.notifications || []).filter((n) => /credited|صرف|180/.test(JSON.stringify(n))).length,
+        badgeHidden: document.getElementById('notifications-badge').classList.contains('hidden') || (state.notifications || []).length > 0
+      };
+    });
+    assert.deepEqual(demo, { serverClass: true, blocks: true, visibleBlocks: [], shopBlocks: 2, visibleShop: 0, track: 'mature', shopRefused: 2, checkoutOpen: false, sampleNotifications: 0, badgeHidden: true }, `no sample data in a real session (${role})`);
+
     if (role === 'farmer') {
       assert.equal(result.page, 'farmer-portal');
       assert.equal(result.toolsVisible, true, 'farmer server tools visible');
