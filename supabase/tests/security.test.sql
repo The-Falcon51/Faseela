@@ -56,6 +56,7 @@ begin
     ) as u(id, email, name, verified, req);
   insert into private.user_roles (user_id, role) values
     (c_f, 'finance_admin'), (c_q, 'quality_auditor'), (c_a, 'admin'), (c_fa, 'farmer'), (c_m, 'mill_operator');
+  insert into private.consent_records (user_id, kind, version, source) select u.id, k, private.consent_version(k), 'checkout' from auth.users u cross join unnest(array['privacy', 'sponsorship']) k on conflict do nothing; -- users of this suite accepted the current documents (migration 51)
   -- Extra test trees for quota tests.
   insert into public.trees_public (tree_id, total_shares, available_shares, price_per_share_minor)
   values ('tree_t4', 4, 4, 1000), ('tree_t5', 4, 4, 1000), ('tree_t6', 4, 4, 1000);

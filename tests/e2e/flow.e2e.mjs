@@ -32,7 +32,7 @@ await signIn(investorPage, process.env.E2E_INVESTOR_EMAIL, process.env.E2E_PW);
 const demoCheck = await investorPage.evaluate(() => ({ shares: state.userShares.length, tx: state.transactions.length, users: state.users.length, ls: Object.keys(localStorage).filter((k) => k.startsWith('faseela_') && k !== 'faseela_currency' && k !== 'faseela_lang' && k !== 'faseela_theme') }));
 assert.deepEqual(demoCheck, { shares: 0, tx: 0, users: 0, ls: [] }, 'server mode starts without demo records or legacy storage');
 
-// Buy through the real purchase function (risk ack + receipt file + land => full tree).
+// Buy through the real purchase function (risk ack + consent + receipt file). The land package is switched off.
 const purchase = await investorPage.evaluate(async (treeId) => {
   // tree_e2e is a test-only server listing: give it a local catalog card (cloned from tree_01).
   if (!state.trees.some((t) => t.id === treeId)) {
@@ -41,8 +41,8 @@ const purchase = await investorPage.evaluate(async (treeId) => {
   await loadServerCatalog();
   state.currentTreeId = treeId;
   state.selectedSharePct = 25;
-  state.includeLandInModal = true;
   document.getElementById('invest-risk-ack').checked = true;
+  document.getElementById('invest-terms-ack').checked = true;
   state.selectedReceiptFile = new File([new Uint8Array([37, 80, 68, 70, 45])], 'receipt.pdf', { type: 'application/pdf' });
   const toasts = [];
   const orig = window.showToast; window.showToast = (m) => toasts.push(m);
@@ -51,13 +51,12 @@ const purchase = await investorPage.evaluate(async (treeId) => {
   return { toasts, listed: state.trees.find((t) => t.id === treeId)?.server_listed };
 }, process.env.E2E_TREE);
 assert.equal(purchase.listed, true, 'catalog marks the seeded tree as server-listed');
-assert.ok(purchase.toasts.some((t) => /4 حصص|4 shares/.test(t)), `land package forces the full tree: ${purchase.toasts.join(' | ')}`);
-assert.ok(purchase.toasts.some((t) => /\$155\.00/.test(t)), `server-confirmed amount shown: ${purchase.toasts.join(' | ')}`);
+assert.ok(purchase.toasts.some((t) => /\$35\.00/.test(t)), `server-confirmed amount shown (one share): ${purchase.toasts.join(' | ')}`);
 
 await investorPage.waitForFunction(() => state.myInvestments.some((r) => r.status === 'under_review'), null, { timeout: 15000 });
 await investorPage.evaluate(() => navigateTo('dashboard'));
 const dashRow = await investorPage.textContent('#my-investments-container');
-assert.match(dashRow, /155\.00/, 'dashboard lists the request with the server amount (regression: treeName ReferenceError)');
+assert.match(dashRow, /35\.00/, 'dashboard lists the request with the server amount (regression: treeName ReferenceError)');
 
 // Finance reviewer approves in the approvals desk.
 const financePage = await openPage();
@@ -69,7 +68,7 @@ const desk = await financePage.evaluate(async () => {
   const item = state.financialApprovalsQueue.find((q) => q.serverQueue === 'payments');
   return { count: state.financialApprovalsQueue.length, hiddenTabs, id: item?.id, amount: item?.amount_usd };
 });
-assert.equal(desk.amount, 155, 'payment item shows the server amount');
+assert.equal(desk.amount, 35, 'payment item shows the server amount');
 assert.deepEqual(desk.hiddenTabs, [true, true, true], 'finance reviewers see only the approvals tab');
 await financePage.evaluate((id) => approveFinancialRequest(id), desk.id);
 // Approval is a two-step flow since migration 32: record the sanctions/KYC screening, then the approval follows.
@@ -87,10 +86,10 @@ await investorPage.evaluate(() => renderDashboard());
 const kpis = await investorPage.evaluate(() => ({
   invested: document.getElementById('dash-total-invested')?.innerText,
   trees: document.getElementById('dash-trees-count')?.innerText,
-  land: document.getElementById('dash-land-area')?.innerText
+  landShown: (() => { const n = document.getElementById('dash-land-area'); return !!n && n.getClientRects().length > 0; })()
 }));
-assert.match(kpis.trees, /^1\b/, `one full tree: ${kpis.trees}`);
-assert.match(kpis.land, /^5\.0/, `5 m² land: ${kpis.land}`);
+assert.match(kpis.trees, /^1\b/, `one tree: ${kpis.trees}`);
+assert.equal(kpis.landShown, false, 'a sponsorship shows no land figure');
 
 // Signed receipt URL for finance (storage policy) and none for a foreign investor request id.
 const signed = await financePage.evaluate(async (id) => (await window.FaseelaBackend.getPaymentProofUrl({ requestId: id })).data, desk.id);

@@ -51,6 +51,10 @@ window.FaseelaFirebase = window.FaseelaBackend = {
   registerPushToken: async (p) => { window.FaseelaBackend.calls.push(['registerPushToken', p]); if (window.__pushServerDown) throw Object.assign(new Error('down'), { code: 'unavailable' }); return { data: { registered: true, activeDevices: 1 } }; },
   unregisterPushToken: async (p) => { window.FaseelaBackend.calls.push(['unregisterPushToken', p]); if (window.__pushServerDown) throw Object.assign(new Error('down'), { code: 'unavailable' }); return { data: { unregistered: true, activeDevices: 0 } }; },
   calls: [],
+  // Consent records + reservation (migration 51): consent must be recorded before the reservation.
+  recordConsent: async (p) => { window.FaseelaBackend.calls.push(['recordConsent', p]); if (window.__consentOutdated) throw Object.assign(new Error('outdated'), { code: 'consent-outdated' }); return { data: { kind: p.kind, version: p.version, recorded: true } }; },
+  createInvestmentRequest: async (p) => { window.FaseelaBackend.calls.push(['createInvestmentRequest', p]); return { data: { requestId: 'e'.repeat(64), amountMinor: 3500, currency: 'USD', expiresAt: Date.now() + 1800000 } }; },
+  uploadPaymentProof: async (id) => { window.FaseelaBackend.calls.push(['uploadPaymentProof', id]); return { data: {} }; },
   // Gifts & referrals
   gifts: { given: [], received: [] },
   myGifts: async () => ({ data: window.FaseelaBackend.gifts }),
@@ -280,6 +284,12 @@ try {
       flow: [ask('de', 'Wie kann ich bezahlen?'), ask('ar', 'كيف أستلم الزيت؟'), ask('en', 'How do I delete my account?')],
       noFalseHit: [ask('ar', 'هل يجوز لي التسجيل؟'), ask('ar', 'كم ينتج الزيتون؟'), ask('de', 'Ich bin Landwirt, wie mache ich mit?')],
       landText: (() => { state.currentLang = 'en'; return /currently not offered/.test(generateFaseelaResponse('Can I buy the land parcel?')); })(),
+      own: [ask('en', 'Who am I?'), ask('de', 'Wie wird das Wetter morgen in Berlin?'), ask('ar', 'ما هو الطقس اليوم؟')],
+      // Questions that used to reach the old rule set: none may promise land, deeds, cash, cards or insurance.
+      noPromises: ['Tell me about the escrow vault and arbitration', 'How does instant cash monetization work?', 'Do you accept Visa or Syriatel Cash?',
+        'What is the climate insurance?', 'كيف أحصل على سند الطابو؟', 'Wie funktioniert die Klimaversicherung?', 'hello']
+        .map((q) => { const html = generateFaseelaResponse(q); return /visa|mastercard|syriatel|cadastral|escrow|deed|insurance policy|cash monetization|طابو|تأمين|حساب أمانة|Grundbuch|Versicherungspolice/i.test(html.replace(/data-query="[^"]*"/g, '')) ? q : null; })
+        .filter(Boolean),
       chips: {}
     };
     for (const lang of ['ar', 'en', 'de']) {
@@ -295,8 +305,10 @@ try {
     land: ['land_off/de', 'land_off/en', 'land_off/ar'],
     money: ['not_investment/de', 'resale_off/en', 'reinvest_off/en'],
     flow: ['payment/de', 'oil/ar', 'account/en'],
-    noFalseHit: ['signup/ar', 'legacy/-', 'farmer/de'],
+    noFalseHit: ['signup/ar', 'fallback/ar', 'farmer/de'],
     landText: true,
+    own: ['own_account/en', 'fallback/de', 'fallback/ar'],
+    noPromises: [],
     chips: { ar: [10, 0], en: [10, 0], de: [10, 0] }
   }, 'assistant answers from the knowledge layer');
   assert.deepEqual(land, { enabled: false, flags: [false, false], track: 'mature', blocked: 2, investModalOpen: false,
@@ -721,6 +733,26 @@ try {
         out.payCopyBtn = !!document.querySelector('#local-pay-accounts button[data-account="SY00 TEST 1234"]');
         out.payReadyAfter = state.paymentReady;
         out.noDemoIban = !document.body.innerHTML.includes('SY98BBSF') && !document.body.innerHTML.includes('0944112233');
+        // Consent: without the box nothing is sent; an outdated document stops before the reservation; then the
+        // two documents are recorded (current versions) before the reservation is made.
+        document.getElementById('invest-gift-toggle').checked = false; investGiftToggled(false);
+        const before = window.FaseelaBackend.calls.length;
+        document.getElementById('invest-terms-ack').checked = false;
+        await confirmPurchase(); await wait(50);
+        out.consentBoxRequired = window.FaseelaBackend.calls.length === before;
+        out.consentLinks = [...document.querySelectorAll('label[for="invest-terms-ack"] a')].map((a) => a.getAttribute('href'));
+        document.getElementById('invest-terms-ack').checked = true;
+        window.__consentOutdated = true;
+        await confirmPurchase(); await wait(50);
+        out.outdatedStops = !window.FaseelaBackend.calls.slice(before).some((c) => c[0] === 'createInvestmentRequest');
+        window.__consentOutdated = false;
+        openInvestModal('tree_01'); await wait(100);
+        document.getElementById('invest-risk-ack').checked = true;
+        document.getElementById('invest-terms-ack').checked = true;
+        state.selectedReceiptFile = new File(['x'], 'r.png', { type: 'image/png' });
+        const mark = window.FaseelaBackend.calls.length;
+        await confirmPurchase(); await wait(100);
+        out.consentOrder = window.FaseelaBackend.calls.slice(mark).map((c) => c[0] + (c[0] === 'recordConsent' ? ':' + c[1].kind + ':' + c[1].version : ''));
         state.selectedReceiptFile = null;
         closeModal('modal-invest');
         // P2P stays demo-only: tab hidden, modal refuses, chatbot answer gated.
@@ -927,6 +959,10 @@ try {
       assert.equal(result.payUnconfigured, true, 'unconfigured accounts show a blocking notice');
       assert.equal(result.payReady, false);
       assert.equal(result.purchaseBlocked, true, 'purchase refused before reservation while accounts are unknown');
+      assert.equal(result.consentBoxRequired, true, 'no call without the consent box');
+      assert.deepEqual(result.consentLinks, ['legal/patenschaft.html', 'legal/datenschutz.html'], 'the consent links real documents');
+      assert.equal(result.outdatedStops, true, 'an outdated document stops before any reservation');
+      assert.deepEqual(result.consentOrder.slice(0, 3), ['recordConsent:sponsorship:2026-11-17', 'recordConsent:privacy:2026-11-17', 'createInvestmentRequest'], 'consent is recorded before the reservation');
       assert.equal(result.payRendered, true, 'server-managed accounts rendered with note');
       assert.equal(result.payCopyBtn, true, 'copy button carries the account');
       assert.equal(result.payReadyAfter, true);

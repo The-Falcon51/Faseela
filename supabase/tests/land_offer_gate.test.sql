@@ -23,6 +23,7 @@ begin
   select '00000000-0000-0000-0000-000000000000', u.id, 'authenticated', 'authenticated', u.email, '', now(), '{}'::jsonb, jsonb_build_object('display_name', u.n, 'requested_role', 'investor'), now(), now()
   from (values (c_a, 'ga@t.faseela.invalid', 'Gate Admin'), (c_i, 'gi@t.faseela.invalid', 'Gate Investor')) u(id, email, n);
   insert into private.user_roles (user_id, role) values (c_a, 'admin');
+  insert into private.consent_records (user_id, kind, version, source) select u.id, k, private.consent_version(k), 'checkout' from auth.users u cross join unnest(array['privacy', 'sponsorship']) k on conflict do nothing; -- users of this suite accepted the current documents (migration 51)
   delete from private.app_settings where key = 'land_offer_enabled';
 
   -- Off by default: every truthy spelling of the land flag is refused before anything is reserved.

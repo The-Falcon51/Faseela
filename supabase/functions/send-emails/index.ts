@@ -44,7 +44,7 @@ function layout(r: Rendered, marketing = false): string {
 <tr><td>${cta}</td></tr>
 <tr><td style="padding:0 28px;"><hr style="border:0;border-top:1px solid #e7e5e4;margin:0;"></td></tr>
 <tr><td dir="ltr" style="padding:16px 28px 24px;text-align:left;font-family:'Plus Jakarta Sans','Segoe UI',Tahoma,sans-serif;font-size:14px;line-height:1.7;">${r.en}</td></tr>
-<tr><td style="padding:12px 28px 24px;text-align:center;font-size:11px;color:#78716c;">[PLATZHALTER: Betreiber, Anschrift] · <a href="${APP_URL}/legal/datenschutz.html" style="color:#78716c;">Datenschutz</a> · <a href="${APP_URL}/legal/impressum.html" style="color:#78716c;">Impressum</a>${unsubscribe}</td></tr>
+<tr><td style="padding:12px 28px 24px;text-align:center;font-size:11px;color:#78716c;">Faseela · <a href="${APP_URL}/legal/impressum.html" style="color:#78716c;">Impressum / بيانات الناشر</a> · <a href="${APP_URL}/legal/datenschutz.html" style="color:#78716c;">Datenschutz / الخصوصية</a>${unsubscribe}</td></tr>
 </table></td></tr></table></body></html>`;
 }
 

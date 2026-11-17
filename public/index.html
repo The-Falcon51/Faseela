@@ -42,13 +42,13 @@
   <title>فسيلة | المنصة التشاركية لأشجار الزيتون في سوريا</title>
   <!-- Fonts: self-hosted (scripts/build-web.cjs), no Google Fonts requests -->
   <link rel="preload" href="fonts/cairo-arabic-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
-  <meta name="faseela-build" content="1487c5be4b49">
+  <meta name="faseela-build" content="5401f7d63b50">
   <link rel="stylesheet" href="fonts/fonts.css">
   <!-- Styles: Tailwind is prebuilt by scripts/build-web.cjs (no runtime CDN) -->
-  <link rel="stylesheet" href="assets/tailwind.css?v=1487c5be4b49">
+  <link rel="stylesheet" href="assets/tailwind.css?v=5401f7d63b50">
   <!-- Lucide Icons (self-hosted, version pinned in package.json) -->
   <script src="vendor/lucide.min.js"></script>
-  <script src="events.js?v=1487c5be4b49"></script>
+  <script src="events.js?v=5401f7d63b50"></script>
   <style>
     :root {
       --sat: env(safe-area-inset-top, 0px);
@@ -4347,11 +4347,12 @@
               </div>
             </div>
 
-            <!-- Terms & Solidarity Charter Agreement -->
+            <!-- Privacy policy acknowledgement: sent with the sign-up and stored as a consent record (migration 51) -->
             <div class="flex items-start gap-2 pt-1 text-[11px] text-stone-600 dark:text-stone-400">
               <input type="checkbox" id="reg-terms-check" required class="mt-0.5 rounded border-stone-300 text-olive-700 focus:ring-olive-600">
               <label for="reg-terms-check" class="cursor-pointer select-none leading-relaxed">
-                <span data-i18n="auth_reg_terms_agree">أوافق على ميثاق الكفالة التشاركية الزراعي وشروط حيازة الأراضي الكاداسترية</span>
+                <span data-i18n="auth_reg_privacy_1">قرأت</span>
+                <a href="legal/datenschutz.html" target="_blank" rel="noopener" class="text-olive-700 dark:text-olive-300 font-bold underline" data-i18n="auth_reg_privacy_link">سياسة الخصوصية</a><span data-i18n="auth_reg_privacy_2">.</span>
               </label>
             </div>
           </div>
@@ -7968,24 +7969,7 @@
 
     <!-- Quick Chips Navigation (Fixed Height) -->
     <div id="chat-quick-chips" class="p-2.5 bg-stone-50 dark:bg-stone-800/80 border-b border-stone-200 dark:border-stone-700 flex gap-1.5 overflow-x-auto text-[11px] whitespace-nowrap scrollbar-none flex-shrink-0">
-      <button data-click="askFaseelaQuick('كيف أسدد عبر سيريتل كاش أو البنوك المحلية؟')" class="bg-white dark:bg-stone-700 hover:bg-olive-50 dark:hover:bg-stone-600 border border-stone-200 dark:border-stone-600 text-stone-800 dark:text-stone-200 px-2.5 py-1 rounded-full font-semibold transition-all shadow-2xs">
-        💳 الدفع بسيريتل كاش
-      </button>
-      <button data-click="askFaseelaQuick('كم لتر زيت تنتج الشجرة المعمرة وما هي الحسابات المالية؟')" class="bg-white dark:bg-stone-700 hover:bg-olive-50 dark:hover:bg-stone-600 border border-stone-200 dark:border-stone-600 text-stone-800 dark:text-stone-200 px-2.5 py-1 rounded-full font-semibold transition-all shadow-2xs">
-        🫒 إنتاج الزيت والمحاصيل
-      </button>
-      <button data-click="askFaseelaQuick('ما هي أصناف الزيتون السوري والفرق بينها؟')" class="bg-white dark:bg-stone-700 hover:bg-olive-50 dark:hover:bg-stone-600 border border-stone-200 dark:border-stone-600 text-stone-800 dark:text-stone-200 px-2.5 py-1 rounded-full font-semibold transition-all shadow-2xs">
-        🌿 الأصناف (صوراني/خضيري)
-      </button>
-      <button data-click="askFaseelaQuick('كيف تعمل المعاصر الحديثة وما هي شروط فحص الحموضة؟')" class="bg-white dark:bg-stone-700 hover:bg-olive-50 dark:hover:bg-stone-600 border border-stone-200 dark:border-stone-600 text-stone-800 dark:text-stone-200 px-2.5 py-1 rounded-full font-semibold transition-all shadow-2xs">
-        ⚙️ فحص المعاصر والجودة
-      </button>
-      <button data-click="askFaseelaQuick('كيف يستلم المغترب حصته من زيت الزيتون في الخارج؟')" class="bg-white dark:bg-stone-700 hover:bg-olive-50 dark:hover:bg-stone-600 border border-stone-200 dark:border-stone-600 text-stone-800 dark:text-stone-200 px-2.5 py-1 rounded-full font-semibold transition-all shadow-2xs">
-        📦 شحن الزيت للخارج
-      </button>
-      <button data-click="askFaseelaQuick('هل يمكنني زيارة الشجرة على أرض الواقع؟')" class="bg-white dark:bg-stone-700 hover:bg-olive-50 dark:hover:bg-stone-600 border border-stone-200 dark:border-stone-600 text-stone-800 dark:text-stone-200 px-2.5 py-1 rounded-full font-semibold transition-all shadow-2xs">
-        📍 زيارة الشجرة والـ GPS
-      </button>
+      <!-- Filled by renderChatQuickChips() with topics of the assistant knowledge (public/assistant-knowledge.js). -->
     </div>
 
     <!-- Scrollable Messages Area with Scroll-To-Bottom Floating Button -->
@@ -8801,16 +8785,17 @@
           </label>
         </div>
 
-        <!-- Legal Agreement Review Banner -->
-        <div class="p-2.5 rounded-xl bg-stone-100 dark:bg-stone-800/80 border border-stone-200 dark:border-stone-700 text-[11px] text-stone-600 dark:text-stone-300 text-start leading-relaxed flex items-start gap-2">
-          <i data-lucide="scale" class="w-4 h-4 text-olive-700 dark:text-olive-400 flex-shrink-0 mt-0.5"></i>
-          <div id="invest-legal-notice-text">
-            <span data-i18n="invest_legal_agree_prefix">بالتأكيد، أنت توافق على أحكام </span>
-            <button type="button" data-click="openLegalContract('investor')" class="text-olive-700 dark:text-olive-400 font-bold underline hover:text-olive-900 cursor-pointer" data-i18n="invest_legal_agree_deed">عقد كفالة وحيازة المقسم (5 م²)</button>
-            <span data-i18n="invest_legal_agree_and"> و</span>
-            <button type="button" data-click="openLegalContract('charter')" class="text-purple-700 dark:text-purple-400 font-bold underline hover:text-purple-900 cursor-pointer" data-i18n="invest_legal_agree_escrow">مراجعة الدفعات البنكية (Payment Review)</button>.
-          </div>
-        </div>
+        <!-- Consent: recorded on the server before the reservation (migration 51) -->
+        <label for="invest-terms-ack" class="p-2.5 rounded-xl bg-stone-100 dark:bg-stone-800/80 border border-stone-200 dark:border-stone-700 text-[11px] text-stone-700 dark:text-stone-200 text-start leading-relaxed flex items-start gap-2 cursor-pointer">
+          <input id="invest-terms-ack" type="checkbox" class="mt-0.5 w-4 h-4 accent-olive-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-olive-700">
+          <span>
+            <span data-i18n="invest_terms_ack_1">قرأت</span>
+            <a href="legal/patenschaft.html" target="_blank" rel="noopener" class="text-olive-700 dark:text-olive-300 font-bold underline" data-i18n="invest_terms_doc">وصف خدمة الكفالة</a>
+            <span data-i18n="invest_terms_ack_2">و</span>
+            <a href="legal/datenschutz.html" target="_blank" rel="noopener" class="text-olive-700 dark:text-olive-300 font-bold underline" data-i18n="invest_terms_privacy">سياسة الخصوصية</a>
+            <span data-i18n="invest_terms_ack_3">وأوافق عليهما.</span>
+          </span>
+        </label>
 
         <button data-click="confirmPurchase()" class="w-full bg-olive-800 hover:bg-olive-900 text-white py-3.5 rounded-2xl font-black text-sm shadow-xl transition-all flex items-center justify-center gap-2">
           <i data-lucide="check-circle" class="w-5 h-5"></i>
@@ -9254,9 +9239,9 @@
   </nav>
 
   <!-- ================= JAVASCRIPT LOGIC & STATE ================= -->
-  <script src="app.js?v=1487c5be4b49"></script>
-  <script src="assistant-knowledge.js?v=1487c5be4b49"></script>
-  <script src="shop.js?v=1487c5be4b49"></script>
+  <script src="app.js?v=5401f7d63b50"></script>
+  <script src="assistant-knowledge.js?v=5401f7d63b50"></script>
+  <script src="shop.js?v=5401f7d63b50"></script>
 
   <!-- ================= 1. MODAL: FOUNDER EDIT TREE & PRICING ================= -->
   <div id="modal-fndr-edit-tree" role="dialog" aria-modal="true" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 mobile-sheet-overlay">
@@ -10670,6 +10655,6 @@
     </div>
   </div>
 
-  <script type="module" src="./supabase-client.mjs?v=1487c5be4b49"></script>
+  <script type="module" src="./supabase-client.mjs?v=5401f7d63b50"></script>
 </body>
 </html>

@@ -248,3 +248,118 @@ function faseelaSpeechLang(text, arabicCode) {
   if (state.currentLang === 'de' && /[äöüß]|\b(der|die|das|und|ist|nicht|Sie|ein|eine)\b/.test(String(text || ''))) return 'de-DE';
   return 'en-US';
 }
+
+// ============================================================
+// Answers outside the knowledge topics
+// ============================================================
+// Only two kinds of answer exist besides the topics above: the signed-in person's own data (account, own shares),
+// read from the real session, and an honest fallback that points to the topics, the service description and the
+// legal notice. Nothing here describes an offer; everything the platform offers is in FASEELA_FAQ.
+
+const FASEELA_OWN_KEYS = {
+  account: ['who am i', 'my account details', 'my profile', 'my role', 'wer bin ich', 'mein profil', 'meine rolle', 'meine kontodaten', 'من انا', 'ملفي', 'دوري', 'بيانات حسابي'],
+  shares: ['my trees', 'my shares', 'my sponsorships', 'what do i own', 'meine baeume', 'meine anteile', 'meine patenschaften', 'اشجاري', 'حصصي', 'كفالاتي']
+};
+const FASEELA_ROLE_LABELS = {
+  investor: { ar: 'كافل', en: 'Sponsor', de: 'Pate' },
+  farmer: { ar: 'مزارع شريك', en: 'Partner farmer', de: 'Partner-Landwirt' },
+  mill_operator: { ar: 'معصرة شريكة', en: 'Partner mill', de: 'Partner-Ölmühle' },
+  mill_owner: { ar: 'معصرة شريكة', en: 'Partner mill', de: 'Partner-Ölmühle' },
+  finance_admin: { ar: 'فريق المالية', en: 'Finance team', de: 'Finanzteam' },
+  quality_auditor: { ar: 'فريق الجودة', en: 'Quality team', de: 'Qualitätsteam' },
+  admin: { ar: 'إدارة المنصة', en: 'Platform administration', de: 'Plattform-Verwaltung' }
+};
+const FASEELA_OWN_TEXT = {
+  signin: { ar: 'سجّل الدخول لعرض بيانات حسابك وكفالاتك.', en: 'Sign in to see your account and your sponsorships.', de: 'Melden Sie sich an, um Ihr Konto und Ihre Patenschaften zu sehen.' },
+  account: { ar: 'بيانات حسابك', en: 'Your account', de: 'Ihr Konto' },
+  name: { ar: 'الاسم', en: 'Name', de: 'Name' },
+  email: { ar: 'البريد الإلكتروني', en: 'E-mail', de: 'E-Mail' },
+  role: { ar: 'الصفة', en: 'Role', de: 'Rolle' },
+  verified: { ar: 'تم تأكيد البريد الإلكتروني', en: 'E-mail confirmed', de: 'E-Mail bestätigt' },
+  unverified: { ar: 'البريد الإلكتروني غير مؤكد بعد', en: 'E-mail not confirmed yet', de: 'E-Mail noch nicht bestätigt' },
+  profile: { ar: 'إدارة الملف', en: 'Manage profile', de: 'Profil verwalten' },
+  dashboard: { ar: 'لوحتي', en: 'My dashboard', de: 'Mein Bereich' },
+  noShares: { ar: 'لا توجد لديك كفالة فعالة بعد.', en: 'You have no active sponsorship yet.', de: 'Sie haben noch keine aktive Patenschaft.' },
+  sharesHead: { ar: 'كفالاتك الفعالة', en: 'Your active sponsorships', de: 'Ihre aktiven Patenschaften' },
+  sharesUnit: { ar: 'حصة', en: 'share(s)', de: 'Anteil(e)' },
+  browse: { ar: 'تصفح الأشجار', en: 'Browse trees', de: 'Bäume ansehen' },
+  fallback: {
+    ar: 'لا أملك جواباً موثوقاً على هذا السؤال. أجيب فقط عمّا تقدمه المنصة فعلاً: اختر أحد المواضيع في الأعلى، أو اقرأ وصف خدمة الكفالة، أو تواصل معنا عبر بيانات الناشر.',
+    en: 'I do not have a reliable answer to this question. I only answer about what the platform really offers: pick one of the topics above, read the sponsorship service description, or contact us through the legal notice.',
+    de: 'Darauf habe ich keine verlässliche Antwort. Ich antworte nur zu dem, was die Plattform wirklich anbietet: Wählen Sie oben ein Thema, lesen Sie die Leistungsbeschreibung der Patenschaft oder schreiben Sie uns über das Impressum.'
+  },
+  terms: { ar: 'وصف خدمة الكفالة', en: 'Service description', de: 'Leistungsbeschreibung' },
+  contact: { ar: 'بيانات الناشر والتواصل', en: 'Legal notice and contact', de: 'Impressum und Kontakt' }
+};
+
+function faseelaOwnTopic(question) {
+  const q = ` ${faseelaFaqNormalize(question)} `;
+  return Object.keys(FASEELA_OWN_KEYS).find((topic) => FASEELA_OWN_KEYS[topic].some((key) => faseelaFaqPattern(key).test(q))) || null;
+}
+
+// Written out in full so the handler inventory test (tests/e2e/handlers.e2e.mjs) can check every data-click.
+const FASEELA_OWN_CLICKS = {
+  signin: 'data-click="openAuthModal()"',
+  profile: `data-click="openAuthModal('identity')"`,
+  dashboard: `data-click="navigateTo('dashboard')"`,
+  market: `data-click="navigateTo('marketplace')"`
+};
+function faseelaButton(label, action) {
+  return `<button type="button" ${FASEELA_OWN_CLICKS[action]} class="bg-olive-800 hover:bg-olive-900 text-white px-3 py-1.5 rounded-lg text-xs font-bold cursor-pointer">${escapeHtml(label)}</button>`;
+}
+
+function faseelaWrap(lang, id, inner) {
+  return `<div class="space-y-2 text-start" lang="${lang}" dir="${lang === 'ar' ? 'rtl' : 'ltr'}" data-faq="${id}">${inner}</div>`;
+}
+
+/** The signed-in person's own data: account facts and active shares, read from the real session only. */
+function faseelaOwnDataAnswer(question, lang) {
+  const topic = faseelaOwnTopic(question);
+  if (!topic) return null;
+  const T = (key) => FASEELA_OWN_TEXT[key][lang] || FASEELA_OWN_TEXT[key].en;
+  const user = state.currentUser;
+  if (!user || !state.serverMode) {
+    return faseelaWrap(lang, `own_${topic}`, `<p class="text-stone-700 dark:text-stone-200">${escapeHtml(T('signin'))}</p>${faseelaButton(FASEELA_FAQ_LABELS.signin[lang] || FASEELA_FAQ_LABELS.signin.en, 'signin')}`);
+  }
+  if (topic === 'account') {
+    const role = (FASEELA_ROLE_LABELS[user.role] || FASEELA_ROLE_LABELS.investor)[lang];
+    const rows = [[T('name'), user.name || ''], [T('email'), user.email || ''], [T('role'), role], ['', user.email_verified === false ? T('unverified') : T('verified')]];
+    return faseelaWrap(lang, 'own_account', `
+      <p class="font-bold text-stone-900 dark:text-stone-100">${escapeHtml(T('account'))}</p>
+      <ul class="text-stone-700 dark:text-stone-200 text-[11px] space-y-0.5">${rows.map(([k, v]) => `<li>${k ? `<strong>${escapeHtml(k)}:</strong> ` : ''}${escapeHtml(v)}</li>`).join('')}</ul>
+      <div class="flex flex-wrap gap-1.5">${faseelaButton(T('profile'), 'profile')}${faseelaButton(T('dashboard'), 'dashboard')}</div>`);
+  }
+  const active = (state.userShares || []).filter((s) => s.source === 'server' && s.status === 'active' && s.user_id === user.id);
+  if (!active.length) {
+    return faseelaWrap(lang, 'own_shares', `<p class="text-stone-700 dark:text-stone-200">${escapeHtml(T('noShares'))}</p>${faseelaButton(T('browse'), 'market')}`);
+  }
+  const byTree = new Map();
+  active.forEach((s) => byTree.set(s.tree_id, (byTree.get(s.tree_id) || 0) + (Number(s.shares_count) || 1)));
+  const lines = [...byTree.entries()].map(([treeId, count]) => {
+    const tree = (state.trees || []).find((t) => t.id === treeId);
+    const name = tree ? (lang === 'ar' ? tree.name : (tree.name_en || tree.name)) : treeId;
+    return `<li><strong>${escapeHtml(name || treeId)}</strong>: ${count} ${escapeHtml(T('sharesUnit'))}</li>`;
+  }).join('');
+  return faseelaWrap(lang, 'own_shares', `
+    <p class="font-bold text-stone-900 dark:text-stone-100">${escapeHtml(T('sharesHead'))}</p>
+    <ul class="text-stone-700 dark:text-stone-200 text-[11px] space-y-0.5">${lines}</ul>
+    ${faseelaButton(T('dashboard'), 'dashboard')}`);
+}
+
+/** When no topic and no own-data question matches: say so, and point to what is reliable. */
+function faseelaFallbackAnswer(lang) {
+  const T = (key) => FASEELA_OWN_TEXT[key][lang] || FASEELA_OWN_TEXT[key].en;
+  const link = (href, label) => `<a href="${href}" target="_blank" rel="noopener" class="inline-block bg-stone-200 dark:bg-stone-700 text-stone-900 dark:text-stone-100 px-3 py-1.5 rounded-lg text-xs font-bold">${escapeHtml(label)}</a>`;
+  return faseelaWrap(lang, 'fallback', `
+    <p class="text-stone-700 dark:text-stone-200 leading-relaxed">${escapeHtml(T('fallback'))}</p>
+    <div class="flex flex-wrap gap-1.5">${link('legal/patenschaft.html', T('terms'))}${link('legal/impressum.html', T('contact'))}</div>`);
+}
+
+/** The assistant's answer to a question: a knowledge topic, the person's own data, or the honest fallback. */
+function generateFaseelaResponse(rawQ) {
+  const question = String(rawQ || '').trim();
+  const topicAnswer = faseelaFaqAnswer(question);
+  if (topicAnswer) return topicAnswer;
+  const lang = faseelaFaqLang(question);
+  return faseelaOwnDataAnswer(question, lang) || faseelaFallbackAnswer(lang);
+}

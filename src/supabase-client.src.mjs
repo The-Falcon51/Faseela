@@ -301,7 +301,7 @@ async function signIn(email, password) {
   return data.user;
 }
 
-async function register({ email, password, displayName, phone, requestedRole, region }) {
+async function register({ email, password, displayName, phone, requestedRole, region, consents }) {
   const role = requestedRole === 'mill_owner' ? 'mill_operator'
     : ['farmer', 'mill_operator'].includes(requestedRole) ? requestedRole : 'investor';
   registrationInProgress = true;
@@ -316,7 +316,9 @@ async function register({ email, password, displayName, phone, requestedRole, re
           display_name: String(displayName || '').trim(),
           phone: String(phone || '').trim(),
           region: String(region || '').trim(),
-          requested_role: role
+          requested_role: role,
+          // Documents ticked in the form; the sign-up trigger stores them as consent records (current versions only).
+          consents: Array.isArray(consents) ? consents.slice(0, 5).map((c) => ({ kind: String(c.kind || ''), version: String(c.version || '') })) : []
         }
       }
     });
@@ -857,6 +859,10 @@ const reviewOrderPayment = callable('review_order_payment');
 const adminSetOrderFulfilment = callable('admin_set_order_fulfilment');
 const adminOrderContact = callable('admin_order_contact');
 const recordOrderScreening = callable('record_order_screening');
+// Consent records (migration 51)
+const recordConsent = callable('record_consent');
+const myConsents = callableNoArg('my_consents');
+const consentVersions = callableNoArg('consent_versions');
 const orderPayer = callable('order_payer');
 const refundOrder = callable('refund_order');
 const recordFarmPayout = callable('record_farm_payout');
@@ -1040,6 +1046,9 @@ const api = Object.freeze({
   adminSetOrderFulfilment,
   adminOrderContact,
   recordOrderScreening,
+  recordConsent,
+  myConsents,
+  consentVersions,
   orderPayer,
   refundOrder,
   recordFarmPayout,
