@@ -47,6 +47,7 @@ window.FaseelaFirebase = window.FaseelaBackend = {
   signFieldMedia: async (paths) => { window.FaseelaBackend.calls.push(['signFieldMedia', paths]); return paths.map((p, i) => ({ path: p, url: i === 0 ? 'https://riyvlhlhzxxerlwqoxsy.supabase.co/storage/v1/object/sign/field-media/a.jpg?token=t' : null, error: i === 0 ? null : 'Object not found' })); },
   reviewFarmerUpdate: async (p) => { window.FaseelaBackend.calls.push(['reviewFarmerUpdate', p]); return { updateId: p.updateId, status: 'published' }; },
   signOut: async () => { window.FaseelaBackend.calls.push(['signOut']); }, exportMyData: async () => ({ shares: [] }),
+  signOutOtherSessions: async () => { window.FaseelaBackend.calls.push(['signOutOtherSessions']); },
   pushState: async () => { if (window.__pushStateDown) throw Object.assign(new Error('down'), { code: 'unavailable' }); return { data: { enabled: localStorage.getItem('__pushOff') !== '1', activeDevices: 0 } }; },
   registerPushToken: async (p) => { window.FaseelaBackend.calls.push(['registerPushToken', p]); if (window.__pushServerDown) throw Object.assign(new Error('down'), { code: 'unavailable' }); return { data: { registered: true, activeDevices: 1 } }; },
   unregisterPushToken: async (p) => { window.FaseelaBackend.calls.push(['unregisterPushToken', p]); if (window.__pushServerDown) throw Object.assign(new Error('down'), { code: 'unavailable' }); return { data: { unregistered: true, activeDevices: 0 } }; },
@@ -132,10 +133,15 @@ try {
       sampleGone: [first.mill_name, first.mill_batch_serial, first.harvest_batch_acidity, first.health_status].join('') === '' && first.maintenance_logs.length === 0 && first.harvest_status === 'growing',
       farmFromDb: first.farm_name_en, farmless: offered.find((tr) => tr.id === 'tree_02').farm_name_en,
       counts: Object.fromEntries([...document.querySelectorAll('[data-crop-count]')].map((el) => [el.getAttribute('data-crop-count'), el.classList.contains('hidden') ? 'hidden' : el.textContent])),
-      featured: state.featuredSeasonTreeId, calculator: [...document.getElementById('roi-region-select').options].map((o) => o.value)
+      featured: state.featuredSeasonTreeId, calculator: [...document.getElementById('roi-region-select').options].map((o) => o.value),
+      heroStats: ['hero-stat-trees', 'hero-stat-farms', 'hero-stat-regions'].map((id) => document.getElementById(id).textContent),
+      inventedNumbers: ['2,400', '45+', '6,900', '~25%', '840 شجرة'].filter((n) => [...document.querySelectorAll('#page-home *')].some((el) => el.childElementCount === 0 && el.textContent.includes(n) && el.getClientRects().length > 0))
     };
     return out;
   });
+  assert.deepEqual(catalog.heroStats, [String(catalog.offered.length), '1', '1'], 'landing figures are counted from the catalogue (3 trees, 1 farm, 1 region in the fixture)');
+  assert.deepEqual(catalog.inventedNumbers, [], 'no invented headline numbers on the landing page');
+  delete catalog.heroStats; delete catalog.inventedNumbers;
   // error and retry (the client object is frozen, so the failure is produced at the network level; 404 is the status the error filter above ignores)
   const failing = (r) => r.fulfill({ status: 404, contentType: 'application/json', body: '{"message":"not found"}' });
   await page.route('**/rest/v1/trees_public*', failing);
@@ -757,6 +763,14 @@ try {
         closeModal('modal-invest');
         // P2P stays demo-only: tab hidden, modal refuses, chatbot answer gated.
         out.tradeTabHidden = document.getElementById('btn-investor-tab-trade').classList.contains('hidden');
+        const visible = (el) => !!el && el.getClientRects().length > 0;
+        out.samplesHidden = ['btn-investor-tab-harvest', 'btn-investor-tab-certs', 'dash-carbon-offset', 'dash-land-area'].filter((id) => visible(document.getElementById(id)))
+          .concat([...document.querySelectorAll('[data-click="openEsgCertificateModal()"], [data-click="openInvestorTaxStatement()"], [data-click^="openLabQrPassportModal"]')].filter(visible).map((b) => b.getAttribute('data-click')));
+        switchInvestorSubTab('harvest'); await wait(50);
+        out.harvestForced = !document.getElementById('panel-investor-harvest').classList.contains('hidden');
+        switchInvestorSubTab('portfolio');
+        await revokeAllOtherSessions(); await wait(20);
+        out.otherSessions = window.FaseelaBackend.calls.filter((c) => c[0] === 'signOutOtherSessions').length;
         switchInvestorSubTab('trade'); await wait(50);
         out.tradePanelHidden = document.getElementById('panel-investor-trade').classList.contains('hidden');
         openP2PListModal(); await wait(50);
@@ -968,6 +982,9 @@ try {
       assert.equal(result.payReadyAfter, true);
       assert.equal(result.noDemoIban, true, 'no hard-coded demo account numbers in the DOM');
       assert.equal(result.tradeTabHidden, true, 'P2P tab hidden in server mode');
+      assert.deepEqual(result.samplesHidden, [], 'no sample harvest, documents, carbon, land or certificate buttons in a real session');
+      assert.equal(result.harvestForced, false, 'the sample harvest tab cannot be opened in a real session');
+      assert.equal(result.otherSessions, 1, 'ending other sessions calls the server');
       assert.equal(result.tradePanelHidden, true, 'P2P panel never opens in server mode');
       assert.equal(result.p2pModalHidden, true, 'P2P modal refused in server mode');
     }

@@ -373,7 +373,7 @@
         auth_tab_assets: "أصولي ونشاطي",
         auth_tab_security: "درع الأمان",
         auth_profile_email_lbl: "البريد الإلكتروني المعتمد:",
-        auth_profile_phone_lbl: "رقم الهاتف الموثق عبر OTP:",
+        auth_profile_phone_lbl: "رقم الهاتف:",
         assets_panel_title: "الأصول والأنشطة المرتبطة بحسابك مباشرة:",
         auth_quick_switch_title: "تبديل الحساب التجريبي بنقرة واحدة (Quick Switcher):",
         auth_tab_prefs: "التفضيلات",
@@ -406,9 +406,9 @@
         legal_tab_farmer: "عقد الرعاية الفلاحية",
         legal_tab_mill: "ميثاق جودة المعاصر",
         legal_btn_print: "طباعة العقد الرسمي والوثيقة المعتمدة (Print / PDF)",
-        footer_legal_title: "العقود والمواثيق الرسمية",
+        footer_legal_title: "معلومات قانونية",
         footer_link_charter: "الميثاق ومراجعة الدفعات (Payment Review)",
-        footer_link_investor_contract: "عقد حيازة الأشجار (5 م² طابو)",
+        footer_link_investor_contract: "وصف خدمة الكفالة",
         footer_link_farmer_contract: "عقد الشراكة والرعاية الفلاحية",
         footer_link_mill_contract: "ميثاق المعاصر والفحص المخبري",
         nav_home: "الرئيسية",
@@ -1707,9 +1707,9 @@
         hero_desc: "اشترِ حصة موثقة في شجرة زيتون عريقة في سوريا، تابع نموها ورعايتها، وراقب عصر ثمارها في أحدث المعاصر المعتمدة مع شهادات جودة مخبرية ونسب حموضة موثّقة مخبرياً، واستلم زيتك البكر أو محاصيلك أينما كنت.",
         hero_btn_explore: "تصفح سوق الأشجار المتاحة",
         hero_btn_chat: "استشر 'فسيلة' فوراً",
-        hero_stat_1_lbl: "شجرة موثقة بنظام GPS",
-        hero_stat_2_lbl: "نسبة حموضة الزيت (بكر ممتاز)",
-        hero_stat_3_lbl: "عصر بارد بمعاصر معتمدة",
+        hero_stat_1_lbl: "شجرة متاحة للكفالة",
+        hero_stat_2_lbl: "مزرعة شريكة",
+        hero_stat_3_lbl: "منطقة",
         hero_stat_4_lbl: "عائلة مزارعة شريكة",
         hero_feat_badge: "شجرة الموسم المميزة",
         hero_feat_is_current: "شجرة الموسم المميزة حالياً",
@@ -1837,7 +1837,7 @@
 
         // Call To Action
         cta_title: "انضم إلى مجتمع كافلي ومزارعي فسيلة",
-        cta_desc: "أكثر من 2,400 شجرة زيتون موثقة بالـ GPS ومعاصر حديثة جاهزة لاستقبال مواسم الخير.",
+        cta_desc: "تصفح الأشجار المتاحة حالياً للكفالة واختر شجرتك.",
         cta_btn_market: "استكشف الأشجار المتاحة",
         cta_btn_mill: "بوابة أصحاب المعاصر",
 
@@ -1879,7 +1879,7 @@
 
         // Sponsor Dashboard
         dash_title: "محفظتي في فسيلة",
-        dash_subtitle: "متابعة أداء أشجارك، الحصص المملوكة، والشهادات الرقمية المعتمدة",
+        dash_subtitle: "متابعة أشجارك وحصصك وشهاداتك",
         dash_btn_cert: "عرض شهادة الملكية الرقمية",
         dash_btn_order_oil: "طلب تسليم عبوات الزيت",
         dash_harvest_hub_title: "جاهزية المحصول واستلام المحاصيل",
@@ -1889,11 +1889,11 @@
         dash_stat_invest: "إجمالي الكفالة",
         dash_stat_invest_sub: "حصة موثقة في شجرة معمرة",
         dash_stat_oil: "إنتاج الزيت المتوقع",
-        dash_stat_oil_sub: "موسم خريف 2026",
+        dash_stat_oil_sub: "تقدير غير ملزم",
         dash_stat_carbon: "أثر امتصاص الكربون",
         dash_stat_carbon_sub: "مساهمة بيئية مستدامة",
         dash_stat_trees: "الأشجار المملوكة",
-        dash_stat_trees_sub: "ريف طرطوس",
+        dash_stat_trees_sub: "أشجار تكفلها",
         dash_tab_trees: "أشجاري في فسيلة",
         dash_tab_txs: "سجل العمليات والمدفوعات",
         dash_tx_ref: "رقم المرجع",
@@ -2106,8 +2106,8 @@
         invest_modal_share_lbl: "اختر نسبة الحصة المطلوبة:",
         invest_modal_total_lbl: "المبلغ الإجمالي للكفالة:",
         invest_modal_oil_lbl: "حصتك المتوقعة من زيت الزيتون البكر:",
-        invest_modal_cert_lbl: "شهادة ملكية رقمية بالـ GPS:",
-        invest_modal_cert_val: "مشمولة فوراً",
+        invest_modal_cert_lbl: "شهادة الكفالة (PDF):",
+        invest_modal_cert_val: "بعد اعتماد الدفعة",
         invest_modal_pay_method_lbl: "طريقة الدفع والتسوية:",
         pay_method_card_title: "بطاقة مصرفية دولية (Visa / MasterCard)",
         pay_method_local_title: "تحويل محلي داخل سوريا (سيريتل كاش / بيمو / الهرم)",
@@ -2342,14 +2342,14 @@
         qr_passport_modal_sub: "معايير المجلس الدولي للزيتون (IOC Standards) • مصادقة مخبرية مشفرة",
         qr_passport_print_btn: "طباعة وتصدير الجواز (Print / PDF)",
         // Sponsor Modern Dashboard 4 Pillars
-        dash_badge_verified: "محفظة كفالات موثقة كاداسترياً • سندات رقمية",
+        dash_badge_verified: "كفالاتك على فسيلة",
         dash_btn_qr_pass: "جواز الزيت المخبري (IOC)",
-        dash_tab_portfolio: "أشجاري والملكيات الكاداسترية",
+        dash_tab_portfolio: "أشجاري وكفالاتي",
         dash_tab_harvest: "إدارة محاصيل المحصول والشحن",
         dash_tab_certs: "الوثائق الرسمية وجواز الجودة",
         dash_tab_finance: "المحفظة المالية والمدفوعات",
-        dash_trees_sub: "حصصك الزراعية المعتمدة وسندات الحيازة الكاداسترية المربوطة بالأقمار الصناعية",
-        dash_investments_title: "طلبات الكفالة والاكتتاب الجارية",
+        dash_trees_sub: "حصصك المعتمدة في أشجار المزارع الشريكة",
+        dash_investments_title: "طلبات الكفالة الجارية",
         dash_investments_sub: "متابعة حالة الحجز المؤقت، تدقيق إشعار الدفع، واعتماد الحصص وسندات الطابو",
         dash_investments_empty_title: "لا توجد طلبات كفالة جارية حالياً",
         dash_investments_empty_sub: "يمكنك استكشاف بستان الأشجار وحجز حصتك الزراعية مع سند الحيازة الكاداستري.",
@@ -2385,7 +2385,7 @@
         dash_certs_card_contract: "عقد الكفالة الزراعية الموثق",
         dash_certs_card_contract_desc: "عقد قانوني خاضع لأحكام القانون المدني السوري ومعتمد من غرف الزراعة.",
         dash_btn_view_contract: "قراءة العقد الموثق",
-        dash_tx_subtitle: "كافة إيصالات الدفع وعمليات التحويل الموثقة عبر سيريتل كاش والبطاقات",
+        dash_tx_subtitle: "دفعاتك بالتحويل وحالة مراجعتها",
         dash_tx_audit_badge: "سجل مدقق مالياً",
 
         // Farmer Modern Portal 5 Pillars
@@ -2462,7 +2462,7 @@
         calc_unit_econ_title: "نموذج الاستدامة الاقتصادية وتوزيع الإيراد:",
         calc_unit_econ_desc: "40% سلف مباشرة للمزارع • 15% معاصر حديثة وفحص مخبري • 12% تعبئة ونيتروجين • 8% صندوق تكافل ضد الكوارث • 25% ربحية وتشغيل المنصة",
         calc_net_roi_badge: "محصول سنوي متوقع ~25%",
-        calc_cta_invest_btn: "ابدأ الكفالة بهذه الباقة الآن (كفالة الشجرة وحرم الأرض)",
+        calc_cta_invest_btn: "ابدأ الكفالة الآن",
         econ_bar_farmer: "40% سلف زراعية مباشرة للمزارع",
         econ_bar_mill: "15% عصر على البارد وفحص IOC",
         econ_bar_packaging: "12% تعبئة ونيتروجين خامل",
@@ -2540,7 +2540,7 @@
         btn_print_cert: "طباعة / تصدير PDF",
         nav_notifications_title: "مركز الإشعارات والتنبيهات",
         notif_center_title: "مركز الإشعارات والتنبيهات",
-        notif_center_sub: "تحديثات حية ومباشرة لكافة العمليات المالية، الحقلية، وحركات الحساب",
+        notif_center_sub: "إشعارات حسابك وطلباتك",
         notif_unread_badge: "غير مقروء",
         notif_mark_all_read: "تحديد الكل كمقروء",
         notif_clear_all: "تفريغ المقروء",
@@ -4507,7 +4507,7 @@
         auth_tab_assets: "My Linked Assets",
         auth_tab_security: "Security Shield",
         auth_profile_email_lbl: "Authorized Email Address:",
-        auth_profile_phone_lbl: "OTP Verified Mobile Phone:",
+        auth_profile_phone_lbl: "Phone number:",
         assets_panel_title: "Active Assets & Operations Linked to Your Session:",
         auth_quick_switch_title: "1-Click Demo Account Switcher (Instant RBAC):",
         theme_light: "Light Mode",
@@ -4523,9 +4523,9 @@
         legal_tab_farmer: "Farmer Grove Accord",
         legal_tab_mill: "Cold Mill Quality Standard",
         legal_btn_print: "Print Official Contract & Certified Deed (Print / PDF)",
-        footer_legal_title: "Official Legal Contracts & Charters",
+        footer_legal_title: "Legal",
         footer_link_charter: "Charter & Payment Review Protection",
-        footer_link_investor_contract: "Tree Stewardship & Land Deed (5m²)",
+        footer_link_investor_contract: "Sponsorship service description",
         footer_link_farmer_contract: "Farmer Grove Partnership Contract",
         footer_link_mill_contract: "Mill Cold Extraction & Quality Accord",
         nav_home: "Home",
@@ -4545,9 +4545,9 @@
         hero_desc: "Own a certified fractional share of an authentic heritage olive tree in Syria. Follow its seasonal care, monitor cold pressing at modern certified mills with lab certificates, and receive your extra virgin olive oil or financial returns anywhere in the world.",
         hero_btn_explore: "Explore Available Trees",
         hero_btn_chat: "Ask 'Faseela' Now",
-        hero_stat_1_lbl: "GPS Documented Trees",
-        hero_stat_2_lbl: "Acidity (Extra Virgin)",
-        hero_stat_3_lbl: "Cold Pressed & Lab Certified",
+        hero_stat_1_lbl: "trees open for sponsorship",
+        hero_stat_2_lbl: "partner farms",
+        hero_stat_3_lbl: "regions",
         hero_stat_4_lbl: "Partner Farming Families",
         hero_feat_badge: "Featured Season Tree",
         hero_feat_is_current: "Current Featured Season Tree",
@@ -4675,7 +4675,7 @@
 
         // Call To Action
         cta_title: "Join the Faseela Stewardship Community",
-        cta_desc: "Over 2,400 GPS-documented trees and certified modern mills ready for authentic stewardship.",
+        cta_desc: "Browse the trees currently open for sponsorship and choose yours.",
         cta_btn_market: "Explore Available Trees",
         cta_btn_mill: "Olive Mills Portal",
 
@@ -4717,7 +4717,7 @@
 
         // Sponsor Dashboard
         dash_title: "My Faseela Portfolio",
-        dash_subtitle: "Track your trees, fractional shares, and verified digital certificates",
+        dash_subtitle: "Follow your trees, shares and certificates",
         dash_btn_cert: "View Digital Certificate",
         dash_btn_order_oil: "Order Olive Oil Delivery",
         dash_harvest_hub_title: "Harvest Readiness & Payout Hub",
@@ -4727,11 +4727,11 @@
         dash_stat_invest: "Total Invested",
         dash_stat_invest_sub: "Verified Tree Share",
         dash_stat_oil: "Expected Oil Yield",
-        dash_stat_oil_sub: "Autumn 2026 Season",
+        dash_stat_oil_sub: "non-binding estimate",
         dash_stat_carbon: "Carbon Offset Impact",
         dash_stat_carbon_sub: "Sustainable Green Contribution",
         dash_stat_trees: "Trees Owned",
-        dash_stat_trees_sub: "Tartus Countryside",
+        dash_stat_trees_sub: "trees you sponsor",
         dash_tab_trees: "My Trees in Faseela",
         dash_tab_txs: "Transactions & Receipts Log",
         dash_tx_ref: "Reference #",
@@ -4923,8 +4923,8 @@
         invest_modal_share_lbl: "Choose Desired Share Size:",
         invest_modal_total_lbl: "Total Stewardship Cost:",
         invest_modal_oil_lbl: "Expected Extra Virgin Oil Yield:",
-        invest_modal_cert_lbl: "GPS Verified Digital Certificate:",
-        invest_modal_cert_val: "Included Instantly",
+        invest_modal_cert_lbl: "Sponsorship certificate (PDF):",
+        invest_modal_cert_val: "after the payment is approved",
         invest_modal_pay_method_lbl: "Payment & Settlement Method:",
         pay_method_card_title: "International Card (Visa / MasterCard)",
         pay_method_local_title: "Local Syria Settlement (Syriatel Cash / BEMO / Al-Haram)",
@@ -5159,14 +5159,14 @@
         qr_passport_modal_sub: "International Olive Council Standards • Cryptographically Verified Lab Passport",
         qr_passport_print_btn: "Print / Export Lab Passport (PDF)",
         // Sponsor Modern Dashboard 4 Pillars
-        dash_badge_verified: "Cadastrally Verified Portfolio • Cryptographic Deeds",
+        dash_badge_verified: "Your sponsorships on Faseela",
         dash_btn_qr_pass: "EVOO Lab Passport (IOC)",
-        dash_tab_portfolio: "My Trees & Cadastral Deeds",
+        dash_tab_portfolio: "My trees & sponsorships",
         dash_tab_harvest: "Harvest Yields & Dispatch Hub",
         dash_tab_certs: "Official Certs & Lab Passport",
         dash_tab_finance: "Finance & Transaction Ledger",
-        dash_trees_sub: "Certified grove shares and cadastral land records linked to satellite telemetry",
-        dash_investments_title: "Active Sponsorship & Subscription Requests",
+        dash_trees_sub: "Your approved shares in trees of partner farms",
+        dash_investments_title: "Open sponsorship requests",
         dash_investments_sub: "Track temporary reservation status, payment receipt audit, and cadastral share issuance",
         dash_investments_empty_title: "No active sponsorship requests found",
         dash_investments_empty_sub: "Explore the marketplace to reserve grove shares with verified cadastral title deeds.",
@@ -5202,7 +5202,7 @@
         dash_certs_card_contract: "Certified Agricultural Partnership Contract",
         dash_certs_card_contract_desc: "Enforceable legal contract governed by Syrian Civil Code and certified by Chambers of Agriculture.",
         dash_btn_view_contract: "Read Certified Contract",
-        dash_tx_subtitle: "All payments, settlements, and receipt tokens processed via Syriatel Cash and international cards",
+        dash_tx_subtitle: "Your transfers and the status of their review",
         dash_tx_audit_badge: "Audited Financial Record",
 
         // Farmer Modern Portal 5 Pillars
@@ -5279,7 +5279,7 @@
         calc_unit_econ_title: "Unit Economics & Revenue Distribution Model:",
         calc_unit_econ_desc: "40% Direct Farmer Advance • 15% Cold Press & IOC Lab • 12% Nitrogen Packaging • 8% Relief Payment Review • 25% Platform Sustainability",
         calc_net_roi_badge: "Estimated annual oil share (not a return)",
-        calc_cta_invest_btn: "Start Sponsorship with this Package Now (Tree & Land Plot)",
+        calc_cta_invest_btn: "Start a sponsorship now",
         econ_bar_farmer: "40% Direct Farmer Advance",
         econ_bar_mill: "15% Cold-Press & IOC Lab",
         econ_bar_packaging: "12% Inert Nitrogen Packaging",
@@ -5357,7 +5357,7 @@
         btn_print_cert: "Print / Export PDF",
         nav_notifications_title: "Notifications & Alerts Hub",
         notif_center_title: "Notifications & Alerts Hub",
-        notif_center_sub: "Real-time updates across financial, agricultural, and security events",
+        notif_center_sub: "Notifications about your account and requests",
         notif_unread_badge: "Unread",
         notif_mark_all_read: "Mark All as Read",
         notif_clear_all: "Clear Read",
@@ -10532,6 +10532,15 @@
     }
 
     /** Trees on offer: only what the database lists. The built-in entries are templates, never offers. */
+    /** Landing page figures: counted from the trees the database lists, never fixed numbers. */
+    function updateHeroStats() {
+      const trees = catalogTrees();
+      const set = (id, value) => { const el = document.getElementById(id); if (el) el.textContent = state.catalogState === 'ready' ? String(value) : '–'; };
+      set('hero-stat-trees', trees.length);
+      set('hero-stat-farms', new Set(trees.map(tr => tr.farm_id).filter(Boolean)).size);
+      set('hero-stat-regions', new Set(trees.map(tr => tr.region).filter(Boolean)).size);
+    }
+
     function catalogTrees() {
       if (state.catalogState !== 'ready') return [];
       return (state.trees || []).filter(tr => tr.server_listed);
@@ -10563,6 +10572,7 @@
     }
     /** Number of offered trees per crop, written into the crop tabs (the numbers used to be fixed text). */
     function updateCropCounts() {
+      updateHeroStats();
       const offers = catalogTrees();
       document.querySelectorAll('[data-crop-count]').forEach(el => {
         const key = el.getAttribute('data-crop-count');
@@ -11522,21 +11532,24 @@
       showToast(state.currentLang !== 'ar' ? '✅ Profile updated successfully!' : '✅ تم حفظ وتحديث بيانات الملف الشخصي بنجاح!');
     }
 
-    function revokeAllOtherSessions() {
-      const nonce = 'REVOKE-' + Math.random().toString(36).substring(2, 8).toUpperCase();
-      if (!state.securityAuditTrail) state.securityAuditTrail = [];
-      state.securityAuditTrail.unshift({
-        id: nonce,
-        timestamp: new Date().toISOString(),
-        action: 'REVOKE_ALL_SESSIONS',
-        target_user_id: state.currentUser ? state.currentUser.id : 'anon',
-        auth_type: 'SECURITY_AUDITED'
-      });
-      playAcousticChime(620, 0.2);
-      showToast(state.currentLang !== 'ar' 
-        ? '🛡️ All other active sessions revoked. Current session secured.' 
-        : '🛡️ تم إنهاء وإبطال كافة الجلسات الأخرى بنجاح. جلستك الحالية فقط هي المصرح بها.');
-      renderAuthSessionModal();
+    async function revokeAllOtherSessions() {
+      const ar = state.currentLang === 'ar';
+      const de = state.currentLang === 'de';
+      if (!state.serverMode || !window.FaseelaFirebase?.signOutOtherSessions) {
+        showToast(ar ? 'متاح بعد تسجيل الدخول فقط.' : de ? 'Nur nach der Anmeldung verfügbar.' : 'Available after signing in only.');
+        return;
+      }
+      try {
+        await window.FaseelaFirebase.signOutOtherSessions();
+        showToast(ar ? 'تم إنهاء جلساتك على الأجهزة الأخرى. تبقى هذه الجلسة فعالة.'
+          : de ? 'Ihre Sitzungen auf anderen Geräten wurden beendet. Diese Sitzung bleibt aktiv.'
+          : 'Your sessions on other devices were ended. This session stays active.');
+      } catch (error) {
+        console.warn('[faseela] other sessions not ended:', error?.code || error?.message);
+        showToast(ar ? 'تعذر إنهاء الجلسات الأخرى. يرجى المحاولة مجدداً.'
+          : de ? 'Die anderen Sitzungen konnten nicht beendet werden. Bitte erneut versuchen.'
+          : 'The other sessions could not be ended. Please try again.');
+      }
     }
 
     function renderAuthSessionModal() {
@@ -11567,7 +11580,7 @@
       }
       
       const orgEl = document.getElementById('auth-card-org');
-      if (orgEl) orgEl.innerText = isEn ? "Syrian Arab Republic" : "الجمهورية العربية السورية";
+      if (orgEl) orgEl.innerText = state.currentLang === 'ar' ? 'عضوية فسيلة' : state.currentLang === 'de' ? 'Faseela-Mitgliedschaft' : 'Faseela membership';
 
       const titleEl = document.getElementById('auth-modal-title');
       if (titleEl) titleEl.innerText = isEn ? "Verified Digital Identity & Access Permit" : "بطاقة الهوية الرقمية وتصريح النفاذ";
@@ -13707,14 +13720,11 @@ function togglePasswordVisibility(inputId, iconId) {
       }
     }
 
+    // The former in-app contracts (Syrian law, arbitration, land tenure) were never agreed by anyone and are gone.
+    // Sponsors get the service description; farm and mill partnerships are agreed individually (contact via imprint).
     function openLegalContract(tabKey) {
-      renderLegalContractsContent();
-      const modal = document.getElementById('modal-legal-contracts');
-      if (modal) {
-        modal.classList.remove('hidden');
-        switchLegalContractTab(tabKey || 'charter');
-      }
-      if (typeof triggerHaptic === 'function') triggerHaptic('light');
+      const href = (tabKey === 'farmer' || tabKey === 'mill') ? 'legal/impressum.html' : 'legal/patenschaft.html';
+      window.open(href, '_blank', 'noopener');
     }
 
     function switchLegalContractTab(tabKey) {
@@ -15488,7 +15498,7 @@ function setMarketplaceViewMode(mode) {
         resetInvestExtras();
 
         showToast((isEn
-          ? `Investment request submitted${confirmedAmount ? ` (amount confirmed by server: $${confirmedAmount})` : ''}. Your payment proof is under finance review.`
+          ? `Sponsorship request submitted${confirmedAmount ? ` (amount confirmed by server: $${confirmedAmount})` : ''}. Your payment receipt is being reviewed.`
           : `تم تقديم طلب الكفالة${confirmedAmount ? ` (المبلغ المعتمد من الخادم: $${confirmedAmount})` : ''}. إشعار الدفع قيد المراجعة المالية.`) + extrasNote);
 
         if (typeof dispatchNotification === 'function') {
@@ -15496,9 +15506,9 @@ function setMarketplaceViewMode(mode) {
             role: 'investor',
             type: 'financial',
             title_ar: 'طلب كفالة قيد المراجعة',
-            title_en: 'Investment Request Submitted',
+            title_en: 'Sponsorship request under review',
             body_ar: `تم تسجيل حجزك لشجرة (${tree.tree_name}) وإرسال إشعار الدفع للتدقيق المالي.`,
-            body_en: `Reservation created for tree (${tree.tree_name_en || tree.tree_name}) and submitted for financial audit.`,
+            body_en: `Reservation created for tree (${tree.tree_name_en || tree.tree_name}); your payment receipt is being reviewed.`,
             icon: 'check-circle',
             badgeColor: 'emerald',
             action: 'dashboard'
@@ -16494,7 +16504,7 @@ function setMarketplaceViewMode(mode) {
         if (matureCards) matureCards.classList.remove('hidden');
         if (bundleBanner) bundleBanner.classList.remove('hidden');
         if (cropTabs) cropTabs.classList.remove('hidden');
-        if (countBadge) countBadge.innerText = state.currentLang !== 'ar' ? `${state.trees.length} Mature Trees` : `${state.trees.length} أشجار معمرة`;
+        if (countBadge) { const offered = catalogTrees().length; countBadge.innerText = state.currentLang === 'ar' ? `${offered} أشجار متاحة` : state.currentLang === 'de' ? `${offered} Bäume im Angebot` : `${offered} trees on offer`; }
       }
       lucide.createIcons();
     }
@@ -16645,6 +16655,8 @@ function setMarketplaceViewMode(mode) {
     function switchInvestorSubTab(tabName) {
       const tabs = ['portfolio', 'harvest', 'trade', 'certs', 'finance'];
       if (tabName === 'trade' && !p2pEnabled()) { showToast(t('p2p_beta_unavailable')); tabName = 'portfolio'; }
+      // Harvest and documents tabs hold samples only (fixed litres, cash offer, lab passport); real sessions use the portfolio.
+      if (state.serverMode && (tabName === 'harvest' || tabName === 'certs')) tabName = 'portfolio';
       document.getElementById('btn-investor-tab-trade')?.classList.toggle('hidden', !p2pEnabled());
       tabs.forEach(t => {
         const btn = document.getElementById(`btn-investor-tab-${t}`);
@@ -18033,7 +18045,7 @@ function setMarketplaceViewMode(mode) {
       openModal('modal-emergency-voice');
     }
 
-    function openMillBatchModal() {
+    async function openMillBatchModal() {
       if (!state.currentUser || (state.currentUser.role !== 'mill_owner' && state.currentUser.role !== 'admin')) {
         const reqRole = state.currentLang !== 'ar' ? 'Certified Mill Operator' : 'صاحب معصرة معتمد';
         const msg = state.currentLang !== 'ar' ? 'Recording pressing batches is restricted to licensed mill operators.' : 'تسجيل وجبات عصر الزيتون مقتصر حصرياً على أصحاب المعاصر المعتمدين بشهادات فحص مخبري.';
@@ -18041,7 +18053,36 @@ function setMarketplaceViewMode(mode) {
         return;
       }
       
-      // Dynamically populate tree selection from state.trees
+      // Real session: only trees on offer and the mills this operator is assigned to (the server checks both again).
+      if (state.serverMode) {
+        const isEn = state.currentLang !== 'ar';
+        let millIds = [];
+        try {
+          const assignments = window.FaseelaFirebase?.myAssignments ? await window.FaseelaFirebase.myAssignments() : null;
+          millIds = (assignments && Array.isArray(assignments.mills)) ? assignments.mills : [];
+        } catch (error) {
+          console.warn('[faseela] mill assignments not loaded:', error?.code || error?.message);
+        }
+        const treeSelect = document.getElementById('batch-tree-select');
+        if (treeSelect) {
+          treeSelect.innerHTML = catalogTrees().map(tr => {
+            const name = isEn ? (tr.tree_name_en || tr.tree_name) : tr.tree_name;
+            const region = isEn ? (tr.region_en || tr.region) : tr.region;
+            return `<option value="${escapeHtml(tr.id)}">${escapeHtml(name || tr.id)}${region ? ' — ' + escapeHtml(region) : ''}</option>`;
+          }).join('');
+        }
+        const assigned = document.getElementById('batch-mill-select');
+        if (assigned) {
+          assigned.innerHTML = `<option value="">${isEn ? 'Select assigned mill' : 'اختر المعصرة المكلف بها'}</option>`
+            + millIds.map(id => `<option value="${escapeHtml(id)}">${escapeHtml(id)}</option>`).join('');
+        }
+        if (!millIds.length) showToast(isEn ? 'No mill is assigned to this account yet. Please contact the team.' : 'لا توجد معصرة مسندة لهذا الحساب بعد. يرجى التواصل مع الفريق.');
+        openModal('modal-mill-batch');
+        if (window.lucide && typeof window.lucide.createIcons === 'function') lucide.createIcons();
+        return;
+      }
+
+      // Demo: populate tree selection from the sample trees
       const sel = document.getElementById('batch-tree-select');
       if (sel && state.trees && state.trees.length > 0) {
         const isEn = state.currentLang !== 'ar';
@@ -19301,6 +19342,7 @@ function setMarketplaceViewMode(mode) {
                 <button data-click="founderImpersonateUser('${u.id}')" class="bg-stone-100 dark:bg-stone-800 hover:bg-indigo-100 dark:hover:bg-indigo-950 text-indigo-700 dark:text-indigo-300 p-1.5 rounded-lg text-[10px] font-bold transition-all cursor-pointer" title="${isEn ? 'Preview as User (Login As)' : 'تصفح كالمستخدم (معاينة)'}">
                   <i data-lucide="eye" class="w-3.5 h-3.5"></i>
                 </button>
+                ${state.serverMode ? '' : `
                 <!-- 3. Toggle Verification -->
                 <button data-click="toggleUserVerification('${u.id}')" class="bg-stone-100 dark:bg-stone-800 hover:bg-emerald-100 dark:hover:bg-emerald-950 text-emerald-700 dark:text-emerald-300 p-1.5 rounded-lg text-[10px] font-bold transition-all cursor-pointer" title="${isEn ? 'Toggle Verification' : 'تبديل التوثيق'}">
                   <i data-lucide="${isVerified ? 'shield-check' : 'shield-alert'}" class="w-3.5 h-3.5"></i>
@@ -19315,6 +19357,7 @@ function setMarketplaceViewMode(mode) {
                   <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                 </button>
                 ` : ''}
+                `}
               </div>
             </td>
           </tr>
@@ -20089,7 +20132,7 @@ function setMarketplaceViewMode(mode) {
       const matureBadge = document.getElementById('fndr-fleet-mature-count-lbl');
       const virginBadge = document.getElementById('fndr-fleet-virgin-count-lbl');
       if (matureBadge) {
-        matureBadge.innerText = isEn ? `Mature Trees (${state.trees.length})` : `الأشجار المعمرة المنتجة (${state.trees.length} شجرة)`;
+        matureBadge.innerText = isEn ? `Mature Trees (${catalogTrees().length})` : `الأشجار المعمرة المنتجة (${catalogTrees().length} شجرة)`;
       }
       if (virginBadge) {
         const vCount = (state.virginGroves || []).length;
@@ -22628,7 +22671,7 @@ function setMarketplaceViewMode(mode) {
         if (el) el.innerText = syncMsg;
       });
 
-      showToast(state.currentLang !== 'ar' ? 'Field microclimate telemetry refreshed from Sentinel-2 satellite & IoT stations' : 'تم تحديث بيانات التليمترية ورطوبة الحقول من أقمار سنتينل-2 والمجسات الأرضية');
+      showToast(state.currentLang === 'ar' ? 'تم تحديث القيم التوضيحية. ليست قياسات مباشرة.' : state.currentLang === 'de' ? 'Beispielwerte aktualisiert – keine Live-Messungen.' : 'Illustrative values refreshed – not live measurements.');
     }
 
     // Cultivar Quick Filter & Direct Crop Routing

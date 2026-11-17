@@ -372,6 +372,12 @@ async function signOut() {
   if (error) throw toBackendError(error);
 }
 
+/** Ends every session of this account except the current one (other devices and browsers). */
+async function signOutOtherSessions() {
+  const { error } = await supabase.auth.signOut({ scope: 'others' });
+  if (error) throw toBackendError(error);
+}
+
 // ---------------------------------------------------------------------------
 // Data API
 // ---------------------------------------------------------------------------
@@ -1068,6 +1074,7 @@ const api = Object.freeze({
   register,
   signInWithGoogle,
   signOut,
+  signOutOtherSessions,
   requestPasswordReset,
   updatePassword,
   uploadPaymentProof,
