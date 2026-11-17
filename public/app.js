@@ -74,6 +74,7 @@
         invest_risk_title: "تنبيه المخاطر",
         invest_risk_text: "ينطوي شراء الحصص الشجرية على مخاطر، منها ضعف المحصول أو فقدانه بسبب الطقس أو الآفات أو الظروف المحلية، وقد تخسر جزءاً من المبلغ المدفوع أو كله. لا يُعد أي محصول أو كمية زيت مؤكَّداً، والتقديرات المعروضة غير ملزمة.",
         invest_risk_ack: "قرأت تنبيه المخاطر وأفهم أنني قد أخسر المبلغ المدفوع.",
+        share_terms_btn: "وصف الخدمة",
         invest_terms_ack_1: "قرأت",
         invest_terms_doc: "وصف خدمة الكفالة",
         invest_terms_ack_2: "و",
@@ -3889,6 +3890,7 @@
         invest_risk_title: "Risk notice",
         invest_risk_text: "Buying tree shares carries risk, including reduced or lost harvests due to weather, pests or local conditions. You may lose part or all of the amount paid. No return or oil quantity is promised, and all estimates shown are non-binding.",
         invest_risk_ack: "I have read the risk notice and understand that I may lose the amount paid.",
+        share_terms_btn: "Service description",
         invest_terms_ack_1: "I have read the",
         invest_terms_doc: "sponsorship service description",
         invest_terms_ack_2: "and the",
@@ -17682,7 +17684,7 @@ function setMarketplaceViewMode(mode) {
                   })()}
                   <button data-click="openLegalContract('investor')" class="bg-purple-100 hover:bg-purple-200 dark:bg-purple-950 dark:hover:bg-purple-900 text-purple-900 dark:text-purple-200 px-3 py-2 rounded-xl font-bold text-xs flex items-center gap-1 cursor-pointer" title="${isEn ? 'Certified Usufruct & Sponsorship Contract' : 'عقد الكفالة الموثق'}">
                     <i data-lucide="file-check-2" class="w-3.5 h-3.5 text-purple-700 dark:text-purple-400"></i>
-                    <span>${isEn ? 'Contract' : 'العقد'}</span>
+                    <span>${t('share_terms_btn')}</span>
                   </button>
                   ${(() => {
                     if (!rewardsVisible() || share.source !== 'server' || !/^[0-9a-f]{64}$/.test(String(share.id || ''))) return '';
@@ -20554,7 +20556,7 @@ function setMarketplaceViewMode(mode) {
       }
     }
 
-    function submitPartnerMillApplication(e) {
+    async function submitPartnerMillApplication(e) {
       if (e) e.preventDefault();
       const isEn = state.currentLang !== 'ar';
 
@@ -20572,6 +20574,36 @@ function setMarketplaceViewMode(mode) {
 
       if (!name || !owner || !cr || !phone || !email) {
         showToast(isEn ? '⚠️ Please complete all required fields.' : '⚠️ يرجى استكمال كافة الحقول المطلوبة لطلب الاعتماد.');
+        return;
+      }
+
+      // Real session: the application goes to the admins as a role application (public.submit_role_application).
+      if (state.serverMode) {
+        const ar = state.currentLang === 'ar';
+        const de = state.currentLang === 'de';
+        if (!window.FaseelaFirebase?.submitRoleApplication) {
+          showToast(ar ? 'تعذر إرسال الطلب حالياً.' : de ? 'Der Antrag kann gerade nicht gesendet werden.' : 'The application cannot be sent right now.');
+          return;
+        }
+        const details = [
+          `Owner: ${owner}`, `Commercial register: ${cr}`, `Phone: ${phone}`, `E-mail: ${email}`,
+          `Technology: ${tech || '-'}`, `Capacity kg/h: ${capacity}`, `Tank capacity L: ${tanksCap}`,
+          `Nitrogen storage: ${n2 ? 'yes' : 'no'}`, `IOC lab: ${ioc ? 'yes' : 'no'}`
+        ].join('\n').slice(0, 1000);
+        try {
+          const { data } = await window.FaseelaFirebase.submitRoleApplication({
+            requestedRole: 'mill_operator', region: String(region || '').slice(0, 120), organizationName: name.slice(0, 160), message: details
+          });
+          closeModal('modal-partner-mill-register');
+          showToast(data?.status === 'approved'
+            ? (ar ? 'هذا الحساب معتمد مسبقاً كمعصرة شريكة.' : de ? 'Dieses Konto ist bereits als Partner-Ölmühle freigegeben.' : 'This account is already approved as a partner mill.')
+            : (ar ? 'تم إرسال طلبك إلى فريق فسيلة. نراجعه ونرد عليك بالبريد الإلكتروني.' : de ? 'Ihr Antrag ist beim Faseela-Team eingegangen. Wir prüfen ihn und antworten per E-Mail.' : 'Your application reached the Faseela team. We review it and reply by e-mail.'));
+        } catch (error) {
+          console.warn('[faseela] mill application not sent:', error?.code || error?.message);
+          showToast(error?.code === 'failed-precondition'
+            ? (ar ? 'يرجى تأكيد بريدك الإلكتروني أولاً.' : de ? 'Bitte bestätigen Sie zuerst Ihre E-Mail-Adresse.' : 'Please confirm your e-mail address first.')
+            : (ar ? 'تعذر إرسال الطلب. يرجى المحاولة مجدداً.' : de ? 'Der Antrag konnte nicht gesendet werden. Bitte erneut versuchen.' : 'The application could not be sent. Please try again.'));
+        }
         return;
       }
 
