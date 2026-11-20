@@ -42,13 +42,13 @@
   <title>فسيلة | المنصة التشاركية لأشجار الزيتون في سوريا</title>
   <!-- Fonts: self-hosted (scripts/build-web.cjs), no Google Fonts requests -->
   <link rel="preload" href="fonts/cairo-arabic-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
-  <meta name="faseela-build" content="a18135d386b2">
+  <meta name="faseela-build" content="3558bc32533a">
   <link rel="stylesheet" href="fonts/fonts.css">
   <!-- Styles: Tailwind is prebuilt by scripts/build-web.cjs (no runtime CDN) -->
-  <link rel="stylesheet" href="assets/tailwind.css?v=a18135d386b2">
+  <link rel="stylesheet" href="assets/tailwind.css?v=3558bc32533a">
   <!-- Lucide Icons (self-hosted, version pinned in package.json) -->
   <script src="vendor/lucide.min.js"></script>
-  <script src="events.js?v=a18135d386b2"></script>
+  <script src="events.js?v=3558bc32533a"></script>
   <style>
     :root {
       --sat: env(safe-area-inset-top, 0px);
@@ -762,6 +762,8 @@
   <!-- Isolated Single-Page Print Stage (Universal Multi-Platform Output Engine) -->
   <div id="faseela-print-stage" class="print-stage-container" aria-hidden="true"></div>
   <a href="#page-home" class="skip-link" data-i18n="skip_to_content">تخطي إلى المحتوى الرئيسي</a>
+  <!-- Test phase notice (remove when the platform leaves the test phase) -->
+  <div id="test-phase-banner" role="note" class="bg-amber-100 dark:bg-amber-950 text-amber-950 dark:text-amber-100 border-b border-amber-300 dark:border-amber-800 px-4 py-2 text-center text-xs font-bold"><span data-i18n="test_phase_banner">مرحلة تجريبية: منصة فسيلة في طور التشغيل التجريبي، وقد تتغير المحتويات والوظائف.</span></div>
   <!-- Executive Impersonation / Preview Mode Banner -->
   <div id="admin-impersonation-banner" class="hidden sticky top-0 z-50 bg-gradient-to-r from-purple-900 via-indigo-950 to-purple-950 text-white px-4 py-2.5 shadow-xl border-b border-purple-400/40 text-xs">
     <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
@@ -998,23 +1000,19 @@
                 </button>
               </div>
 
-              <!-- Quick Stats -->
-              <div class="grid grid-cols-4 gap-4 pt-6 border-t border-olive-800/60 text-stone-200">
+              <!-- Quick Stats: counted from the catalogue the database lists (updateHeroStats in public/app.js) -->
+              <div class="grid grid-cols-3 gap-4 pt-6 border-t border-olive-800/60 text-stone-200">
                 <div>
-                  <div class="text-2xl sm:text-3xl font-black text-olive-300">2,400+</div>
-                  <div class="text-[11px] text-stone-400 mt-1" data-i18n="hero_stat_1_lbl">شجرة موثقة بنظام GPS</div>
+                  <div id="hero-stat-trees" class="text-2xl sm:text-3xl font-black text-olive-300">–</div>
+                  <div class="text-[11px] text-stone-400 mt-1" data-i18n="hero_stat_1_lbl">شجرة متاحة للكفالة</div>
                 </div>
                 <div>
-                  <div class="text-2xl sm:text-3xl font-black text-olive-300">&lt; 0.4%</div>
-                  <div class="text-[11px] text-stone-400 mt-1" data-i18n="hero_stat_2_lbl">نسبة حموضة الزيت (بكر ممتاز)</div>
+                  <div id="hero-stat-farms" class="text-2xl sm:text-3xl font-black text-olive-300">–</div>
+                  <div class="text-[11px] text-stone-400 mt-1" data-i18n="hero_stat_2_lbl">مزرعة شريكة</div>
                 </div>
                 <div>
-                  <div class="text-2xl sm:text-3xl font-black text-amber-300">100%</div>
-                  <div class="text-[11px] text-stone-400 mt-1" data-i18n="hero_stat_3_lbl">عصر بارد بمعاصر معتمدة</div>
-                </div>
-                <div>
-                  <div class="text-2xl sm:text-3xl font-black text-olive-300">45+</div>
-                  <div class="text-[11px] text-stone-400 mt-1" data-i18n="hero_stat_4_lbl">عائلة مزارعة شريكة</div>
+                  <div id="hero-stat-regions" class="text-2xl sm:text-3xl font-black text-amber-300">–</div>
+                  <div class="text-[11px] text-stone-400 mt-1" data-i18n="hero_stat_3_lbl">منطقة</div>
                 </div>
               </div>
             </div>
@@ -1438,7 +1436,7 @@
                     <span class="text-[11px] text-stone-600 dark:text-stone-400 block" data-i18n="map_region_tartus_sub">خضيري ساحلي • هطول 850 مم</span>
                   </div>
                 </div>
-                <span class="text-xs font-bold text-olive-800 bg-white/80 border border-olive-200 px-2.5 py-1 rounded-lg flex-shrink-0" data-i18n="map_count_840">840 شجرة</span>
+                <span data-off="no-offer" class="text-xs font-bold text-olive-800 bg-white/80 border border-olive-200 px-2.5 py-1 rounded-lg flex-shrink-0" data-i18n="map_count_840">840 شجرة</span>
               </button>
 
               <!-- 2. Latakia -->
@@ -1452,7 +1450,7 @@
                     <span class="text-[11px] text-stone-600 dark:text-stone-400 block" data-i18n="map_region_latakia_sub">خضيري ساحلي • هطول 920 مم</span>
                   </div>
                 </div>
-                <span class="text-xs font-bold text-stone-600 bg-stone-50 border border-stone-200 px-2.5 py-1 rounded-lg flex-shrink-0" data-i18n="map_count_960">960 شجرة</span>
+                <span data-off="no-offer" class="text-xs font-bold text-stone-600 bg-stone-50 border border-stone-200 px-2.5 py-1 rounded-lg flex-shrink-0" data-i18n="map_count_960">960 شجرة</span>
               </button>
 
               <!-- 3. Idlib -->
@@ -1466,7 +1464,7 @@
                     <span class="text-[11px] text-stone-600 dark:text-stone-400 block" data-i18n="map_region_idlib_sub">صوراني عريق • هطول 480 مم</span>
                   </div>
                 </div>
-                <span class="text-xs font-bold text-stone-600 bg-stone-50 border border-stone-200 px-2.5 py-1 rounded-lg flex-shrink-0" data-i18n="map_count_1120">1,120 شجرة</span>
+                <span data-off="no-offer" class="text-xs font-bold text-stone-600 bg-stone-50 border border-stone-200 px-2.5 py-1 rounded-lg flex-shrink-0" data-i18n="map_count_1120">1,120 شجرة</span>
               </button>
 
               <!-- 4. Aleppo & Afrin -->
@@ -1480,7 +1478,7 @@
                     <span class="text-[11px] text-stone-600 dark:text-stone-400 block" data-i18n="map_region_afrin_sub">زيتي كردي معمر • هطول 520 مم</span>
                   </div>
                 </div>
-                <span class="text-xs font-bold text-stone-600 bg-stone-50 border border-stone-200 px-2.5 py-1 rounded-lg flex-shrink-0" data-i18n="map_count_650">650 شجرة</span>
+                <span data-off="no-offer" class="text-xs font-bold text-stone-600 bg-stone-50 border border-stone-200 px-2.5 py-1 rounded-lg flex-shrink-0" data-i18n="map_count_650">650 شجرة</span>
               </button>
 
               <!-- 5. Hama & Masyaf -->
@@ -1494,7 +1492,7 @@
                     <span class="text-[11px] text-stone-600 dark:text-stone-400 block" data-i18n="map_region_hama_sub">صوراني وقيسي • هطول 620 مم</span>
                   </div>
                 </div>
-                <span class="text-xs font-bold text-stone-600 bg-stone-50 border border-stone-200 px-2.5 py-1 rounded-lg flex-shrink-0" data-i18n="map_count_690">690 شجرة</span>
+                <span data-off="no-offer" class="text-xs font-bold text-stone-600 bg-stone-50 border border-stone-200 px-2.5 py-1 rounded-lg flex-shrink-0" data-i18n="map_count_690">690 شجرة</span>
               </button>
 
               <!-- 6. Homs & Valley of Christians -->
@@ -1508,7 +1506,7 @@
                     <span class="text-[11px] text-stone-600 dark:text-stone-400 block" data-i18n="map_region_homs_sub">دعيبلي وخضيري • هطول 780 مم</span>
                   </div>
                 </div>
-                <span class="text-xs font-bold text-stone-600 bg-stone-50 border border-stone-200 px-2.5 py-1 rounded-lg flex-shrink-0" data-i18n="map_count_580">580 شجرة</span>
+                <span data-off="no-offer" class="text-xs font-bold text-stone-600 bg-stone-50 border border-stone-200 px-2.5 py-1 rounded-lg flex-shrink-0" data-i18n="map_count_580">580 شجرة</span>
               </button>
 
               <!-- 7. Daraa & Hauran -->
@@ -1522,7 +1520,7 @@
                     <span class="text-[11px] text-stone-600 dark:text-stone-400 block" data-i18n="map_region_daraa_sub">قيسي حوراني • تربة بركانية</span>
                   </div>
                 </div>
-                <span class="text-xs font-bold text-stone-600 bg-stone-50 border border-stone-200 px-2.5 py-1 rounded-lg flex-shrink-0" data-i18n="map_count_520">520 شجرة</span>
+                <span data-off="no-offer" class="text-xs font-bold text-stone-600 bg-stone-50 border border-stone-200 px-2.5 py-1 rounded-lg flex-shrink-0" data-i18n="map_count_520">520 شجرة</span>
               </button>
 
               <!-- 8. Damascus & Qalamoun -->
@@ -1536,7 +1534,7 @@
                     <span class="text-[11px] text-stone-600 dark:text-stone-400 block" data-i18n="map_region_damascus_sub">دعيبلي ومصعبي • ينابيع نقية</span>
                   </div>
                 </div>
-                <span class="text-xs font-bold text-stone-600 bg-stone-50 border border-stone-200 px-2.5 py-1 rounded-lg flex-shrink-0" data-i18n="map_count_380">380 شجرة</span>
+                <span data-off="no-offer" class="text-xs font-bold text-stone-600 bg-stone-50 border border-stone-200 px-2.5 py-1 rounded-lg flex-shrink-0" data-i18n="map_count_380">380 شجرة</span>
               </button>
 
               <!-- 9. As-Suwayda & Jabal Al-Arab -->
@@ -1550,7 +1548,7 @@
                     <span class="text-[11px] text-stone-600 dark:text-stone-400 block" data-i18n="map_region_suwayda_sub">صوراني جبلي • ارتفاع 1,200 م</span>
                   </div>
                 </div>
-                <span class="text-xs font-bold text-stone-600 bg-stone-50 border border-stone-200 px-2.5 py-1 rounded-lg flex-shrink-0" data-i18n="map_count_460">460 شجرة</span>
+                <span data-off="no-offer" class="text-xs font-bold text-stone-600 bg-stone-50 border border-stone-200 px-2.5 py-1 rounded-lg flex-shrink-0" data-i18n="map_count_460">460 شجرة</span>
               </button>
 
               <!-- 10. Quneitra & Golan -->
@@ -1564,7 +1562,7 @@
                     <span class="text-[11px] text-stone-600 dark:text-stone-400 block" data-i18n="map_region_quneitra_sub">صوراني وقيسي • مياه الثلوج</span>
                   </div>
                 </div>
-                <span class="text-xs font-bold text-stone-600 bg-stone-50 border border-stone-200 px-2.5 py-1 rounded-lg flex-shrink-0" data-i18n="map_count_390">390 شجرة</span>
+                <span data-off="no-offer" class="text-xs font-bold text-stone-600 bg-stone-50 border border-stone-200 px-2.5 py-1 rounded-lg flex-shrink-0" data-i18n="map_count_390">390 شجرة</span>
               </button>
 
               <!-- 11. Deir ez-Zor & Euphrates -->
@@ -1578,7 +1576,7 @@
                     <span class="text-[11px] text-stone-600 dark:text-stone-400 block" data-i18n="map_region_euphrates_sub">قيسي فراتي • ري بالتنقيط</span>
                   </div>
                 </div>
-                <span class="text-xs font-bold text-stone-600 bg-stone-50 border border-stone-200 px-2.5 py-1 rounded-lg flex-shrink-0" data-i18n="map_count_310">310 شجرة</span>
+                <span data-off="no-offer" class="text-xs font-bold text-stone-600 bg-stone-50 border border-stone-200 px-2.5 py-1 rounded-lg flex-shrink-0" data-i18n="map_count_310">310 شجرة</span>
               </button>
             </div>
 
@@ -1796,8 +1794,8 @@
                   </div>
                 </div>
 
-                <!-- Unit Economics & Platform Sustainability Model -->
-                <div class="col-span-2 bg-white p-4 rounded-2xl border border-stone-200 shadow-2xs space-y-2 text-start">
+                <!-- Unit Economics block: invented revenue split, never shown -->
+                <div data-off="no-offer" class="col-span-2 bg-white p-4 rounded-2xl border border-stone-200 shadow-2xs space-y-2 text-start">
                   <div class="flex items-center justify-between gap-2">
                     <span class="text-xs font-black text-olive-950 flex items-center gap-1.5">
                       <i data-lucide="pie-chart" class="w-3.5 h-3.5 text-olive-700"></i>
@@ -1821,7 +1819,7 @@
                 <div class="col-span-2 pt-1">
                   <button type="button" data-click="investFromROICalculator()" class="w-full bg-terracotta-600 hover:bg-terracotta-700 text-white py-3 px-6 rounded-2xl font-black text-sm shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-[0.99]">
                     <i data-lucide="shopping-bag" class="w-4 h-4"></i>
-                    <span data-i18n="calc_cta_invest_btn">ابدأ الكفالة بهذه الباقة الآن (كفالة الشجرة وحرم الأرض)</span>
+                    <span data-i18n="calc_cta_invest_btn">ابدأ الكفالة الآن</span>
                   </button>
                 </div>
               </div>
@@ -1834,9 +1832,7 @@
       <section class="py-16 bg-olive-900 text-white text-center">
         <div class="max-w-4xl mx-auto px-4">
           <h2 class="text-3xl font-black mb-4" data-i18n="cta_title">انضم إلى مجتمع كافلي ومزارعي فسيلة</h2>
-          <p class="text-stone-300 text-sm mb-8" data-i18n="cta_desc">
-            أكثر من 2,400 شجرة زيتون موثقة بالـ GPS ومعاصر حديثة جاهزة لاستقبال مواسم الخير.
-          </p>
+          <p class="text-stone-300 text-sm mb-8" data-i18n="cta_desc">تصفح الأشجار المتاحة حالياً للكفالة واختر شجرتك.</p>
           <div class="flex flex-wrap justify-center gap-4">
             <button data-click="navigateTo('marketplace')" class="bg-terracotta-600 hover:bg-terracotta-700 text-white px-8 py-3.5 rounded-2xl font-black text-sm shadow-xl transition-all" data-i18n="cta_btn_market">
               استكشف الأشجار المتاحة
@@ -2120,7 +2116,7 @@
       </div>
 
       <!-- Featured Multi-Crop Agroforestry Bundle Card -->
-      <div id="agroforestry-bundle-banner" class="mb-8 bg-gradient-to-r from-olive-950 via-purple-950/80 to-stone-950 border-2 border-purple-400/50 p-6 rounded-3xl text-white shadow-xl flex flex-col lg:flex-row items-center justify-between gap-6 text-start">
+      <div data-off="no-offer" id="agroforestry-bundle-banner" class="mb-8 bg-gradient-to-r from-olive-950 via-purple-950/80 to-stone-950 border-2 border-purple-400/50 p-6 rounded-3xl text-white shadow-xl flex flex-col lg:flex-row items-center justify-between gap-6 text-start">
         <div class="space-y-2 max-w-2xl">
           <div class="inline-flex items-center gap-1.5 bg-purple-500/20 text-purple-200 border border-purple-400/30 px-3 py-0.5 rounded-full text-[10px] font-black uppercase">
             <i data-lucide="sparkles" class="w-3 h-3 text-amber-300"></i>
@@ -2174,25 +2170,25 @@
         <div class="relative z-10">
           <div class="inline-flex items-center gap-1.5 bg-olive-800/80 border border-olive-600/40 text-amber-300 px-3 py-1 rounded-full text-xs font-bold mb-2">
             <i data-lucide="shield-check" class="w-3.5 h-3.5 text-amber-300"></i>
-            <span data-i18n="dash_badge_verified">محفظة كفالات موثقة كاداسترياً • سندات رقمية</span>
+            <span data-i18n="dash_badge_verified">كفالاتك على فسيلة</span>
           </div>
           <h1 class="text-2xl sm:text-3xl font-black" data-i18n="dash_title">محفظتي في فسيلة</h1>
           <p class="text-stone-300 text-xs mt-1" data-i18n="dash_subtitle">متابعة أداء أشجارك، الحصص المملوكة، محاصيل الزيت الفاخر، والشهادات الرسمية</p>
         </div>
         <div class="flex flex-wrap items-center gap-2 relative z-10">
-          <button type="button" data-click="openCertificateModal('tree_01')" class="bg-amber-600 hover:bg-amber-700 text-white px-4 sm:px-5 py-2.5 sm:py-3 rounded-2xl font-bold text-xs flex items-center gap-2 shadow-lg transition-all cursor-pointer">
+          <button data-demo type="button" data-click="openCertificateModal('tree_01')" class="bg-amber-600 hover:bg-amber-700 text-white px-4 sm:px-5 py-2.5 sm:py-3 rounded-2xl font-bold text-xs flex items-center gap-2 shadow-lg transition-all cursor-pointer">
             <i data-lucide="award" class="w-4 h-4"></i>
             <span data-i18n="dash_btn_cert">شهادة الملكية الرقمية</span>
           </button>
-          <button type="button" data-click="openLabQrPassportModal('SYR-MILL-2025-0981')" class="bg-white/10 hover:bg-white/20 text-emerald-200 border border-emerald-400/30 px-3.5 sm:px-4 py-2.5 sm:py-3 rounded-2xl font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer">
+          <button data-demo type="button" data-click="openLabQrPassportModal('SYR-MILL-2025-0981')" class="bg-white/10 hover:bg-white/20 text-emerald-200 border border-emerald-400/30 px-3.5 sm:px-4 py-2.5 sm:py-3 rounded-2xl font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer">
             <i data-lucide="qr-code" class="w-4 h-4 text-emerald-300"></i>
             <span data-i18n="dash_btn_qr_pass">جواز الزيت المخبري (IOC)</span>
           </button>
-          <button type="button" data-click="openEsgCertificateModal()" class="bg-emerald-700/80 hover:bg-emerald-600 text-white border border-emerald-400/40 px-3.5 sm:px-4 py-2.5 sm:py-3 rounded-2xl font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer shadow-xs">
+          <button data-off="no-offer" type="button" data-click="openEsgCertificateModal()" class="bg-emerald-700/80 hover:bg-emerald-600 text-white border border-emerald-400/40 px-3.5 sm:px-4 py-2.5 sm:py-3 rounded-2xl font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer shadow-xs">
             <i data-lucide="leaf" class="w-4 h-4 text-lime-300"></i>
             <span data-i18n="dash_btn_esg">شهادة الأثر البيئي (ESG)</span>
           </button>
-          <button type="button" data-click="openInvestorTaxStatement()" class="bg-white/10 hover:bg-white/20 text-stone-200 border border-white/20 px-3.5 sm:px-4 py-2.5 sm:py-3 rounded-2xl font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer shadow-xs">
+          <button data-off="no-offer" type="button" data-click="openInvestorTaxStatement()" class="bg-white/10 hover:bg-white/20 text-stone-200 border border-white/20 px-3.5 sm:px-4 py-2.5 sm:py-3 rounded-2xl font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer shadow-xs">
             <i data-lucide="file-text" class="w-4 h-4 text-amber-300"></i>
             <span data-i18n="dash_btn_statement">كشف الحساب السنوي</span>
           </button>
@@ -2284,10 +2280,10 @@
             </div>
           </div>
           <div id="dash-expected-oil" class="text-lg sm:text-xl font-black text-olive-900 dark:text-olive-300 font-mono">7.4 L</div>
-          <span class="text-[10px] text-emerald-600 dark:text-emerald-400 block font-semibold" data-i18n="dash_stat_oil_sub">موسم خريف 2026</span>
+          <span class="text-[10px] text-emerald-600 dark:text-emerald-400 block font-semibold" data-i18n="dash_stat_oil_sub">تقدير غير ملزم</span>
         </div>
 
-        <div class="bg-white dark:bg-stone-900 p-4 rounded-2xl border border-stone-200 dark:border-stone-800 shadow-2xs">
+        <div data-demo class="bg-white dark:bg-stone-900 p-4 rounded-2xl border border-stone-200 dark:border-stone-800 shadow-2xs">
           <div class="flex items-center justify-between text-stone-500 dark:text-stone-400 mb-1">
             <span class="font-bold text-[11px]" data-i18n="dash_stat_carbon">أثر امتصاص الكربون</span>
             <div class="w-7 h-7 rounded-lg bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-400 flex items-center justify-center">
@@ -2306,10 +2302,10 @@
             </div>
           </div>
           <div id="dash-trees-count" class="text-lg sm:text-xl font-black text-stone-900 dark:text-white font-mono">1</div>
-          <span class="text-[10px] text-stone-400 block font-medium" data-i18n="dash_stat_trees_sub">ريف طرطوس</span>
+          <span class="text-[10px] text-stone-400 block font-medium" data-i18n="dash_stat_trees_sub">أشجار تكفلها</span>
         </div>
 
-        <div class="col-span-2 lg:col-span-1 bg-white dark:bg-stone-900 p-4 rounded-2xl border border-stone-200 dark:border-stone-800 shadow-2xs">
+        <div data-off="no-offer" class="col-span-2 lg:col-span-1 bg-white dark:bg-stone-900 p-4 rounded-2xl border border-stone-200 dark:border-stone-800 shadow-2xs">
           <div class="flex items-center justify-between text-stone-500 dark:text-stone-400 mb-1">
             <span class="font-bold text-[11px]" data-i18n="dash_stat_land">الأرض الزراعية المسجلة</span>
             <div class="w-7 h-7 rounded-lg bg-lime-100 dark:bg-lime-950 text-lime-800 dark:text-lime-400 flex items-center justify-center">
@@ -2325,9 +2321,9 @@
       <div class="sticky top-20 z-30 bg-stone-100/95 dark:bg-stone-800/95 backdrop-blur-md p-1.5 rounded-2xl border border-stone-200 dark:border-stone-700 text-xs font-bold mb-6 overflow-x-auto shadow-xs transition-all">
         <button type="button" data-click="switchInvestorSubTab('portfolio')" id="btn-investor-tab-portfolio" class="flex-1 min-w-[130px] py-2.5 px-2.5 rounded-xl transition-all flex items-center justify-center gap-1.5 bg-white dark:bg-stone-900 text-olive-950 dark:text-olive-200 shadow-2xs font-black cursor-pointer">
           <i data-lucide="trees" class="w-4 h-4 text-olive-600"></i>
-          <span data-i18n="dash_tab_portfolio" class="truncate">أشجاري والملكيات الكاداسترية</span>
+          <span data-i18n="dash_tab_portfolio" class="truncate">أشجاري وكفالاتي</span>
         </button>
-        <button type="button" data-click="switchInvestorSubTab('harvest')" id="btn-investor-tab-harvest" class="flex-1 min-w-[130px] py-2.5 px-2.5 rounded-xl transition-all flex items-center justify-center gap-1.5 text-stone-500 hover:text-stone-900 dark:text-stone-400 font-bold cursor-pointer">
+        <button data-demo type="button" data-click="switchInvestorSubTab('harvest')" id="btn-investor-tab-harvest" class="flex-1 min-w-[130px] py-2.5 px-2.5 rounded-xl transition-all flex items-center justify-center gap-1.5 text-stone-500 hover:text-stone-900 dark:text-stone-400 font-bold cursor-pointer">
           <i data-lucide="package-check" class="w-4 h-4 text-amber-600"></i>
           <span data-i18n="dash_tab_harvest" class="truncate">إدارة محاصيل المحصول والشحن</span>
         </button>
@@ -2335,7 +2331,7 @@
           <i data-lucide="arrow-left-right" class="w-4 h-4 text-cyan-600"></i>
           <span data-i18n="dash_tab_trade" class="truncate">سوق التداول وإعادة البيع P2P</span>
         </button>
-        <button type="button" data-click="switchInvestorSubTab('certs')" id="btn-investor-tab-certs" class="flex-1 min-w-[130px] py-2.5 px-2.5 rounded-xl transition-all flex items-center justify-center gap-1.5 text-stone-500 hover:text-stone-900 dark:text-stone-400 font-bold cursor-pointer">
+        <button data-demo type="button" data-click="switchInvestorSubTab('certs')" id="btn-investor-tab-certs" class="flex-1 min-w-[130px] py-2.5 px-2.5 rounded-xl transition-all flex items-center justify-center gap-1.5 text-stone-500 hover:text-stone-900 dark:text-stone-400 font-bold cursor-pointer">
           <i data-lucide="award" class="w-4 h-4 text-emerald-600"></i>
           <span data-i18n="dash_tab_certs" class="truncate">الوثائق الرسمية وجواز الجودة</span>
         </button>
@@ -2354,7 +2350,7 @@
                 <i data-lucide="trees" class="w-5 h-5 text-olive-700 dark:text-olive-400"></i>
                 <span data-i18n="dash_tab_trees">أشجاري في منصة فسيلة</span>
               </h2>
-              <p class="text-xs text-stone-500 dark:text-stone-400 mt-0.5" data-i18n="dash_trees_sub">حصصك الزراعية المعتمدة وسندات الحيازة الكاداسترية المربوطة بالأقمار الصناعية</p>
+              <p class="text-xs text-stone-500 dark:text-stone-400 mt-0.5" data-i18n="dash_trees_sub">حصصك المعتمدة في أشجار المزارع الشريكة</p>
             </div>
             <button type="button" data-click="navigateTo('marketplace')" class="bg-olive-800 hover:bg-olive-900 text-white px-4 py-2 rounded-xl text-xs font-bold transition-all shadow-xs flex items-center gap-1.5 cursor-pointer self-start sm:self-auto">
               <i data-lucide="plus" class="w-4 h-4"></i>
@@ -2445,7 +2441,7 @@
                 <i data-lucide="clock" class="w-5 h-5 text-amber-600 dark:text-amber-400"></i>
                 <span data-i18n="dash_investments_title">طلبات الكفالة والاكتتاب الجارية</span>
               </h2>
-              <p class="text-xs text-stone-500 dark:text-stone-400 mt-0.5" data-i18n="dash_investments_sub">متابعة حالة الحجز المؤقت، تدقيق إشعار الدفع، واعتماد الحصص وسندات الطابو</p>
+              <p class="text-xs text-stone-500 dark:text-stone-400 mt-0.5" data-i18n="dash_investments_sub">متابعة الحجز المؤقت وتدقيق إشعار الدفع واعتماد الحصص</p>
             </div>
           </div>
           <div id="my-investments-container" class="space-y-4">
@@ -2455,7 +2451,7 @@
       </div>
 
       <!-- ================= SPONSOR PANEL 2: HARVEST YIELDS & 3 DISPATCH PATHWAYS ================= -->
-      <div id="panel-investor-harvest" class="space-y-6 hidden text-start">
+      <div data-demo id="panel-investor-harvest" class="space-y-6 hidden text-start">
         <!-- Yield Allocation Control Card -->
         <div class="bg-gradient-to-br from-white via-amber-50/30 to-stone-50 dark:from-stone-900 dark:via-stone-900/90 dark:to-stone-850 rounded-3xl border border-amber-200/90 dark:border-stone-800 p-6 sm:p-7 shadow-sm space-y-6">
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-amber-200/60 dark:border-stone-800">
@@ -2587,7 +2583,7 @@
         </div>
       </div>
 
-      <div id="panel-investor-certs" class="space-y-6 hidden text-start">
+      <div data-demo id="panel-investor-certs" class="space-y-6 hidden text-start">
         <div class="bg-white dark:bg-stone-900 rounded-3xl border border-stone-200 dark:border-stone-800 p-6 shadow-sm space-y-5">
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-stone-100 dark:border-stone-800">
             <div>
@@ -2763,7 +2759,7 @@
             <strong class="text-stone-900 dark:text-stone-100" data-i18n="modal_clause_dna_title">بند التدقيق الجيني لأصناف الزيتون (DNA Cultivar Verification):</strong>
             <button data-click="insertTemplateClause('dna_cultivar')" class="bg-purple-700 hover:bg-purple-800 text-white px-2.5 py-1 rounded-lg text-[10px] font-bold" data-i18n="modal_clause_insert_btn">+ إدراج في الوثيقة</button>
           </div>
-          <p class="text-[11px] text-stone-600 dark:text-stone-300" data-i18n="modal_clause_dna_text">تتحقق المنصة من سلامة ونقاء الصنف الشجري (صوراني، قيسي، دعيبلي، خضيري) بشهادة فحص جيني صادرة عن مركز البحوث الزراعية ومطابقة لسند الطابو الكاداستري.</p>
+          <p class="text-[11px] text-stone-600 dark:text-stone-300" data-i18n="modal_clause_dna_text">يُذكر صنف الشجرة (صوراني، قيسي، دعيبلي، خضيري) كما أفادت به المزرعة الشريكة. تظهر نتيجة فحص الصنف في صفحة الشجرة فقط إذا أُجري الفحص فعلاً.</p>
         </div>
       </div>
 
@@ -2864,7 +2860,7 @@
   </div>
 
   <!-- 7. Climate Solidarity Reserve (planned) Modal -->
-  <div id="modal-climate-insurance" role="dialog" aria-modal="true" class="fixed inset-0 bg-stone-900/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+  <div data-off="no-offer" id="modal-climate-insurance" role="dialog" aria-modal="true" class="fixed inset-0 bg-stone-900/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
     <div class="bg-white dark:bg-stone-900 rounded-3xl max-w-xl w-full p-6 shadow-2xl border border-emerald-200 dark:border-emerald-800 space-y-5 animate-scale-up max-h-[90vh] overflow-y-auto">
       <div class="flex items-center justify-between border-b border-stone-200 dark:border-stone-800 pb-3">
         <div class="flex items-center gap-2.5">
@@ -2930,7 +2926,7 @@
   </div>
 
   <!-- 8. Auto-Compounding Yield Engine Modal -->
-  <div id="modal-compounding-yield" role="dialog" aria-modal="true" class="fixed inset-0 bg-stone-900/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+  <div data-off="no-offer" id="modal-compounding-yield" role="dialog" aria-modal="true" class="fixed inset-0 bg-stone-900/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
     <div class="bg-white dark:bg-stone-900 rounded-3xl max-w-xl w-full p-6 shadow-2xl border border-amber-200 dark:border-amber-800 space-y-5 animate-scale-up max-h-[90vh] overflow-y-auto">
       <div class="flex items-center justify-between border-b border-stone-200 dark:border-stone-800 pb-3">
         <div class="flex items-center gap-2.5">
@@ -3259,7 +3255,7 @@
   </div>
 
   <!-- 7.4. Unified Central Legal Contracts & Charters Suite Modal -->
-  <div id="modal-legal-contracts" role="dialog" aria-modal="true" class="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 mobile-sheet-overlay">
+  <div data-off="no-offer" id="modal-legal-contracts" role="dialog" aria-modal="true" class="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 mobile-sheet-overlay">
     <div class="bg-white dark:bg-stone-900 w-full max-w-3xl rounded-3xl p-5 sm:p-8 shadow-2xl border border-stone-200 dark:border-stone-800 max-h-[92vh] overflow-y-auto text-start space-y-4 mobile-sheet-card">
       <div class="w-12 h-1 bg-stone-300 dark:bg-stone-700 rounded-full mx-auto -mt-2 mb-2 sm:hidden"></div>
 
@@ -3630,8 +3626,8 @@
                   <i data-lucide="cpu" class="w-4 h-4 text-stone-900"></i>
                 </div>
                 <div>
-                  <span class="text-[9px] font-mono tracking-widest uppercase opacity-80 block text-amber-300">FASEELA SOVEREIGN PASS</span>
-                  <span class="text-[11px] font-black tracking-tight" id="auth-card-org">الجمهورية العربية السورية</span>
+                  <span class="text-[9px] font-mono tracking-widest uppercase opacity-80 block text-amber-300">FASEELA</span>
+                  <span class="text-[11px] font-black tracking-tight" id="auth-card-org">عضوية فسيلة</span>
                 </div>
               </div>
               <div class="flex items-center gap-1.5">
@@ -3672,7 +3668,7 @@
               </div>
 
               <!-- Interactive Dynamic Verification QR Code -->
-              <div class="flex-shrink-0 cursor-pointer text-center group" data-click="verifyDigitalPassSignature()" title="اضغط للتحقق الفوري من التوقيع الرقمي وصك النفاذ">
+              <div data-demo class="flex-shrink-0 cursor-pointer text-center group" data-click="verifyDigitalPassSignature()" title="اضغط للتحقق الفوري من التوقيع الرقمي وصك النفاذ">
                 <div class="w-16 h-16 sm:w-18 sm:h-18 bg-white p-1 rounded-xl shadow-lg border border-white/30 group-hover:scale-105 transition-transform flex items-center justify-center">
                   <svg id="auth-pass-qr-svg" class="w-full h-full text-stone-900" viewBox="0 0 100 100" fill="currentColor">
                     <rect x="0" y="0" width="30" height="30" rx="4" fill="#1c2013"/>
@@ -3760,7 +3756,7 @@
               <i data-lucide="user-cog" class="w-3.5 h-3.5 text-amber-600 dark:text-amber-400"></i>
               <span class="text-[11px]" data-i18n="auth_btn_edit_profile">تعديل البيانات</span>
             </button>
-            <button type="button" data-click="verifyDigitalPassSignature()" class="bg-stone-50 hover:bg-stone-100 dark:bg-stone-800/80 dark:hover:bg-stone-750 text-stone-800 dark:text-stone-200 border border-stone-200 dark:border-stone-700 p-2 rounded-xl font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-2xs hover:shadow-xs">
+            <button data-demo type="button" data-click="verifyDigitalPassSignature()" class="bg-stone-50 hover:bg-stone-100 dark:bg-stone-800/80 dark:hover:bg-stone-750 text-stone-800 dark:text-stone-200 border border-stone-200 dark:border-stone-700 p-2 rounded-xl font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-2xs hover:shadow-xs">
               <i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400"></i>
               <span class="text-[11px]" data-i18n="auth_btn_verify_pass">فحص التوقيع</span>
             </button>
@@ -4008,7 +4004,7 @@
               </span>
               <span class="text-[9px] font-mono text-stone-400" id="auth-sec-last-active">Just Now</span>
             </div>
-            <div class="grid grid-cols-2 gap-2 text-[11px] font-mono">
+            <div data-demo class="grid grid-cols-2 gap-2 text-[11px] font-mono">
               <div class="bg-black/40 p-2 rounded-xl border border-white/5">
                 <span class="text-[9px] text-stone-400 block" data-i18n="auth_sec_session_hash">رمز الجلسة المشفر</span>
                 <span class="text-stone-200 font-bold truncate block" id="auth-sec-token-hash">SES-8F4A2B-2026</span>
@@ -4033,7 +4029,7 @@
               </div>
               <div class="space-y-0.5">
                 <strong class="font-bold text-stone-900 dark:text-white block" data-i18n="auth_sec_item1_title">التشفير الهجين للبيانات (AES-256 + TLS 1.3)</strong>
-                <p class="text-[11px] text-stone-500 dark:text-stone-400" data-i18n="auth_sec_item1_desc">تشفير كامل لكافة صكوك الملكية وأوامر التحويل المالي أثناء النقل والتخزين السحابي.</p>
+                <p class="text-[11px] text-stone-500 dark:text-stone-400" data-i18n="auth_sec_item1_desc">تُنقل بياناتك وطلبات الدفع عبر اتصال مشفّر (TLS) وتُخزَّن مشفّرة.</p>
               </div>
             </div>
 
@@ -4236,7 +4232,7 @@
                   <span class="text-base">💼</span>
                   <span class="font-black text-stone-900 dark:text-white text-xs block" data-i18n="auth_role_investor">كافل زراعي</span>
                 </div>
-                <span class="text-[10px] text-stone-600 dark:text-stone-300 block leading-tight" data-i18n="auth_role_investor_sub">كفالة الأشجار، حصص الزيت، صكوك الطابو، وتداول P2P</span>
+                <span class="text-[10px] text-stone-600 dark:text-stone-300 block leading-tight" data-i18n="auth_role_investor_sub">رعاية واستلام زيت</span>
               </label>
 
               <label class="cursor-pointer border border-stone-200 dark:border-stone-700 rounded-2xl p-3 text-start block hover:border-emerald-600 has-[:checked]:border-emerald-700 has-[:checked]:bg-emerald-50 dark:has-[:checked]:bg-emerald-950/60 transition-all shadow-2xs">
@@ -4347,11 +4343,12 @@
               </div>
             </div>
 
-            <!-- Terms & Solidarity Charter Agreement -->
+            <!-- Privacy policy acknowledgement: sent with the sign-up and stored as a consent record (migration 51) -->
             <div class="flex items-start gap-2 pt-1 text-[11px] text-stone-600 dark:text-stone-400">
               <input type="checkbox" id="reg-terms-check" required class="mt-0.5 rounded border-stone-300 text-olive-700 focus:ring-olive-600">
               <label for="reg-terms-check" class="cursor-pointer select-none leading-relaxed">
-                <span data-i18n="auth_reg_terms_agree">أوافق على ميثاق الكفالة التشاركية الزراعي وشروط حيازة الأراضي الكاداسترية</span>
+                <span data-i18n="auth_reg_privacy_1">قرأت</span>
+                <a href="legal/datenschutz.html" target="_blank" rel="noopener" class="text-olive-700 dark:text-olive-300 font-bold underline" data-i18n="auth_reg_privacy_link">سياسة الخصوصية</a><span data-i18n="auth_reg_privacy_2">.</span>
               </label>
             </div>
           </div>
@@ -4470,7 +4467,7 @@
   </div>
 
     <!-- Modal: Olive Oil Delivery & Dual Payout Option -->
-  <div id="modal-order-oil" role="dialog" aria-modal="true" class="fixed inset-0 z-50 bg-stone-950/70 backdrop-blur-xs flex items-center justify-center p-4 hidden">
+  <div data-off="no-offer" id="modal-order-oil" role="dialog" aria-modal="true" class="fixed inset-0 z-50 bg-stone-950/70 backdrop-blur-xs flex items-center justify-center p-4 hidden">
     <div class="bg-white dark:bg-stone-900 dark:border-stone-800 dark:text-stone-100 rounded-3xl max-w-xl w-full p-6 sm:p-8 shadow-2xl border border-stone-200 text-start max-h-[90vh] overflow-y-auto">
       <div class="flex items-center justify-between pb-4 border-b border-stone-100 mb-4">
         <div>
@@ -4713,7 +4710,7 @@
           <div class="flex items-center justify-between border-b border-stone-100 dark:border-stone-800 pb-2">
             <h4 class="font-black text-stone-900 dark:text-white text-xs sm:text-sm flex items-center gap-2">
               <i data-lucide="trees" class="w-4 h-4 text-olive-600"></i>
-              <span data-i18n="modal_dossier_assets_title">الأصول الزراعية وصكوك الحيازة الكاداسترية المقيدة باسم المستخدم</span>
+              <span data-i18n="modal_dossier_assets_title">حصص الأشجار المسجلة باسم المستخدم</span>
             </h4>
             <span id="fndr-dossier-shares-count" class="text-[11px] font-bold text-olive-700 dark:text-olive-400 bg-olive-100 dark:bg-olive-950 px-2 py-0.5 rounded-full" data-i18n="modal_dossier_zero_shares">0 حصص</span>
           </div>
@@ -5537,7 +5534,7 @@
       </div>
 
         <!-- Syrian Agro-Climate Radar & Weather Intelligence Widget -->
-        <div id="agro-weather-radar-card" class="bg-gradient-to-br from-stone-900 via-sky-950/80 to-stone-950 text-white p-6 rounded-3xl border border-sky-500/30 shadow-xl space-y-4 text-start">
+        <div data-demo id="agro-weather-radar-card" class="bg-gradient-to-br from-stone-900 via-sky-950/80 to-stone-950 text-white p-6 rounded-3xl border border-sky-500/30 shadow-xl space-y-4 text-start">
           <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
             <div>
               <div class="inline-flex items-center gap-1.5 bg-sky-500/20 text-sky-200 border border-sky-400/30 px-3 py-0.5 rounded-full text-[10px] font-black uppercase">
@@ -6481,7 +6478,7 @@
     <section id="page-founder-control" class="page-content hidden py-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 text-start">
       <div id="fndr-preview-banner" class="hidden mb-6 p-3 rounded-2xl border border-amber-300 dark:border-amber-700 bg-amber-50 dark:bg-amber-950/40 text-amber-950 dark:text-amber-100 text-xs flex items-start gap-2" role="note">
         <i data-lucide="info" class="w-4 h-4 flex-shrink-0 mt-0.5" aria-hidden="true"></i>
-        <span data-i18n="preview_banner_founder">معاينة: مؤشرات الأسطول والقياسات والنزاعات بيانات توضيحية. المراجعات ودليل المستخدمين بيانات حقيقية من الخادم.</span>
+        <span data-i18n="preview_banner_founder">هذه الصفحة تعرض بيانات حقيقية من الخادم فقط: حالة النظام، التصدير المالي، حسابات الاستلام، دليل المستخدمين والمراجعات. بقية أدوات الفريق في <a href="admin/" class="underline font-bold">لوحة الإدارة</a>.</span>
       </div>
       
       <!-- Top Executive Operations Header -->
@@ -6493,7 +6490,7 @@
             <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
             <span id="founder-clock-live">12:00:00 UTC+3</span>
           </div>
-          <div class="bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 text-xs font-bold px-3 py-1.5 rounded-2xl flex items-center gap-1.5">
+          <div data-demo class="bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 text-xs font-bold px-3 py-1.5 rounded-2xl flex items-center gap-1.5">
             <i data-lucide="shield-check" class="w-4 h-4"></i>
             <span data-i18n="fndr_system_nominal">جميع الأنظمة تعمل بكفاءة 100%</span>
           </div>
@@ -6641,8 +6638,8 @@
             <i data-lucide="save" class="w-4 h-4" aria-hidden="true"></i><span data-i18n="fndr_pay_save">حفظ حسابات الدفع</span>
           </button>
         </section>
-        <!-- Executive KPI Metrics Radar Strip -->
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
+        <!-- Executive KPI Metrics Radar Strip (sample figures: hidden in real sessions) -->
+        <div data-demo class="grid grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
           <div class="bg-white dark:bg-stone-900 dark:border-stone-800 dark:text-stone-100 p-5 rounded-3xl border border-stone-200 shadow-sm space-y-2">
             <div class="flex items-center justify-between text-stone-500 dark:text-stone-400">
               <span class="font-bold text-[11px]" data-i18n="fndr_kpi_escrow">إجمالي أصول مراجعة الدفعات (Payment Review)</span>
@@ -6700,8 +6697,8 @@
           </div>
         </div>
 
-        <!-- Commercial Monetization & Revenue Streams Card for Founder & Platform -->
-        <div class="bg-gradient-to-br from-purple-950 via-stone-900 to-purple-950 text-white rounded-3xl p-6 sm:p-7 border-2 border-purple-500/50 shadow-xl space-y-5 text-start">
+        <!-- Commercial Monetization & Revenue Streams Card (sample figures: hidden in real sessions) -->
+        <div data-demo class="bg-gradient-to-br from-purple-950 via-stone-900 to-purple-950 text-white rounded-3xl p-6 sm:p-7 border-2 border-purple-500/50 shadow-xl space-y-5 text-start">
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/10 pb-4">
             <div class="flex items-center gap-3">
               <div class="w-10 h-10 rounded-2xl bg-amber-400 text-purple-950 font-black flex items-center justify-center shadow-md">
@@ -6765,8 +6762,8 @@
           </div>
         </div>
 
-        <!-- Financial Payment Review & Liquidity Monitor (مرصد السيولة ومراجعة الدفعات) -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+        <!-- Financial Payment Review & Liquidity Monitor (sample figures: hidden in real sessions) -->
+        <div data-demo class="grid grid-cols-1 lg:grid-cols-3 gap-5">
           <div class="lg:col-span-2 bg-gradient-to-br from-stone-900 to-stone-950 text-white p-6 sm:p-7 rounded-3xl shadow-sm border border-stone-800 space-y-4 text-xs">
             <div class="flex items-center justify-between border-b border-stone-800 pb-3">
               <div class="flex items-center gap-2.5">
@@ -6842,7 +6839,7 @@
       <!-- ================= PANEL 2: USER DIRECTORY & VERIFICATION HUB ================= -->
             <div id="panel-fndr-users" class="hidden space-y-6">
         <!-- Executive Intelligence & Founder Suggestions Card -->
-        <div id="fndr-users-intel-card" class="bg-gradient-to-br from-purple-950 via-stone-900 to-indigo-950 text-white rounded-3xl p-6 border-2 border-purple-500/40 shadow-xl space-y-5 text-start">
+        <div id="fndr-users-intel-card" data-demo class="bg-gradient-to-br from-purple-950 via-stone-900 to-indigo-950 text-white rounded-3xl p-6 border-2 border-purple-500/40 shadow-xl space-y-5 text-start">
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/10 pb-4">
             <div class="flex items-center gap-3">
               <div class="w-10 h-10 rounded-2xl bg-amber-400 text-purple-950 font-black flex items-center justify-center shadow-md">
@@ -7450,7 +7447,7 @@
               <i data-lucide="users" class="w-3.5 h-3.5 text-purple-600"></i>
               <span data-i18n="fndr_export_users_csv">دليل المستخدمين (CSV)</span>
             </button>
-            <button type="button" data-click="exportFinancialLedgerCSV()" class="bg-white dark:bg-stone-800 hover:bg-stone-100 dark:hover:bg-stone-700 border border-stone-200 dark:border-stone-700 text-stone-800 dark:text-stone-200 px-3 py-1.5 rounded-xl text-[11px] font-bold transition-all cursor-pointer flex items-center gap-1.5 shadow-2xs">
+            <button data-demo type="button" data-click="exportFinancialLedgerCSV()" class="bg-white dark:bg-stone-800 hover:bg-stone-100 dark:hover:bg-stone-700 border border-stone-200 dark:border-stone-700 text-stone-800 dark:text-stone-200 px-3 py-1.5 rounded-xl text-[11px] font-bold transition-all cursor-pointer flex items-center gap-1.5 shadow-2xs">
               <i data-lucide="wallet" class="w-3.5 h-3.5 text-emerald-600"></i>
               <span data-i18n="fndr_export_ledger_csv">دفتر الأستاذ المالي (CSV)</span>
             </button>
@@ -7482,11 +7479,11 @@
               </div>
             </div>
             <div class="flex items-center gap-2">
-              <button type="button" data-click="bulkApprovePendingFinances()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 py-2 rounded-xl font-black text-xs shadow-xs transition-all flex items-center gap-1.5 cursor-pointer">
+              <button data-demo type="button" data-click="bulkApprovePendingFinances()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 py-2 rounded-xl font-black text-xs shadow-xs transition-all flex items-center gap-1.5 cursor-pointer">
                 <i data-lucide="check-check" class="w-4 h-4 text-emerald-200"></i>
                 <span data-i18n="fndr_btn_bulk_approve">اعتماد جميع الطلبات المعلقة</span>
               </button>
-              <button type="button" data-click="exportFinancialLedgerCSV()" class="bg-stone-100 dark:bg-stone-800 hover:bg-stone-200 text-stone-800 dark:text-stone-200 px-3 py-2 rounded-xl font-bold text-xs transition-all flex items-center gap-1 cursor-pointer">
+              <button data-demo type="button" data-click="exportFinancialLedgerCSV()" class="bg-stone-100 dark:bg-stone-800 hover:bg-stone-200 text-stone-800 dark:text-stone-200 px-3 py-2 rounded-xl font-bold text-xs transition-all flex items-center gap-1 cursor-pointer">
                 <i data-lucide="download" class="w-3.5 h-3.5 text-purple-600"></i>
                 <span data-i18n="fndr_btn_export_csv">تصدير (CSV)</span>
               </button>
@@ -7968,24 +7965,7 @@
 
     <!-- Quick Chips Navigation (Fixed Height) -->
     <div id="chat-quick-chips" class="p-2.5 bg-stone-50 dark:bg-stone-800/80 border-b border-stone-200 dark:border-stone-700 flex gap-1.5 overflow-x-auto text-[11px] whitespace-nowrap scrollbar-none flex-shrink-0">
-      <button data-click="askFaseelaQuick('كيف أسدد عبر سيريتل كاش أو البنوك المحلية؟')" class="bg-white dark:bg-stone-700 hover:bg-olive-50 dark:hover:bg-stone-600 border border-stone-200 dark:border-stone-600 text-stone-800 dark:text-stone-200 px-2.5 py-1 rounded-full font-semibold transition-all shadow-2xs">
-        💳 الدفع بسيريتل كاش
-      </button>
-      <button data-click="askFaseelaQuick('كم لتر زيت تنتج الشجرة المعمرة وما هي الحسابات المالية؟')" class="bg-white dark:bg-stone-700 hover:bg-olive-50 dark:hover:bg-stone-600 border border-stone-200 dark:border-stone-600 text-stone-800 dark:text-stone-200 px-2.5 py-1 rounded-full font-semibold transition-all shadow-2xs">
-        🫒 إنتاج الزيت والمحاصيل
-      </button>
-      <button data-click="askFaseelaQuick('ما هي أصناف الزيتون السوري والفرق بينها؟')" class="bg-white dark:bg-stone-700 hover:bg-olive-50 dark:hover:bg-stone-600 border border-stone-200 dark:border-stone-600 text-stone-800 dark:text-stone-200 px-2.5 py-1 rounded-full font-semibold transition-all shadow-2xs">
-        🌿 الأصناف (صوراني/خضيري)
-      </button>
-      <button data-click="askFaseelaQuick('كيف تعمل المعاصر الحديثة وما هي شروط فحص الحموضة؟')" class="bg-white dark:bg-stone-700 hover:bg-olive-50 dark:hover:bg-stone-600 border border-stone-200 dark:border-stone-600 text-stone-800 dark:text-stone-200 px-2.5 py-1 rounded-full font-semibold transition-all shadow-2xs">
-        ⚙️ فحص المعاصر والجودة
-      </button>
-      <button data-click="askFaseelaQuick('كيف يستلم المغترب حصته من زيت الزيتون في الخارج؟')" class="bg-white dark:bg-stone-700 hover:bg-olive-50 dark:hover:bg-stone-600 border border-stone-200 dark:border-stone-600 text-stone-800 dark:text-stone-200 px-2.5 py-1 rounded-full font-semibold transition-all shadow-2xs">
-        📦 شحن الزيت للخارج
-      </button>
-      <button data-click="askFaseelaQuick('هل يمكنني زيارة الشجرة على أرض الواقع؟')" class="bg-white dark:bg-stone-700 hover:bg-olive-50 dark:hover:bg-stone-600 border border-stone-200 dark:border-stone-600 text-stone-800 dark:text-stone-200 px-2.5 py-1 rounded-full font-semibold transition-all shadow-2xs">
-        📍 زيارة الشجرة والـ GPS
-      </button>
+      <!-- Filled by renderChatQuickChips() with topics of the assistant knowledge (public/assistant-knowledge.js). -->
     </div>
 
     <!-- Scrollable Messages Area with Scroll-To-Bottom Floating Button -->
@@ -8512,26 +8492,26 @@
         <div class="grid grid-cols-2 gap-3">
           <div>
             <label class="block font-bold text-stone-700 mb-1" data-i18n="mill_modal_weight_lbl">وزن الزيتون (كغ):</label>
-            <input type="number" id="batch-weight" value="85" required class="w-full bg-stone-50 border border-stone-200 rounded-xl p-2.5">
+            <input type="number" id="batch-weight" placeholder="85" required class="w-full bg-stone-50 border border-stone-200 rounded-xl p-2.5">
           </div>
           <div>
             <label class="block font-bold text-stone-700 mb-1" data-i18n="mill_modal_oil_lbl">ناتج الزيت باللتر:</label>
-            <input type="number" id="batch-oil" value="18" required class="w-full bg-stone-50 border border-stone-200 rounded-xl p-2.5">
+            <input type="number" id="batch-oil" placeholder="18" required class="w-full bg-stone-50 border border-stone-200 rounded-xl p-2.5">
           </div>
         </div>
 
         <div class="grid grid-cols-2 gap-3">
           <div>
             <label class="block font-bold text-stone-700 mb-1" data-i18n="mill_modal_acidity_lbl">نسبة الحموضة %:</label>
-            <input type="number" step="0.01" id="batch-acidity" value="0.30" required class="w-full bg-stone-50 border border-stone-200 rounded-xl p-2.5">
+            <input type="number" step="0.01" id="batch-acidity" placeholder="0.30" required class="w-full bg-stone-50 border border-stone-200 rounded-xl p-2.5">
           </div>
           <div>
             <label class="block font-bold text-stone-700 mb-1" data-i18n="mill_modal_temp_lbl">حرارة العصر (مئوية):</label>
-            <input type="number" step="0.1" id="batch-temp" value="23.5" required class="w-full bg-stone-50 border border-stone-200 rounded-xl p-2.5">
+            <input type="number" step="0.1" id="batch-temp" placeholder="23.5" required class="w-full bg-stone-50 border border-stone-200 rounded-xl p-2.5">
           </div>
           <div>
             <label class="block font-bold text-stone-700 mb-1" data-i18n="mill_modal_peroxide_lbl">رقم البيروكسيد:</label>
-            <input type="number" step="0.1" min="0" max="100" id="batch-peroxide" value="6.2" required class="w-full bg-stone-50 border border-stone-200 rounded-xl p-2.5">
+            <input type="number" step="0.1" min="0" max="100" id="batch-peroxide" placeholder="6.2" required class="w-full bg-stone-50 border border-stone-200 rounded-xl p-2.5">
           </div>
         </div>
         <p class="text-[10px] text-stone-500" data-i18n="mill_batch_review_notice">سيُتحقق الخادم من التكليف وتُرسل الدفعة لمراجعة الجودة قبل نشرها.</p>
@@ -8604,7 +8584,7 @@
           </div>
 
           <!-- Bulk Diaspora Perks Notice -->
-          <div id="invest-modal-perk-notice" class="hidden bg-emerald-50 border border-emerald-200 p-2.5 rounded-xl text-emerald-950 text-[11px] font-bold flex items-center gap-2">
+          <div data-off="no-offer" id="invest-modal-perk-notice" class="hidden bg-emerald-50 border border-emerald-200 p-2.5 rounded-xl text-emerald-950 text-[11px] font-bold flex items-center gap-2">
             <i data-lucide="gift" class="w-4 h-4 text-emerald-600 flex-shrink-0"></i>
             <span data-i18n="invest_modal_bulk_perk">🎉 باقة كبار الكافلين: شحن دولي مجاني وتوثيق مخصص للعائلة مشمول فوراً!</span>
           </div>
@@ -8647,9 +8627,9 @@
           <div class="bg-black/40 p-2.5 rounded-xl border border-white/10 flex items-center justify-between text-xs">
             <div class="flex items-center gap-2">
               <i data-lucide="map" class="w-4 h-4 text-emerald-400"></i>
-              <span class="text-stone-200 font-medium" data-i18n="bundle_deed_label">سند الحيازة المساحي المفرز:</span>
+              <span class="text-stone-200 font-medium" data-i18n="bundle_deed_label">الأرض:</span>
             </div>
-            <strong class="text-emerald-300 font-mono" data-i18n="bundle_deed_val">~ 15.0 م² طابو زراعي مساحي موحد</strong>
+            <strong class="text-emerald-300 font-mono" data-i18n="bundle_deed_val">لا يشمل أرضاً</strong>
           </div>
         </div>
 
@@ -8801,16 +8781,17 @@
           </label>
         </div>
 
-        <!-- Legal Agreement Review Banner -->
-        <div class="p-2.5 rounded-xl bg-stone-100 dark:bg-stone-800/80 border border-stone-200 dark:border-stone-700 text-[11px] text-stone-600 dark:text-stone-300 text-start leading-relaxed flex items-start gap-2">
-          <i data-lucide="scale" class="w-4 h-4 text-olive-700 dark:text-olive-400 flex-shrink-0 mt-0.5"></i>
-          <div id="invest-legal-notice-text">
-            <span data-i18n="invest_legal_agree_prefix">بالتأكيد، أنت توافق على أحكام </span>
-            <button type="button" data-click="openLegalContract('investor')" class="text-olive-700 dark:text-olive-400 font-bold underline hover:text-olive-900 cursor-pointer" data-i18n="invest_legal_agree_deed">عقد كفالة وحيازة المقسم (5 م²)</button>
-            <span data-i18n="invest_legal_agree_and"> و</span>
-            <button type="button" data-click="openLegalContract('charter')" class="text-purple-700 dark:text-purple-400 font-bold underline hover:text-purple-900 cursor-pointer" data-i18n="invest_legal_agree_escrow">مراجعة الدفعات البنكية (Payment Review)</button>.
-          </div>
-        </div>
+        <!-- Consent: recorded on the server before the reservation (migration 51) -->
+        <label for="invest-terms-ack" class="p-2.5 rounded-xl bg-stone-100 dark:bg-stone-800/80 border border-stone-200 dark:border-stone-700 text-[11px] text-stone-700 dark:text-stone-200 text-start leading-relaxed flex items-start gap-2 cursor-pointer">
+          <input id="invest-terms-ack" type="checkbox" class="mt-0.5 w-4 h-4 accent-olive-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-olive-700">
+          <span>
+            <span data-i18n="invest_terms_ack_1">قرأت</span>
+            <a href="legal/patenschaft.html" target="_blank" rel="noopener" class="text-olive-700 dark:text-olive-300 font-bold underline" data-i18n="invest_terms_doc">وصف خدمة الكفالة</a>
+            <span data-i18n="invest_terms_ack_2">و</span>
+            <a href="legal/datenschutz.html" target="_blank" rel="noopener" class="text-olive-700 dark:text-olive-300 font-bold underline" data-i18n="invest_terms_privacy">سياسة الخصوصية</a>
+            <span data-i18n="invest_terms_ack_3">وأوافق عليهما.</span>
+          </span>
+        </label>
 
         <button data-click="confirmPurchase()" class="w-full bg-olive-800 hover:bg-olive-900 text-white py-3.5 rounded-2xl font-black text-sm shadow-xl transition-all flex items-center justify-center gap-2">
           <i data-lucide="check-circle" class="w-5 h-5"></i>
@@ -9008,7 +8989,7 @@
   </div>
 
   <!-- ================= MODAL: WALLET DEPOSIT & BALANCE RECHARGE (#modal-deposit) ================= -->
-  <div id="modal-deposit" role="dialog" aria-modal="true" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 mobile-sheet-overlay">
+  <div data-off="no-offer" id="modal-deposit" role="dialog" aria-modal="true" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 mobile-sheet-overlay">
     <div class="bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-3xl max-w-lg w-full max-h-[92vh] flex flex-col shadow-2xl overflow-hidden animate-scale-up text-start">
       <!-- Header -->
       <div class="p-5 border-b border-stone-100 dark:border-stone-800 flex items-center justify-between gap-3 bg-gradient-to-r from-emerald-950 via-stone-900 to-stone-950 text-white">
@@ -9195,12 +9176,12 @@
           </ul>
         </div>
         <div>
-          <h4 class="text-white text-sm font-bold mb-3" data-i18n="footer_legal_title">العقود والمواثيق الرسمية</h4>
+          <h4 class="text-white text-sm font-bold mb-3" data-i18n="footer_legal_title">معلومات قانونية</h4>
           <ul class="space-y-2 text-xs">
-            <li><button type="button" data-click="openLegalContract('charter')" class="hover:text-purple-300 transition-colors flex items-center gap-1.5 text-stone-400 cursor-pointer text-start" data-i18n="footer_link_charter">الميثاق ومراجعة الدفعات (Payment Review)</button></li>
-            <li><button type="button" data-click="openLegalContract('investor')" class="hover:text-olive-300 transition-colors flex items-center gap-1.5 text-stone-400 cursor-pointer text-start" data-i18n="footer_link_investor_contract">عقد حيازة الأشجار (5 م² طابو)</button></li>
-            <li><button type="button" data-click="openLegalContract('farmer')" class="hover:text-emerald-300 transition-colors flex items-center gap-1.5 text-stone-400 cursor-pointer text-start" data-i18n="footer_link_farmer_contract">عقد الشراكة والرعاية الفلاحية</button></li>
-            <li><button type="button" data-click="openLegalContract('mill')" class="hover:text-amber-300 transition-colors flex items-center gap-1.5 text-stone-400 cursor-pointer text-start" data-i18n="footer_link_mill_contract">ميثاق المعاصر والفحص المخبري</button></li>
+            <li><button data-off="no-offer" type="button" data-click="openLegalContract('charter')" class="hover:text-purple-300 transition-colors flex items-center gap-1.5 text-stone-400 cursor-pointer text-start" data-i18n="footer_link_charter">الميثاق ومراجعة الدفعات (Payment Review)</button></li>
+            <li><button type="button" data-click="openLegalContract('investor')" class="hover:text-olive-300 transition-colors flex items-center gap-1.5 text-stone-400 cursor-pointer text-start" data-i18n="footer_link_investor_contract">وصف خدمة الكفالة</button></li>
+            <li><button data-off="no-offer" type="button" data-click="openLegalContract('farmer')" class="hover:text-emerald-300 transition-colors flex items-center gap-1.5 text-stone-400 cursor-pointer text-start" data-i18n="footer_link_farmer_contract">عقد الشراكة والرعاية الفلاحية</button></li>
+            <li><button data-off="no-offer" type="button" data-click="openLegalContract('mill')" class="hover:text-amber-300 transition-colors flex items-center gap-1.5 text-stone-400 cursor-pointer text-start" data-i18n="footer_link_mill_contract">ميثاق المعاصر والفحص المخبري</button></li>
             <li><a href="legal/impressum.html" class="hover:text-olive-300 transition-colors flex items-center gap-1.5 text-stone-400" data-i18n="footer_link_imprint">Impressum</a></li>
             <li><a href="legal/datenschutz.html" class="hover:text-olive-300 transition-colors flex items-center gap-1.5 text-stone-400" data-i18n="footer_link_privacy">سياسة الخصوصية (Datenschutz)</a></li>
           </ul>
@@ -9254,8 +9235,9 @@
   </nav>
 
   <!-- ================= JAVASCRIPT LOGIC & STATE ================= -->
-  <script src="app.js?v=a18135d386b2"></script>
-  <script src="shop.js?v=a18135d386b2"></script>
+  <script src="app.js?v=3558bc32533a"></script>
+  <script src="assistant-knowledge.js?v=3558bc32533a"></script>
+  <script src="shop.js?v=3558bc32533a"></script>
 
   <!-- ================= 1. MODAL: FOUNDER EDIT TREE & PRICING ================= -->
   <div id="modal-fndr-edit-tree" role="dialog" aria-modal="true" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 mobile-sheet-overlay">
@@ -9778,7 +9760,7 @@
 
 
   <!-- ================= 3. MODAL: OFFICIAL ESG & CARBON OFFSET CERTIFICATE ================= -->
-  <div id="modal-esg-certificate" role="dialog" aria-modal="true" class="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 mobile-sheet-overlay">
+  <div data-off="no-offer" id="modal-esg-certificate" role="dialog" aria-modal="true" class="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 mobile-sheet-overlay">
     <div class="bg-white dark:bg-stone-900 dark:text-stone-100 rounded-3xl border-2 border-emerald-500/40 p-6 sm:p-8 max-w-2xl w-full space-y-5 shadow-2xl relative max-h-[90vh] overflow-y-auto text-start">
       <div class="flex items-center justify-between pb-3 border-b border-emerald-100 dark:border-emerald-900/40">
         <div class="flex items-center gap-3">
@@ -9843,7 +9825,7 @@
   </div>
 
   <!-- ================= 4. MODAL: ANNUAL CERTIFIED SPONSORSHIP STATEMENT ================= -->
-  <div id="modal-investor-statement" role="dialog" aria-modal="true" class="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 mobile-sheet-overlay">
+  <div data-off="no-offer" id="modal-investor-statement" role="dialog" aria-modal="true" class="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 mobile-sheet-overlay">
     <div class="bg-white dark:bg-stone-900 dark:text-stone-100 rounded-3xl border border-stone-200 dark:border-stone-800 p-6 sm:p-8 max-w-2xl w-full space-y-4 shadow-2xl relative max-h-[90vh] overflow-y-auto text-start">
       <div class="flex items-center justify-between pb-3 border-b border-stone-100 dark:border-stone-800">
         <div class="flex items-center gap-2.5">
@@ -10669,6 +10651,6 @@
     </div>
   </div>
 
-  <script type="module" src="./supabase-client.mjs?v=a18135d386b2"></script>
+  <script type="module" src="./supabase-client.mjs?v=3558bc32533a"></script>
 </body>
 </html>

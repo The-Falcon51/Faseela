@@ -74,18 +74,19 @@ async function render(c: Certificate): Promise<Uint8Array> {
   };
 
   centre("FASEELA", height - 88, sansBold, 14, OLIVE);
-  centre("Certificate of Stewardship", height - 130, serif, 34, STONE);
-  centre("Fractional stewardship of a Syrian olive tree", height - 152, serifItalic, 13, MUTED);
+  centre("Certificate of Sponsorship", height - 130, serif, 34, STONE);
+  centre("Sponsorship of a share in the harvest of a tree", height - 152, serifItalic, 13, MUTED);
 
   centre("This certifies that", height - 200, sans, 12, MUTED);
   centre(latin(c.holderName) || "Faseela member", height - 236, serif, 26, STONE);
 
   const shareText = c.shareCount === c.totalShares
-    ? `holds the complete tree (${c.shareCount} of ${c.totalShares} shares)`
-    : `holds ${c.shareCount} of ${c.totalShares} shares`;
-  centre(`${shareText} of olive tree ${latin(c.treeName)}`, height - 268, sans, 13, STONE);
+    ? `sponsors all ${c.totalShares} shares`
+    : `sponsors ${c.shareCount} of ${c.totalShares} shares`;
+  centre(`${shareText} of the tree ${latin(c.treeName)}`, height - 268, sans, 13, STONE);
   const place = latin(c.region);
-  const land = c.includesLand ? ` including the land parcel${c.landAreaSqm ? ` (${c.landAreaSqm} sqm)` : ""}` : "";
+  // Only records made while the (now switched off) land option existed carry it; the wording promises nothing more.
+  const land = c.includesLand ? ` · land option recorded at purchase${c.landAreaSqm ? ` (${c.landAreaSqm} sqm)` : ""}` : "";
   centre(`${place ? `${place}, Syria` : "Syria"}${land}`, height - 288, sans, 12, MUTED);
 
   // Facts table
@@ -93,7 +94,7 @@ async function render(c: Certificate): Promise<Uint8Array> {
     ["Serial", c.serial],
     ["Tree ID", latin(c.treeId)],
     ["Issued", fmtDate(c.issuedAt)],
-    ["Consideration", fmtMoney(c.purchasePriceMinor, c.currency)],
+    ["Amount paid", fmtMoney(c.purchasePriceMinor, c.currency)],
     ["Status", latin(c.status)],
   ];
   let y = height - 340;
@@ -124,9 +125,9 @@ async function render(c: Certificate): Promise<Uint8Array> {
 
   // Footer: what this document is (and is not)
   const foot = [
-    "This certificate documents a stewardship share recorded on the Faseela platform. It is not a security, deposit or bank product and",
-    "does not promise any return. Ownership of the share and, where stated, the land parcel is governed by the signed stewardship contract.",
-    "[PLATZHALTER: Betreiber, Anschrift, Registernummer]",
+    "This certificate documents the sponsorship of a share in the harvest of the tree named above, recorded on the Faseela platform.",
+    "It confers no ownership of the tree or the land, is not a security, deposit or bank product and promises no return.",
+    `Service description: ${APP_URL.replace(/^https?:\/\//, "")}/legal/patenschaft.html · Operator: ${APP_URL.replace(/^https?:\/\//, "")}/legal/impressum.html`,
   ];
   let fy = 72;
   for (const line of foot.reverse()) {

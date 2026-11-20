@@ -59,7 +59,7 @@ console.log('✅ No unbacked financial claims in shipped HTML.');
 // rises, and the baseline is lowered as copy is rewritten (`node scripts/check-claims.cjs
 // --update-baseline` after a clean-up). Counts include identifiers in app.js; only the
 // direction matters.
-const RATCHET_FILES = ['public/index.html', 'public/app.js', 'src/i18n/de.json', 'public/manifest.json'];
+const RATCHET_FILES = ['public/index.html', 'public/app.js', 'public/assistant-knowledge.js', 'public/shop.js', 'src/i18n/de.json', 'public/manifest.json'];
 const RATCHET_TERMS = [
   { label: 'land title (ar)', pattern: /طابو/g },
   { label: 'land title', pattern: /\bTabu\b|\bGrundbuch|\bcadastral\b|كاداستر/gi },

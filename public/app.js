@@ -74,6 +74,19 @@
         invest_risk_title: "تنبيه المخاطر",
         invest_risk_text: "ينطوي شراء الحصص الشجرية على مخاطر، منها ضعف المحصول أو فقدانه بسبب الطقس أو الآفات أو الظروف المحلية، وقد تخسر جزءاً من المبلغ المدفوع أو كله. لا يُعد أي محصول أو كمية زيت مؤكَّداً، والتقديرات المعروضة غير ملزمة.",
         invest_risk_ack: "قرأت تنبيه المخاطر وأفهم أنني قد أخسر المبلغ المدفوع.",
+        share_terms_btn: "وصف الخدمة",
+        invest_terms_ack_1: "قرأت",
+        invest_terms_doc: "وصف خدمة الكفالة",
+        invest_terms_ack_2: "و",
+        invest_terms_privacy: "سياسة الخصوصية",
+        invest_terms_ack_3: "وأوافق عليهما.",
+        invest_terms_required: "يرجى قراءة وصف خدمة الكفالة وسياسة الخصوصية والموافقة عليهما.",
+        consent_outdated: "تم تحديث المستند. يرجى إعادة تحميل الصفحة وقراءة النسخة الحالية.",
+        consent_failed: "تعذر حفظ موافقتك. يرجى المحاولة مجدداً.",
+        auth_reg_privacy_1: "قرأت",
+        auth_reg_privacy_link: "سياسة الخصوصية",
+        auth_reg_privacy_2: ".",
+        auth_reg_privacy_required: "يرجى تأكيد قراءة سياسة الخصوصية.",
         invest_risk_required: "يرجى قراءة تنبيه المخاطر وتأكيده قبل المتابعة.",
         // Gifts & referrals
         rewards_section_title: "الهدايا والتوصيات",
@@ -116,6 +129,7 @@
         gift_share_wa: "مشاركة عبر واتساب",
         gift_print_cert: "طباعة وثيقة الإهداء",
         land_offer_unavailable: "هذا العرض غير متاح حالياً.",
+        test_phase_banner: "مرحلة تجريبية: منصة فسيلة في طور التشغيل التجريبي، وقد تتغير المحتويات والوظائف.",
         gift_result_note: "احتفظ بالرمز سرّاً: من يملكه يستطيع استلام الهدية. يمكنك إلغاؤه من قائمة «هداياي» ما دام غير مستعمَل.",
         gift_err_exists: "يوجد رمز هدية مفتوح لهذه الحصة بالفعل.",
         gift_err_precondition: "لا يمكن إهداء هذه الحصة الآن: تأكد من بريدك، ومن أن الحصة فعّالة ولا يوجد طلب زيت مفتوح لها.",
@@ -219,7 +233,7 @@
         fx_truncated: "تنبيه: الحد 5000 صف — قسّم الفترة.",
         footer_link_imprint: "بيانات الناشر (Impressum)",
         footer_link_privacy: "سياسة الخصوصية (Datenschutz)",
-        preview_banner_founder: "معاينة: مؤشرات الأسطول والقياسات والنزاعات بيانات توضيحية. المراجعات ودليل المستخدمين بيانات حقيقية من الخادم.",
+        preview_banner_founder: "هذه الصفحة تعرض بيانات حقيقية من الخادم فقط: حالة النظام، التصدير المالي، حسابات الاستلام، دليل المستخدمين والمراجعات. بقية أدوات الفريق في <a href=\"admin/\" class=\"underline font-bold\">لوحة الإدارة</a>.",
         preview_banner_farmer: "معاينة: المحفظة والسلف بيانات توضيحية. تقاريرك الميدانية المرسلة تُحفظ على الخادم وتظهر أدناه.",
         preview_banner_mill: "معاينة: الخزانات والتعبئة بيانات توضيحية. دفعات العصر المرسلة تُحفظ على الخادم وتظهر أدناه.",
         privacy_box_title: "بياناتي وخصوصيتي",
@@ -329,7 +343,7 @@
       prefs_curr_syp_title: 'الليرة السورية (SYP)',
       prefs_curr_syp_sub: 'للمعاملات وأتعاب الفلاحة',
       auth_sec_item1_title: 'التشفير الهجين للبيانات (AES-256 + TLS 1.3)',
-      auth_sec_item1_desc: 'تشفير كامل لكافة صكوك الملكية وأوامر التحويل المالي أثناء النقل والتخزين السحابي.',
+      auth_sec_item1_desc: 'تُنقل بياناتك وطلبات الدفع عبر اتصال مشفّر (TLS) وتُخزَّن مشفّرة.',
       auth_sec_item2_title: 'عزل البيانات الدقيق (Multi-Tenant RLS)',
       auth_sec_item2_desc: 'سياسة أمنية صارمة تمنع تسريب أو تداخل سجلات أي مستخدم أو مزارع مع حسابات أخرى.',
       auth_sec_item3_title: 'البريد الإلكتروني موثّق',
@@ -361,7 +375,7 @@
         auth_tab_assets: "أصولي ونشاطي",
         auth_tab_security: "درع الأمان",
         auth_profile_email_lbl: "البريد الإلكتروني المعتمد:",
-        auth_profile_phone_lbl: "رقم الهاتف الموثق عبر OTP:",
+        auth_profile_phone_lbl: "رقم الهاتف:",
         assets_panel_title: "الأصول والأنشطة المرتبطة بحسابك مباشرة:",
         auth_quick_switch_title: "تبديل الحساب التجريبي بنقرة واحدة (Quick Switcher):",
         auth_tab_prefs: "التفضيلات",
@@ -394,9 +408,9 @@
         legal_tab_farmer: "عقد الرعاية الفلاحية",
         legal_tab_mill: "ميثاق جودة المعاصر",
         legal_btn_print: "طباعة العقد الرسمي والوثيقة المعتمدة (Print / PDF)",
-        footer_legal_title: "العقود والمواثيق الرسمية",
+        footer_legal_title: "معلومات قانونية",
         footer_link_charter: "الميثاق ومراجعة الدفعات (Payment Review)",
-        footer_link_investor_contract: "عقد حيازة الأشجار (5 م² طابو)",
+        footer_link_investor_contract: "وصف خدمة الكفالة",
         footer_link_farmer_contract: "عقد الشراكة والرعاية الفلاحية",
         footer_link_mill_contract: "ميثاق المعاصر والفحص المخبري",
         nav_home: "الرئيسية",
@@ -1695,9 +1709,9 @@
         hero_desc: "اشترِ حصة موثقة في شجرة زيتون عريقة في سوريا، تابع نموها ورعايتها، وراقب عصر ثمارها في أحدث المعاصر المعتمدة مع شهادات جودة مخبرية ونسب حموضة موثّقة مخبرياً، واستلم زيتك البكر أو محاصيلك أينما كنت.",
         hero_btn_explore: "تصفح سوق الأشجار المتاحة",
         hero_btn_chat: "استشر 'فسيلة' فوراً",
-        hero_stat_1_lbl: "شجرة موثقة بنظام GPS",
-        hero_stat_2_lbl: "نسبة حموضة الزيت (بكر ممتاز)",
-        hero_stat_3_lbl: "عصر بارد بمعاصر معتمدة",
+        hero_stat_1_lbl: "شجرة متاحة للكفالة",
+        hero_stat_2_lbl: "مزرعة شريكة",
+        hero_stat_3_lbl: "منطقة",
         hero_stat_4_lbl: "عائلة مزارعة شريكة",
         hero_feat_badge: "شجرة الموسم المميزة",
         hero_feat_is_current: "شجرة الموسم المميزة حالياً",
@@ -1825,7 +1839,7 @@
 
         // Call To Action
         cta_title: "انضم إلى مجتمع كافلي ومزارعي فسيلة",
-        cta_desc: "أكثر من 2,400 شجرة زيتون موثقة بالـ GPS ومعاصر حديثة جاهزة لاستقبال مواسم الخير.",
+        cta_desc: "تصفح الأشجار المتاحة حالياً للكفالة واختر شجرتك.",
         cta_btn_market: "استكشف الأشجار المتاحة",
         cta_btn_mill: "بوابة أصحاب المعاصر",
 
@@ -1867,7 +1881,7 @@
 
         // Sponsor Dashboard
         dash_title: "محفظتي في فسيلة",
-        dash_subtitle: "متابعة أداء أشجارك، الحصص المملوكة، والشهادات الرقمية المعتمدة",
+        dash_subtitle: "متابعة أشجارك وحصصك وشهاداتك",
         dash_btn_cert: "عرض شهادة الملكية الرقمية",
         dash_btn_order_oil: "طلب تسليم عبوات الزيت",
         dash_harvest_hub_title: "جاهزية المحصول واستلام المحاصيل",
@@ -1877,11 +1891,11 @@
         dash_stat_invest: "إجمالي الكفالة",
         dash_stat_invest_sub: "حصة موثقة في شجرة معمرة",
         dash_stat_oil: "إنتاج الزيت المتوقع",
-        dash_stat_oil_sub: "موسم خريف 2026",
+        dash_stat_oil_sub: "تقدير غير ملزم",
         dash_stat_carbon: "أثر امتصاص الكربون",
         dash_stat_carbon_sub: "مساهمة بيئية مستدامة",
         dash_stat_trees: "الأشجار المملوكة",
-        dash_stat_trees_sub: "ريف طرطوس",
+        dash_stat_trees_sub: "أشجار تكفلها",
         dash_tab_trees: "أشجاري في فسيلة",
         dash_tab_txs: "سجل العمليات والمدفوعات",
         dash_tx_ref: "رقم المرجع",
@@ -2094,8 +2108,8 @@
         invest_modal_share_lbl: "اختر نسبة الحصة المطلوبة:",
         invest_modal_total_lbl: "المبلغ الإجمالي للكفالة:",
         invest_modal_oil_lbl: "حصتك المتوقعة من زيت الزيتون البكر:",
-        invest_modal_cert_lbl: "شهادة ملكية رقمية بالـ GPS:",
-        invest_modal_cert_val: "مشمولة فوراً",
+        invest_modal_cert_lbl: "شهادة الكفالة (PDF):",
+        invest_modal_cert_val: "بعد اعتماد الدفعة",
         invest_modal_pay_method_lbl: "طريقة الدفع والتسوية:",
         pay_method_card_title: "بطاقة مصرفية دولية (Visa / MasterCard)",
         pay_method_local_title: "تحويل محلي داخل سوريا (سيريتل كاش / بيمو / الهرم)",
@@ -2330,15 +2344,15 @@
         qr_passport_modal_sub: "معايير المجلس الدولي للزيتون (IOC Standards) • مصادقة مخبرية مشفرة",
         qr_passport_print_btn: "طباعة وتصدير الجواز (Print / PDF)",
         // Sponsor Modern Dashboard 4 Pillars
-        dash_badge_verified: "محفظة كفالات موثقة كاداسترياً • سندات رقمية",
+        dash_badge_verified: "كفالاتك على فسيلة",
         dash_btn_qr_pass: "جواز الزيت المخبري (IOC)",
-        dash_tab_portfolio: "أشجاري والملكيات الكاداسترية",
+        dash_tab_portfolio: "أشجاري وكفالاتي",
         dash_tab_harvest: "إدارة محاصيل المحصول والشحن",
         dash_tab_certs: "الوثائق الرسمية وجواز الجودة",
         dash_tab_finance: "المحفظة المالية والمدفوعات",
-        dash_trees_sub: "حصصك الزراعية المعتمدة وسندات الحيازة الكاداسترية المربوطة بالأقمار الصناعية",
-        dash_investments_title: "طلبات الكفالة والاكتتاب الجارية",
-        dash_investments_sub: "متابعة حالة الحجز المؤقت، تدقيق إشعار الدفع، واعتماد الحصص وسندات الطابو",
+        dash_trees_sub: "حصصك المعتمدة في أشجار المزارع الشريكة",
+        dash_investments_title: "طلبات الكفالة الجارية",
+        dash_investments_sub: "متابعة الحجز المؤقت وتدقيق إشعار الدفع واعتماد الحصص",
         dash_investments_empty_title: "لا توجد طلبات كفالة جارية حالياً",
         dash_investments_empty_sub: "يمكنك استكشاف بستان الأشجار وحجز حصتك الزراعية مع سند الحيازة الكاداستري.",
         dash_btn_cancel_request: "إلغاء الطلب وتحرير الحصة",
@@ -2373,7 +2387,7 @@
         dash_certs_card_contract: "عقد الكفالة الزراعية الموثق",
         dash_certs_card_contract_desc: "عقد قانوني خاضع لأحكام القانون المدني السوري ومعتمد من غرف الزراعة.",
         dash_btn_view_contract: "قراءة العقد الموثق",
-        dash_tx_subtitle: "كافة إيصالات الدفع وعمليات التحويل الموثقة عبر سيريتل كاش والبطاقات",
+        dash_tx_subtitle: "دفعاتك بالتحويل وحالة مراجعتها",
         dash_tx_audit_badge: "سجل مدقق مالياً",
 
         // Farmer Modern Portal 5 Pillars
@@ -2450,7 +2464,7 @@
         calc_unit_econ_title: "نموذج الاستدامة الاقتصادية وتوزيع الإيراد:",
         calc_unit_econ_desc: "40% سلف مباشرة للمزارع • 15% معاصر حديثة وفحص مخبري • 12% تعبئة ونيتروجين • 8% صندوق تكافل ضد الكوارث • 25% ربحية وتشغيل المنصة",
         calc_net_roi_badge: "محصول سنوي متوقع ~25%",
-        calc_cta_invest_btn: "ابدأ الكفالة بهذه الباقة الآن (كفالة الشجرة وحرم الأرض)",
+        calc_cta_invest_btn: "ابدأ الكفالة الآن",
         econ_bar_farmer: "40% سلف زراعية مباشرة للمزارع",
         econ_bar_mill: "15% عصر على البارد وفحص IOC",
         econ_bar_packaging: "12% تعبئة ونيتروجين خامل",
@@ -2528,7 +2542,7 @@
         btn_print_cert: "طباعة / تصدير PDF",
         nav_notifications_title: "مركز الإشعارات والتنبيهات",
         notif_center_title: "مركز الإشعارات والتنبيهات",
-        notif_center_sub: "تحديثات حية ومباشرة لكافة العمليات المالية، الحقلية، وحركات الحساب",
+        notif_center_sub: "إشعارات حسابك وطلباتك",
         notif_unread_badge: "غير مقروء",
         notif_mark_all_read: "تحديد الكل كمقروء",
         notif_clear_all: "تفريغ المقروء",
@@ -2615,7 +2629,7 @@
         prefs_curr_syp_title: "الليرة السورية (SYP)",
         prefs_curr_syp_sub: "للمعاملات وأتعاب الفلاحة",
         auth_sec_item1_title: "التشفير الهجين للبيانات (AES-256 + TLS 1.3)",
-        auth_sec_item1_desc: "تشفير كامل لكافة صكوك الملكية وأوامر التحويل المالي أثناء النقل والتخزين السحابي.",
+        auth_sec_item1_desc: "تُنقل بياناتك وطلبات الدفع عبر اتصال مشفّر (TLS) وتُخزَّن مشفّرة.",
         auth_sec_item2_title: "عزل البيانات الدقيق (Multi-Tenant RLS)",
         auth_sec_item2_desc: "سياسة أمنية صارمة تمنع تسريب أو تداخل سجلات أي مستخدم أو مزارع مع حسابات أخرى.",
         auth_sec_item3_title: "البريد الإلكتروني موثّق",
@@ -3436,7 +3450,7 @@
         modal_inputs_guide: "اختر المواد الزراعية المعتمدة التي تحتاجها لمزرعتك اليوم، وسيتم تسليمها لك مباشرة عبر أقرب نقطة توزيع تعاونية، مع تأجيل سداد القيمة ليتم استقطاعها من حصتك في زيت الموسم بعد العصر:",
         modal_specimen_user_lbl: "اسم الكافل للتجربة:",
         modal_contracts_legal_approval_lbl: "اعتماد الإدارة القانونية العليا:",
-        modal_dossier_assets_title: "الأصول الزراعية وصكوك الحيازة الكاداسترية المقيدة باسم المستخدم",
+        modal_dossier_assets_title: "حصص الأشجار المسجلة باسم المستخدم",
         modal_manage_user_trees_lbl: "الأشجار والبساتين المربوطة بالحساب:",
         modal_manage_user_aml_lbl: "الأمان المالي ومكافحة غسيل الأموال (AML)",
         modal_specimen_coords_lbl: "الإحداثيات المساحية WGS-84:",
@@ -3682,8 +3696,8 @@
         bundle_almond_label: "🌸 حصة لوز سوري:",
         bundle_almond_tree: "فرك المخرم الفاخر",
         bundle_almond_yield: "~ 2.5 كغ لوز فرك نقي",
-        bundle_deed_label: "سند الحيازة المساحي المفرز:",
-        bundle_deed_val: "~ 15.0 م² طابو زراعي مساحي موحد",
+        bundle_deed_label: "الأرض:",
+        bundle_deed_val: "لا يشمل أرضاً",
         bundle_discount_badge: "خصم 7% مجمع",
         bundle_olive_label: "🫒 حصتان زيتون:",
         bundle_olive_tree: "خضيري دريكيش عتيق",
@@ -3801,7 +3815,7 @@
         mill_reg_terms: "أقر بصحة البيانات أعلاه والتزامي التام بميثاق جودة العصر البارد الإيطالي ومطابقة معايير المجلس الدولي للزيتون (IOC)، وقبول الرقابة الميدانية الدورية من إدارة منصة فسيلة.",
         mill_tank_opt_1: "خزان رقم 1 (T-101 - خضيري الساحل)",
         mill_tank_opt_2: "خزان رقم 2 (T-102 - صوراني جبل الزاوية)",
-        modal_clause_dna_text: "تتحقق المنصة من سلامة ونقاء الصنف الشجري (صوراني، قيسي، دعيبلي، خضيري) بشهادة فحص جيني صادرة عن مركز البحوث الزراعية ومطابقة لسند الطابو الكاداستري.",
+        modal_clause_dna_text: "يُذكر صنف الشجرة (صوراني، قيسي، دعيبلي، خضيري) كما أفادت به المزرعة الشريكة. تظهر نتيجة فحص الصنف في صفحة الشجرة فقط إذا أُجري الفحص فعلاً.",
         modal_inputs_item_drip: "شبكة ري بالتنقيط ذاتية التنظيف (10 دونم)",
         modal_inputs_item_fertilizer_sub: "رفع جودة الثمار وتقليل نسبة المعاومة الشجرية",
         modal_inputs_item_pruning: "عدة تقليم كهربائية واحترافية وبخاخات ضغط",
@@ -3877,6 +3891,19 @@
         invest_risk_title: "Risk notice",
         invest_risk_text: "Buying tree shares carries risk, including reduced or lost harvests due to weather, pests or local conditions. You may lose part or all of the amount paid. No return or oil quantity is promised, and all estimates shown are non-binding.",
         invest_risk_ack: "I have read the risk notice and understand that I may lose the amount paid.",
+        share_terms_btn: "Service description",
+        invest_terms_ack_1: "I have read the",
+        invest_terms_doc: "sponsorship service description",
+        invest_terms_ack_2: "and the",
+        invest_terms_privacy: "privacy policy",
+        invest_terms_ack_3: "and agree to them.",
+        invest_terms_required: "Please read and accept the sponsorship service description and the privacy policy.",
+        consent_outdated: "This document has been updated. Please reload the page and read the current version.",
+        consent_failed: "Your consent could not be saved. Please try again.",
+        auth_reg_privacy_1: "I have read the",
+        auth_reg_privacy_link: "privacy policy",
+        auth_reg_privacy_2: ".",
+        auth_reg_privacy_required: "Please confirm that you have read the privacy policy.",
         invest_risk_required: "Please read and confirm the risk notice before continuing.",
         // Gifts & referrals
         rewards_section_title: "Gifts & referrals",
@@ -3919,6 +3946,7 @@
         gift_share_wa: "Share via WhatsApp",
         gift_print_cert: "Print Gift Certificate",
         land_offer_unavailable: "This offer is currently not available.",
+        test_phase_banner: "Test phase: Faseela is in a trial run. Content and features may still change.",
         gift_result_note: "Keep the code private: whoever holds it can claim the gift. You can cancel it from “My gifts” while it is unused.",
         gift_err_exists: "This share already has an open gift code.",
         gift_err_precondition: "This share cannot be gifted right now: verify your e-mail and make sure the share is active with no open oil request.",
@@ -4022,7 +4050,7 @@
         fx_truncated: "Note: limited to 5,000 rows — split the period.",
         footer_link_imprint: "Legal notice (Impressum)",
         footer_link_privacy: "Privacy policy (Datenschutz)",
-        preview_banner_founder: "Preview: fleet, telemetry and dispute widgets show sample data. Reviews and the user directory are live server data.",
+        preview_banner_founder: "This page shows live server data only: system status, finance export, receiving accounts, the user directory and reviews. All other team tools are in the <a href=\"admin/\" class=\"underline font-bold\">admin panel</a>.",
         preview_banner_farmer: "Preview: wallet and advances show sample data. Field reports you submit are stored on the server and listed below.",
         preview_banner_mill: "Preview: tanks and bottling show sample data. Pressing batches you submit are stored on the server and listed below.",
         privacy_box_title: "My data & privacy",
@@ -4132,7 +4160,7 @@
       prefs_curr_syp_title: 'Syrian Pound (SYP)',
       prefs_curr_syp_sub: 'For Field Labor & Transactions',
       auth_sec_item1_title: 'Hybrid Data Encryption (AES-256 + TLS 1.3)',
-      auth_sec_item1_desc: 'Full cryptographic encryption for all usufruct deeds and financial transfer orders in transit and at rest.',
+      auth_sec_item1_desc: 'Your data and payment requests travel over an encrypted connection (TLS) and are stored encrypted.',
       auth_sec_item2_title: 'Strict Tenant Isolation (Multi-Tenant RLS)',
       auth_sec_item2_desc: 'Rigorous row-level security preventing cross-account leakage between investors, farmers, and mills.',
       auth_sec_item3_title: 'Email verified',
@@ -4483,7 +4511,7 @@
         auth_tab_assets: "My Linked Assets",
         auth_tab_security: "Security Shield",
         auth_profile_email_lbl: "Authorized Email Address:",
-        auth_profile_phone_lbl: "OTP Verified Mobile Phone:",
+        auth_profile_phone_lbl: "Phone number:",
         assets_panel_title: "Active Assets & Operations Linked to Your Session:",
         auth_quick_switch_title: "1-Click Demo Account Switcher (Instant RBAC):",
         theme_light: "Light Mode",
@@ -4499,9 +4527,9 @@
         legal_tab_farmer: "Farmer Grove Accord",
         legal_tab_mill: "Cold Mill Quality Standard",
         legal_btn_print: "Print Official Contract & Certified Deed (Print / PDF)",
-        footer_legal_title: "Official Legal Contracts & Charters",
+        footer_legal_title: "Legal",
         footer_link_charter: "Charter & Payment Review Protection",
-        footer_link_investor_contract: "Tree Stewardship & Land Deed (5m²)",
+        footer_link_investor_contract: "Sponsorship service description",
         footer_link_farmer_contract: "Farmer Grove Partnership Contract",
         footer_link_mill_contract: "Mill Cold Extraction & Quality Accord",
         nav_home: "Home",
@@ -4521,9 +4549,9 @@
         hero_desc: "Own a certified fractional share of an authentic heritage olive tree in Syria. Follow its seasonal care, monitor cold pressing at modern certified mills with lab certificates, and receive your extra virgin olive oil or financial returns anywhere in the world.",
         hero_btn_explore: "Explore Available Trees",
         hero_btn_chat: "Ask 'Faseela' Now",
-        hero_stat_1_lbl: "GPS Documented Trees",
-        hero_stat_2_lbl: "Acidity (Extra Virgin)",
-        hero_stat_3_lbl: "Cold Pressed & Lab Certified",
+        hero_stat_1_lbl: "trees open for sponsorship",
+        hero_stat_2_lbl: "partner farms",
+        hero_stat_3_lbl: "regions",
         hero_stat_4_lbl: "Partner Farming Families",
         hero_feat_badge: "Featured Season Tree",
         hero_feat_is_current: "Current Featured Season Tree",
@@ -4651,7 +4679,7 @@
 
         // Call To Action
         cta_title: "Join the Faseela Stewardship Community",
-        cta_desc: "Over 2,400 GPS-documented trees and certified modern mills ready for authentic stewardship.",
+        cta_desc: "Browse the trees currently open for sponsorship and choose yours.",
         cta_btn_market: "Explore Available Trees",
         cta_btn_mill: "Olive Mills Portal",
 
@@ -4693,7 +4721,7 @@
 
         // Sponsor Dashboard
         dash_title: "My Faseela Portfolio",
-        dash_subtitle: "Track your trees, fractional shares, and verified digital certificates",
+        dash_subtitle: "Follow your trees, shares and certificates",
         dash_btn_cert: "View Digital Certificate",
         dash_btn_order_oil: "Order Olive Oil Delivery",
         dash_harvest_hub_title: "Harvest Readiness & Payout Hub",
@@ -4703,11 +4731,11 @@
         dash_stat_invest: "Total Invested",
         dash_stat_invest_sub: "Verified Tree Share",
         dash_stat_oil: "Expected Oil Yield",
-        dash_stat_oil_sub: "Autumn 2026 Season",
+        dash_stat_oil_sub: "non-binding estimate",
         dash_stat_carbon: "Carbon Offset Impact",
         dash_stat_carbon_sub: "Sustainable Green Contribution",
         dash_stat_trees: "Trees Owned",
-        dash_stat_trees_sub: "Tartus Countryside",
+        dash_stat_trees_sub: "trees you sponsor",
         dash_tab_trees: "My Trees in Faseela",
         dash_tab_txs: "Transactions & Receipts Log",
         dash_tx_ref: "Reference #",
@@ -4899,8 +4927,8 @@
         invest_modal_share_lbl: "Choose Desired Share Size:",
         invest_modal_total_lbl: "Total Stewardship Cost:",
         invest_modal_oil_lbl: "Expected Extra Virgin Oil Yield:",
-        invest_modal_cert_lbl: "GPS Verified Digital Certificate:",
-        invest_modal_cert_val: "Included Instantly",
+        invest_modal_cert_lbl: "Sponsorship certificate (PDF):",
+        invest_modal_cert_val: "after the payment is approved",
         invest_modal_pay_method_lbl: "Payment & Settlement Method:",
         pay_method_card_title: "International Card (Visa / MasterCard)",
         pay_method_local_title: "Local Syria Settlement (Syriatel Cash / BEMO / Al-Haram)",
@@ -5135,15 +5163,15 @@
         qr_passport_modal_sub: "International Olive Council Standards • Cryptographically Verified Lab Passport",
         qr_passport_print_btn: "Print / Export Lab Passport (PDF)",
         // Sponsor Modern Dashboard 4 Pillars
-        dash_badge_verified: "Cadastrally Verified Portfolio • Cryptographic Deeds",
+        dash_badge_verified: "Your sponsorships on Faseela",
         dash_btn_qr_pass: "EVOO Lab Passport (IOC)",
-        dash_tab_portfolio: "My Trees & Cadastral Deeds",
+        dash_tab_portfolio: "My trees & sponsorships",
         dash_tab_harvest: "Harvest Yields & Dispatch Hub",
         dash_tab_certs: "Official Certs & Lab Passport",
         dash_tab_finance: "Finance & Transaction Ledger",
-        dash_trees_sub: "Certified grove shares and cadastral land records linked to satellite telemetry",
-        dash_investments_title: "Active Sponsorship & Subscription Requests",
-        dash_investments_sub: "Track temporary reservation status, payment receipt audit, and cadastral share issuance",
+        dash_trees_sub: "Your approved shares in trees of partner farms",
+        dash_investments_title: "Open sponsorship requests",
+        dash_investments_sub: "Track temporary reservations, payment receipt checks and share approval",
         dash_investments_empty_title: "No active sponsorship requests found",
         dash_investments_empty_sub: "Explore the marketplace to reserve grove shares with verified cadastral title deeds.",
         dash_btn_cancel_request: "Cancel Request & Release Share",
@@ -5178,7 +5206,7 @@
         dash_certs_card_contract: "Certified Agricultural Partnership Contract",
         dash_certs_card_contract_desc: "Enforceable legal contract governed by Syrian Civil Code and certified by Chambers of Agriculture.",
         dash_btn_view_contract: "Read Certified Contract",
-        dash_tx_subtitle: "All payments, settlements, and receipt tokens processed via Syriatel Cash and international cards",
+        dash_tx_subtitle: "Your transfers and the status of their review",
         dash_tx_audit_badge: "Audited Financial Record",
 
         // Farmer Modern Portal 5 Pillars
@@ -5255,7 +5283,7 @@
         calc_unit_econ_title: "Unit Economics & Revenue Distribution Model:",
         calc_unit_econ_desc: "40% Direct Farmer Advance • 15% Cold Press & IOC Lab • 12% Nitrogen Packaging • 8% Relief Payment Review • 25% Platform Sustainability",
         calc_net_roi_badge: "Estimated annual oil share (not a return)",
-        calc_cta_invest_btn: "Start Sponsorship with this Package Now (Tree & Land Plot)",
+        calc_cta_invest_btn: "Start a sponsorship now",
         econ_bar_farmer: "40% Direct Farmer Advance",
         econ_bar_mill: "15% Cold-Press & IOC Lab",
         econ_bar_packaging: "12% Inert Nitrogen Packaging",
@@ -5333,7 +5361,7 @@
         btn_print_cert: "Print / Export PDF",
         nav_notifications_title: "Notifications & Alerts Hub",
         notif_center_title: "Notifications & Alerts Hub",
-        notif_center_sub: "Real-time updates across financial, agricultural, and security events",
+        notif_center_sub: "Notifications about your account and requests",
         notif_unread_badge: "Unread",
         notif_mark_all_read: "Mark All as Read",
         notif_clear_all: "Clear Read",
@@ -5420,7 +5448,7 @@
         prefs_curr_syp_title: "Syrian Pound (SYP)",
         prefs_curr_syp_sub: "For Local Operations & Care Wages",
         auth_sec_item1_title: "Hybrid Data Encryption (AES-256 + TLS 1.3)",
-        auth_sec_item1_desc: "End-to-end encryption for all ownership deeds and payment transfers in transit and cloud storage.",
+        auth_sec_item1_desc: "Your data and payment requests travel over an encrypted connection (TLS) and are stored encrypted.",
         auth_sec_item2_title: "Strict Data Isolation (Multi-Tenant RLS)",
         auth_sec_item2_desc: "Enforced access boundaries preventing cross-tenant leakage between sponsors, farmers, and mills.",
         auth_sec_item3_title: "Email verified",
@@ -6247,7 +6275,7 @@
         modal_inputs_guide: "Select the certified agricultural supplies required for your orchard today. Distributed via your nearest agricultural cooperative with cost deferred to post-milling season harvest settlement:",
         modal_specimen_user_lbl: "Test Sponsor Name:",
         modal_contracts_legal_approval_lbl: "Supreme Legal Council Accreditation:",
-        modal_dossier_assets_title: "Agricultural Assets & Cadastral Title Deeds Registered to User",
+        modal_dossier_assets_title: "Tree shares registered to this user",
         modal_manage_user_trees_lbl: "Linked Trees & Groves:",
         modal_manage_user_aml_lbl: "Financial Security & AML Clearance:",
         modal_specimen_coords_lbl: "Cadastral Coordinates WGS-84:",
@@ -6493,8 +6521,8 @@
         bundle_almond_label: "🌸 Syrian Almond Share:",
         bundle_almond_tree: "Premium Al-Mukharram Soft-Shell",
         bundle_almond_yield: "~ 2.5 kg pure soft-shell almonds",
-        bundle_deed_label: "Cadastral Plot Tenure Deed:",
-        bundle_deed_val: "~ 15.0 m² unified cadastral deed",
+        bundle_deed_label: "Land:",
+        bundle_deed_val: "No land included",
         bundle_discount_badge: "7% Bundle Discount",
         bundle_olive_label: "🫒 2 Olive Shares:",
         bundle_olive_tree: "Ancient Dreikish Khodairi",
@@ -6612,7 +6640,7 @@
         mill_reg_terms: "I hereby affirm the accuracy of the data above and my full commitment to cold-extraction quality standards, IOC conformity, and periodic field inspections by Faseela Administration.",
         mill_tank_opt_1: "Tank #1 (T-101 - Coastal Khodairi)",
         mill_tank_opt_2: "Tank #2 (T-102 - Jabal Al-Zawiya Sourani)",
-        modal_clause_dna_text: "The platform verifies tree varietal purity (Sourani, Qaysi, Daebli, Khodairi) via genetic testing certificates from Agricultural Research Centers aligned with Cadastral Deeds.",
+        modal_clause_dna_text: "The tree variety (Sourani, Qaysi, Daebli, Khodairi) is stated as reported by the partner farm. A variety test result appears on the tree page only where such a test was actually carried out.",
         modal_inputs_item_drip: "Self-Cleaning Drip Irrigation Network (10 Dunums)",
         modal_inputs_item_fertilizer_sub: "Boost fruit quality & mitigate alternate bearing cycles",
         modal_inputs_item_pruning: "Electric Precision Pruning Kit & Pressure Sprayers",
@@ -10397,6 +10425,10 @@
     // Off means: no new land sales and no land marketing surfaces. Shares that already include
     // land (server records) keep showing it — that is an existing contract, not an offer.
     state.catalogState = 'loading'; // 'loading' | 'ready' | 'error' — see catalogTrees()
+    // Versions of the documents users agree to. They must equal private.app_settings('consent_versions') on the server
+    // and the data-version of the document page (public/legal/patenschaft.html); the server refuses any other version.
+    const CONSENT_VERSIONS = Object.freeze({ privacy: '2026-11-17', sponsorship: '2026-11-17' });
+
     const LAND_OFFER_ENABLED = false;
     // The shop has sample products and prices and no order backend: an "order" would go nowhere. Off until it has one.
     const BOUTIQUE_ENABLED = false;
@@ -10504,6 +10536,15 @@
     }
 
     /** Trees on offer: only what the database lists. The built-in entries are templates, never offers. */
+    /** Landing page figures: counted from the trees the database lists, never fixed numbers. */
+    function updateHeroStats() {
+      const trees = catalogTrees();
+      const set = (id, value) => { const el = document.getElementById(id); if (el) el.textContent = state.catalogState === 'ready' ? String(value) : '–'; };
+      set('hero-stat-trees', trees.length);
+      set('hero-stat-farms', new Set(trees.map(tr => tr.farm_id).filter(Boolean)).size);
+      set('hero-stat-regions', new Set(trees.map(tr => tr.region).filter(Boolean)).size);
+    }
+
     function catalogTrees() {
       if (state.catalogState !== 'ready') return [];
       return (state.trees || []).filter(tr => tr.server_listed);
@@ -10535,6 +10576,7 @@
     }
     /** Number of offered trees per crop, written into the crop tabs (the numbers used to be fixed text). */
     function updateCropCounts() {
+      updateHeroStats();
       const offers = catalogTrees();
       document.querySelectorAll('[data-crop-count]').forEach(el => {
         const key = el.getAttribute('data-crop-count');
@@ -11494,21 +11536,24 @@
       showToast(state.currentLang !== 'ar' ? '✅ Profile updated successfully!' : '✅ تم حفظ وتحديث بيانات الملف الشخصي بنجاح!');
     }
 
-    function revokeAllOtherSessions() {
-      const nonce = 'REVOKE-' + Math.random().toString(36).substring(2, 8).toUpperCase();
-      if (!state.securityAuditTrail) state.securityAuditTrail = [];
-      state.securityAuditTrail.unshift({
-        id: nonce,
-        timestamp: new Date().toISOString(),
-        action: 'REVOKE_ALL_SESSIONS',
-        target_user_id: state.currentUser ? state.currentUser.id : 'anon',
-        auth_type: 'SECURITY_AUDITED'
-      });
-      playAcousticChime(620, 0.2);
-      showToast(state.currentLang !== 'ar' 
-        ? '🛡️ All other active sessions revoked. Current session secured.' 
-        : '🛡️ تم إنهاء وإبطال كافة الجلسات الأخرى بنجاح. جلستك الحالية فقط هي المصرح بها.');
-      renderAuthSessionModal();
+    async function revokeAllOtherSessions() {
+      const ar = state.currentLang === 'ar';
+      const de = state.currentLang === 'de';
+      if (!state.serverMode || !window.FaseelaFirebase?.signOutOtherSessions) {
+        showToast(ar ? 'متاح بعد تسجيل الدخول فقط.' : de ? 'Nur nach der Anmeldung verfügbar.' : 'Available after signing in only.');
+        return;
+      }
+      try {
+        await window.FaseelaFirebase.signOutOtherSessions();
+        showToast(ar ? 'تم إنهاء جلساتك على الأجهزة الأخرى. تبقى هذه الجلسة فعالة.'
+          : de ? 'Ihre Sitzungen auf anderen Geräten wurden beendet. Diese Sitzung bleibt aktiv.'
+          : 'Your sessions on other devices were ended. This session stays active.');
+      } catch (error) {
+        console.warn('[faseela] other sessions not ended:', error?.code || error?.message);
+        showToast(ar ? 'تعذر إنهاء الجلسات الأخرى. يرجى المحاولة مجدداً.'
+          : de ? 'Die anderen Sitzungen konnten nicht beendet werden. Bitte erneut versuchen.'
+          : 'The other sessions could not be ended. Please try again.');
+      }
     }
 
     function renderAuthSessionModal() {
@@ -11539,7 +11584,7 @@
       }
       
       const orgEl = document.getElementById('auth-card-org');
-      if (orgEl) orgEl.innerText = isEn ? "Syrian Arab Republic" : "الجمهورية العربية السورية";
+      if (orgEl) orgEl.innerText = state.currentLang === 'ar' ? 'عضوية فسيلة' : state.currentLang === 'de' ? 'Faseela-Mitgliedschaft' : 'Faseela membership';
 
       const titleEl = document.getElementById('auth-modal-title');
       if (titleEl) titleEl.innerText = isEn ? "Verified Digital Identity & Access Permit" : "بطاقة الهوية الرقمية وتصريح النفاذ";
@@ -12243,8 +12288,9 @@
       }
 
       const termsCheck = document.getElementById('reg-terms-check');
-      if (termsCheck && termsCheck.checked === false) {
-        showToast(state.currentLang !== 'ar' ? 'Please agree to the Agricultural Partnership Charter.' : 'يرجى الموافقة على ميثاق الكفالة التشاركية الزراعي وحيازة الأراضي.');
+      if (!termsCheck || !termsCheck.checked) {
+        showToast(t('auth_reg_privacy_required'));
+        termsCheck?.focus();
         return;
       }
 
@@ -12263,7 +12309,8 @@
         displayName: name,
         phone,
         requestedRole: role,
-        region
+        region,
+        consents: [{ kind: 'privacy', version: CONSENT_VERSIONS.privacy }]
       }).then(result => {
         switchAuthSubTab('login');
         const loginEmail = document.getElementById('auth-login-email');
@@ -13677,14 +13724,11 @@ function togglePasswordVisibility(inputId, iconId) {
       }
     }
 
+    // The former in-app contracts (Syrian law, arbitration, land tenure) were never agreed by anyone and are gone.
+    // Sponsors get the service description; farm and mill partnerships are agreed individually (contact via imprint).
     function openLegalContract(tabKey) {
-      renderLegalContractsContent();
-      const modal = document.getElementById('modal-legal-contracts');
-      if (modal) {
-        modal.classList.remove('hidden');
-        switchLegalContractTab(tabKey || 'charter');
-      }
-      if (typeof triggerHaptic === 'function') triggerHaptic('light');
+      const href = (tabKey === 'farmer' || tabKey === 'mill') ? 'legal/impressum.html' : 'legal/patenschaft.html';
+      window.open(href, '_blank', 'noopener');
     }
 
     function switchLegalContractTab(tabKey) {
@@ -15333,6 +15377,12 @@ function setMarketplaceViewMode(mode) {
         riskAck?.focus();
         return;
       }
+      const termsAck = document.getElementById('invest-terms-ack');
+      if (!termsAck || !termsAck.checked) {
+        showToast(t('invest_terms_required'));
+        termsAck?.focus();
+        return;
+      }
 
       const tree = state.trees.find(t => t.id === state.currentTreeId) || state.trees[0];
       if (!tree) {
@@ -15390,6 +15440,20 @@ function setMarketplaceViewMode(mode) {
         submitBtn.innerHTML = `<span class="animate-spin inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full me-2"></span>${isEn ? 'Reserving Shares...' : 'جاري حجز الحصص...'}`;
       }
 
+      // The server refuses a sponsorship without a recorded acceptance of the current documents.
+      if (state.serverMode && window.FaseelaFirebase.recordConsent) {
+        try {
+          for (const kind of ['sponsorship', 'privacy']) {
+            await window.FaseelaFirebase.recordConsent({ kind, version: CONSENT_VERSIONS[kind], source: 'checkout' });
+          }
+        } catch (consentError) {
+          console.warn('[faseela] consent not recorded:', consentError?.code || consentError?.message);
+          showToast(consentError?.code === 'consent-outdated' ? t('consent_outdated') : t('consent_failed'));
+          if (submitBtn) { submitBtn.disabled = false; submitBtn.innerHTML = origHtml; }
+          return;
+        }
+      }
+
       try {
         const idempotencyKey = 'inv_' + (crypto.randomUUID ? crypto.randomUUID().replace(/-/g, '') : (Date.now() + '_' + Math.random().toString(36).slice(2))) + '_' + Date.now();
         const reservationRes = await window.FaseelaFirebase.createInvestmentRequest({
@@ -15438,7 +15502,7 @@ function setMarketplaceViewMode(mode) {
         resetInvestExtras();
 
         showToast((isEn
-          ? `Investment request submitted${confirmedAmount ? ` (amount confirmed by server: $${confirmedAmount})` : ''}. Your payment proof is under finance review.`
+          ? `Sponsorship request submitted${confirmedAmount ? ` (amount confirmed by server: $${confirmedAmount})` : ''}. Your payment receipt is being reviewed.`
           : `تم تقديم طلب الكفالة${confirmedAmount ? ` (المبلغ المعتمد من الخادم: $${confirmedAmount})` : ''}. إشعار الدفع قيد المراجعة المالية.`) + extrasNote);
 
         if (typeof dispatchNotification === 'function') {
@@ -15446,9 +15510,9 @@ function setMarketplaceViewMode(mode) {
             role: 'investor',
             type: 'financial',
             title_ar: 'طلب كفالة قيد المراجعة',
-            title_en: 'Investment Request Submitted',
+            title_en: 'Sponsorship request under review',
             body_ar: `تم تسجيل حجزك لشجرة (${tree.tree_name}) وإرسال إشعار الدفع للتدقيق المالي.`,
-            body_en: `Reservation created for tree (${tree.tree_name_en || tree.tree_name}) and submitted for financial audit.`,
+            body_en: `Reservation created for tree (${tree.tree_name_en || tree.tree_name}); your payment receipt is being reviewed.`,
             icon: 'check-circle',
             badgeColor: 'emerald',
             action: 'dashboard'
@@ -16444,7 +16508,7 @@ function setMarketplaceViewMode(mode) {
         if (matureCards) matureCards.classList.remove('hidden');
         if (bundleBanner) bundleBanner.classList.remove('hidden');
         if (cropTabs) cropTabs.classList.remove('hidden');
-        if (countBadge) countBadge.innerText = state.currentLang !== 'ar' ? `${state.trees.length} Mature Trees` : `${state.trees.length} أشجار معمرة`;
+        if (countBadge) { const offered = catalogTrees().length; countBadge.innerText = state.currentLang === 'ar' ? `${offered} أشجار متاحة` : state.currentLang === 'de' ? `${offered} Bäume im Angebot` : `${offered} trees on offer`; }
       }
       lucide.createIcons();
     }
@@ -16595,6 +16659,8 @@ function setMarketplaceViewMode(mode) {
     function switchInvestorSubTab(tabName) {
       const tabs = ['portfolio', 'harvest', 'trade', 'certs', 'finance'];
       if (tabName === 'trade' && !p2pEnabled()) { showToast(t('p2p_beta_unavailable')); tabName = 'portfolio'; }
+      // Harvest and documents tabs hold samples only (fixed litres, cash offer, lab passport); real sessions use the portfolio.
+      if (state.serverMode && (tabName === 'harvest' || tabName === 'certs')) tabName = 'portfolio';
       document.getElementById('btn-investor-tab-trade')?.classList.toggle('hidden', !p2pEnabled());
       tabs.forEach(t => {
         const btn = document.getElementById(`btn-investor-tab-${t}`);
@@ -17620,7 +17686,7 @@ function setMarketplaceViewMode(mode) {
                   })()}
                   <button data-click="openLegalContract('investor')" class="bg-purple-100 hover:bg-purple-200 dark:bg-purple-950 dark:hover:bg-purple-900 text-purple-900 dark:text-purple-200 px-3 py-2 rounded-xl font-bold text-xs flex items-center gap-1 cursor-pointer" title="${isEn ? 'Certified Usufruct & Sponsorship Contract' : 'عقد الكفالة الموثق'}">
                     <i data-lucide="file-check-2" class="w-3.5 h-3.5 text-purple-700 dark:text-purple-400"></i>
-                    <span>${isEn ? 'Contract' : 'العقد'}</span>
+                    <span>${t('share_terms_btn')}</span>
                   </button>
                   ${(() => {
                     if (!rewardsVisible() || share.source !== 'server' || !/^[0-9a-f]{64}$/.test(String(share.id || ''))) return '';
@@ -17983,7 +18049,7 @@ function setMarketplaceViewMode(mode) {
       openModal('modal-emergency-voice');
     }
 
-    function openMillBatchModal() {
+    async function openMillBatchModal() {
       if (!state.currentUser || (state.currentUser.role !== 'mill_owner' && state.currentUser.role !== 'admin')) {
         const reqRole = state.currentLang !== 'ar' ? 'Certified Mill Operator' : 'صاحب معصرة معتمد';
         const msg = state.currentLang !== 'ar' ? 'Recording pressing batches is restricted to licensed mill operators.' : 'تسجيل وجبات عصر الزيتون مقتصر حصرياً على أصحاب المعاصر المعتمدين بشهادات فحص مخبري.';
@@ -17991,7 +18057,36 @@ function setMarketplaceViewMode(mode) {
         return;
       }
       
-      // Dynamically populate tree selection from state.trees
+      // Real session: only trees on offer and the mills this operator is assigned to (the server checks both again).
+      if (state.serverMode) {
+        const isEn = state.currentLang !== 'ar';
+        let millIds = [];
+        try {
+          const assignments = window.FaseelaFirebase?.myAssignments ? await window.FaseelaFirebase.myAssignments() : null;
+          millIds = (assignments && Array.isArray(assignments.mills)) ? assignments.mills : [];
+        } catch (error) {
+          console.warn('[faseela] mill assignments not loaded:', error?.code || error?.message);
+        }
+        const treeSelect = document.getElementById('batch-tree-select');
+        if (treeSelect) {
+          treeSelect.innerHTML = catalogTrees().map(tr => {
+            const name = isEn ? (tr.tree_name_en || tr.tree_name) : tr.tree_name;
+            const region = isEn ? (tr.region_en || tr.region) : tr.region;
+            return `<option value="${escapeHtml(tr.id)}">${escapeHtml(name || tr.id)}${region ? ' — ' + escapeHtml(region) : ''}</option>`;
+          }).join('');
+        }
+        const assigned = document.getElementById('batch-mill-select');
+        if (assigned) {
+          assigned.innerHTML = `<option value="">${isEn ? 'Select assigned mill' : 'اختر المعصرة المكلف بها'}</option>`
+            + millIds.map(id => `<option value="${escapeHtml(id)}">${escapeHtml(id)}</option>`).join('');
+        }
+        if (!millIds.length) showToast(isEn ? 'No mill is assigned to this account yet. Please contact the team.' : 'لا توجد معصرة مسندة لهذا الحساب بعد. يرجى التواصل مع الفريق.');
+        openModal('modal-mill-batch');
+        if (window.lucide && typeof window.lucide.createIcons === 'function') lucide.createIcons();
+        return;
+      }
+
+      // Demo: populate tree selection from the sample trees
       const sel = document.getElementById('batch-tree-select');
       if (sel && state.trees && state.trees.length > 0) {
         const isEn = state.currentLang !== 'ar';
@@ -18819,6 +18914,7 @@ function setMarketplaceViewMode(mode) {
     // =========================================================
     let currentAuditFilter = 'all';
     let currentFounderSubTab = 'overview';
+    const FOUNDER_SAMPLE_TABS = ['fleet', 'telemetry', 'audit', 'decisions', 'contracts_editor'];
     let currentFleetTrack = 'mature';
 
     // Telemetry Stations Model
@@ -18881,6 +18977,9 @@ function setMarketplaceViewMode(mode) {
 
     function switchFounderSubTab(tabName) {
       if (state.currentUser && ['finance_admin', 'quality_auditor'].includes(state.currentUser.role)) tabName = 'approvals';
+      // These tabs hold illustrations only (invented fleet figures, sensor readings, audit events, disputes, contract
+      // drafts). A real session never shows them; the team works in the admin panel.
+      if (state.serverMode && FOUNDER_SAMPLE_TABS.includes(tabName)) tabName = 'overview';
       currentFounderSubTab = tabName;
       const tabs = ['overview', 'users', 'fleet', 'telemetry', 'audit', 'decisions', 'approvals', 'contracts_editor'];
       tabs.forEach(tName => {
@@ -18929,8 +19028,9 @@ function setMarketplaceViewMode(mode) {
     function applyFounderRoleScope() {
       const reviewerOnly = !!state.currentUser && REVIEWER_ONLY_ROLES.includes(state.currentUser.role);
       ['overview', 'users', 'fleet', 'telemetry', 'audit', 'decisions', 'contracts_editor'].forEach(tab => {
-        document.getElementById(`btn-fndr-tab-${tab}`)?.classList.toggle('hidden', reviewerOnly);
+        document.getElementById(`btn-fndr-tab-${tab}`)?.classList.toggle('hidden', reviewerOnly || (!!state.serverMode && FOUNDER_SAMPLE_TABS.includes(tab)));
       });
+      if (state.serverMode && FOUNDER_SAMPLE_TABS.includes(currentFounderSubTab)) switchFounderSubTab('overview');
       const banner = document.getElementById('fndr-preview-banner');
       if (banner) banner.classList.toggle('hidden', !state.serverMode || reviewerOnly);
       return reviewerOnly;
@@ -19246,6 +19346,7 @@ function setMarketplaceViewMode(mode) {
                 <button data-click="founderImpersonateUser('${u.id}')" class="bg-stone-100 dark:bg-stone-800 hover:bg-indigo-100 dark:hover:bg-indigo-950 text-indigo-700 dark:text-indigo-300 p-1.5 rounded-lg text-[10px] font-bold transition-all cursor-pointer" title="${isEn ? 'Preview as User (Login As)' : 'تصفح كالمستخدم (معاينة)'}">
                   <i data-lucide="eye" class="w-3.5 h-3.5"></i>
                 </button>
+                ${state.serverMode ? '' : `
                 <!-- 3. Toggle Verification -->
                 <button data-click="toggleUserVerification('${u.id}')" class="bg-stone-100 dark:bg-stone-800 hover:bg-emerald-100 dark:hover:bg-emerald-950 text-emerald-700 dark:text-emerald-300 p-1.5 rounded-lg text-[10px] font-bold transition-all cursor-pointer" title="${isEn ? 'Toggle Verification' : 'تبديل التوثيق'}">
                   <i data-lucide="${isVerified ? 'shield-check' : 'shield-alert'}" class="w-3.5 h-3.5"></i>
@@ -19260,6 +19361,7 @@ function setMarketplaceViewMode(mode) {
                   <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                 </button>
                 ` : ''}
+                `}
               </div>
             </td>
           </tr>
@@ -20034,7 +20136,7 @@ function setMarketplaceViewMode(mode) {
       const matureBadge = document.getElementById('fndr-fleet-mature-count-lbl');
       const virginBadge = document.getElementById('fndr-fleet-virgin-count-lbl');
       if (matureBadge) {
-        matureBadge.innerText = isEn ? `Mature Trees (${state.trees.length})` : `الأشجار المعمرة المنتجة (${state.trees.length} شجرة)`;
+        matureBadge.innerText = isEn ? `Mature Trees (${catalogTrees().length})` : `الأشجار المعمرة المنتجة (${catalogTrees().length} شجرة)`;
       }
       if (virginBadge) {
         const vCount = (state.virginGroves || []).length;
@@ -20456,7 +20558,7 @@ function setMarketplaceViewMode(mode) {
       }
     }
 
-    function submitPartnerMillApplication(e) {
+    async function submitPartnerMillApplication(e) {
       if (e) e.preventDefault();
       const isEn = state.currentLang !== 'ar';
 
@@ -20474,6 +20576,36 @@ function setMarketplaceViewMode(mode) {
 
       if (!name || !owner || !cr || !phone || !email) {
         showToast(isEn ? '⚠️ Please complete all required fields.' : '⚠️ يرجى استكمال كافة الحقول المطلوبة لطلب الاعتماد.');
+        return;
+      }
+
+      // Real session: the application goes to the admins as a role application (public.submit_role_application).
+      if (state.serverMode) {
+        const ar = state.currentLang === 'ar';
+        const de = state.currentLang === 'de';
+        if (!window.FaseelaFirebase?.submitRoleApplication) {
+          showToast(ar ? 'تعذر إرسال الطلب حالياً.' : de ? 'Der Antrag kann gerade nicht gesendet werden.' : 'The application cannot be sent right now.');
+          return;
+        }
+        const details = [
+          `Owner: ${owner}`, `Commercial register: ${cr}`, `Phone: ${phone}`, `E-mail: ${email}`,
+          `Technology: ${tech || '-'}`, `Capacity kg/h: ${capacity}`, `Tank capacity L: ${tanksCap}`,
+          `Nitrogen storage: ${n2 ? 'yes' : 'no'}`, `IOC lab: ${ioc ? 'yes' : 'no'}`
+        ].join('\n').slice(0, 1000);
+        try {
+          const { data } = await window.FaseelaFirebase.submitRoleApplication({
+            requestedRole: 'mill_operator', region: String(region || '').slice(0, 120), organizationName: name.slice(0, 160), message: details
+          });
+          closeModal('modal-partner-mill-register');
+          showToast(data?.status === 'approved'
+            ? (ar ? 'هذا الحساب معتمد مسبقاً كمعصرة شريكة.' : de ? 'Dieses Konto ist bereits als Partner-Ölmühle freigegeben.' : 'This account is already approved as a partner mill.')
+            : (ar ? 'تم إرسال طلبك إلى فريق فسيلة. نراجعه ونرد عليك بالبريد الإلكتروني.' : de ? 'Ihr Antrag ist beim Faseela-Team eingegangen. Wir prüfen ihn und antworten per E-Mail.' : 'Your application reached the Faseela team. We review it and reply by e-mail.'));
+        } catch (error) {
+          console.warn('[faseela] mill application not sent:', error?.code || error?.message);
+          showToast(error?.code === 'failed-precondition'
+            ? (ar ? 'يرجى تأكيد بريدك الإلكتروني أولاً.' : de ? 'Bitte bestätigen Sie zuerst Ihre E-Mail-Adresse.' : 'Please confirm your e-mail address first.')
+            : (ar ? 'تعذر إرسال الطلب. يرجى المحاولة مجدداً.' : de ? 'Der Antrag konnte nicht gesendet werden. Bitte erneut versuchen.' : 'The application could not be sent. Please try again.'));
+        }
         return;
       }
 
@@ -21328,21 +21460,12 @@ function setMarketplaceViewMode(mode) {
               </div>
             </div>
             <p class="leading-relaxed text-stone-700 dark:text-stone-300 text-xs">
-              ${isEn 
-                ? 'I am fully updated with our latest nationwide ecosystem: dual investment packages, 5m² cadastral land usufruct deeds, official legal contracts & payment review, laboratory quality certificates, 11 cultivars across 11 Syrian governorates, and oil delivery vs. cash marketing payouts!'
-                : 'أنا جاهزة ومحدثة بالكامل بأحدث تطويرات المنظومة: باقات الكفالة المزدوجة (الشجرة وحدها أو مع 5 م² مقسم أرض طابو)، العقود والمواثيق الرسمية مع مراجعة الدفعات، شهادات الفحص المخبري، أصناف المحافظات الـ 11، وخيارات استلام الزيت أو المحصول النقدي بالدولار!'
-              }
+              ${state.currentLang === 'ar'
+                ? 'أجيب عن الكفالة والدفع والزيت والهدايا وحسابك، وفقط عمّا تقدمه المنصة فعلاً. اختر موضوعاً من الأعلى أو اكتب سؤالك.'
+                : state.currentLang === 'de'
+                  ? 'Ich beantworte Fragen zu Patenschaft, Bezahlung, Öl, Geschenken und Ihrem Konto – und nur zu dem, was die Plattform wirklich anbietet. Wählen Sie oben ein Thema oder schreiben Sie Ihre Frage.'
+                  : 'I answer questions about sponsorship, payment, oil, gifts and your account – and only about what the platform really offers. Pick a topic above or type your question.'}
             </p>
-            <div class="pt-1 flex flex-wrap gap-1.5">
-              <button type="button" data-click="askFaseelaQuick(this.dataset.query)" data-query="${escapeHtml(isEn ? 'What are the legal contracts, payment review, and usufruct rights?' : 'ما هي تفاصيل العقود القانونية الأربعة ومراجعة الدفعات؟')}" class="bg-purple-50 dark:bg-purple-950/60 hover:bg-purple-100 text-purple-900 dark:text-purple-300 border border-purple-200 dark:border-purple-800 px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all cursor-pointer">
-                ${isEn ? '📜 Legal Contracts & Payment Review' : '📜 العقود ومراجعة الدفعات'}
-              </button>
-              <button type="button" data-click="askFaseelaQuick(this.dataset.query)" data-query="${escapeHtml(isEn ? 'How does the Tree with 5m² Cadastral Land Parcel tenure work?' : 'كيف يعمل الكفالة في الشجرة مع مقسم الأرض 5 م² وسند الطابو؟')}" class="bg-emerald-50 dark:bg-emerald-950/60 hover:bg-emerald-100 text-emerald-900 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all cursor-pointer">
-                ${isEn ? '🌿 5m² Land Plot Deed' : '🌿 مقسم أرض 5 م² طابو'}
-              </button>
-              <button type="button" data-click="askFaseelaQuick(this.dataset.query)" data-query="${escapeHtml(isEn ? 'What are the 11 Syrian governorates and olive varieties available?' : 'ما هي أصناف الزيتون الـ 11 المتاحة في المحافظات السورية؟')}" class="bg-amber-50 dark:bg-amber-950/60 hover:bg-amber-100 text-amber-900 dark:text-amber-300 border border-amber-200 dark:border-amber-800 px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all cursor-pointer">
-                ${isEn ? '🗺️ 11 Governorates & Trees' : '🗺️ المحافظات الـ 11 والأصناف'}
-              </button>
             </div>
           </div>
         </div>
@@ -22247,1720 +22370,10 @@ function setMarketplaceViewMode(mode) {
       if (window.lucide && typeof window.lucide.createIcons === 'function') lucide.createIcons();
     }
 
-    // ============================================================
-    // Assistant knowledge layer (answers first, before the legacy keyword rules below)
-    // ============================================================
-    // Each topic states only what the platform does today. Offers that are switched off (land parcels,
-    // greenfield plots, resale between users, insurance, reinvestment) are answered as "not offered",
-    // so the older rule set can no longer describe them as available. Answers exist in Arabic, English
-    // and German; keywords of all three languages match regardless of the interface language.
-    const FASEELA_FAQ_ACTIONS = {
-      market: (label) => `<button type="button" data-click="navigateTo('marketplace')" class="bg-olive-800 hover:bg-olive-900 text-white px-3 py-1.5 rounded-lg text-xs font-bold cursor-pointer">${label}</button>`,
-      dates: (label) => `<button type="button" data-click="navigateTo('marketplace'); setCropCategoryFilter('date')" class="bg-olive-800 hover:bg-olive-900 text-white px-3 py-1.5 rounded-lg text-xs font-bold cursor-pointer">${label}</button>`,
-      dashboard: (label) => `<button type="button" data-click="navigateTo('dashboard')" class="bg-olive-800 hover:bg-olive-900 text-white px-3 py-1.5 rounded-lg text-xs font-bold cursor-pointer">${label}</button>`,
-      signin: (label) => `<button type="button" data-click="openAuthModal()" class="bg-olive-800 hover:bg-olive-900 text-white px-3 py-1.5 rounded-lg text-xs font-bold cursor-pointer">${label}</button>`,
-      privacy: (label) => `<a href="legal/datenschutz.html" class="inline-block bg-stone-200 dark:bg-stone-700 text-stone-900 dark:text-stone-100 px-3 py-1.5 rounded-lg text-xs font-bold">${label}</a>`,
-      imprint: (label) => `<a href="legal/impressum.html" class="inline-block bg-stone-200 dark:bg-stone-700 text-stone-900 dark:text-stone-100 px-3 py-1.5 rounded-lg text-xs font-bold">${label}</a>`,
-      verify: (label) => `<a href="verify.html" class="inline-block bg-stone-200 dark:bg-stone-700 text-stone-900 dark:text-stone-100 px-3 py-1.5 rounded-lg text-xs font-bold">${label}</a>`
-    };
-    const FASEELA_FAQ_LABELS = {
-      market: { ar: 'تصفح الأشجار', en: 'Browse trees', de: 'Bäume ansehen' },
-      dates: { ar: 'عرض أشجار النخيل', en: 'Show date palms', de: 'Dattelpalmen anzeigen' },
-      dashboard: { ar: 'فتح لوحتي', en: 'Open my dashboard', de: 'Mein Bereich' },
-      signin: { ar: 'تسجيل الدخول / إنشاء حساب', en: 'Sign in / Register', de: 'Anmelden / Registrieren' },
-      privacy: { ar: 'سياسة الخصوصية', en: 'Privacy policy', de: 'Datenschutzerklärung' },
-      imprint: { ar: 'بيانات الناشر', en: 'Legal notice', de: 'Impressum' },
-      verify: { ar: 'التحقق من شهادة', en: 'Verify a certificate', de: 'Zertifikat prüfen' }
-    };
-    // claims-ratchet:off
-    const FASEELA_FAQ = [
-      { id: 'dates', action: 'dates',
-        k: ['dattel*', 'date palm*', 'dates', 'palme*', 'palm tree', 'khastawi', 'zahidi', 'barhi', 'palmyra', 'تمر', 'تمور', 'نخيل', 'نخله', 'نخل', 'خستاوي', 'زهدي', 'برحي', 'رطب'],
-        a: {
-          ar: ['نخيل التمر هو المحصول السادس في فسيلة. يُزرع في سوريا في واحة تدمر وعلى امتداد الفرات بين دير الزور والبوكمال، ومن أصنافه الخستاوي والزهدي والبرحي.', 'تمر الثمرة بمراحل الكمري ثم الخلال ثم الرطب ثم التمر. يُلقَّح النخل يدوياً في الربيع، وتُكيَّس العذوق صيفاً، ويبدأ القطاف من أيلول حتى تشرين الثاني.', 'تظهر أشجار النخيل في السوق عند إدراجها من فريق المنصة. تسليم محصول المحاصيل غير الزيتون قيد الإعداد وسيُعلن عنه قبل أول موسم.'],
-          en: ['The date palm is the sixth crop on Faseela. In Syria it grows in the Palmyra oasis and along the Euphrates between Deir ez-Zor and Al-Bukamal; cultivars include Khastawi, Zahidi and Barhi.', 'The fruit passes through four stages: kimri, khalal, rutab and tamr. Palms are pollinated by hand in spring, bunches are bagged in summer, and picking runs from September to November.', 'Date palms appear in the market once the team has listed them. Harvest delivery for crops other than olives is still being set up and will be announced before the first season.'],
-          de: ['Die Dattelpalme ist die sechste Kultur bei Faseela. In Syrien wächst sie in der Oase von Palmyra und entlang des Euphrat zwischen Deir ez-Zor und Al-Bukamal; angebaut werden unter anderem Khastawi, Zahidi und Barhi.', 'Die Frucht durchläuft vier Stufen: Kimri, Khalal, Rutab und Tamr. Bestäubt wird im Frühjahr von Hand, im Sommer werden die Fruchtstände eingehüllt, geerntet wird von September bis November.', 'Dattelpalmen erscheinen im Markt, sobald das Team sie freigeschaltet hat. Die Auslieferung der Ernte für andere Kulturen als Oliven wird noch eingerichtet und vor der ersten Saison bekannt gegeben.']
-        } },
-      { id: 'crops', action: 'market',
-        k: ['which crops', 'what crops', 'welche kulturen', 'welche bäume', 'welche baeume', 'which trees', 'kinds of trees', 'pistazie*', 'pistachio*', 'mandel*', 'almond*', 'walnuss*', 'walnut*', 'granatapfel*', 'pomegranate*', 'اي محاصيل', 'انواع الاشجار', 'المحاصيل', 'فستق', 'لوز', 'جوز', 'رمان'],
-        a: {
-          ar: ['تضم فسيلة ستة محاصيل: الزيتون، الفستق الحلبي، اللوز، الرمان، نخيل التمر، والجوز. الزيتون هو المحصول المكتمل اليوم من الكفالة حتى استلام الزيت.', 'المحاصيل الأخرى تُدرج في السوق تباعاً، وطريقة تسليم محصولها قيد الإعداد. لكل محصول تقويم موسمي ودليل أصناف في الصفحة الرئيسية.'],
-          en: ['Faseela covers six crops: olive, Aleppo pistachio, almond, pomegranate, date palm and walnut. Olive is the one that works end to end today, from sponsorship to receiving oil.', 'The other crops are listed step by step, and how their harvest is delivered is still being set up. Each crop has a seasonal calendar and a cultivar guide on the home page.'],
-          de: ['Faseela umfasst sechs Kulturen: Olive, Aleppo-Pistazie, Mandel, Granatapfel, Dattelpalme und Walnuss. Vollständig von der Patenschaft bis zum Öl funktioniert heute die Olive.', 'Die übrigen Kulturen werden nach und nach freigeschaltet; wie ihre Ernte ausgeliefert wird, ist noch in Vorbereitung. Zu jeder Kultur gibt es auf der Startseite einen Saisonkalender und einen Sortenführer.']
-        } },
-      { id: 'how', action: 'market',
-        k: ['how does it work', 'how it works', 'how does faseela', 'what is faseela', 'was ist faseela', 'wie funktioniert', 'how do i start', 'wie fange ich an', 'get started', 'ما هي فسيله', 'ما هو فسيله', 'كيف تعمل', 'كيف يعمل', 'كيف ابدا', 'شرح المنصه', 'فكره المنصه'],
-        a: {
-          ar: ['فسيلة تربطك مباشرةً بمزارع سوري معروف بالاسم: تكفل حصة من شجرة، يتابعها المزارع ويرسل تقارير من الحقل، وبعد القطاف والعصر تحصل على حصتك من المحصول.', 'الخطوات: اختر شجرة، أرسل طلب الكفالة، حوّل المبلغ بالطريقة المعروضة وارفع إيصال الدفع، وبعد مراجعة الفريق تُسجَّل الحصة باسمك وتحصل على شهادة.'],
-          en: ['Faseela connects you directly with a named Syrian farmer: you sponsor a share of a tree, the farmer tends it and sends reports from the field, and after harvest and pressing you receive your share of the crop.', 'The steps: choose a tree, send a sponsorship request, transfer the amount by the method shown and upload the payment receipt; once the team has checked it, the share is recorded in your name and you receive a certificate.'],
-          de: ['Faseela verbindet Sie direkt mit einem namentlich bekannten syrischen Landwirt: Sie übernehmen die Patenschaft für einen Anteil an einem Baum, der Landwirt pflegt ihn und berichtet vom Feld, und nach Ernte und Pressung erhalten Sie Ihren Anteil am Ertrag.', 'Der Ablauf: Baum auswählen, Patenschaft anfragen, den Betrag auf dem angezeigten Weg überweisen und den Zahlungsbeleg hochladen; nach der Prüfung durch das Team wird der Anteil auf Ihren Namen eingetragen und Sie erhalten ein Zertifikat.']
-        } },
-      { id: 'not_investment',
-        k: ['investment*', 'invest*', 'return on', 'roi', 'profit*', 'dividend*', 'interest', 'guarantee*', 'geldanlage', 'rendite*', 'gewinn*', 'zinsen*', 'garantie*', 'investition*', 'استثمار', 'ارباح', 'ربح', 'عائد', 'عوائد', 'مضمون', 'فائده', 'فوائد'],
-        a: {
-          ar: ['كفالة الشجرة ليست استثماراً مالياً: لا فوائد ولا أرباح نقدية ولا عائد مضمون. ما تحصل عليه هو حصتك من محصول الشجرة.', 'كمية المحصول تتغير من موسم إلى آخر بحسب الطقس وحال الشجرة، وقد تكون أقل من المتوقع. الأرقام المعروضة تقديرات وليست وعوداً.'],
-          en: ['Sponsoring a tree is not a financial investment: there is no interest, no cash profit and no guaranteed return. What you receive is your share of the tree\'s harvest.', 'The harvest varies from season to season with the weather and the condition of the tree, and it can be smaller than expected. Figures shown are estimates, not promises.'],
-          de: ['Eine Baumpatenschaft ist keine Geldanlage: Es gibt keine Zinsen, keinen Geldgewinn und keine garantierte Rendite. Sie erhalten Ihren Anteil an der Ernte des Baumes.', 'Der Ertrag schwankt von Saison zu Saison mit dem Wetter und dem Zustand des Baumes und kann geringer ausfallen als erwartet. Angezeigte Mengen sind Schätzungen, keine Zusagen.']
-        } },
-      { id: 'land_off',
-        k: ['land', 'parcel', 'plot', 'deed', 'tabu', 'cadastral', 'usufruct', 'grundstück*', 'grundstueck*', 'parzelle*', 'grundbuch', 'boden kaufen', 'ارض', 'مقسم', 'طابو', 'كاداستر', 'سند حيازه', 'ملكيه الارض', 'صك'],
-        a: {
-          ar: ['باقة «الشجرة مع قطعة أرض» غير متاحة حالياً. تقتصر الكفالة اليوم على حصص الشجرة ومحصولها.', 'من سبق أن سُجّلت له حصة تتضمن أرضاً يجدها كما هي في لوحته.'],
-          en: ['The "tree with a land parcel" package is currently not offered. Sponsorship today covers shares of the tree and its harvest only.', 'If a share that includes land was already recorded for you, it stays visible in your dashboard as it is.'],
-          de: ['Das Paket „Baum mit Grundstücksparzelle“ wird derzeit nicht angeboten. Die Patenschaft umfasst heute ausschließlich Anteile am Baum und an seiner Ernte.', 'Wurde für Sie bereits ein Anteil mit Parzelle eingetragen, bleibt er unverändert in Ihrem Bereich sichtbar.']
-        } },
-      { id: 'greenfield_off', action: 'market',
-        k: ['greenfield', 'virgin', 'sapling*', 'new planting', 'neupflanzung', 'setzling*', 'jungpflanze', 'junge bäume', 'بكر', 'غراس', 'غرسه', 'شتله', 'ارض بكر', 'بستان جديد'],
-        a: {
-          ar: ['بساتين الغراس البكر مع الأرض غير متاحة حالياً. يمكنك كفالة حصص في الأشجار القائمة المعروضة في السوق.'],
-          en: ['Greenfield groves with young saplings and land are currently not offered. You can sponsor shares of the established trees listed in the market.'],
-          de: ['Neupflanzungen mit Setzlingen und Land werden derzeit nicht angeboten. Sie können Patenschaften für die bestehenden Bäume im Markt übernehmen.']
-        } },
-      { id: 'resale_off',
-        k: ['p2p', 'secondary market', 'resell', 'sell my share', 'sell share', 'trade share', 'weiterverkauf*', 'verkaufen*', 'handel', 'zweitmarkt', 'سوق ثانوي', 'تداول', 'بيع حصه', 'بيع حصتي', 'اعاده بيع'],
-        a: {
-          ar: ['بيع الحصص أو تداولها بين المستخدمين غير متاح حالياً. يمكنك إهداء حصة إلى شخص آخر عبر رمز إهداء من لوحتك.'],
-          en: ['Selling or trading shares between users is currently not available. You can give a share to someone else with a gift code from your dashboard.'],
-          de: ['Der Verkauf oder Handel von Anteilen zwischen Nutzern ist derzeit nicht möglich. Sie können einen Anteil über einen Geschenkcode aus Ihrem Bereich an eine andere Person verschenken.']
-        } },
-      { id: 'payment', action: 'market',
-        k: ['pay', 'payment*', 'bank transfer', 'receipt', 'credit card', 'paypal', 'visa', 'zahlen*', 'zahlung*', 'bezahlen*', 'überweisung*', 'ueberweisung*', 'kreditkarte', 'beleg', 'دفع', 'ادفع', 'سداد', 'تحويل', 'حواله', 'ايصال', 'بطاقه', 'فيزا'],
-        a: {
-          ar: ['الدفع يتم بتحويل إلى إحدى قنوات الدفع التي تظهر لك في نافذة طلب الكفالة. بعد التحويل ترفع صورة الإيصال في الطلب نفسه.', 'يراجع فريق المالية الإيصال، وعند اعتماده تُسجَّل الحصة باسمك. الدفع بالبطاقة مباشرةً داخل التطبيق غير متاح حالياً.'],
-          en: ['You pay by transfer to one of the payment channels shown in the sponsorship request dialog. After the transfer you upload a picture of the receipt in the same request.', 'The finance team checks the receipt; once it is approved, the share is recorded in your name. Paying by card inside the app is currently not available.'],
-          de: ['Bezahlt wird per Überweisung auf einen der Zahlungswege, die im Dialog der Patenschaftsanfrage angezeigt werden. Danach laden Sie in derselben Anfrage ein Bild des Zahlungsbelegs hoch.', 'Das Finanzteam prüft den Beleg; nach der Freigabe wird der Anteil auf Ihren Namen eingetragen. Kartenzahlung direkt in der App gibt es derzeit nicht.']
-        } },
-      { id: 'price', action: 'market',
-        k: ['price', 'cost', 'how much', 'fee', 'fees', 'preis', 'kosten*', 'kostet', 'wie viel', 'wieviel', 'gebühr*', 'gebuehr*', 'سعر', 'اسعار', 'تكلفه', 'كم يكلف', 'بكم', 'رسوم', 'عموله'],
-        a: {
-          ar: ['سعر الحصة ظاهر على بطاقة كل شجرة، والمبلغ النهائي يؤكده الخادم عند إرسال الطلب ويظهر لك قبل الدفع.', 'تفاصيل الشحن وأي تكاليف مرتبطة به يوضحها لك الفريق قبل إرسال أي شيء.'],
-          en: ['The price per share is shown on each tree card; the final amount is confirmed by the server when you send the request and is shown to you before you pay.', 'Shipping details and any related costs are clarified with you by the team before anything is sent.'],
-          de: ['Der Preis je Anteil steht auf jeder Baumkarte; der endgültige Betrag wird beim Absenden der Anfrage vom Server bestätigt und Ihnen vor der Zahlung angezeigt.', 'Einzelheiten zum Versand und damit verbundene Kosten klärt das Team mit Ihnen, bevor etwas verschickt wird.']
-        } },
-      { id: 'oil', action: 'dashboard',
-        k: ['olive oil', 'my oil', 'delivery', 'deliver*', 'shipping', 'ship', 'pickup', 'receive', 'olivenöl', 'olivenoel', 'lieferung*', 'liefern*', 'versand*', 'abholung*', 'abholen*', 'زيت', 'زيتي', 'استلام', 'توصيل', 'شحن', 'تسليم'],
-        a: {
-          ar: ['بعد القطاف تُعصر الثمار في المعصرة، وتُعتمد الدفعة بعد فحص الجودة، ثم تُخصَّص لك كمية الزيت بحسب حصتك وتظهر في لوحتك.', 'من اللوحة تطلب التسليم إلى عنوانك أو الاستلام، ويتواصل معك الفريق لترتيب التفاصيل.'],
-          en: ['After the harvest the fruit is pressed at the mill and the batch is certified after a quality check; your oil is then allocated according to your share and appears in your dashboard.', 'From the dashboard you request delivery to your address or a pickup, and the team contacts you to arrange the details.'],
-          de: ['Nach der Ernte werden die Früchte in der Mühle gepresst und die Charge nach der Qualitätsprüfung freigegeben; anschließend wird Ihnen das Öl entsprechend Ihrem Anteil zugeteilt und erscheint in Ihrem Bereich.', 'Dort beantragen Sie die Lieferung an Ihre Adresse oder die Abholung; das Team meldet sich, um die Einzelheiten abzustimmen.']
-        } },
-      { id: 'certificate', action: 'verify',
-        k: ['certificate*', 'serial', 'verify', 'proof of', 'zertifikat*', 'urkunde', 'seriennummer', 'nachweis', 'prüfen', 'شهاده', 'شهادتي', 'رقم تسلسلي', 'تحقق', 'اثبات'],
-        a: {
-          ar: ['لكل حصة معتمدة شهادة بصيغة PDF تحمل رقماً تسلسلياً، وتجدها في لوحتك عند الحصة.', 'يمكن لأي شخص التحقق من صحة الشهادة بإدخال رقمها التسلسلي في صفحة التحقق.'],
-          en: ['Every approved share comes with a PDF certificate carrying a serial number; you find it next to the share in your dashboard.', 'Anyone can check that a certificate is genuine by entering its serial number on the verification page.'],
-          de: ['Zu jedem freigegebenen Anteil gibt es ein PDF-Zertifikat mit Seriennummer; Sie finden es in Ihrem Bereich beim jeweiligen Anteil.', 'Die Echtheit eines Zertifikats kann jeder prüfen, indem er die Seriennummer auf der Prüfseite eingibt.']
-        } },
-      { id: 'gift', action: 'dashboard',
-        k: ['gift*', 'redeem*', 'referral', 'invite a friend', 'geschenk*', 'verschenken*', 'einlösen', 'einloesen', 'empfehlung', 'freunde werben', 'هديه', 'اهداء', 'اهدي', 'رمز', 'دعوه', 'احاله'],
-        a: {
-          ar: ['يمكنك إهداء حصة: تنشئ رمز إهداء من لوحتك وترسله إلى من تحب، فيسجّل حساباً ويُدخل الرمز لتنتقل الحصة إليه.', 'ولديك رابط دعوة شخصي تشاركه مع معارفك. من وصله رمز إهداء يُدخله بعد تسجيل الدخول.'],
-          en: ['You can give a share as a gift: create a gift code in your dashboard and send it to the recipient, who signs up and enters the code to receive the share.', 'You also have a personal referral link to share. If you received a gift code, enter it after signing in.'],
-          de: ['Sie können einen Anteil verschenken: Erstellen Sie in Ihrem Bereich einen Geschenkcode und senden Sie ihn der beschenkten Person; sie registriert sich und gibt den Code ein, um den Anteil zu erhalten.', 'Außerdem haben Sie einen persönlichen Empfehlungslink. Wer einen Geschenkcode erhalten hat, gibt ihn nach der Anmeldung ein.']
-        } },
-      { id: 'account', action: 'privacy',
-        k: ['delete my account', 'delete account', 'export my data', 'my data', 'privacy', 'gdpr', 'konto löschen', 'konto loeschen', 'daten exportieren', 'meine daten', 'datenschutz', 'dsgvo', 'حذف حسابي', 'احذف حسابي', 'حذف الحساب', 'بياناتي', 'تصدير', 'خصوصيه'],
-        a: {
-          ar: ['من إعدادات ملفك الشخصي يمكنك تنزيل نسخة من بياناتك، وحذف حسابك نهائياً.', 'تفاصيل البيانات التي نعالجها وحقوقك موضحة في سياسة الخصوصية.'],
-          en: ['In your profile settings you can download a copy of your data and delete your account permanently.', 'Which data is processed and what your rights are is explained in the privacy policy.'],
-          de: ['In den Profileinstellungen können Sie eine Kopie Ihrer Daten herunterladen und Ihr Konto dauerhaft löschen.', 'Welche Daten verarbeitet werden und welche Rechte Sie haben, steht in der Datenschutzerklärung.']
-        } },
-      { id: 'signup', action: 'signin',
-        k: ['register', 'sign up', 'create account', 'log in', 'login', 'password', 'registrier*', 'anmelden*', 'konto erstellen', 'passwort', 'تسجيل', 'انشاء حساب', 'دخول', 'كلمه المرور', 'كلمه السر'],
-        a: {
-          ar: ['تنشئ حساباً بالبريد الإلكتروني وكلمة مرور، ثم تؤكد بريدك عبر الرسالة التي تصلك. إن نسيت كلمة المرور فاستخدم «نسيت كلمة المرور» في نافذة الدخول.'],
-          en: ['You create an account with an email address and a password and then confirm your email through the message you receive. If you forget your password, use "Forgot password" in the sign-in dialog.'],
-          de: ['Sie legen ein Konto mit E-Mail-Adresse und Passwort an und bestätigen Ihre Adresse über die zugesandte Nachricht. Haben Sie Ihr Passwort vergessen, nutzen Sie „Passwort vergessen“ im Anmeldedialog.']
-        } },
-      { id: 'farmer', action: 'signin',
-        k: ['i am a farmer', 'become a farmer', 'join as farmer', 'join as mill', 'my farm', 'landwirt werden', 'als landwirt', 'als bauer', 'meine bäume anbieten', 'ich bin landwirt', 'mühle anmelden', 'انا مزارع', 'كمزارع', 'انضمام مزارع', 'تسجيل مزارع', 'اشجاري للكفاله', 'تسجيل معصره', 'صاحب معصره'],
-        a: {
-          ar: ['إن كنت مزارعاً أو صاحب معصرة: أنشئ حساباً واختر الدور المناسب عند التسجيل. يراجع فريق المنصة الطلب، وبعد الاعتماد تُسنَد إليك أشجارك أو معصرتك.', 'المزارع يرسل تقارير حقلية بالنص والصور عن الأشجار المسندة إليه، وصاحب المعصرة يسجّل دفعات العصر؛ وكلاهما يُراجَع قبل النشر.'],
-          en: ['If you are a farmer or a mill owner: create an account and choose that role when you register. The team reviews the application; after approval your trees or your mill are assigned to you.', 'Farmers send field reports with text and photos for their assigned trees, and mill owners record pressing batches; both are reviewed before they are published.'],
-          de: ['Wenn Sie Landwirt oder Mühlenbetreiber sind: Legen Sie ein Konto an und wählen Sie bei der Registrierung die passende Rolle. Das Team prüft den Antrag; nach der Freigabe werden Ihnen Ihre Bäume oder Ihre Mühle zugeordnet.', 'Landwirte senden Feldberichte mit Text und Fotos zu den ihnen zugeordneten Bäumen, Mühlenbetreiber erfassen Presschargen; beides wird vor der Veröffentlichung geprüft.']
-        } },
-      { id: 'reports', action: 'market',
-        k: ['field report', 'updates from', 'photos of my tree', 'how is my tree', 'who is the farmer', 'feldbericht', 'fotos', 'wie geht es meinem baum', 'wer ist der landwirt', 'neuigkeiten', 'تقرير', 'تقارير', 'صور شجرتي', 'من هو المزارع', 'اخبار الشجره', 'متابعه'],
-        a: {
-          ar: ['لكل شجرة صفحة عامة تعرض تقارير المزارع المنشورة وصورها، ونتائج فحص آخر دفعة عصر إن وُجدت.', 'يظهر اسم المزارع وصورته فقط إذا وافق على نشرهما.'],
-          en: ['Every tree has a public page showing the farmer\'s published reports and photos, and the lab results of the latest pressing batch where available.', 'The farmer\'s name and photo are shown only if the farmer agreed to publish them.'],
-          de: ['Zu jedem Baum gibt es eine öffentliche Seite mit den veröffentlichten Berichten und Fotos des Landwirts sowie, sofern vorhanden, den Laborwerten der letzten Presscharge.', 'Name und Foto des Landwirts erscheinen nur, wenn er der Veröffentlichung zugestimmt hat.']
-        } },
-      { id: 'risk',
-        k: ['risk', 'insurance', 'what if', 'bad harvest', 'crop failure', 'frost', 'drought', 'tree dies', 'risiko*', 'versicherung*', 'was passiert wenn', 'ernteausfall', 'missernte', 'dürre', 'baum stirbt', 'مخاطر', 'خطر', 'تامين', 'ماذا لو', 'جفاف', 'صقيع', 'تلف المحصول', 'ماتت الشجره'],
-        a: {
-          ar: ['الزراعة مرتبطة بالطقس: قد يقل المحصول في موسم أو يغيب بسبب الجفاف أو الصقيع أو الآفات، وعندها تقل حصتك أو لا تُوزَّع.', 'لا تقدّم المنصة حالياً تأميناً على المحصول. اقرأ إقرار المخاطر في نافذة الطلب قبل الإرسال.'],
-          en: ['Farming depends on the weather: in some seasons the harvest can be small or fail because of drought, frost or pests, and your share is then smaller or not distributed.', 'The platform does not currently offer crop insurance. Please read the risk notice in the request dialog before you send it.'],
-          de: ['Landwirtschaft hängt vom Wetter ab: In manchen Jahren fällt die Ernte durch Dürre, Frost oder Schädlinge gering aus oder ganz weg; Ihr Anteil ist dann kleiner oder entfällt.', 'Eine Ernteversicherung bietet die Plattform derzeit nicht an. Bitte lesen Sie den Risikohinweis im Anfragedialog, bevor Sie absenden.']
-        } },
-      { id: 'reinvest_off',
-        k: ['reinvest', 'compound', 'compounding', 'auto-reinvest', 'cash payout', 'cash out', 'wallet', 'wiederanlage', 'auszahlung', 'auszahlen', 'guthaben', 'اعاده استثمار', 'تراكمي', 'سحب نقدي', 'تسييل', 'محفظه ماليه'],
-        a: {
-          ar: ['لا توجد في المنصة محفظة نقدية ولا سحب نقدي ولا إعادة استثمار تلقائية. ما يُسجَّل لك هو حصصك في الأشجار وكميات الزيت المخصَّصة لك.'],
-          en: ['The platform has no cash wallet, no cash payout and no automatic reinvestment. What is recorded for you are your tree shares and the oil allocated to you.'],
-          de: ['Es gibt auf der Plattform kein Geldguthaben, keine Auszahlung und keine automatische Wiederanlage. Erfasst werden Ihre Baumanteile und das Ihnen zugeteilte Öl.']
-        } },
-      { id: 'language',
-        k: ['language*', 'languages', 'german', 'english', 'arabic', 'currency', 'sprache*', 'sprachen', 'deutsch', 'englisch', 'arabisch', 'währung', 'waehrung', 'لغه', 'لغات', 'المانيه', 'انجليزيه', 'عمله'],
-        a: {
-          ar: ['المنصة متاحة بالعربية والإنكليزية والألمانية؛ تغيّر اللغة من الزر في الشريط العلوي. الأسعار بالدولار الأمريكي، ويمكن عرض قيمة تقريبية بالليرة السورية.'],
-          en: ['The platform is available in Arabic, English and German; switch the language with the button in the top bar. Prices are in US dollars, with an approximate value in Syrian pounds available for display.'],
-          de: ['Die Plattform gibt es auf Arabisch, Englisch und Deutsch; die Sprache wechseln Sie über die Schaltfläche in der oberen Leiste. Preise werden in US-Dollar geführt, ein ungefährer Wert in syrischen Pfund lässt sich anzeigen.']
-        } },
-      { id: 'notifications',
-        k: ['notification*', 'push', 'email from', 'unsubscribe', 'benachrichtigung*', 'mitteilungen', 'abmelden vom newsletter', 'اشعار', 'اشعارات', 'تنبيه', 'تنبيهات', 'الغاء الاشتراك'],
-        a: {
-          ar: ['تصلك رسائل بريدية عن حالة طلباتك. في تطبيق الهاتف يمكنك تشغيل الإشعارات الفورية أو إيقافها من الإعدادات، وكذلك الموافقة على الرسائل التسويقية أو سحبها.'],
-          en: ['You receive emails about the status of your requests. In the mobile app you can switch push notifications on or off in the settings, and give or withdraw consent to marketing messages there.'],
-          de: ['Zum Stand Ihrer Anfragen erhalten Sie E-Mails. In der App können Sie Push-Mitteilungen in den Einstellungen ein- oder ausschalten und dort auch die Einwilligung in Werbenachrichten erteilen oder widerrufen.']
-        } },
-      { id: 'contact', action: 'imprint',
-        k: ['contact', 'support', 'help me', 'complaint', 'reach you', 'who runs', 'kontakt', 'hilfe', 'beschwerde', 'erreichen', 'wer betreibt', 'ansprechpartner', 'تواصل', 'اتصال', 'دعم', 'مساعده', 'شكوى', 'من يدير'],
-        a: {
-          ar: ['بيانات الجهة المشغِّلة ووسائل التواصل موجودة في صفحة «بيانات الناشر». عند مراسلتنا بشأن طلب، اذكر رقم الطلب لتسريع المعالجة.'],
-          en: ['The operator\'s details and contact channels are on the legal notice page. When you write about a request, include its number so it can be handled faster.'],
-          de: ['Angaben zum Betreiber und die Kontaktwege stehen im Impressum. Wenn Sie zu einer Anfrage schreiben, nennen Sie bitte deren Nummer, damit sie schneller bearbeitet wird.']
-        } }
-    ];
+    // The assistant's knowledge layer (topics, matching, speech language) lives in public/assistant-knowledge.js.
 
-    // claims-ratchet:on
+    // generateFaseelaResponse lives in public/assistant-knowledge.js (topics, own data, honest fallback).
 
-    /** Lower-case text with Arabic letter variants and German umlauts folded, so one keyword matches all spellings. */
-    function faseelaFaqNormalize(text) {
-      return String(text || '').toLowerCase()
-        .replace(/[ً-ٰٟـ]/g, '')
-        .replace(/[إأآا]/g, 'ا').replace(/ة/g, 'ه').replace(/ى/g, 'ي')
-        .replace(/ä/g, 'ae').replace(/ö/g, 'oe').replace(/ü/g, 'ue').replace(/ß/g, 'ss')
-        .replace(/[^\p{L}\p{N}]+/gu, ' ').trim();
-    }
-    function faseelaFaqLang(question) {
-      if (/[؀-ۿ]/.test(question)) return 'ar';
-      if (state.currentLang === 'de' || /[äöüß]|\b(wie|was|ist|ich|kann|der|die|das|und|nicht|meine?)\b/i.test(question)) return 'de';
-      return 'en';
-    }
-    /**
-     * Turns a keyword into a pattern over the normalized question (which is padded with spaces).
-     * Latin keywords match whole words; a trailing * makes them a word stem ("dattel*" matches "dattelpalme").
-     * Arabic keywords may carry the usual prefixes (و ف ب ل ك ال); short ones (up to 3 letters) must also end
-     * the word, apart from common suffixes, so that "جوز" does not match "يجوز".
-     */
-    function faseelaFaqPattern(keyword) {
-      const stem = /\*$/.test(keyword);
-      const k = faseelaFaqNormalize(keyword).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-      if (/[؀-ۿ]/.test(k)) {
-        const tail = k.replace(/\s/g, '').length <= 3 ? '(?:ي|ك|ه|ها|ات|ين|نا)? ' : '';
-        return new RegExp(` [وف]?[بلك]?(?:ال)?${k}${tail}`);
-      }
-      return new RegExp(` ${k}${stem ? '' : ' '}`);
-    }
-    let _faseelaFaqIndex = null;
-    /** Best-matching topic or null. Longer keywords weigh more, so the most specific topic wins. */
-    function faseelaFaqMatch(question) {
-      if (!_faseelaFaqIndex) {
-        _faseelaFaqIndex = FASEELA_FAQ.map(topic => ({ topic, keys: topic.k.map(keyword => ({ re: faseelaFaqPattern(keyword), weight: faseelaFaqNormalize(keyword).length })) }));
-      }
-      const q = ` ${faseelaFaqNormalize(question)} `;
-      let best = null;
-      let bestScore = 0;
-      _faseelaFaqIndex.forEach(({ topic, keys }) => {
-        const score = keys.reduce((sum, key) => sum + (key.re.test(q) ? key.weight : 0), 0);
-        if (score > bestScore) { best = topic; bestScore = score; }
-      });
-      return best;
-    }
-    function faseelaFaqAnswer(question) {
-      const topic = faseelaFaqMatch(question);
-      if (!topic) return null;
-      const lang = faseelaFaqLang(question);
-      const paragraphs = topic.a[lang] || topic.a.en;
-      const action = topic.action && FASEELA_FAQ_ACTIONS[topic.action]
-        ? FASEELA_FAQ_ACTIONS[topic.action](escapeHtml(FASEELA_FAQ_LABELS[topic.action][lang] || FASEELA_FAQ_LABELS[topic.action].en))
-        : '';
-      return `
-        <div class="space-y-2 text-start" lang="${lang}" dir="${lang === 'ar' ? 'rtl' : 'ltr'}" data-faq="${topic.id}">
-          ${paragraphs.map(text => `<p class="text-stone-700 dark:text-stone-200 leading-relaxed">${escapeHtml(text)}</p>`).join('')}
-          ${action}
-        </div>
-      `;
-    }
-    /** Speech language for a piece of answer or question text (Arabic script, German markers, else English). */
-    function faseelaSpeechLang(text, arabicCode) {
-      if (/[؀-ۿ]/.test(String(text || ''))) return arabicCode;
-      if (state.currentLang === 'de' && /[äöüß]|\b(der|die|das|und|ist|nicht|Sie|ein|eine)\b/.test(String(text || ''))) return 'de-DE';
-      return 'en-US';
-    }
-
-    function generateFaseelaResponse(rawQ) {
-      const originalQ = rawQ.trim();
-      const qLower = originalQ.toLowerCase();
-
-      // Normalize Arabic
-      function normAr(str) {
-        return str
-          .toLowerCase()
-          .replace(/[\u064B-\u065F\u0670]/g, '')
-          .replace(/[إأآا]/g, 'ا')
-          .replace(/ة/g, 'ه')
-          .replace(/ى/g, 'ي')
-          .replace(/ـ/g, '')
-          .trim();
-      }
-      const normQ = normAr(originalQ);
-
-      const faqAnswer = faseelaFaqAnswer(originalQ);
-      if (faqAnswer) return faqAnswer;
-
-      const isEnglish = (/^[a-zA-Z0-9\s.,?!'"\-_/]+$/.test(qLower) && !/[\u0600-\u06FF]/.test(originalQ)) || (state.currentLang !== 'ar' && !/[\u0600-\u06FF]/.test(originalQ));
-
-      // -------------------------------------------------------------
-      
-      // -------------------------------------------------------------
-      // CONTEXT-AWARE SYSTEM INTELLIGENCE (User, Portfolio, Balance, Leadership)
-      // -------------------------------------------------------------
-      const isAccountOrIdentity = isEnglish
-        ? (qLower.includes('who am i') || qLower.includes('my account') || qLower.includes('my profile') || qLower.includes('my role') || qLower.includes('logged in') || qLower.includes('user status') || qLower.includes('my email'))
-        : (normQ.includes('من انا') || normQ.includes('حسابي') || normQ.includes('ملفي') || normQ.includes('بياناتي') || normQ.includes('دوري') || normQ.includes('هويتي') || normQ.includes('تسجيل دخولي'));
-
-      if (isAccountOrIdentity) {
-        const u = state.currentUser;
-        if (!u) {
-          return isEnglish ? `
-            <div class="space-y-2 text-start">
-              <p class="text-stone-700 dark:text-stone-200">You are currently browsing as an anonymous <strong>Guest</strong>. Sign in to access your investment portfolio, title deeds, and harvest allocations.</p>
-              <button type="button" data-click="openAuthModal()" class="bg-olive-800 hover:bg-olive-900 text-white px-3 py-1.5 rounded-lg text-xs font-bold">Sign In / Register</button>
-            </div>
-          ` : `
-            <div class="space-y-2 text-start">
-              <p class="text-stone-700 dark:text-stone-200">أنت تتصفح المنصة حالياً بصفة <strong>زائر كريم</strong>. سجّل دخولك للوصول المباشر إلى محفظة كفالاتك وسندات الطابو وحصص الزيت.</p>
-              <button type="button" data-click="openAuthModal()" class="bg-olive-800 hover:bg-olive-900 text-white px-3 py-1.5 rounded-lg text-xs font-bold">تسجيل الدخول / إنشاء حساب</button>
-            </div>
-          `;
-        }
-        const roleNameEn = u.role === 'admin' ? 'Root Executive / Administrator' : (u.role === 'farmer' ? 'Agricultural Partner' : (u.role === 'mill' || u.role === 'mill_owner' ? 'Certified Mill Operator' : 'Verified Investor'));
-        const roleNameAr = u.role === 'admin' ? 'المدير التنفيذي العام' : (u.role === 'farmer' ? 'شريك زراعي وفلاح معتمد' : (u.role === 'mill' || u.role === 'mill_owner' ? 'صاحب معصرة معتمدة' : 'كافل زراعي معتمد'));
-        const formattedBal = formatCurrency(u.wallet_usd || 0);
-        return isEnglish ? `
-          <div class="space-y-2.5 text-start">
-            <div class="flex items-center justify-between pb-1 border-b border-olive-200 dark:border-olive-800">
-              <span class="font-black text-olive-950 dark:text-olive-300 text-xs flex items-center gap-1">
-                <i data-lucide="user-check" class="w-4 h-4 text-emerald-600"></i>
-                <span>Account Status & Identity:</span>
-              </span>
-              <span class="text-[9px] bg-olive-100 dark:bg-olive-900/60 text-olive-800 dark:text-olive-300 px-2 py-0.5 rounded font-mono font-bold">${u.role.toUpperCase()}</span>
-            </div>
-            <div class="bg-stone-50 dark:bg-stone-800/80 p-2.5 rounded-xl text-[11px] space-y-1 text-stone-700 dark:text-stone-300">
-              <div><strong>Name:</strong> ${escapeHtml(u.name || '')}</div>
-              <div><strong>Email:</strong> ${escapeHtml(u.email || '')}</div>
-              <div><strong>Clearance Role:</strong> ${roleNameEn}</div>
-              <div><strong>Available Balance:</strong> <span class="text-emerald-700 dark:text-emerald-400 font-bold">${formattedBal}</span></div>
-              <div><strong>Verification:</strong> <span class="text-emerald-600 dark:text-emerald-400">✓ Email verified</span></div>
-            </div>
-            <div class="pt-1 flex flex-wrap gap-1.5">
-              <button type="button" data-click="openAuthModal('identity')" class="bg-olive-800 hover:bg-olive-900 text-white px-2.5 py-1.5 rounded-lg text-[10px] font-bold">Manage Profile</button>
-              <button type="button" data-click="navigateTo('dashboard')" class="bg-stone-800 hover:bg-stone-900 text-white px-2.5 py-1.5 rounded-lg text-[10px] font-bold">My Dashboard</button>
-            </div>
-          </div>
-        ` : `
-          <div class="space-y-2.5 text-start">
-            <div class="flex items-center justify-between pb-1 border-b border-olive-200 dark:border-olive-800">
-              <span class="font-black text-olive-950 dark:text-olive-300 text-xs flex items-center gap-1">
-                <i data-lucide="user-check" class="w-4 h-4 text-emerald-600"></i>
-                <span>بيانات حسابك وتصريح الهوية:</span>
-              </span>
-              <span class="text-[9px] bg-olive-100 dark:bg-olive-900/60 text-olive-800 dark:text-olive-300 px-2 py-0.5 rounded font-mono font-bold">${roleNameAr}</span>
-            </div>
-            <div class="bg-stone-50 dark:bg-stone-800/80 p-2.5 rounded-xl text-[11px] space-y-1 text-stone-700 dark:text-stone-300">
-              <div><strong>الاسم الكريم:</strong> ${escapeHtml(u.name || '')}</div>
-              <div><strong>البريد الإلكتروني:</strong> ${escapeHtml(u.email || '')}</div>
-              <div><strong>الصفة والتصريح:</strong> ${roleNameAr}</div>
-              <div><strong>الرصيد المتاح:</strong> <span class="text-emerald-700 dark:text-emerald-400 font-bold">${formattedBal}</span></div>
-              <div><strong>حالة التوثيق:</strong> <span class="text-emerald-600 dark:text-emerald-400">✓ موثق ومحمٍ بتوثيق البريد الإلكتروني</span></div>
-            </div>
-            <div class="pt-1 flex flex-wrap gap-1.5">
-              <button type="button" data-click="openAuthModal('identity')" class="bg-olive-800 hover:bg-olive-900 text-white px-2.5 py-1.5 rounded-lg text-[10px] font-bold">إدارة الملف والتصريح</button>
-              <button type="button" data-click="navigateTo('dashboard')" class="bg-stone-800 hover:bg-stone-900 text-white px-2.5 py-1.5 rounded-lg text-[10px] font-bold">لوحة التحكم</button>
-            </div>
-          </div>
-        `;
-      }
-
-      const isPortfolioOrTrees = isEnglish
-        ? (qLower.includes('my tree') || qLower.includes('my portfolio') || qLower.includes('my share') || qLower.includes('what do i own') || qLower.includes('my investment') || qLower.includes('my holding'))
-        : (normQ.includes('اشجاري') || normQ.includes('محفظتي') || normQ.includes('حصصي') || normQ.includes('اسهمي') || normQ.includes('ماذا املك') || normQ.includes('كفالاتي') || normQ.includes('شجراتي'));
-
-      if (isPortfolioOrTrees) {
-        const u = state.currentUser;
-        if (!u) {
-          return isEnglish ? `
-            <div class="space-y-2 text-start">
-              <p class="text-stone-700 dark:text-stone-200">Please sign in to view your live tree assets and deed holdings.</p>
-              <button type="button" data-click="openAuthModal()" class="bg-olive-800 hover:bg-olive-900 text-white px-3 py-1.5 rounded-lg text-xs font-bold">Sign In</button>
-            </div>
-          ` : `
-            <div class="space-y-2 text-start">
-              <p class="text-stone-700 dark:text-stone-200">يرجى تسجيل الدخول لعرض تفاصيل محفظة أشجارك وسندات الطابو الخاصة بك.</p>
-              <button type="button" data-click="openAuthModal()" class="bg-olive-800 hover:bg-olive-900 text-white px-3 py-1.5 rounded-lg text-xs font-bold">تسجيل الدخول</button>
-            </div>
-          `;
-        }
-
-        const myShares = (state.userShares || []).filter(s => s.user_id === u.id || s.user_email === u.email);
-        if (myShares.length === 0) {
-          return isEnglish ? `
-            <div class="space-y-2 text-start">
-              <p class="text-stone-700 dark:text-stone-200">You currently have no tree assets registered in your portfolio.</p>
-              <p class="text-[11px] text-stone-500 dark:text-stone-400">Explore our verified marketplace to acquire tree shares bundled with surveyed 5.0 m² cadastral parcels.</p>
-              <button type="button" data-click="navigateTo('marketplace')" class="bg-emerald-700 hover:bg-emerald-800 text-white px-3 py-1.5 rounded-lg text-xs font-bold">Explore Marketplace</button>
-            </div>
-          ` : `
-            <div class="space-y-2 text-start">
-              <p class="text-stone-700 dark:text-stone-200">ليس لديك حالياً أي أصول شجرية مسجلة في محفظة كفالاتك.</p>
-              <p class="text-[11px] text-stone-500 dark:text-stone-400">يمكنك استكشاف السوق لتملك حصص في أشجار زيتون معمرة أو بساتين بكر مدمجة مع سندات طابو كاداستري.</p>
-              <button type="button" data-click="navigateTo('marketplace')" class="bg-emerald-700 hover:bg-emerald-800 text-white px-3 py-1.5 rounded-lg text-xs font-bold">استعراض الأشجار المتاحة</button>
-            </div>
-          `;
-        }
-
-        let totalLandSqm = 0;
-        let totalEstimatedOil = 0;
-        const sharesSummary = myShares.map(s => {
-          const tree = (state.trees || []).find(t => t.id === s.tree_id) || (state.virginGroves || []).find(g => g.id === s.tree_id);
-          const title = tree ? (isEnglish ? (tree.name_en || tree.name) : tree.name) : s.tree_title;
-          const land = s.land_parcel_sqm || (s.percentage ? (s.percentage * 5 / 100) : 0);
-          totalLandSqm += land;
-          const estOil = (tree && tree.oil_yield_liters) ? (tree.oil_yield_liters * (s.percentage || 10) / 100) : 15;
-          totalEstimatedOil += estOil;
-          return `• <strong>${escapeHtml(title)}</strong>: ${s.percentage ? s.percentage + '%' : (s.saplings_count || 1) + ' ' + (isEnglish ? 'saplings' : 'غرسة')} (${land.toFixed(1)} m²)`;
-        }).join('<br>');
-
-        return isEnglish ? `
-          <div class="space-y-2.5 text-start">
-            <div class="flex items-center justify-between pb-1 border-b border-emerald-200 dark:border-emerald-800">
-              <span class="font-black text-emerald-950 dark:text-emerald-300 text-xs flex items-center gap-1.5">
-                <i data-lucide="trees" class="w-4 h-4 text-emerald-600"></i>
-                <span>Your Active Portfolio (${myShares.length} Assets):</span>
-              </span>
-              <span class="text-[9px] bg-emerald-100 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-300 px-2 py-0.5 rounded font-mono font-bold">${totalLandSqm.toFixed(1)} m² Total Land</span>
-            </div>
-            <div class="bg-white dark:bg-stone-800 p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 text-[11px] space-y-1">
-              <div class="mb-1 leading-relaxed text-stone-700 dark:text-stone-300">${sharesSummary}</div>
-              <div class="pt-1.5 border-t border-stone-200 dark:border-stone-700 flex justify-between font-bold text-olive-900 dark:text-olive-300">
-                <span>Estimated Annual Yield:</span>
-                <span>~${totalEstimatedOil.toFixed(1)} Liters EVOO</span>
-              </div>
-            </div>
-            <div class="pt-1 flex flex-wrap gap-1.5">
-              <button type="button" data-click="navigateTo('dashboard'); switchInvestorSubTab('portfolio');" class="bg-emerald-700 hover:bg-emerald-800 text-white px-2.5 py-1.5 rounded-lg text-[10px] font-bold">Open Portfolio Tab</button>
-              <button type="button" data-click="navigateTo('dashboard'); switchInvestorSubTab('harvest');" class="bg-olive-800 hover:bg-olive-900 text-white px-2.5 py-1.5 rounded-lg text-[10px] font-bold">Harvest Delivery / Cashout</button>
-            </div>
-          </div>
-        ` : `
-          <div class="space-y-2.5 text-start">
-            <div class="flex items-center justify-between pb-1 border-b border-emerald-200 dark:border-emerald-800">
-              <span class="font-black text-emerald-950 dark:text-emerald-300 text-xs flex items-center gap-1.5">
-                <i data-lucide="trees" class="w-4 h-4 text-emerald-600"></i>
-                <span>محفظة كفالاتك النشطة (${myShares.length} أصول زراعية):</span>
-              </span>
-              <span class="text-[9px] bg-emerald-100 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-300 px-2 py-0.5 rounded font-mono font-bold">${totalLandSqm.toFixed(1)} م² إجمالي الأرض</span>
-            </div>
-            <div class="bg-white dark:bg-stone-800 p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 text-[11px] space-y-1">
-              <div class="mb-1 leading-relaxed text-stone-700 dark:text-stone-300">${sharesSummary}</div>
-              <div class="pt-1.5 border-t border-stone-200 dark:border-stone-700 flex justify-between font-bold text-olive-900 dark:text-olive-300">
-                <span>إنتاج الزيت السنوي المتوقع:</span>
-                <span>~${totalEstimatedOil.toFixed(1)} لتر زيت زيتون بكر ممتاز</span>
-              </div>
-            </div>
-            <div class="pt-1 flex flex-wrap gap-1.5">
-              <button type="button" data-click="navigateTo('dashboard'); switchInvestorSubTab('portfolio');" class="bg-emerald-700 hover:bg-emerald-800 text-white px-2.5 py-1.5 rounded-lg text-[10px] font-bold">عرض المحفظة وسندات الطابو</button>
-              <button type="button" data-click="navigateTo('dashboard'); switchInvestorSubTab('harvest');" class="bg-olive-800 hover:bg-olive-900 text-white px-2.5 py-1.5 rounded-lg text-[10px] font-bold">استلام المحصول أو حصص المحصول</button>
-            </div>
-          </div>
-        `;
-      }
-
-      const isBalanceOrWallet = isEnglish
-        ? (qLower.includes('my balance') || qLower.includes('my wallet') || qLower.includes('my profit') || qLower.includes('my fund') || qLower.includes('how much money'))
-        : (normQ.includes('رصيدي') || normQ.includes('محفظتي الماليه') || normQ.includes('ارباحي') || normQ.includes('فلوسي') || normQ.includes('اموالي'));
-
-      if (isBalanceOrWallet) {
-        const u = state.currentUser;
-        if (!u) {
-          return isEnglish ? `
-            <div class="space-y-2 text-start">
-              <p class="text-stone-700 dark:text-stone-200">Please sign in to view your verified wallet balance and transaction ledger.</p>
-              <button type="button" data-click="openAuthModal()" class="bg-olive-800 hover:bg-olive-900 text-white px-3 py-1.5 rounded-lg text-xs font-bold">Sign In</button>
-            </div>
-          ` : `
-            <div class="space-y-2 text-start">
-              <p class="text-stone-700 dark:text-stone-200">يرجى تسجيل الدخول للاطلاع على رصيدك المالي المتاح وسجل العمليات المصرفية.</p>
-              <button type="button" data-click="openAuthModal()" class="bg-olive-800 hover:bg-olive-900 text-white px-3 py-1.5 rounded-lg text-xs font-bold">تسجيل الدخول</button>
-            </div>
-          `;
-        }
-        const bal = formatCurrency(u.wallet_usd || 0);
-        return isEnglish ? `
-          <div class="space-y-2.5 text-start">
-            <div class="flex items-center justify-between pb-1 border-b border-olive-200 dark:border-olive-800">
-              <span class="font-black text-olive-950 dark:text-olive-300 text-xs">💰 Financial Wallet Balance:</span>
-              <span class="text-emerald-700 dark:text-emerald-400 font-bold text-sm font-mono">${bal}</span>
-            </div>
-            <p class="text-xs text-stone-600 dark:text-stone-300 leading-relaxed">Your balance is liquid and available for new tree investments, terroir boutique purchases, or instantaneous payouts via Syriatel Cash and bank wires.</p>
-            <div class="pt-1 flex flex-wrap gap-1.5">
-              <button type="button" data-click="openModal('modal-deposit')" class="bg-emerald-700 hover:bg-emerald-800 text-white px-2.5 py-1.5 rounded-lg text-[10px] font-bold">Deposit Funds</button>
-              <button type="button" data-click="navigateTo('dashboard'); switchInvestorSubTab('finance');" class="bg-stone-800 hover:bg-stone-900 text-white px-2.5 py-1.5 rounded-lg text-[10px] font-bold">Transaction History</button>
-            </div>
-          </div>
-        ` : `
-          <div class="space-y-2.5 text-start">
-            <div class="flex items-center justify-between pb-1 border-b border-olive-200 dark:border-olive-800">
-              <span class="font-black text-olive-950 dark:text-olive-300 text-xs">💰 الرصيد المالي المتاح في محفظتك:</span>
-              <span class="text-emerald-700 dark:text-emerald-400 font-bold text-sm font-mono">${bal}</span>
-            </div>
-            <p class="text-xs text-stone-600 dark:text-stone-300 leading-relaxed">رصيدك فوري وقابل للاستخدام في الكفالة في أشجار وبساتين جديدة، أو الشراء من بوتيك المونة الريفية، أو السحب النقدي المباشر عبر سيريتل كاش والحسابات المصرفية.</p>
-            <div class="pt-1 flex flex-wrap gap-1.5">
-              <button type="button" data-click="openModal('modal-deposit')" class="bg-emerald-700 hover:bg-emerald-800 text-white px-2.5 py-1.5 rounded-lg text-[10px] font-bold">إيداع رصيد</button>
-              <button type="button" data-click="navigateTo('dashboard'); switchInvestorSubTab('finance');" class="bg-stone-800 hover:bg-stone-900 text-white px-2.5 py-1.5 rounded-lg text-[10px] font-bold">سجل الحركات المالية</button>
-            </div>
-          </div>
-        `;
-      }
-
-      const isFounderOrLeadership = isEnglish
-        ? (qLower.includes('founder') || qLower.includes('manager') || qLower.includes('leadership') || qLower.includes('wissam') || qLower.includes('hamdoli') || qLower.includes('who runs') || qLower.includes('command center') || qLower.includes('sovereign') || qLower.includes('pricing') || qLower.includes('decisions'))
-        : (normQ.includes('مدير') || normQ.includes('مؤسس') || normQ.includes('وسام') || normQ.includes('الحمدولي') || normQ.includes('من يدير') || normQ.includes('قياد') || normQ.includes('اوامر') || normQ.includes('قرارات') || normQ.includes('تسعير') || normQ.includes('صرف') || normQ.includes('اداره المنصه'));
-
-      if (isFounderOrLeadership) {
-        return isEnglish ? `
-          <div class="space-y-2.5 text-start">
-            <div class="flex items-center justify-between pb-1 border-b border-olive-200 dark:border-olive-800">
-              <span class="font-black text-olive-950 dark:text-olive-300 text-xs flex items-center gap-1.5">
-                <i data-lucide="award" class="w-4 h-4 text-purple-600"></i>
-                <span>Platform Leadership & Oversight:</span>
-              </span>
-              <span class="text-[9px] bg-purple-100 dark:bg-purple-900/60 text-purple-800 dark:text-purple-300 px-2 py-0.5 rounded font-mono font-bold">Executive Office</span>
-            </div>
-            <p class="text-xs text-stone-700 dark:text-stone-200 leading-relaxed">
-              <strong>Faseela (فسيلة)</strong> was designed, founded and directed by <strong>Eng. Wissam Al-Hamdoli (م. وسام الحمدولي)</strong>, Root Executive & Chief Architectural Officer, to pioneer regenerative agro-investment, protect historic centuries-old olive orchards, and empower Syrian farmers with documented stipends, cold-press infrastructure, and global diaspora export channels.
-            </p>
-            <div class="bg-stone-50 dark:bg-stone-800/80 p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 text-[10.5px] text-stone-600 dark:text-stone-300">
-              Backed by an autonomous <strong>Payment Review</strong>, automated emergency freezing, 11-governorate territorial expansion, and cadastral deed legal protections.
-            </div>
-            <div class="pt-1 flex flex-wrap gap-1.5">
-              <button type="button" data-click="openLegalContract('charter')" class="bg-purple-800 hover:bg-purple-900 text-white px-2.5 py-1.5 rounded-lg text-[10px] font-bold">View Payment Terms</button>
-            </div>
-          </div>
-        ` : `
-          <div class="space-y-2.5 text-start">
-            <div class="flex items-center justify-between pb-1 border-b border-olive-200 dark:border-olive-800">
-              <span class="font-black text-olive-950 dark:text-olive-300 text-xs flex items-center gap-1.5">
-                <i data-lucide="award" class="w-4 h-4 text-purple-600"></i>
-                <span>القيادة التنفيذية والإشراف العام:</span>
-              </span>
-              <span class="text-[9px] bg-purple-100 dark:bg-purple-900/60 text-purple-800 dark:text-purple-300 px-2 py-0.5 rounded font-mono font-bold">الإدارة العليا</span>
-            </div>
-            <p class="text-xs text-stone-700 dark:text-stone-200 leading-relaxed">
-              تأسست منظومة <strong>فسيلة</strong> تحت إشراف وتصميم المهندس <strong>وسام الحمدولي (م. وسام الحمدولي)</strong>، الرئيس التنفيذي والمشرف العام على المنظومة، برؤية  تهدف إلى رقمنة وتأصيل القطاع الزراعي السوري، وحماية التراث الشجري المعمر، وتمكين المزارع السوري والكافل المغترب من بناء شراكة تشاركية  رابحة وموثقة كاداسترياً.
-            </p>
-            <div class="bg-stone-50 dark:bg-stone-800/80 p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 text-[10.5px] text-stone-600 dark:text-stone-300">
-              تلتزم الإدارة بمراجعة كل دفعة بنكية قبل اعتمادها، وتوفير العصر البارد دون 25° م في 11 محافظة، وإتاحة التسييل النقدي الفوري أو استلام الزيت الدولي.
-            </div>
-            <div class="pt-1 flex flex-wrap gap-1.5">
-              <button type="button" data-click="openLegalContract('charter')" class="bg-purple-800 hover:bg-purple-900 text-white px-2.5 py-1.5 rounded-lg text-[10px] font-bold">استعراض ميثاق الضمان</button>
-            </div>
-          </div>
-        `;
-      }
-
-      // -------------------------------------------------------------
-      // 0. VIRGIN SAPLINGS, GREENFIELD GROVES & LAND SPONSORSHIP FROM SCRATCH
-      // (Prioritized first for questions on new groves, virgin trees & land)
-      // -------------------------------------------------------------
-      const isVirginOrGreenfield = isEnglish
-        ? (qLower.includes('virgin') || qLower.includes('greenfield') || qLower.includes('sapling') || qLower.includes('scratch') || qLower.includes('young') || qLower.includes('nursery') || qLower.includes('pioneer') || qLower.includes('start from') || qLower.includes('seed') || qLower.includes('1 year') || qLower.includes('2 year') || qLower.includes('3 year') || qLower.includes('new tree') || qLower.includes('plant from'))
-        : (normQ.includes('بكر') || normQ.includes('حديث') || normQ.includes('غراس') || normQ.includes('شتل') || normQ.includes('غرس') || normQ.includes('من الصفر') || normQ.includes('تاسيس') || normQ.includes('بدايه المشروع') || normQ.includes('شابه') || normQ.includes('صغيره') || normQ.includes('عمر سنه') || normQ.includes('سنتين') || normQ.includes('ثلاث سنوات') || normQ.includes('شراء حصه في بدايه'));
-
-      if (isVirginOrGreenfield) {
-        if (isEnglish) {
-          return `
-            <div class="space-y-2.5 text-start">
-              <div class="flex items-center justify-between pb-1 border-b border-emerald-200">
-                <span class="font-black text-emerald-950 dark:text-emerald-300 text-xs flex items-center gap-1.5">
-                  <i data-lucide="sprout" class="w-4 h-4 text-emerald-600"></i>
-                  <span>Greenfield Virgin Olive Groves with Land (Ages 1 - 3 Years):</span>
-                </span>
-                <span class="text-[9px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-mono font-bold">Pioneer Wealth Track</span>
-              </div>
-              <p class="text-[11px] text-stone-600 dark:text-stone-300 leading-relaxed">
-                This is Faseela’s sovereign foundational investment model: acquire certified young olive saplings (1 to 3 years old) <strong>bundled with registered cadastral land parcels (25 m² to 1,000 m² Dunum)</strong> to build long-term generational wealth:
-              </p>
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[10.5px]">
-                <div class="bg-white dark:bg-stone-800 p-2.5 rounded-xl border border-stone-200 dark:border-stone-700">
-                  <strong class="text-emerald-900 dark:text-emerald-300 block mb-0.5">• High Capital Land Appreciation:</strong>
-                  <span class="text-stone-600 dark:text-stone-300">Reclaimed land with solar drip irrigation surges by <strong>+40% to +50% in value</strong> within the first 2 years, doubling upon commercial harvest.</span>
-                </div>
-                <div class="bg-white dark:bg-stone-800 p-2.5 rounded-xl border border-stone-200 dark:border-stone-700">
-                  <strong class="text-olive-900 dark:text-olive-300 block mb-0.5">• Substantial Land Holdings:</strong>
-                  <span class="text-stone-600 dark:text-stone-300">Each sapling is backed by <strong>25.0 m² of registered land</strong> (or 250 m² quarter dunum / 1,000 m² full dunum green title deed).</span>
-                </div>
-                <div class="bg-white dark:bg-stone-800 p-2.5 rounded-xl border border-stone-200 dark:border-stone-700">
-                  <strong class="text-amber-900 dark:text-amber-300 block mb-0.5">• Low Entry Pricing ($45 - $55):</strong>
-                  <span class="text-stone-600 dark:text-stone-300">Includes the certified sapling, registered land parcel, solar drip network, and professional agrarian supervision.</span>
-                </div>
-                <div class="bg-white dark:bg-stone-800 p-2.5 rounded-xl border border-stone-200 dark:border-stone-700">
-                  <strong class="text-purple-900 dark:text-purple-300 block mb-0.5">• Platform Profitability Model:</strong>
-                  <span class="text-stone-600 dark:text-stone-300">Faseela earns a 30-35% land development margin, annual smart care management fee, and a 20% share of future harvest oil pressing & export.</span>
-                </div>
-              </div>
-              <div class="pt-1 flex flex-wrap gap-1.5">
-                <button type="button" data-click="navigateTo('marketplace'); switchMarketplaceTrack('virgin');" class="bg-emerald-700 hover:bg-emerald-800 text-white px-3 py-1.5 rounded-lg text-[10px] font-bold flex items-center gap-1">
-                  <i data-lucide="sprout" class="w-3.5 h-3.5"></i>
-                  <span>Explore Virgin Groves with Land</span>
-                </button>
-                <button type="button" data-click="openCertificateModal('tree_01')" class="bg-stone-800 hover:bg-stone-900 text-white px-3 py-1.5 rounded-lg text-[10px] font-bold flex items-center gap-1">
-                  <i data-lucide="map" class="w-3.5 h-3.5"></i>
-                  <span>View Cadastral Deed Blueprint</span>
-                </button>
-              </div>
-            </div>
-          `;
-        } else {
-          return `
-            <div class="space-y-2.5 text-start">
-              <div class="flex items-center justify-between pb-1 border-b border-emerald-200">
-                <span class="font-black text-emerald-950 dark:text-emerald-300 text-xs flex items-center gap-1.5">
-                  <i data-lucide="sprout" class="w-4 h-4 text-emerald-600"></i>
-                  <span>مشروع بساتين الزيتون البكر مع الأرض (عمر 1 إلى 3 سنوات) من الصفر:</span>
-                </span>
-                <span class="text-[9px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-mono font-bold">بناء الثروة الزراعية</span>
-              </div>
-              <p class="text-[11px] text-stone-600 dark:text-stone-300 leading-relaxed">
-                هذا هو المسار التشاركي الأساسي والسيادي لمنصة فسيلة: تملك غراس زيتون بكر مؤصلة (عمر سنة إلى 3 سنوات) <strong>مدمجة حكماً مع مقاسم أراضٍ كاداسترية مفرزة (25 م² إلى دونم كامل 1,000 م²)</strong> لتحقيق نمو رأسمالي متسارع ومحاصيل مستدامة:
-              </p>
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[10.5px]">
-                <div class="bg-white dark:bg-stone-800 p-2.5 rounded-xl border border-stone-200 dark:border-stone-700">
-                  <strong class="text-emerald-900 dark:text-emerald-300 block mb-0.5">• نمو ومضاعفة قيمة الأرض الرأسمالية:</strong>
-                  <span class="text-stone-600 dark:text-stone-300">ترتفع قيمة الأرض المستصلحة والمجهزة بالري الشمسي بنسبة <strong>40% إلى 50%</strong> خلال أول سنتين، وتتضاعف 2x إلى 3x عند دخول مرحلة الإثمار الكامل.</span>
-                </div>
-                <div class="bg-white dark:bg-stone-800 p-2.5 rounded-xl border border-stone-200 dark:border-stone-700">
-                  <strong class="text-olive-900 dark:text-olive-300 block mb-0.5">• مساحات أراضٍ حقيقية مفرزة:</strong>
-                  <span class="text-stone-600 dark:text-stone-300">تحصل كل غرسة على <strong>25 م² طابو زراعي مساحي</strong> (أو 250 م² ربع دونم / 1,000 م² دونم كامل بسند طابو أخضر مستقل باسمك).</span>
-                </div>
-                <div class="bg-white dark:bg-stone-800 p-2.5 rounded-xl border border-stone-200 dark:border-stone-700">
-                  <strong class="text-amber-900 dark:text-amber-300 block mb-0.5">• كلفة تأسيس منخفضة (45$ - 55$):</strong>
-                  <span class="text-stone-600 dark:text-stone-300">تشمل الشتلة المؤصلة + مقسم 25 م² أرض + شبكة ري بالتنقيط بالطاقة الشمسية + الرعاية الفلاحية والحراسة.</span>
-                </div>
-                <div class="bg-white dark:bg-stone-800 p-2.5 rounded-xl border border-stone-200 dark:border-stone-700">
-                  <strong class="text-purple-900 dark:text-purple-300 block mb-0.5">• نموذج استدامة وربحية المنصة:</strong>
-                  <span class="text-stone-600 dark:text-stone-300">تجني المنصة هامش استصلاح تأسيسي (30-35%)، وأتعاب إدارة وإشراف سنوية، ونسبة 20% من إنتاج الزيت المستقبلي عند العصر في معاصر فسيلة وتصديره.</span>
-                </div>
-              </div>
-              <div class="pt-1 flex flex-wrap gap-1.5">
-                <button type="button" data-click="navigateTo('marketplace'); switchMarketplaceTrack('virgin');" class="bg-emerald-700 hover:bg-emerald-800 text-white px-3 py-1.5 rounded-lg text-[10px] font-bold flex items-center gap-1">
-                  <i data-lucide="sprout" class="w-3.5 h-3.5"></i>
-                  <span>تصفح بساتين الغراس البكر مع الأرض</span>
-                </button>
-                <button type="button" data-click="openCertificateModal('tree_01')" class="bg-stone-800 hover:bg-stone-900 text-white px-3 py-1.5 rounded-lg text-[10px] font-bold flex items-center gap-1">
-                  <i data-lucide="map" class="w-3.5 h-3.5"></i>
-                  <span>معاينة سند الطابو الكاداستري</span>
-                </button>
-              </div>
-            </div>
-          `;
-        }
-      }
-
-      // 1. LEGAL CONTRACTS, ESCROW VAULT & GOVERNANCE
-      // -------------------------------------------------------------
-      const isLegal = isEnglish
-        ? ((qLower.includes('contract') || qLower.includes('legal') || qLower.includes('escrow') || qLower.includes('vault') || qLower.includes('charter') || qLower.includes('governance') || qLower.includes('agreement') || qLower.includes('freeze') || qLower.includes('arbitration') || qLower.includes('guarantee') || qLower.includes('law')) && !qLower.includes('press') && !qLower.includes('mill') && !qLower.includes('oil'))
-        : ((normQ.includes('عقد') || normQ.includes('عقود') || normQ.includes('ميثاق') || normQ.includes('قانون') || (normQ.includes('ضمان') && !normQ.includes('زيت')) || normQ.includes('اسكرو') || normQ.includes('امانه') || normQ.includes('تحكيم') || (normQ.includes('شروط') && !normQ.includes('فحص') && !normQ.includes('عصر')) || normQ.includes('تجميد') || normQ.includes('قوه قاهره') || normQ.includes('حمايه الكافل')) && !normQ.includes('عصر') && !normQ.includes('فحص'));
-
-      if (isLegal) {
-        if (isEnglish) {
-          return `
-            <div class="space-y-2.5 text-start">
-              <div class="flex items-center justify-between pb-1 border-b border-purple-200">
-                <span class="font-black text-purple-950 dark:text-purple-300 text-xs flex items-center gap-1.5">
-                  <i data-lucide="shield-check" class="w-4 h-4 text-purple-700"></i>
-                  <span>Official Legal Framework & Payment Review:</span>
-                </span>
-                <span class="text-[9px] bg-purple-100 text-purple-800 px-2 py-0.5 rounded font-mono font-bold">Syrian Civil Code</span>
-              </div>
-              <p class="text-[11px] text-stone-600 dark:text-stone-300 leading-relaxed">
-                Faseela operates under a bank-backed institutional governance framework designed to give agricultural investors and farmers complete institutional certainty:
-              </p>
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[10.5px]">
-                <div class="bg-white dark:bg-stone-800 p-2.5 rounded-xl border border-stone-200 dark:border-stone-700">
-                  <strong class="text-purple-900 dark:text-purple-300 block mb-0.5">• 1. Platform Governance & Payment Review:</strong>
-                  <span class="text-stone-600 dark:text-stone-300">Independent <strong>Payment Review</strong> held in reserve with automated Emergency Freeze Protocols and quarterly independent audits.</span>
-                </div>
-                <div class="bg-white dark:bg-stone-800 p-2.5 rounded-xl border border-stone-200 dark:border-stone-700">
-                  <strong class="text-olive-900 dark:text-olive-300 block mb-0.5">• 2. Sponsor Stewardship & Land Usufruct:</strong>
-                  <span class="text-stone-600 dark:text-stone-300">Official long-term tenure over the tree and its <strong>5.0 m² cadastral land parcel</strong>, including EVOO delivery or cash payout rights.</span>
-                </div>
-                <div class="bg-white dark:bg-stone-800 p-2.5 rounded-xl border border-stone-200 dark:border-stone-700">
-                  <strong class="text-emerald-900 dark:text-emerald-300 block mb-0.5">• 3. Farmer Partnership across 11 Cities:</strong>
-                  <span class="text-stone-600 dark:text-stone-300">Documented regular stipends via Syriatel Cash/Haram, soil protection covenants, and agricultural solidarity funds.</span>
-                </div>
-                <div class="bg-white dark:bg-stone-800 p-2.5 rounded-xl border border-stone-200 dark:border-stone-700">
-                  <strong class="text-amber-900 dark:text-amber-300 block mb-0.5">• 4. Modern Mills & EVOO Quality Charter:</strong>
-                  <span class="text-stone-600 dark:text-stone-300">Certified 2-phase cold extraction under 25°C, acidity &lt; 0.4%, and nitrogen-inert Inox 316 storage.</span>
-                </div>
-              </div>
-              <div class="pt-1 flex flex-wrap gap-1.5">
-                <button type="button" data-click="openLegalContract('charter')" class="bg-purple-700 hover:bg-purple-800 text-white px-2.5 py-1.5 rounded-lg text-[10px] font-bold flex items-center gap-1">
-                  <i data-lucide="shield" class="w-3.5 h-3.5"></i>
-                  <span>Payment Terms</span>
-                </button>
-                <button type="button" data-click="openLegalContract('investor')" class="bg-olive-800 hover:bg-olive-900 text-white px-2.5 py-1.5 rounded-lg text-[10px] font-bold flex items-center gap-1">
-                  <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
-                  <span>Sponsor Usufruct Contract</span>
-                </button>
-                <button type="button" data-click="openLegalContract('farmer')" class="bg-emerald-700 hover:bg-emerald-800 text-white px-2.5 py-1.5 rounded-lg text-[10px] font-bold flex items-center gap-1">
-                  <i data-lucide="handshake" class="w-3.5 h-3.5"></i>
-                  <span>Farmer Partnership</span>
-                </button>
-                <button type="button" data-click="openLegalContract('mill')" class="bg-amber-700 hover:bg-amber-800 text-white px-2.5 py-1.5 rounded-lg text-[10px] font-bold flex items-center gap-1">
-                  <i data-lucide="cog" class="w-3.5 h-3.5"></i>
-                  <span>Mills Charter</span>
-                </button>
-              </div>
-            </div>
-          `;
-        } else {
-          return `
-            <div class="space-y-2.5 text-start">
-              <div class="flex items-center justify-between pb-1 border-b border-purple-200">
-                <span class="font-black text-purple-950 dark:text-purple-300 text-xs flex items-center gap-1.5">
-                  <i data-lucide="shield-check" class="w-4 h-4 text-purple-700"></i>
-                  <span>منظومة العقود الرسمية ومراجعة الدفعات:</span>
-                </span>
-                <span class="text-[9px] bg-purple-100 text-purple-800 px-2 py-0.5 rounded font-mono font-bold">القانون المدني السوري</span>
-              </div>
-              <p class="text-[11px] text-stone-600 dark:text-stone-300 leading-relaxed">
-                تعتمد المنصة إطاراً قانونياً ومصرفياً موثقاً يحمي الكافل والمزارع بالكامل عبر 4 عقود ومواثيق تنفيذية موثقة:
-              </p>
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[10.5px]">
-                <div class="bg-white dark:bg-stone-800 p-2.5 rounded-xl border border-stone-200 dark:border-stone-700">
-                  <strong class="text-purple-900 dark:text-purple-300 block mb-0.5">• 1. ميثاق الحوكمة ومراجعة الدفعات (Payment Review):</strong>
-                  <span class="text-stone-600 dark:text-stone-300">تُعتمد كل دفعة بعد مراجعة إيصال التحويل البنكي من مدقق مالي مستقل عن مقدّم الطلب. لا يوجد حالياً حساب أمانة بنكي مستقل.</span>
-                </div>
-                <div class="bg-white dark:bg-stone-800 p-2.5 rounded-xl border border-stone-200 dark:border-stone-700">
-                  <strong class="text-olive-900 dark:text-olive-300 block mb-0.5">• 2. عقد كفالة وحيازة مقسم الأرض:</strong>
-                  <span class="text-stone-600 dark:text-stone-300">حق انتفاع كاداستري بمقسم <strong>5.0 م² طابو زراعي</strong> ومسح طوبوغرافي WGS84، مع ضمان استلام الزيت عيناً أو التسييل المالي نقداً.</span>
-                </div>
-                <div class="bg-white dark:bg-stone-800 p-2.5 rounded-xl border border-stone-200 dark:border-stone-700">
-                  <strong class="text-emerald-900 dark:text-emerald-300 block mb-0.5">• 3. عقد الشراكة الفلاحية (11 محافظة):</strong>
-                  <span class="text-stone-600 dark:text-stone-300">صرف أتعاب فلاحية منتظمة عبر سيريتل كاش/الهرم، وتأمين صندوق تكافل زراعي في حالات القوة القاهرة (الصقيع أو الجفاف).</span>
-                </div>
-                <div class="bg-white dark:bg-stone-800 p-2.5 rounded-xl border border-stone-200 dark:border-stone-700">
-                  <strong class="text-amber-900 dark:text-amber-300 block mb-0.5">• 4. ميثاق المعاصر المعتمدة وفحص الجودة:</strong>
-                  <span class="text-stone-600 dark:text-stone-300">عصر بارد دون 25° م، حموضة أقل من 0.4%، وحفظ الزيت في خزانات Inox 316 معزولة بنيتروجين لمنع الأكسدة.</span>
-                </div>
-              </div>
-              <div class="pt-1 flex flex-wrap gap-1.5">
-                <button type="button" data-click="openLegalContract('charter')" class="bg-purple-700 hover:bg-purple-800 text-white px-2.5 py-1.5 rounded-lg text-[10px] font-bold flex items-center gap-1">
-                  <i data-lucide="shield" class="w-3.5 h-3.5"></i>
-                  <span>ميثاق مراجعة الدفعات</span>
-                </button>
-                <button type="button" data-click="openLegalContract('investor')" class="bg-olive-800 hover:bg-olive-900 text-white px-2.5 py-1.5 rounded-lg text-[10px] font-bold flex items-center gap-1">
-                  <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
-                  <span>عقد الكفالة والحيازة</span>
-                </button>
-                <button type="button" data-click="openLegalContract('farmer')" class="bg-emerald-700 hover:bg-emerald-800 text-white px-2.5 py-1.5 rounded-lg text-[10px] font-bold flex items-center gap-1">
-                  <i data-lucide="handshake" class="w-3.5 h-3.5"></i>
-                  <span>عقد الشراكة الفلاحية</span>
-                </button>
-                <button type="button" data-click="openLegalContract('mill')" class="bg-amber-700 hover:bg-amber-800 text-white px-2.5 py-1.5 rounded-lg text-[10px] font-bold flex items-center gap-1">
-                  <i data-lucide="cog" class="w-3.5 h-3.5"></i>
-                  <span data-i18n="mill_btn_contract">ميثاق المعاصر المعتمدة</span>
-                </button>
-              </div>
-            </div>
-          `;
-        }
-      }
-
-      // -------------------------------------------------------------
-      // 2. CADASTRAL LAND PLOT (5m²), DEEDS & CERTIFICATES
-      // -------------------------------------------------------------
-      const isLandOrCert = isEnglish
-        ? (qLower.includes('land') || qLower.includes('parcel') || qLower.includes('deed') || qLower.includes('cadastral') || qLower.includes('certificate') || qLower.includes('wgs') || qLower.includes('blueprint') || qLower.includes('soil') || qLower.includes('tenure') || qLower.includes('plot') || qLower.includes('usufruct'))
-        : (normQ.includes('ارض') || normQ.includes('مقسم') || normQ.includes('طابو') || normQ.includes('كاداستر') || normQ.includes('شهاده') || normQ.includes('احداثيات') || normQ.includes('مساح') || normQ.includes('wgs') || normQ.includes('حيازه') || normQ.includes('مخطط') || normQ.includes('تربه'));
-
-      if (isLandOrCert) {
-        if (isEnglish) {
-          return `
-            <div class="space-y-2.5 text-start">
-              <div class="flex items-center justify-between pb-1 border-b border-emerald-200">
-                <span class="font-black text-emerald-950 dark:text-emerald-300 text-xs flex items-center gap-1.5">
-                  <i data-lucide="map" class="w-4 h-4 text-emerald-700"></i>
-                  <span>Cadastral Land Parcel (5.0 m² Plot) & Digital Deed:</span>
-                </span>
-                <span class="text-[9px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-mono font-bold">WGS-84 Precision</span>
-              </div>
-              <p class="text-[11px] text-stone-600 dark:text-stone-300 leading-relaxed">
-                Every olive tree comes with an option to acquire a designated <strong>5.0 square meter circular agrarian perimeter</strong> (radius 1.26m) around its trunk under Syrian agrarian tenure law.
-              </p>
-              <div class="bg-emerald-50/80 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 p-3 rounded-2xl space-y-1.5 text-[11px] text-emerald-950 dark:text-emerald-200">
-                <p><strong>• 4-Corner GPS Boundary:</strong> Precise North, East, South, West WGS-84 coordinates surveyed to ±10 cm.</p>
-                <p><strong>• Scale 1:50 Blueprint:</strong> Interactive cadastral blueprint rendered in the tree details page.</p>
-                <p><strong>• Digital Green Deed:</strong> Serialized certificate with parcel number, cadastral basin, and soil taxonomy (Terra Rossa, Basaltic, or Alluvial).</p>
-                <p><strong>• Flexible Land Tenure:</strong> Available from <strong>5 m² per mature tree ($12 - $22 based on region)</strong>, or up to <strong>25 m² - 1,000 m² (dunum)</strong> in virgin greenfield projects.</p>
-              </div>
-              <div class="pt-1 flex flex-wrap gap-1.5">
-                <button type="button" data-click="openCertificateModalForCurrentTree()" class="bg-amber-600 hover:bg-amber-700 text-white px-3 py-1.5 rounded-lg text-[10px] font-bold flex items-center gap-1">
-                  <i data-lucide="award" class="w-3.5 h-3.5"></i>
-                  <span>View Cadastral Deed Certificate</span>
-                </button>
-                <button type="button" data-click="navigateTo('marketplace')" class="bg-olive-800 hover:bg-olive-900 text-white px-3 py-1.5 rounded-lg text-[10px] font-bold flex items-center gap-1">
-                  <i data-lucide="trees" class="w-3.5 h-3.5"></i>
-                  <span>Browse Trees with Land</span>
-                </button>
-              </div>
-            </div>
-          `;
-        } else {
-          return `
-            <div class="space-y-2.5 text-start">
-              <div class="flex items-center justify-between pb-1 border-b border-emerald-200">
-                <span class="font-black text-emerald-950 dark:text-emerald-300 text-xs flex items-center gap-1.5">
-                  <i data-lucide="map" class="w-4 h-4 text-emerald-700"></i>
-                  <span>مقسم الأرض الزراعية (5.0 م²) وسند الطابو الكاداستري:</span>
-                </span>
-                <span class="text-[9px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-mono font-bold">إحداثيات WGS-84</span>
-              </div>
-              <p class="text-[11px] text-stone-600 dark:text-stone-300 leading-relaxed">
-                تتيح لك منصة فسيلة امتلاك حق انتفاع زراعي رسمي بمقسم أرض مساحته <strong>5.0 أمتار مربعة</strong> (حرم دائري بشعاع 1.26 متر حول الجذع)، موثق بسند طابو رقمي رسمي يحمي أصلك العقاري الزراعي:
-              </p>
-              <div class="bg-emerald-50/80 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 p-3 rounded-2xl space-y-1.5 text-[11px] text-emerald-950 dark:text-emerald-200">
-                <p><strong>• إحداثيات الأركان الأربعة:</strong> مسح مساحي دقيق (N, E, S, W) بنظام WGS-84 العالمي بدقة ±10 سم.</p>
-                <p><strong>• مخطط مساحي طوبوغرافي:</strong> رسم هندسي بمقياس 1:50 معتمد يظهر حرم المقسم وجذع الشجرة في صفحة التفاصيل.</p>
-                <p><strong>• شهادة طابو زراعي خضراء:</strong> مستند رسمي يحمل رقم المقسم والحوض العقاري وتصنيف التربة (كلسية، بركانية، رسوبية) مع كود التوثيق المشفر.</p>
-                <p><strong>• خيارات التملك والمساحة:</strong> تبدأ من <strong>5 م² للأشجار المعمرة ($12 - $22 حسب المحافظة)</strong>، أو <strong>25 م² إلى 1,000 م² (دونم كامل)</strong> في مشاريع الغراس البكر التأسيسية.</p>
-              </div>
-              <div class="pt-1 flex flex-wrap gap-1.5">
-                <button type="button" data-click="openCertificateModalForCurrentTree()" class="bg-amber-600 hover:bg-amber-700 text-white px-3 py-1.5 rounded-lg text-[10px] font-bold flex items-center gap-1">
-                  <i data-lucide="award" class="w-3.5 h-3.5"></i>
-                  <span>معاينة شهادة الطابو الزراعي</span>
-                </button>
-                <button type="button" data-click="navigateTo('marketplace')" class="bg-olive-800 hover:bg-olive-900 text-white px-3 py-1.5 rounded-lg text-[10px] font-bold flex items-center gap-1">
-                  <i data-lucide="trees" class="w-3.5 h-3.5"></i>
-                  <span>تصفح الأشجار مع مقاسم الأرض</span>
-                </button>
-              </div>
-            </div>
-          `;
-        }
-      }
-
-      // -------------------------------------------------------------
-      // 3. MILLS, COLD PRESSING & PHYSICOCHEMICAL LAB TESTING
-      // -------------------------------------------------------------
-      const isMillOrLab = isEnglish
-        ? ((qLower.includes('mill') || qLower.includes('press') || qLower.includes('cold') || qLower.includes('acidity') || qLower.includes('lab') || qLower.includes('quality') || qLower.includes('peroxide') || qLower.includes('spectrophotometry') || qLower.includes('evoo') || (qLower.includes('test') && !qLower.includes('contest'))) && !qLower.includes('register') && !qLower.includes('join'))
-        : ((normQ.includes('معصر') || normQ.includes('عصر') || normQ.includes('بارد') || normQ.includes('حموض') || normQ.includes('مخبر') || normQ.includes('تحليل') || normQ.includes('فحص') || normQ.includes('بيروكسيد') || normQ.includes('طيف') || normQ.includes('جوده') || normQ.includes('شهاده الزيت') || normQ.includes('اينوكس') || normQ.includes('نيتروجين') || normQ.includes('بكر ممتاز')) && !normQ.includes('تسجيل') && !normQ.includes('انضمام') && !normQ.includes('اعتماد'));
-
-      if (isMillOrLab) {
-        if (isEnglish) {
-          return `
-            <div class="space-y-2.5 text-start">
-              <div class="flex items-center justify-between pb-1 border-b border-amber-200">
-                <span class="font-black text-amber-950 dark:text-amber-300 text-xs flex items-center gap-1.5">
-                  <i data-lucide="flask-conical" class="w-4 h-4 text-amber-600"></i>
-                  <span>Certified Cold Mills & Physicochemical Laboratory Standards:</span>
-                </span>
-                <span class="text-[9px] bg-amber-100 text-amber-800 px-2 py-0.5 rounded font-mono font-bold">IOC Certified</span>
-              </div>
-              <p class="text-[11px] text-stone-600 dark:text-stone-300 leading-relaxed">
-                All Faseela harvests are processed exclusively in verified 2-phase modern continuous centrifuge mills under strict temperature control:
-              </p>
-              <div class="bg-amber-50/80 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 p-3 rounded-2xl space-y-1.5 text-[11px] text-stone-700 dark:text-stone-200">
-                <div class="flex justify-between font-bold text-amber-950 dark:text-amber-300">
-                  <span>• Free Oleic Acidity:</span>
-                  <span class="text-emerald-700 dark:text-emerald-400">&lt; 0.35% (IOC Extra Virgin standard &lt; 0.80%)</span>
-                </div>
-                <div class="flex justify-between font-bold text-amber-950 dark:text-amber-300">
-                  <span>• Extraction Temperature:</span>
-                  <span class="text-emerald-700 dark:text-emerald-400">Strictly below 25°C (True Cold Extraction)</span>
-                </div>
-                <div class="flex justify-between font-bold text-amber-950 dark:text-amber-300">
-                  <span>• Peroxide Value:</span>
-                  <span class="text-emerald-700 dark:text-emerald-400">&lt; 6.5 meq O2/kg (Peak oxidative freshness)</span>
-                </div>
-                <div class="flex justify-between font-bold text-amber-950 dark:text-amber-300">
-                  <span>• Storage Environment:</span>
-                  <span class="text-stone-600 dark:text-stone-300">Food-grade Inox 316 tanks with nitrogen blanket injection</span>
-                </div>
-              </div>
-              <div class="pt-1 flex flex-wrap gap-1.5">
-                <button type="button" data-click="openLabCertModalForCurrentTree()" class="bg-amber-700 hover:bg-amber-800 text-white px-3 py-1.5 rounded-lg text-[10px] font-bold flex items-center gap-1">
-                  <i data-lucide="file-check-2" class="w-3.5 h-3.5"></i>
-                  <span>View Lab Quality Certificate</span>
-                </button>
-                <button type="button" data-click="openLegalContract('mill')" class="bg-stone-800 hover:bg-stone-900 text-white px-3 py-1.5 rounded-lg text-[10px] font-bold flex items-center gap-1">
-                  <i data-lucide="cog" class="w-3.5 h-3.5"></i>
-                  <span>Mills Quality Charter</span>
-                </button>
-              </div>
-            </div>
-          `;
-        } else {
-          return `
-            <div class="space-y-2.5 text-start">
-              <div class="flex items-center justify-between pb-1 border-b border-amber-200">
-                <span class="font-black text-amber-950 dark:text-amber-300 text-xs flex items-center gap-1.5">
-                  <i data-lucide="flask-conical" class="w-4 h-4 text-amber-600"></i>
-                  <span>معايير المعاصر المعتمدة والفحص الفيزيوكيميائي للبكر الممتاز:</span>
-                </span>
-                <span class="text-[9px] bg-amber-100 text-amber-800 px-2 py-0.5 rounded font-mono font-bold">معايير IOC الدولية</span>
-              </div>
-              <p class="text-[11px] text-stone-600 dark:text-stone-300 leading-relaxed">
-                تعصر كافة محاصيل فسيلة حصرياً في معاصر إيطالية حديثة تعمل بنظام الطرد المركزي المستمر على مرحلتين ودون إضافة حرارة:
-              </p>
-              <div class="bg-amber-50/80 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 p-3 rounded-2xl space-y-1.5 text-[11px] text-stone-700 dark:text-stone-200">
-                <div class="flex justify-between font-bold text-amber-950 dark:text-amber-300">
-                  <span>• نسبة الحموضة الحرة:</span>
-                  <span class="text-emerald-700 dark:text-emerald-400">دون 0.35% (المعيار الدولي للبكر الممتاز دون 0.80%)</span>
-                </div>
-                <div class="flex justify-between font-bold text-amber-950 dark:text-amber-300">
-                  <span>• درجة حرارة العصر:</span>
-                  <span class="text-emerald-700 dark:text-emerald-400">أقل من 25° مئوية (عصر على البارد حقيقي)</span>
-                </div>
-                <div class="flex justify-between font-bold text-amber-950 dark:text-amber-300">
-                  <span>• رقم البيروكسيد:</span>
-                  <span class="text-emerald-700 dark:text-emerald-400">دون 6.5 meq O2/kg (طزاجة فائقة وخلو من التزنخ)</span>
-                </div>
-                <div class="flex justify-between font-bold text-amber-950 dark:text-amber-300">
-                  <span>• شروط العزل والتخزين:</span>
-                  <span class="text-stone-600 dark:text-stone-300">خزانات ستانلس ستيل غذائي Inox 316 مع حقن غاز النيتروجين</span>
-                </div>
-              </div>
-              <div class="pt-1 flex flex-wrap gap-1.5">
-                <button type="button" data-click="openLabCertModalForCurrentTree()" class="bg-amber-700 hover:bg-amber-800 text-white px-3 py-1.5 rounded-lg text-[10px] font-bold flex items-center gap-1">
-                  <i data-lucide="file-check-2" class="w-3.5 h-3.5"></i>
-                  <span>معاينة شهادة الفحص المخبري</span>
-                </button>
-                <button type="button" data-click="openLegalContract('mill')" class="bg-stone-800 hover:bg-stone-900 text-white px-3 py-1.5 rounded-lg text-[10px] font-bold flex items-center gap-1">
-                  <i data-lucide="cog" class="w-3.5 h-3.5"></i>
-                  <span data-i18n="mill_btn_contract">ميثاق المعاصر المعتمدة</span>
-                </button>
-              </div>
-            </div>
-          `;
-        }
-      }
-
-      // -------------------------------------------------------------
-      // 4. PAYMENTS: SYRIATEL CASH, BEMO BANK & INTERNATIONAL CARDS
-      // (Prioritized before Harvest Claim so 'سيريتل كاش' triggers Payments)
-      // -------------------------------------------------------------
-      const isPayment = isEnglish
-        ? (qLower.includes('pay') || qLower.includes('payment') || qLower.includes('syriatel') || qLower.includes('bemo') || qLower.includes('card') || qLower.includes('visa') || qLower.includes('mastercard') || qLower.includes('wire') || qLower.includes('remittance') || qLower.includes('syp') || (qLower.includes('transfer') && !qLower.includes('monetize')))
-        : (normQ.includes('دفع') || normQ.includes('سداد') || normQ.includes('سيريتل') || normQ.includes('بيمو') || normQ.includes('هرم') || normQ.includes('فيزا') || normQ.includes('ماستر') || normQ.includes('حواله') || normQ.includes('طريقه الدفع') || (normQ.includes('تحويل') && !normQ.includes('تسييل')));
-
-      if (isPayment) {
-        if (isEnglish) {
-          return `
-            <div class="space-y-2.5 text-start">
-              <div class="flex items-center justify-between pb-1 border-b border-stone-200">
-                <span class="font-black text-olive-950 dark:text-olive-300 text-xs flex items-center gap-1.5">
-                  <i data-lucide="credit-card" class="w-4 h-4 text-olive-700"></i>
-                  <span>Payment Channels in Syria & Internationally:</span>
-                </span>
-                <span class="text-[9px] bg-stone-100 text-stone-700 px-2 py-0.5 rounded font-mono font-bold">Secure Gateways</span>
-              </div>
-              <div class="space-y-1.5 text-[10.5px]">
-                <div class="bg-white dark:bg-stone-800 p-2.5 rounded-xl border border-stone-200 dark:border-stone-700">
-                  <div class="flex items-center justify-between">
-                    <strong class="text-stone-900 dark:text-stone-100">• Syriatel Cash (Syria):</strong>
-                    <button type="button" data-click="copyToClipboard('0944112233', 'Syriatel Cash')" class="bg-olive-50 dark:bg-olive-950 text-olive-800 dark:text-olive-300 border border-olive-300 dark:border-olive-700 px-2 py-0.5 rounded text-[9.5px] font-bold cursor-pointer">Copy 0944112233</button>
-                  </div>
-                  <span class="text-stone-600 dark:text-stone-300">Instant SYP transfer via Cash app or USSD (*304#). Attach transfer receipt ID in checkout.</span>
-                </div>
-                <div class="bg-white dark:bg-stone-800 p-2.5 rounded-xl border border-stone-200 dark:border-stone-700">
-                  <strong class="text-stone-900 dark:text-stone-100 block mb-0.5">• International Cards (Visa / MasterCard):</strong>
-                  <span class="text-stone-600 dark:text-stone-300">Immediate checkout in USD or EUR with instant share confirmation for expatriates.</span>
-                </div>
-                <div class="bg-white dark:bg-stone-800 p-2.5 rounded-xl border border-stone-200 dark:border-stone-700">
-                  <strong class="text-stone-900 dark:text-stone-100 block mb-0.5">• Bank BEMO & Al-Haram Remittances:</strong>
-                  <span class="text-stone-600 dark:text-stone-300">Commercial transfers to Banque Bemo Saudi Fransi or Al-Haram offices in Damascus, Tartus, or Aleppo.</span>
-                </div>
-              </div>
-            </div>
-          `;
-        } else {
-          return `
-            <div class="space-y-2.5 text-start">
-              <div class="flex items-center justify-between pb-1 border-b border-stone-200">
-                <span class="font-black text-olive-950 dark:text-olive-300 text-xs flex items-center gap-1.5">
-                  <i data-lucide="credit-card" class="w-4 h-4 text-olive-700"></i>
-                  <span>قنوات الدفع والسداد المعتمدة محلياً ودولياً:</span>
-                </span>
-                <span class="text-[9px] bg-stone-100 text-stone-700 px-2 py-0.5 rounded font-mono font-bold">بوابات آمنة</span>
-              </div>
-              <div class="space-y-1.5 text-[10.5px]">
-                <div class="bg-white dark:bg-stone-800 p-2.5 rounded-xl border border-stone-200 dark:border-stone-700">
-                  <div class="flex items-center justify-between">
-                    <strong class="text-stone-900 dark:text-stone-100">• سيريتل كاش (داخل سوريا):</strong>
-                    <button type="button" data-click="copyToClipboard('0944112233', 'سيريتل كاش')" class="bg-olive-50 dark:bg-olive-950 text-olive-800 dark:text-olive-300 border border-olive-300 dark:border-olive-700 px-2 py-0.5 rounded text-[9.5px] font-bold cursor-pointer">نسخ 0944112233</button>
-                  </div>
-                  <span class="text-stone-600 dark:text-stone-300">تحويل مباشر بالليرة السورية عبر التطبيق أو كود USSD، ثم إرفاق رقم العملية في نافذة الدفع.</span>
-                </div>
-                <div class="bg-white dark:bg-stone-800 p-2.5 rounded-xl border border-stone-200 dark:border-stone-700">
-                  <strong class="text-stone-900 dark:text-stone-100 block mb-0.5">• البطاقات الدولية (فيزا / ماستركارد):</strong>
-                  <span class="text-stone-600 dark:text-stone-300">سداد فوري بالدولار أو اليورو للمغتربين مع إصدار الشهادة والعقد فورياً.</span>
-                </div>
-                <div class="bg-white dark:bg-stone-800 p-2.5 rounded-xl border border-stone-200 dark:border-stone-700">
-                  <strong class="text-stone-900 dark:text-stone-100 block mb-0.5">• بنك بيمو السعودي الفرنسي وشركة الهرم:</strong>
-                  <span class="text-stone-600 dark:text-stone-300">حوالات مصرفية تجارية أو إيداع نقدي عبر فروع الهرم في دمشق وطرطوس وكافة المحافظات.</span>
-                </div>
-              </div>
-            </div>
-          `;
-        }
-      }
-
-      // -------------------------------------------------------------
-      // 5. HARVEST CLAIM OPTIONS: OVERSEAS SHIPPING, GIFTING & CASH PAYOUT
-      // (Prioritized before generic 'oil' query so "Can I ship the olive oil" matches Shipping)
-      // -------------------------------------------------------------
-      const isClaim = isEnglish
-        ? (qLower.includes('ship') || qLower.includes('shipping') || qLower.includes('claim') || qLower.includes('delivery') || qLower.includes('monetize') || qLower.includes('payout') || qLower.includes('diaspora') || qLower.includes('abroad') || qLower.includes('gift') || qLower.includes('family') || qLower.includes('overseas') || qLower.includes('europe') || qLower.includes('gcc'))
-        : (normQ.includes('استلام') || normQ.includes('تسييل') || normQ.includes('نقدي') || normQ.includes('شحن') || normQ.includes('مغترب') || normQ.includes('خارج') || normQ.includes('اوروبا') || normQ.includes('خليج') || normQ.includes('اهداء') || normQ.includes('عائله') || normQ.includes('تنك') || normQ.includes('توصيل') || (normQ.includes('كاش') && (normQ.includes('ارباح') || normQ.includes('بيع') || normQ.includes('محصول'))));
-
-      if (isClaim) {
-        if (isEnglish) {
-          return `
-            <div class="space-y-2.5 text-start">
-              <div class="flex items-center justify-between pb-1 border-b border-stone-200">
-                <span class="font-black text-olive-950 dark:text-olive-300 text-xs flex items-center gap-1.5">
-                  <i data-lucide="package-check" class="w-4 h-4 text-olive-700"></i>
-                  <span>Flexible Harvest Claim & Monetization Options:</span>
-                </span>
-                <span class="text-[9px] bg-olive-100 text-olive-800 px-2 py-0.5 rounded font-mono font-bold">3 Channels</span>
-              </div>
-              <div class="space-y-1.5 text-[10.5px]">
-                <div class="bg-white dark:bg-stone-800 p-2.5 rounded-xl border border-stone-200 dark:border-stone-700">
-                  <strong class="text-stone-900 dark:text-stone-100 block mb-0.5">1. International Shipping to Diaspora:</strong>
-                  <span class="text-stone-600 dark:text-stone-300">Sealed food-grade tin containers delivered directly to GCC countries and Europe with phytosanitary certificates.</span>
-                </div>
-                <div class="bg-white dark:bg-stone-800 p-2.5 rounded-xl border border-stone-200 dark:border-stone-700">
-                  <strong class="text-stone-900 dark:text-stone-100 block mb-0.5">2. Direct Gifting to Families in Syria:</strong>
-                  <span class="text-stone-600 dark:text-stone-300">Free door-to-door delivery of full tins to your parents or relatives in Damascus, Tartus, Aleppo, Homs, or Daraa.</span>
-                </div>
-                <div class="bg-white dark:bg-stone-800 p-2.5 rounded-xl border border-stone-200 dark:border-stone-700">
-                  <strong class="text-stone-900 dark:text-stone-100 block mb-0.5">3. Instant Cash Payout (Monetization in USD):</strong>
-                  <span class="text-stone-600 dark:text-stone-300">Sell your oil yields at seasonal wholesale export peak rates, transferring net profits in USD to your bank account or card.</span>
-                </div>
-              </div>
-              <div class="pt-1 flex flex-wrap gap-1.5">
-                <button type="button" data-click="openHarvestOptionsModal()" class="bg-olive-800 hover:bg-olive-900 text-white px-3 py-1.5 rounded-lg text-[10px] font-bold flex items-center gap-1">
-                  <i data-lucide="package" class="w-3.5 h-3.5"></i>
-                  <span>Open Harvest Options Hub</span>
-                </button>
-              </div>
-            </div>
-          `;
-        } else {
-          return `
-            <div class="space-y-2.5 text-start">
-              <div class="flex items-center justify-between pb-1 border-b border-stone-200">
-                <span class="font-black text-olive-950 dark:text-olive-300 text-xs flex items-center gap-1.5">
-                  <i data-lucide="package-check" class="w-4 h-4 text-olive-700"></i>
-                  <span>خيارات استلام محصول الزيت والتسييل المالي للكافلين:</span>
-                </span>
-                <span class="text-[9px] bg-olive-100 text-olive-800 px-2 py-0.5 rounded font-mono font-bold">3 مسارات</span>
-              </div>
-              <div class="space-y-1.5 text-[10.5px]">
-                <div class="bg-white dark:bg-stone-800 p-2.5 rounded-xl border border-stone-200 dark:border-stone-700">
-                  <strong class="text-stone-900 dark:text-stone-100 block mb-0.5">1. الشحن الدولي للمغتربين:</strong>
-                  <span class="text-stone-600 dark:text-stone-300">شحن آمن بعبوات معدنية محكمة إلى دول الخليج وأوروبا مع شهادات المنشأ والسلامة الغذائية.</span>
-                </div>
-                <div class="bg-white dark:bg-stone-800 p-2.5 rounded-xl border border-stone-200 dark:border-stone-700">
-                  <strong class="text-stone-900 dark:text-stone-100 block mb-0.5">2. إهداء الحصة للأهل في سوريا (مجاناً):</strong>
-                  <span class="text-stone-600 dark:text-stone-300">توصيل تنكات الزيت مباشرة لباب منزل عائلتك في أي مدينة أو قرية سورية كهدية خير وبركة من شجرتك.</span>
-                </div>
-                <div class="bg-white dark:bg-stone-800 p-2.5 rounded-xl border border-stone-200 dark:border-stone-700">
-                  <strong class="text-stone-900 dark:text-stone-100 block mb-0.5">3. التسييل المالي الفوري بالدولار (Cash Payout):</strong>
-                  <span class="text-stone-600 dark:text-stone-300">بيع إنتاجك في ذروة أسعار التصدير وتحويل صافي حصصك من المحصول بالدولار الأمريكي لحسابك البنكي أو بطاقتك.</span>
-                </div>
-              </div>
-              <div class="pt-1 flex flex-wrap gap-1.5">
-                <button type="button" data-click="openHarvestOptionsModal()" class="bg-olive-800 hover:bg-olive-900 text-white px-3 py-1.5 rounded-lg text-[10px] font-bold flex items-center gap-1">
-                  <i data-lucide="package" class="w-3.5 h-3.5"></i>
-                  <span>بوابة خيارات استلام الزيت</span>
-                </button>
-              </div>
-            </div>
-          `;
-        }
-      }
-
-      // -------------------------------------------------------------
-      // 6. 11 GOVERNORATES & 11 SYRIAN OLIVE CULTIVARS
-      // -------------------------------------------------------------
-      const isVarieties = isEnglish
-        ? (qLower.includes('variety') || qLower.includes('cultivar') || qLower.includes('governorate') || qLower.includes('city') || qLower.includes('cities') || qLower.includes('nationwide') || qLower.includes('khodairi') || qLower.includes('sourani') || qLower.includes('qaisi') || qLower.includes('daebli') || qLower.includes('zaiti') || qLower.includes('mossabi') || qLower.includes('daan') || qLower.includes('nebali') || qLower.includes('mouhazzam') || qLower.includes('tadmori') || qLower.includes('jallat') || qLower.includes('tartus') || qLower.includes('idlib') || qLower.includes('daraa') || qLower.includes('aleppo') || qLower.includes('latakia') || qLower.includes('homs') || qLower.includes('damascus'))
-        : (normQ.includes('محافظ') || normQ.includes('صنف') || normQ.includes('اصناف') || normQ.includes('خضيري') || normQ.includes('صوراني') || normQ.includes('قيسي') || normQ.includes('دعيبلي') || normQ.includes('زيتي') || normQ.includes('مصعبي') || normQ.includes('دان') || normQ.includes('نيبالي') || normQ.includes('محزم') || normQ.includes('تدمري') || normQ.includes('جلط') || normQ.includes('طرطوس') || normQ.includes('ادلب') || normQ.includes('درعا') || normQ.includes('اللاذقيه') || normQ.includes('حلب') || normQ.includes('حمص') || normQ.includes('دمشق') || normQ.includes('القنيطره') || normQ.includes('السويداء') || normQ.includes('حماه') || normQ.includes('دير الزور'));
-
-      if (isVarieties) {
-        if (isEnglish) {
-          return `
-            <div class="space-y-2.5 text-start">
-              <div class="flex items-center justify-between pb-1 border-b border-olive-200">
-                <span class="font-black text-olive-950 dark:text-olive-300 text-xs flex items-center gap-1.5">
-                  <i data-lucide="trees" class="w-4 h-4 text-olive-700"></i>
-                  <span>Nationwide Expansion: 11 Heritage Cultivars across 11 Syrian Governorates:</span>
-                </span>
-                <span class="text-[9px] bg-olive-100 text-olive-800 px-2 py-0.5 rounded font-mono font-bold">11 Regions</span>
-              </div>
-              <p class="text-[11px] text-stone-600 dark:text-stone-300 leading-relaxed">
-                Faseela protects historic olive trees spanning Syria’s varied microclimates and soils:
-              </p>
-              <div class="space-y-1 text-[10.5px]">
-                <div class="bg-white dark:bg-stone-800 p-2 rounded-xl border border-stone-200 dark:border-stone-700">
-                  <strong class="text-olive-900 dark:text-olive-300">• Coastal Sector:</strong> Khodairi (Tartus - Dreikish) & Daebli (Latakia - Al-Haffah). Delicate fruity aroma, light peppery note, 25-28% oil.
-                </div>
-                <div class="bg-white dark:bg-stone-800 p-2 rounded-xl border border-stone-200 dark:border-stone-700">
-                  <strong class="text-olive-900 dark:text-olive-300">• Northern Sector:</strong> Sourani (Idlib - Mount Zawiya) & Zaiti (Aleppo - Afrin). The premier oil giants with up to 33% oil yield and intense polyphenol antioxidants.
-                </div>
-                <div class="bg-white dark:bg-stone-800 p-2 rounded-xl border border-stone-200 dark:border-stone-700">
-                  <strong class="text-olive-900 dark:text-olive-300">• Central & Ghouta:</strong> Mossabi (Homs - Talkalakh), Daan (Damascus Ghouta), and Tadmori (Hama - Salamiyah).
-                </div>
-                <div class="bg-white dark:bg-stone-800 p-2 rounded-xl border border-stone-200 dark:border-stone-700">
-                  <strong class="text-olive-900 dark:text-olive-300">• Southern Plains & Golan:</strong> Qaisi (Daraa - Houran Plains), Nebali (Quneitra - Golan), and Mouhazzam Abu Satl (Sweida - Mount Arab).
-                </div>
-                <div class="bg-white dark:bg-stone-800 p-2 rounded-xl border border-stone-200 dark:border-stone-700">
-                  <strong class="text-olive-900 dark:text-olive-300">• Euphrates River:</strong> Jallat (Deir ez-Zor - Mayadin). Riverbank alluvial soil resilience.
-                </div>
-              </div>
-              <div class="pt-1 flex flex-wrap gap-1.5">
-                <button type="button" data-click="navigateTo('marketplace')" class="bg-olive-800 hover:bg-olive-900 text-white px-3 py-1.5 rounded-lg text-[10px] font-bold flex items-center gap-1">
-                  <i data-lucide="compass" class="w-3.5 h-3.5"></i>
-                  <span>Explore Trees across All 11 Governorates</span>
-                </button>
-              </div>
-            </div>
-          `;
-        } else {
-          return `
-            <div class="space-y-2.5 text-start">
-              <div class="flex items-center justify-between pb-1 border-b border-olive-200">
-                <span class="font-black text-olive-950 dark:text-olive-300 text-xs flex items-center gap-1.5">
-                  <i data-lucide="trees" class="w-4 h-4 text-olive-700"></i>
-                  <span>التوسع الوطني: 11 صنفاً عريقاً في 11 محافظة سورية:</span>
-                </span>
-                <span class="text-[9px] bg-olive-100 text-olive-800 px-2 py-0.5 rounded font-mono font-bold">11 محافظة</span>
-              </div>
-              <p class="text-[11px] text-stone-600 dark:text-stone-300 leading-relaxed">
-                تغطي منصة فسيلة كافة الأقاليم الجغرافية السورية وتوفر أشجاراً معمرة موثقة بنظام الـ GIS:
-              </p>
-              <div class="space-y-1 text-[10.5px]">
-                <div class="bg-white dark:bg-stone-800 p-2 rounded-xl border border-stone-200 dark:border-stone-700">
-                  <strong class="text-olive-900 dark:text-olive-300">• الساحل السوري:</strong> <strong>الخضيري</strong> (طرطوس - الدريكيش) و<strong>الدعيبلي</strong> (اللاذقية - الحفة). نكهة فاكهية رقيقة ونسبة زيت 25-28%.
-                </div>
-                <div class="bg-white dark:bg-stone-800 p-2 rounded-xl border border-stone-200 dark:border-stone-700">
-                  <strong class="text-olive-900 dark:text-olive-300">• الشمال السوري:</strong> <strong>الصوراني</strong> (إدلب - جبل الزاوية) و<strong>الزيتي</strong> (حلب - عفرين). نسبة الزيت تصل 33% وغنى استثنائي بمضادات الأكسدة.
-                </div>
-                <div class="bg-white dark:bg-stone-800 p-2 rounded-xl border border-stone-200 dark:border-stone-700">
-                  <strong class="text-olive-900 dark:text-olive-300">• الوسط والغوطة:</strong> <strong>المصعبي</strong> (حمص - وادي النضارة)، <strong>الدان</strong> (ريف دمشق)، و<strong>التدمري</strong> (حماة - سلمية ومصياف).
-                </div>
-                <div class="bg-white dark:bg-stone-800 p-2 rounded-xl border border-stone-200 dark:border-stone-700">
-                  <strong class="text-olive-900 dark:text-olive-300">• الجنوب وسهول حوران:</strong> <strong>القيسي</strong> (درعا)، <strong>النيبالي</strong> (القنيطرة والجولان)، و<strong>المحزم أبو سطل</strong> (السويداء).
-                </div>
-                <div class="bg-white dark:bg-stone-800 p-2 rounded-xl border border-stone-200 dark:border-stone-700">
-                  <strong class="text-olive-900 dark:text-olive-300">• ضفاف الفرات والشرق:</strong> <strong>الجلط</strong> (دير الزور - الميادين) في تربة فيضية مروية.
-                </div>
-              </div>
-              <div class="pt-1 flex flex-wrap gap-1.5">
-                <button type="button" data-click="navigateTo('marketplace')" class="bg-olive-800 hover:bg-olive-900 text-white px-3 py-1.5 rounded-lg text-[10px] font-bold flex items-center gap-1">
-                  <i data-lucide="compass" class="w-3.5 h-3.5"></i>
-                  <span>استكشاف أشجار المحافظات الـ 11</span>
-                </button>
-              </div>
-            </div>
-          `;
-        }
-      }
-
-      // -------------------------------------------------------------
-      // 7. PACKAGES, YIELDS, PRICES & FINANCIAL RETURNS
-      // -------------------------------------------------------------
-      const isFinance = isEnglish
-        ? (qLower.includes('oil') || qLower.includes('yield') || qLower.includes('liter') || qLower.includes('litre') || qLower.includes('return') || qLower.includes('production') || qLower.includes('profit') || qLower.includes('cost') || qLower.includes('price') || qLower.includes('package') || qLower.includes('share') || qLower.includes('economics'))
-        : (normQ.includes('باق') || normQ.includes('سعر') || normQ.includes('اسعار') || normQ.includes('تكلف') || normQ.includes('ارباح') || normQ.includes('محصول') || normQ.includes('انتاج') || normQ.includes('كم لتر') || normQ.includes('حصه') || normQ.includes('سهم') || normQ.includes('اقتصاد') || normQ.includes('كفالة') || normQ.includes('تنكه'));
-
-      if (isFinance) {
-        if (isEnglish) {
-          return `
-            <div class="space-y-2.5 text-start">
-              <div class="flex items-center justify-between pb-1 border-b border-stone-200">
-                <span class="font-black text-olive-950 dark:text-olive-300 text-xs flex items-center gap-1.5">
-                  <i data-lucide="trending-up" class="w-4 h-4 text-olive-700"></i>
-                  <span>Sponsorship Packages & EVOO Oil Production Economics:</span>
-                </span>
-                <span class="text-[9px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-mono font-bold">Lab-tested oil share</span>
-              </div>
-              <div class="grid grid-cols-2 gap-2 text-[10.5px]">
-                <div class="bg-white dark:bg-stone-800 p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 text-center">
-                  <span class="text-stone-500 block text-[9.5px]">1 Tree Share (25%)</span>
-                  <span class="font-black text-terracotta-600 text-xs block mt-0.5">$35 (~525,000 SYP)</span>
-                  <span class="text-olive-800 dark:text-olive-300 font-bold block text-[10px]">~ 3.7 to 4.2 Liters EVOO</span>
-                </div>
-                <div class="bg-white dark:bg-stone-800 p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 text-center">
-                  <span class="text-stone-500 block text-[9.5px]">Tree + 5m² Land (25%)</span>
-                  <span class="font-black text-emerald-700 dark:text-emerald-400 text-xs block mt-0.5">$50 (~750,000 SYP)</span>
-                  <span class="text-olive-800 dark:text-olive-300 font-bold block text-[10px]">Oil + Cadastral Deed</span>
-                </div>
-              </div>
-              <p class="text-[11px] text-stone-600 dark:text-stone-300 leading-relaxed">
-                <strong>Financial Advantage:</strong> Your effective cost per liter comes out to roughly <strong>$8.50 - $9.00</strong> (including certified cold-press milling, soil maintenance, and harvest logistics). Standard laboratory-certified Extra Virgin Olive Oil retails internationally for <strong>$14 - $18/L</strong>, delivering a <strong>35%+ economic yield</strong> while protecting Syrian farming families.
-              </p>
-              <div class="pt-1 flex flex-wrap gap-1.5">
-                <button type="button" data-click="navigateTo('marketplace')" class="bg-olive-800 hover:bg-olive-900 text-white px-3 py-1.5 rounded-lg text-[10px] font-bold">Browse Trees</button>
-                <button type="button" data-click="navigateTo('home'); scrollToSection('sec-calculator')" class="bg-stone-800 hover:bg-stone-900 text-white px-3 py-1.5 rounded-lg text-[10px] font-bold">Open Return Calculator</button>
-              </div>
-            </div>
-          `;
-        } else {
-          return `
-            <div class="space-y-2.5 text-start">
-              <div class="flex items-center justify-between pb-1 border-b border-stone-200">
-                <span class="font-black text-olive-950 dark:text-olive-300 text-xs flex items-center gap-1.5">
-                  <i data-lucide="trending-up" class="w-4 h-4 text-olive-700"></i>
-                  <span>باقات الكفالة وحسابات إنتاج الزيت والمحاصيل:</span>
-                </span>
-                <span class="text-[9px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-mono font-bold">محصول اقتصادي 35%+</span>
-              </div>
-              <div class="grid grid-cols-2 gap-2 text-[10.5px]">
-                <div class="bg-white dark:bg-stone-800 p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 text-center">
-                  <span class="text-stone-500 block text-[9.5px]">حصة الشجرة (25%)</span>
-                  <span class="font-black text-terracotta-600 text-xs block mt-0.5">35$ (~525,000 ل.س)</span>
-                  <span class="text-olive-800 dark:text-olive-300 font-bold block text-[10px]">~ 3.7 إلى 4.2 لتر بكر ممتاز</span>
-                </div>
-                <div class="bg-white dark:bg-stone-800 p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 text-center">
-                  <span class="text-stone-500 block text-[9.5px]">شجرة + 5 م² مقسم أرض (25%)</span>
-                  <span class="font-black text-emerald-700 dark:text-emerald-400 text-xs block mt-0.5">50$ (~750,000 ل.س)</span>
-                  <span class="text-olive-800 dark:text-olive-300 font-bold block text-[10px]">زيت + سند طابو كاداستري</span>
-                </div>
-              </div>
-              <p class="text-[11px] text-stone-600 dark:text-stone-300 leading-relaxed">
-                <strong>الجدوى الاقتصادية:</strong> تكلفة اللتر الواحد عبر فسيلة تقارب <strong>8.50$ - 9.00$</strong> شاملة العناية الفلاحية السنوية والعصر البارد، بينما يباع زيت الزيتون البكر الممتاز المفحوص مخبرياً في الأسواق الدولية بسعر <strong>14$ - 18$ للتر</strong>، مما يحقق وفراً ومحصولاً تشاركياً يتجاوز <strong>35%</strong> فضلاً عن بركة دعم الأرض والمزارعين.
-              </p>
-              <div class="pt-1 flex flex-wrap gap-1.5">
-                <button type="button" data-click="navigateTo('marketplace')" class="bg-olive-800 hover:bg-olive-900 text-white px-3 py-1.5 rounded-lg text-[10px] font-bold">شراء حصة الآن</button>
-                <button type="button" data-click="navigateTo('home'); scrollToSection('sec-calculator')" class="bg-stone-800 hover:bg-stone-900 text-white px-3 py-1.5 rounded-lg text-[10px] font-bold">حاسبة المحاصيل التقديرية</button>
-              </div>
-            </div>
-          `;
-        }
-      }
-
-      // -------------------------------------------------------------
-      // 8. FARMER STEWARDSHIP, FIELD CARE & VOICE NOTES
-      // -------------------------------------------------------------
-      const isFarmer = isEnglish
-        ? (qLower.includes('farmer') || qLower.includes('stewardship') || qLower.includes('voice') || qLower.includes('audio') || qLower.includes('maintenance') || qLower.includes('pruning') || qLower.includes('irrigation') || qLower.includes('farmer portal'))
-        : (normQ.includes('مزارع') || normQ.includes('فلاح') || normQ.includes('رعايه') || normQ.includes('صوت') || normQ.includes('تسجيل') || normQ.includes('تقليم') || normQ.includes('ري') || normQ.includes('محفظه') || normQ.includes('بوابه المزارع') || normQ.includes('صوتي'));
-
-      if (isFarmer) {
-        if (isEnglish) {
-          return `
-            <div class="space-y-2.5 text-start">
-              <div class="flex items-center justify-between pb-1 border-b border-emerald-200">
-                <span class="font-black text-emerald-950 dark:text-emerald-300 text-xs flex items-center gap-1.5">
-                  <i data-lucide="tractor" class="w-4 h-4 text-emerald-700"></i>
-                  <span>Partner Farmer Stewardship & Field Voice Notes:</span>
-                </span>
-                <span class="text-[9px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-mono font-bold">Field Certified</span>
-              </div>
-              <p class="text-[11px] text-stone-600 dark:text-stone-300 leading-relaxed">
-                Faseela pairs each olive grove with hereditary local farming families. Farmers log agricultural operations (pruning, basin weeding, organic fertilizing) accompanied by authenticated <strong>field voice recordings</strong> in the tree timeline.
-              </p>
-              <div class="pt-1 flex flex-wrap gap-1.5">
-                <button type="button" data-click="navigateTo('farmer-portal')" class="bg-emerald-700 hover:bg-emerald-800 text-white px-3 py-1.5 rounded-lg text-[10px] font-bold flex items-center gap-1">
-                  <i data-lucide="tractor" class="w-3.5 h-3.5"></i>
-                  <span>Visit Farmer Portal</span>
-                </button>
-                <button type="button" data-click="openLegalContract('farmer')" class="bg-stone-800 hover:bg-stone-900 text-white px-3 py-1.5 rounded-lg text-[10px] font-bold flex items-center gap-1">
-                  <i data-lucide="handshake" class="w-3.5 h-3.5"></i>
-                  <span>Farmer Partnership Contract</span>
-                </button>
-              </div>
-            </div>
-          `;
-        } else {
-          return `
-            <div class="space-y-2.5 text-start">
-              <div class="flex items-center justify-between pb-1 border-b border-emerald-200">
-                <span class="font-black text-emerald-950 dark:text-emerald-300 text-xs flex items-center gap-1.5">
-                  <i data-lucide="tractor" class="w-4 h-4 text-emerald-700"></i>
-                  <span>الرعاية الفلاحية الميدانية والرسائل الصوتية للمزارعين:</span>
-                </span>
-                <span class="text-[9px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-mono font-bold">توثيق ميداني</span>
-              </div>
-              <p class="text-[11px] text-stone-600 dark:text-stone-300 leading-relaxed">
-                تربط فسيلة كل بستان بمزارع شريك يتوارث رعاية الأرض أباً عن جد. يوثق المزارع عمليات التقليم، وحراثة الأحواض، والتسميد العضوي عبر <strong>رسائل صوتية ميدانية حقيقية</strong> تستمع إليها مباشرة في الخط الزمني لشجرتك!
-              </p>
-              <div class="pt-1 flex flex-wrap gap-1.5">
-                <button type="button" data-click="navigateTo('farmer-portal')" class="bg-emerald-700 hover:bg-emerald-800 text-white px-3 py-1.5 rounded-lg text-[10px] font-bold flex items-center gap-1">
-                  <i data-lucide="tractor" class="w-3.5 h-3.5"></i>
-                  <span>زيارة بوابة المزارع الميداني</span>
-                </button>
-                <button type="button" data-click="openLegalContract('farmer')" class="bg-stone-800 hover:bg-stone-900 text-white px-3 py-1.5 rounded-lg text-[10px] font-bold flex items-center gap-1">
-                  <i data-lucide="handshake" class="w-3.5 h-3.5"></i>
-                  <span>عقد الشراكة الفلاحية</span>
-                </button>
-              </div>
-            </div>
-          `;
-        }
-      }
-
-      // -------------------------------------------------------------
-      // 9. THEME, PREFERENCES, IDENTITY PROFILE & CLEARANCE
-      // -------------------------------------------------------------
-      const isThemeOrProfile = isEnglish
-        ? (qLower.includes('dark') || qLower.includes('light') || qLower.includes('theme') || qLower.includes('mode') || qLower.includes('profile') || qLower.includes('identity') || qLower.includes('preference') || qLower.includes('currency') || qLower.includes('language') || qLower.includes('setting') || qLower.includes('account'))
-        : (normQ.includes('وضع ليلي') || normQ.includes('داكن') || normQ.includes('مظهر') || normQ.includes('نهاري') || normQ.includes('لغه') || normQ.includes('عمله') || normQ.includes('هويه') || normQ.includes('ملف') || normQ.includes('حساب') || normQ.includes('بروفايل') || normQ.includes('تصريح') || normQ.includes('نفاذ') || normQ.includes('تفضيلات') || normQ.includes('اعدادات'));
-
-      if (isThemeOrProfile) {
-        if (isEnglish) {
-          return `
-            <div class="space-y-2.5 text-start">
-              <div class="flex items-center justify-between pb-1 border-b border-stone-200">
-                <span class="font-black text-stone-900 dark:text-stone-100 text-xs flex items-center gap-1.5">
-                  <i data-lucide="sliders" class="w-4 h-4 text-olive-700"></i>
-                  <span>Display Preferences & Digital Identity Hub:</span>
-                </span>
-                <span class="text-[9px] bg-stone-100 text-stone-700 px-2 py-0.5 rounded font-mono font-bold">Personalization</span>
-              </div>
-              <p class="text-[11px] text-stone-600 dark:text-stone-300 leading-relaxed">
-                You can customize your experience at any time: toggle between Light and Dark mode, switch languages (Arabic/English), or select USD ($) or Syrian Pounds (SYP). You can access these in the <strong>Preferences slider</strong> in the top navbar or inside your <strong>Digital Identity Card</strong>.
-              </p>
-              <div class="pt-1 flex flex-wrap gap-1.5">
-                <button type="button" data-click="openAuthModal('prefs')" class="bg-olive-800 hover:bg-olive-900 text-white px-3 py-1.5 rounded-lg text-[10px] font-bold flex items-center gap-1">
-                  <i data-lucide="sliders" class="w-3.5 h-3.5"></i>
-                  <span>Open Preferences Hub</span>
-                </button>
-                <button type="button" data-click="toggleTheme()" class="bg-stone-800 hover:bg-stone-900 text-white px-3 py-1.5 rounded-lg text-[10px] font-bold flex items-center gap-1">
-                  <i data-lucide="moon" class="w-3.5 h-3.5 text-amber-300"></i>
-                  <span>Toggle Dark / Light Mode</span>
-                </button>
-              </div>
-            </div>
-          `;
-        } else {
-          return `
-            <div class="space-y-2.5 text-start">
-              <div class="flex items-center justify-between pb-1 border-b border-stone-200">
-                <span class="font-black text-stone-900 dark:text-stone-100 text-xs flex items-center gap-1.5">
-                  <i data-lucide="sliders" class="w-4 h-4 text-olive-700"></i>
-                  <span>تفضيلات العرض وبطاقة الهوية الرقمية وتصريح النفاذ:</span>
-                </span>
-                <span class="text-[9px] bg-stone-100 text-stone-700 px-2 py-0.5 rounded font-mono font-bold">تخصيص كامل</span>
-              </div>
-              <p class="text-[11px] text-stone-600 dark:text-stone-300 leading-relaxed">
-                يمكنك تخصيص تجربتك بلمسة واحدة: التبديل بين الوضع الليلي والنهاري، وتغيير لغة العرض (عربي / English)، والعملة (دولار / ليرة سورية). تجد هذه الخيارات في <strong>زر التفضيلات (السلايدر)</strong> في شريط التنقل العلوي، أو داخل <strong>بطاقة الهوية الرقمية الذكية</strong> الخاصة بك.
-              </p>
-              <div class="pt-1 flex flex-wrap gap-1.5">
-                <button type="button" data-click="openAuthModal('prefs')" class="bg-olive-800 hover:bg-olive-900 text-white px-3 py-1.5 rounded-lg text-[10px] font-bold flex items-center gap-1">
-                  <i data-lucide="sliders" class="w-3.5 h-3.5"></i>
-                  <span>فتح نافذة التفضيلات</span>
-                </button>
-                <button type="button" data-click="toggleTheme()" class="bg-stone-800 hover:bg-stone-900 text-white px-3 py-1.5 rounded-lg text-[10px] font-bold flex items-center gap-1">
-                  <i data-lucide="moon" class="w-3.5 h-3.5 text-amber-300"></i>
-                  <span>تبديل المظهر الليلي/النهاري</span>
-                </button>
-              </div>
-            </div>
-          `;
-        }
-      }
-
-      // -------------------------------------------------------------
-      // 10. GREETINGS & WHO ARE YOU
-      // -------------------------------------------------------------
-      
-      // -------------------------------------------------------------
-      // NEW 2026 TOPIC: P2P SECONDARY MARKET & TOKENIZED DEED TRADING
-      // -------------------------------------------------------------
-      const isP2PMarket = p2pEnabled() && (isEnglish
-        ? ((qLower.includes('p2p') || qLower.includes('secondary market') || qLower.includes('sell share') || qLower.includes('buy share') || qLower.includes('trade') || qLower.includes('trading') || qLower.includes('transfer deed') || qLower.includes('marketplace')))
-        : (normQ.includes('سوق ثانوي') || normQ.includes('تداول') || normQ.includes('بيع حصه') || normQ.includes('شراء حصه') || normQ.includes('بيع شجره') || normQ.includes('تنازل') || normQ.includes('p2p') || normQ.includes('سوق الحصص') || normQ.includes('سوق التداول')));
-
-      if (isP2PMarket) {
-        return isEnglish ? `
-          <div class="space-y-2.5 text-start">
-            <div class="flex items-center justify-between pb-1 border-b border-indigo-200 dark:border-indigo-800">
-              <span class="font-black text-indigo-950 dark:text-indigo-300 text-xs flex items-center gap-1.5">
-                <i data-lucide="repeat" class="w-4 h-4 text-indigo-600"></i>
-                <span>Faseela P2P Secondary Market & Share Liquidity:</span>
-              </span>
-              <span class="text-[9px] bg-indigo-100 dark:bg-indigo-950/60 text-indigo-800 dark:text-indigo-300 px-2 py-0.5 rounded font-mono font-bold">Cadastral P2P</span>
-            </div>
-            <p class="text-xs text-stone-700 dark:text-stone-200 leading-relaxed">
-              Faseela provides an audited P2P secondary liquidity venue where investors can list or buy fractional tree shares and greenfield grove rights with immediate cadastral title deed re-issuance and automated Payment Review settlement.
-            </p>
-            <div class="bg-indigo-50/80 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-800/60 p-2.5 rounded-xl space-y-1.5 text-[11px] text-stone-700 dark:text-stone-200">
-              <div class="flex justify-between font-semibold">
-                <span>• Settlement Protocol:</span>
-                <span class="text-indigo-700 dark:text-indigo-400 font-bold">Instant Payment Review Lock & Release</span>
-              </div>
-              <div class="flex justify-between font-semibold">
-                <span>• Cadastral Re-registration:</span>
-                <span class="text-indigo-700 dark:text-indigo-400 font-bold">Immediate QR Land Record Title Update</span>
-              </div>
-              <div class="flex justify-between font-semibold">
-                <span>• Trading Fee:</span>
-                <span class="text-stone-600 dark:text-stone-300">0% Platform Fee for Community Members</span>
-              </div>
-            </div>
-            <div class="pt-1 flex flex-wrap gap-1.5">
-              <button type="button" data-click="openP2PListModal()" class="bg-indigo-800 hover:bg-indigo-900 text-white px-3 py-1.5 rounded-lg text-[10px] font-bold flex items-center gap-1">
-                <i data-lucide="tag" class="w-3.5 h-3.5"></i>
-                <span>List My Shares for Sale</span>
-              </button>
-              <button type="button" data-click="navigateTo('marketplace')" class="bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 text-stone-800 dark:text-stone-200 px-3 py-1.5 rounded-lg text-[10px] font-bold">Browse Secondary Offers</button>
-            </div>
-          </div>
-        ` : `
-          <div class="space-y-2.5 text-start">
-            <div class="flex items-center justify-between pb-1 border-b border-indigo-200 dark:border-indigo-800">
-              <span class="font-black text-indigo-950 dark:text-indigo-300 text-xs flex items-center gap-1.5">
-                <i data-lucide="repeat" class="w-4 h-4 text-indigo-600"></i>
-                <span>سوق التداول الثانوي P2P وتسييل الحصص الشجرية:</span>
-              </span>
-              <span class="text-[9px] bg-indigo-100 dark:bg-indigo-950/60 text-indigo-800 dark:text-indigo-300 px-2 py-0.5 rounded font-mono font-bold">تداول كاداستري</span>
-            </div>
-            <p class="text-xs text-stone-700 dark:text-stone-200 leading-relaxed">
-              تتيح منصة <strong>فسيلة</strong> سوقاً ثانوياً P2P رسمياً ومحمياً بمراجعة الدفعات (Payment Review) يمكن الكافلين من بيع أو شراء الحصص الشجرية وسندات المغارسة في أي وقت، مع نقل فوري للملكية الكاداسترية وإعادة إصدار السجل العقاري.
-            </p>
-            <div class="bg-indigo-50/80 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-800/60 p-2.5 rounded-xl space-y-1.5 text-[11px] text-stone-700 dark:text-stone-200">
-              <div class="flex justify-between font-semibold">
-                <span>• بروتوكول الأمان:</span>
-                <span class="text-indigo-700 dark:text-indigo-400 font-bold">حجز بنكي مشفر لحين إتمام نقل السند</span>
-              </div>
-              <div class="flex justify-between font-semibold">
-                <span>• توثيق الطابو:</span>
-                <span class="text-indigo-700 dark:text-indigo-400 font-bold">تحديث فوري لرمز QR وشهادة الملكية العقارية</span>
-              </div>
-              <div class="flex justify-between font-semibold">
-                <span>• عمولة التداول:</span>
-                <span class="text-stone-600 dark:text-stone-300">0% عمولة وساطة لأعضاء المنصة النشطين</span>
-              </div>
-            </div>
-            <div class="pt-1 flex flex-wrap gap-1.5">
-              <button type="button" data-click="openP2PListModal()" class="bg-indigo-800 hover:bg-indigo-900 text-white px-3 py-1.5 rounded-lg text-[10px] font-bold flex items-center gap-1">
-                <i data-lucide="tag" class="w-3.5 h-3.5"></i>
-                <span>عرض حصصي للبيع في السوق</span>
-              </button>
-              <button type="button" data-click="navigateTo('marketplace')" class="bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 text-stone-800 dark:text-stone-200 px-3 py-1.5 rounded-lg text-[10px] font-bold">تصفح عروض السوق الثانوي</button>
-            </div>
-          </div>
-        `;
-      }
-
-      // -------------------------------------------------------------
-      // NEW 2026 TOPIC: NOTIFICATION AUTOMATION & FINAL VERIFIER
-      // -------------------------------------------------------------
-      const isNotificationsOrVerifier = isEnglish
-        ? (qLower.includes('notification') || qLower.includes('alert') || qLower.includes('verifier') || qLower.includes('final verifier') || qLower.includes('dispatch') || qLower.includes('remind') || qLower.includes('sms') || qLower.includes('voice reminder'))
-        : (normQ.includes('اشعار') || normQ.includes('تنبيه') || normQ.includes('مدقق') || normQ.includes('المدقق النهائي') || normQ.includes('ارسال تنبيه') || normQ.includes('تذكير') || normQ.includes('رساله صوتيه') || normQ.includes('رسائل'));
-
-      if (isNotificationsOrVerifier) {
-        return isEnglish ? `
-          <div class="space-y-2.5 text-start">
-            <div class="flex items-center justify-between pb-1 border-b border-rose-200 dark:border-rose-800">
-              <span class="font-black text-rose-950 dark:text-rose-300 text-xs flex items-center gap-1.5">
-                <i data-lucide="shield-alert" class="w-4 h-4 text-rose-600"></i>
-                <span>Automated Notification Pipeline & Final Verifier:</span>
-              </span>
-              <span class="text-[9px] bg-rose-100 dark:bg-rose-950/60 text-rose-800 dark:text-rose-300 px-2 py-0.5 rounded font-mono font-bold">Zero-Mistake Engine</span>
-            </div>
-            <p class="text-xs text-stone-700 dark:text-stone-200 leading-relaxed">
-              Faseela operates an automated cron-based alert dispatch engine for farmers, investors, and mill owners. Every critical transmission must pass the <strong>Final Verifier Gatekeeper</strong> to eliminate errors before reaching mobile handsets.
-            </p>
-            <div class="bg-rose-50/80 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800/60 p-2.5 rounded-xl space-y-1 text-[11px] text-stone-700 dark:text-stone-200">
-              <div>• <strong>Multi-Channel:</strong> Automated SMS, WhatsApp API, Web Push, and Interactive Voice Broadcasts.</div>
-              <div>• <strong>Verification Protocol:</strong> Payload checksum + recipient RBAC verification + optical rate limiting.</div>
-            </div>
-            <div class="pt-1 flex flex-wrap gap-1.5">
-              <button type="button" data-click="openNotificationCenter()" class="bg-rose-800 hover:bg-rose-900 text-white px-3 py-1.5 rounded-lg text-[10px] font-bold flex items-center gap-1">
-                <i data-lucide="bell" class="w-3.5 h-3.5"></i>
-                <span>View Notification Center</span>
-              </button>
-              ${state.currentUser && state.currentUser.role === 'admin' ? `
-                <button type="button" data-click="openNotificationAutomationModal()" class="bg-stone-800 hover:bg-stone-900 text-white px-3 py-1.5 rounded-lg text-[10px] font-bold">Configure Automation & Verifier</button>
-              ` : ''}
-            </div>
-          </div>
-        ` : `
-          <div class="space-y-2.5 text-start">
-            <div class="flex items-center justify-between pb-1 border-b border-rose-200 dark:border-rose-800">
-              <span class="font-black text-rose-950 dark:text-rose-300 text-xs flex items-center gap-1.5">
-                <i data-lucide="shield-alert" class="w-4 h-4 text-rose-600"></i>
-                <span>محرك الإشعارات المؤتمت ونظام المدقق النهائي (Final Verifier):</span>
-              </span>
-              <span class="text-[9px] bg-rose-100 dark:bg-rose-950/60 text-rose-800 dark:text-rose-300 px-2 py-0.5 rounded font-mono font-bold">صفر أخطاء</span>
-            </div>
-            <p class="text-xs text-stone-700 dark:text-stone-200 leading-relaxed">
-              تعتمد المنصة نظاماً ذكياً لإرسال التنبيهات الدورية المجدولة (للمزارعين، الكافلين، وأصحاب المعاصر). ولضمان الأمان الأقصى ومنع أي خطأ، تخضع جميع الإرساليات لـ <strong>المدقق النهائي الصارم</strong> قبل البث المباشر.
-            </p>
-            <div class="bg-rose-50/80 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800/60 p-2.5 rounded-xl space-y-1 text-[11px] text-stone-700 dark:text-stone-200">
-              <div>• <strong>قنوات الإرسال:</strong> إشعارات دفع داخل المنصة، رسائل SMS، وتنبيهات صوتية فورية للمزارعين في الحقول.</div>
-              <div>• <strong>معايير التدقيق:</strong> مطابقة الصلاحيات، التحقق من صحة المبالغ وتواريخ الاستحقاق، ومنع التكرار الآلي.</div>
-            </div>
-            <div class="pt-1 flex flex-wrap gap-1.5">
-              <button type="button" data-click="openNotificationCenter()" class="bg-rose-800 hover:bg-rose-900 text-white px-3 py-1.5 rounded-lg text-[10px] font-bold flex items-center gap-1">
-                <i data-lucide="bell" class="w-3.5 h-3.5"></i>
-                <span>فتح مركز الإشعارات</span>
-              </button>
-              ${state.currentUser && state.currentUser.role === 'admin' ? `
-                <button type="button" data-click="openNotificationAutomationModal()" class="bg-stone-800 hover:bg-stone-900 text-white px-3 py-1.5 rounded-lg text-[10px] font-bold">إدارة جدولة الإشعارات والمدقق</button>
-              ` : ''}
-            </div>
-          </div>
-        `;
-      }
-
-      // -------------------------------------------------------------
-      // NEW 2026 TOPIC: PARTNER MILL REGISTRATION & ADMISSION
-      // -------------------------------------------------------------
-      const isMillRegistration = isEnglish
-        ? (qLower.includes('register mill') || qLower.includes('join as mill') || qLower.includes('mill registration') || qLower.includes('mill application'))
-        : (normQ.includes('تسجيل معصر') || normQ.includes('انضمام معصر') || normQ.includes('طلب اعتماد معصر') || normQ.includes('تسجيل اصحاب المعاصر'));
-
-      if (isMillRegistration) {
-        return isEnglish ? `
-          <div class="space-y-2.5 text-start">
-            <div class="flex items-center justify-between pb-1 border-b border-amber-200 dark:border-amber-800">
-              <span class="font-black text-amber-950 dark:text-amber-300 text-xs flex items-center gap-1.5">
-                <i data-lucide="building" class="w-4 h-4 text-amber-600"></i>
-                <span>Partner Olive Mill Admission & Accreditation:</span>
-              </span>
-              <span class="text-[9px] bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 px-2 py-0.5 rounded font-mono font-bold">IOC Standard</span>
-            </div>
-            <p class="text-xs text-stone-700 dark:text-stone-200 leading-relaxed">
-              Industrial mill operators can submit applications to join Faseela's accredited milling network across all Syrian governorates. Accreditation requires strict adherence to cold centrifugation below 25°C and food-grade Inox 316 storage.
-            </p>
-            <div class="pt-1 flex flex-wrap gap-1.5">
-              <button type="button" data-click="openPartnerMillRegistrationModal()" class="bg-amber-800 hover:bg-amber-900 text-white px-3 py-1.5 rounded-lg text-[10px] font-bold flex items-center gap-1">
-                <i data-lucide="clipboard-check" class="w-3.5 h-3.5"></i>
-                <span>Submit Mill Registration Application</span>
-              </button>
-              <button type="button" data-click="navigateTo('mill')" class="bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 text-stone-800 dark:text-stone-200 px-3 py-1.5 rounded-lg text-[10px] font-bold">Explore Mill Portal</button>
-            </div>
-          </div>
-        ` : `
-          <div class="space-y-2.5 text-start">
-            <div class="flex items-center justify-between pb-1 border-b border-amber-200 dark:border-amber-800">
-              <span class="font-black text-amber-950 dark:text-amber-300 text-xs flex items-center gap-1.5">
-                <i data-lucide="building" class="w-4 h-4 text-amber-600"></i>
-                <span>بوابة انضمام واعتماد المعاصر الشريكة:</span>
-              </span>
-              <span class="text-[9px] bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 px-2 py-0.5 rounded font-mono font-bold">معايير IOC</span>
-            </div>
-            <p class="text-xs text-stone-700 dark:text-stone-200 leading-relaxed">
-              ترحب المنصة بأصحاب المعاصر الحديثة للانضمام إلى شبكة معاصر فسيلة المعتمدة في كافة المحافظات، والحصول على عقود عصر حصرية لمحاصيل مزارعنا مع شروط فنية صارمة تشمل العصر البارد دون 25°م وخزانات إينوكس 316.
-            </p>
-            <div class="pt-1 flex flex-wrap gap-1.5">
-              <button type="button" data-click="openPartnerMillRegistrationModal()" class="bg-amber-800 hover:bg-amber-900 text-white px-3 py-1.5 rounded-lg text-[10px] font-bold flex items-center gap-1">
-                <i data-lucide="clipboard-check" class="w-3.5 h-3.5"></i>
-                <span>تقديم طلب اعتماد معصرة جديدة</span>
-              </button>
-              <button type="button" data-click="navigateTo('mill')" class="bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 text-stone-800 dark:text-stone-200 px-3 py-1.5 rounded-lg text-[10px] font-bold">دخول بوابة المعاصر</button>
-            </div>
-          </div>
-        `;
-      }
-
-      
-      // -------------------------------------------------------------
-      // 2026 ARCHITECTURAL TOPIC: CLIMATE INSURANCE & AUTO-COMPOUNDING
-      // -------------------------------------------------------------
-      const isClimateInsurance = isEnglish
-        ? (qLower.includes('insurance') || qLower.includes('climate') || qLower.includes('frost') || qLower.includes('drought') || qLower.includes('takaful') || qLower.includes('hedge'))
-        : (normQ.includes('تأمين') || normQ.includes('تامين') || normQ.includes('تكافلي') || normQ.includes('مناخ') || normQ.includes('صقيع') || normQ.includes('جفاف') || normQ.includes('حريق') || normQ.includes('بوليصه') || normQ.includes('تحوط'));
-
-      if (isClimateInsurance) {
-        return isEnglish ? `
-          <div class="space-y-2.5 text-start">
-            <div class="flex items-center justify-between pb-1 border-b border-emerald-200 dark:border-emerald-800">
-              <span class="font-black text-emerald-950 dark:text-emerald-300 text-xs flex items-center gap-1.5">
-                <i data-lucide="shield-check" class="w-4 h-4 text-emerald-600"></i>
-                <span>Climate Solidarity Reserve (planned):</span>
-              </span>
-              <span class="text-[9px] bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 px-2 py-0.5 rounded font-mono font-bold">$3/Tree/Year</span>
-            </div>
-            <p class="text-xs text-stone-700 dark:text-stone-200 leading-relaxed">
-              A climate solidarity reserve against frost, drought, wildfire and olive-fly damage is planned. It is not an insurance policy and does not promise reimbursement of invested capital.
-            </p>
-            <div class="pt-1 flex flex-wrap gap-1.5">
-              <button type="button" data-click="openClimateInsuranceModal()" class="bg-emerald-800 hover:bg-emerald-900 text-white px-3 py-1.5 rounded-lg text-[10px] font-bold flex items-center gap-1">
-                <i data-lucide="shield-plus" class="w-3.5 h-3.5"></i>
-                <span>Open Insurance Policy Details</span>
-              </button>
-            </div>
-          </div>
-        ` : `
-          <div class="space-y-2.5 text-start">
-            <div class="flex items-center justify-between pb-1 border-b border-emerald-200 dark:border-emerald-800">
-              <span class="font-black text-emerald-950 dark:text-emerald-300 text-xs flex items-center gap-1.5">
-                <i data-lucide="shield-check" class="w-4 h-4 text-emerald-600"></i>
-                <span>صندوق التكافل المناخي (قيد الإعداد، ليس تأميناً):</span>
-              </span>
-              <span class="text-[9px] bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 px-2 py-0.5 rounded font-mono font-bold">3$ / شجرة سنوياً</span>
-            </div>
-            <p class="text-xs text-stone-700 dark:text-stone-200 leading-relaxed">
-              صندوق تكافل مناخي ضد الصقيع والجفاف والحرائق قيد الإعداد، وهو ليس بوليصة تأمين ولا يضمن استرداد رأس المال الكافل.
-            </p>
-            <div class="pt-1 flex flex-wrap gap-1.5">
-              <button type="button" data-click="openClimateInsuranceModal()" class="bg-emerald-800 hover:bg-emerald-900 text-white px-3 py-1.5 rounded-lg text-[10px] font-bold flex items-center gap-1">
-                <i data-lucide="shield-plus" class="w-3.5 h-3.5"></i>
-                <span>معاينة وتفعيل بوليصة التأمين</span>
-              </button>
-            </div>
-          </div>
-        `;
-      }
-
-      const isCompoundingYield = isEnglish
-        ? (qLower.includes('compounding') || qLower.includes('auto-reinvest') || qLower.includes('reinvest') || qLower.includes('compound'))
-        : (normQ.includes('تراكمي') || normQ.includes('اعاده كفالة') || normQ.includes('مركب') || normQ.includes('تنميه المحفظه'));
-
-      if (isCompoundingYield) {
-        return isEnglish ? `
-          <div class="space-y-2.5 text-start">
-            <div class="flex items-center justify-between pb-1 border-b border-amber-200 dark:border-amber-800">
-              <span class="font-black text-amber-950 dark:text-amber-300 text-xs flex items-center gap-1.5">
-                <i data-lucide="trending-up" class="w-4 h-4 text-amber-600"></i>
-                <span>Auto-Compounding Yield Engine:</span>
-              </span>
-              <span class="text-[9px] bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 px-2 py-0.5 rounded font-mono font-bold">0% Admin Fee</span>
-            </div>
-            <p class="text-xs text-stone-700 dark:text-stone-200 leading-relaxed">
-              Automatically compound your yearly olive oil shares into purchasing newly verified mature trees or greenfield saplings at an exclusive 5% reinvestment discount.
-            </p>
-            <div class="pt-1 flex flex-wrap gap-1.5">
-              <button type="button" data-click="openCompoundingYieldModal()" class="bg-amber-800 hover:bg-amber-900 text-white px-3 py-1.5 rounded-lg text-[10px] font-bold flex items-center gap-1">
-                <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
-                <span>Configure Auto-Compounding</span>
-              </button>
-            </div>
-          </div>
-        ` : `
-          <div class="space-y-2.5 text-start">
-            <div class="flex items-center justify-between pb-1 border-b border-amber-200 dark:border-amber-800">
-              <span class="font-black text-amber-950 dark:text-amber-300 text-xs flex items-center gap-1.5">
-                <i data-lucide="trending-up" class="w-4 h-4 text-amber-600"></i>
-                <span>محرك إعادة الكفالة التلقائية للمحاصيل (Auto-Compounding):</span>
-              </span>
-              <span class="text-[9px] bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 px-2 py-0.5 rounded font-mono font-bold">0% رسوم إضافية</span>
-            </div>
-            <p class="text-xs text-stone-700 dark:text-stone-200 leading-relaxed">
-              يتيح لك هذا المحرك إعادة توجيه حصص محصول الزيت السنوية لشراء حصص شجرية جديدة تلقائياً مع خصم 5% خاص بأعضاء التراكم ومضاعفة الأصول بنسبة تفوق 114% خلال 5 سنوات.
-            </p>
-            <div class="pt-1 flex flex-wrap gap-1.5">
-              <button type="button" data-click="openCompoundingYieldModal()" class="bg-amber-800 hover:bg-amber-900 text-white px-3 py-1.5 rounded-lg text-[10px] font-bold flex items-center gap-1">
-                <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
-                <span>تفعيل وضبط محرك التراكم</span>
-              </button>
-            </div>
-          </div>
-        `;
-      }
-
-      const isGreeting = isEnglish
-        ? (qLower.includes('hi') || qLower.includes('hello') || qLower.includes('hey') || qLower.includes('welcome') || qLower.includes('who are you') || qLower.includes('faseela') || qLower.includes('help'))
-        : (normQ.includes('مرحبا') || normQ.includes('سلام') || normQ.includes('صباح') || normQ.includes('مساء') || normQ.includes('اهلين') || normQ.includes('هلا') || normQ.includes('هاي') || normQ.includes('من انت') || normQ.includes('شو بتعملي') || normQ.includes('مين فسيله') || normQ.includes('ساعدني'));
-
-      if (isGreeting) {
-        if (isEnglish) {
-          return `
-            <div class="space-y-2.5 text-start">
-              <p class="font-black text-olive-950 dark:text-olive-300 text-xs">Welcome! I am your Faseela AI Advisor 🌿</p>
-              <p class="text-[11px] text-stone-600 dark:text-stone-300 leading-relaxed">
-                I am thrilled to assist you. We bridge global and diaspora stewards with historic Syrian olive trees across 11 governorates—with lab-tested Extra Virgin Olive Oil, documented 5m² usufruct parcels, and receipt-reviewed payments.
-              </p>
-              <div class="pt-1 flex flex-wrap gap-1.5">
-                <button type="button" data-click="askFaseelaQuick('What are the legal contracts, payment review, and usufruct rights?')" class="bg-white dark:bg-stone-800 hover:bg-olive-50 border border-stone-200 dark:border-stone-700 text-stone-800 dark:text-stone-200 px-2.5 py-1 rounded-lg text-[10px] font-bold">📜 Legal Contracts</button>
-                <button type="button" data-click="askFaseelaQuick('How does the Tree with 5m² Cadastral Land Parcel tenure work?')" class="bg-white dark:bg-stone-800 hover:bg-olive-50 border border-stone-200 dark:border-stone-700 text-stone-800 dark:text-stone-200 px-2.5 py-1 rounded-lg text-[10px] font-bold">🌿 5m² Land Plot</button>
-                <button type="button" data-click="askFaseelaQuick('What are the 11 Syrian governorates and olive varieties available?')" class="bg-white dark:bg-stone-800 hover:bg-olive-50 border border-stone-200 dark:border-stone-700 text-stone-800 dark:text-stone-200 px-2.5 py-1 rounded-lg text-[10px] font-bold">🗺️ 11 Governorates</button>
-              </div>
-            </div>
-          `;
-        } else {
-          return `
-            <div class="space-y-2.5 text-start">
-              <p class="font-black text-olive-950 dark:text-olive-300 text-xs">أهلاً وسهلاً بك، نوّرت منصة فسيلة! 🌿</p>
-              <p class="text-[11px] text-stone-600 dark:text-stone-300 leading-relaxed">
-                أنا هنا لمساعدتك في كل خطوة: نربط المغتربين والمهتمين بالأرض السورية المباركة بأشجار الزيتون المعمرة في 11 محافظة، مع ضمان استلام زيت زيتون بكر ممتاز نقي، وسندات طابو لمقاسم الأرض 5 م²، وحماية قانونية كاملة بحساب ضمان مالي مستقل.
-              </p>
-              <div class="pt-1 flex flex-wrap gap-1.5">
-                <button type="button" data-click="askFaseelaQuick('ما هي تفاصيل العقود القانونية الأربعة ومراجعة الدفعات؟')" class="bg-white dark:bg-stone-800 hover:bg-olive-50 border border-stone-200 dark:border-stone-700 text-stone-800 dark:text-stone-200 px-2.5 py-1 rounded-lg text-[10px] font-bold">📜 العقود ومراجعة الدفعات</button>
-                <button type="button" data-click="askFaseelaQuick('كيف يعمل الكفالة في الشجرة مع مقسم الأرض 5 م² وسند الطابو؟')" class="bg-white dark:bg-stone-800 hover:bg-olive-50 border border-stone-200 dark:border-stone-700 text-stone-800 dark:text-stone-200 px-2.5 py-1 rounded-lg text-[10px] font-bold">🌿 مقسم أرض 5 م²</button>
-                <button type="button" data-click="askFaseelaQuick('ما هي أصناف الزيتون الـ 11 المتاحة في المحافظات السورية؟')" class="bg-white dark:bg-stone-800 hover:bg-olive-50 border border-stone-200 dark:border-stone-700 text-stone-800 dark:text-stone-200 px-2.5 py-1 rounded-lg text-[10px] font-bold">🗺️ المحافظات الـ 11</button>
-              </div>
-            </div>
-          `;
-        }
-      }
-
-      // -------------------------------------------------------------
-      // 11. DEFAULT FALLBACK
-      // -------------------------------------------------------------
-      if (isEnglish) {
-        return `
-          <div class="space-y-2.5 text-start">
-            <p class="text-[11px] text-stone-700 dark:text-stone-200 leading-relaxed">
-              At <strong>Faseela</strong>, our platform offers an integrated agritech ecosystem covering legal certainty, cadastral land ownership, and premium cold-pressed olive oil production.
-            </p>
-            <div class="bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 p-2.5 rounded-xl text-[10.5px] text-stone-600 dark:text-stone-300">
-              <span class="font-bold text-stone-900 dark:text-stone-100 block mb-1">Here is what I can assist you with right now:</span>
-              <ul class="list-disc ps-4 space-y-1 text-stone-600 dark:text-stone-300">
-                <li><strong>📜 Legal Framework:</strong> Payment Review, Emergency Freeze, and investor tenure rights.</li>
-                <li><strong>🌿 5.0 m² Land Parcel:</strong> Digital Cadastral Deed and WGS-84 4-corner boundary survey.</li>
-                <li><strong>🗺️ 11 Governorates & Cultivars:</strong> Historic trees in Tartus, Idlib, Daraa, Latakia, Aleppo, and beyond.</li>
-                <li><strong>⚙️ Cold-Press Mills & Lab Quality:</strong> Acidity &lt; 0.35%, peroxide values, and nitrogen-sealed Inox storage.</li>
-                <li><strong>🫒 Dual Payouts:</strong> International overseas shipping vs instant cash monetization in USD.</li>
-                <li><strong>💳 Payments:</strong> Syriatel Cash (Syria), Bank Bemo, and international Visa/MasterCard.</li>
-              </ul>
-            </div>
-            <div class="pt-1 flex flex-wrap gap-1.5">
-              <button type="button" data-click="openLegalContract('investor')" class="bg-purple-800 text-white px-2.5 py-1 rounded-lg text-[10px] font-bold">View Contracts</button>
-              <button type="button" data-click="navigateTo('marketplace')" class="bg-olive-800 text-white px-2.5 py-1 rounded-lg text-[10px] font-bold">Explore Marketplace</button>
-            </div>
-          </div>
-        `;
-      } else {
-        return `
-          <div class="space-y-2.5 text-start">
-            <p class="text-[11px] text-stone-700 dark:text-stone-200 leading-relaxed">
-              أهلاً بك! في <strong>فسيلة</strong> نوفر لك منظومة متكاملة للكفالة الزراعية التشاركي تجمع بين الأمان القانوني وحيازة الأراضي الكاداسترية وأعلى معايير جودة زيت الزيتون:
-            </p>
-            <div class="bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 p-2.5 rounded-xl text-[10.5px] text-stone-600 dark:text-stone-300">
-              <span class="font-bold text-stone-900 dark:text-stone-100 block mb-1">أبرز المحاور التي يمكنك الاستفسار عنها:</span>
-              <ul class="list-disc ps-4 space-y-1 text-stone-600 dark:text-stone-300">
-                <li><strong>📜 العقود ومراجعة الدفعات:</strong> حساب أمانة بنكي، وبروتوكول التجميد الطارئ، والتحكيم التجاري.</li>
-                <li><strong>🌿 مقسم الأرض 5 م²:</strong> سند طابو زراعي رسمي ومسح طوبوغرافي WGS-84 بدقة ±10 سم.</li>
-                <li><strong>🗺️ أصناف المحافظات الـ 11:</strong> أشجار معمرة في طرطوس، إدلب، درعا، اللاذقية، حلب، وكافة المناطق.</li>
-                <li><strong>⚙️ المعاصر والفحص المخبري:</strong> عصر على البارد دون 25° م، حموضة دون 0.35%، وخزانات Inox 316.</li>
-                <li><strong>🫒 خيارات المحصول:</strong> الشحن الدولي للمغتربين أو إهداء العائلة أو التسييل المالي الفوري بالدولار.</li>
-                <li><strong>💳 قنوات الدفع:</strong> سيريتل كاش، شركة الهرم، بنك بيمو، والبطاقات الدولية (فيزا / ماستركارد).</li>
-              </ul>
-            </div>
-            <div class="pt-1 flex flex-wrap gap-1.5">
-              <button type="button" data-click="openLegalContract('investor')" class="bg-purple-800 text-white px-2.5 py-1 rounded-lg text-[10px] font-bold">استعراض العقود</button>
-              <button type="button" data-click="navigateTo('marketplace')" class="bg-olive-800 text-white px-2.5 py-1 rounded-lg text-[10px] font-bold">تصفح الأشجار</button>
-            </div>
-          </div>
-        `;
-      }
-    }
-
-    
     let toastTimer = null;
     function showToast(msg) {
       const toast = document.getElementById('toast');
@@ -24292,7 +22705,7 @@ function setMarketplaceViewMode(mode) {
         if (el) el.innerText = syncMsg;
       });
 
-      showToast(state.currentLang !== 'ar' ? 'Field microclimate telemetry refreshed from Sentinel-2 satellite & IoT stations' : 'تم تحديث بيانات التليمترية ورطوبة الحقول من أقمار سنتينل-2 والمجسات الأرضية');
+      showToast(state.currentLang === 'ar' ? 'تم تحديث القيم التوضيحية. ليست قياسات مباشرة.' : state.currentLang === 'de' ? 'Beispielwerte aktualisiert – keine Live-Messungen.' : 'Illustrative values refreshed – not live measurements.');
     }
 
     // Cultivar Quick Filter & Direct Crop Routing

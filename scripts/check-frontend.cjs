@@ -102,7 +102,7 @@ for (const relativePath of shippedHtmlFiles) {
 }
 
 // Inline-handler guard: no on*= attributes or javascript: URLs may ship (CSP without 'unsafe-inline').
-for (const file of ['public/index.html', 'public/app.js', 'public/auth/reset.html']) {
+for (const file of ['public/index.html', 'public/app.js', 'public/assistant-knowledge.js', 'public/shop.js', 'public/auth/reset.html']) {
   const filePath = path.resolve(__dirname, '..', file);
   if (!fs.existsSync(filePath)) continue;
   const source = fs.readFileSync(filePath, 'utf8');

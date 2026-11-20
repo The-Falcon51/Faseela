@@ -47,10 +47,15 @@ window.FaseelaFirebase = window.FaseelaBackend = {
   signFieldMedia: async (paths) => { window.FaseelaBackend.calls.push(['signFieldMedia', paths]); return paths.map((p, i) => ({ path: p, url: i === 0 ? 'https://riyvlhlhzxxerlwqoxsy.supabase.co/storage/v1/object/sign/field-media/a.jpg?token=t' : null, error: i === 0 ? null : 'Object not found' })); },
   reviewFarmerUpdate: async (p) => { window.FaseelaBackend.calls.push(['reviewFarmerUpdate', p]); return { updateId: p.updateId, status: 'published' }; },
   signOut: async () => { window.FaseelaBackend.calls.push(['signOut']); }, exportMyData: async () => ({ shares: [] }),
+  signOutOtherSessions: async () => { window.FaseelaBackend.calls.push(['signOutOtherSessions']); },
   pushState: async () => { if (window.__pushStateDown) throw Object.assign(new Error('down'), { code: 'unavailable' }); return { data: { enabled: localStorage.getItem('__pushOff') !== '1', activeDevices: 0 } }; },
   registerPushToken: async (p) => { window.FaseelaBackend.calls.push(['registerPushToken', p]); if (window.__pushServerDown) throw Object.assign(new Error('down'), { code: 'unavailable' }); return { data: { registered: true, activeDevices: 1 } }; },
   unregisterPushToken: async (p) => { window.FaseelaBackend.calls.push(['unregisterPushToken', p]); if (window.__pushServerDown) throw Object.assign(new Error('down'), { code: 'unavailable' }); return { data: { unregistered: true, activeDevices: 0 } }; },
   calls: [],
+  // Consent records + reservation (migration 51): consent must be recorded before the reservation.
+  recordConsent: async (p) => { window.FaseelaBackend.calls.push(['recordConsent', p]); if (window.__consentOutdated) throw Object.assign(new Error('outdated'), { code: 'consent-outdated' }); return { data: { kind: p.kind, version: p.version, recorded: true } }; },
+  createInvestmentRequest: async (p) => { window.FaseelaBackend.calls.push(['createInvestmentRequest', p]); return { data: { requestId: 'e'.repeat(64), amountMinor: 3500, currency: 'USD', expiresAt: Date.now() + 1800000 } }; },
+  uploadPaymentProof: async (id) => { window.FaseelaBackend.calls.push(['uploadPaymentProof', id]); return { data: {} }; },
   // Gifts & referrals
   gifts: { given: [], received: [] },
   myGifts: async () => ({ data: window.FaseelaBackend.gifts }),
@@ -95,7 +100,7 @@ const failures = [];
 try {
   // ---- 1. handler inventory ------------------------------------------------------------
   const attrs = new Set();
-  for (const file of ['public/index.html', 'public/app.js']) {
+  for (const file of ['public/index.html', 'public/app.js', 'public/assistant-knowledge.js']) {
     for (const m of fs.readFileSync(path.join(root, file), 'utf8').matchAll(/data-(click|change|input|submit|keydown|scroll)=\\?"((?:[^"\\]|\\.)*)\\?"/g)) {
       attrs.add(m[2].replace(/\\"/g, '"'));
     }
@@ -128,10 +133,15 @@ try {
       sampleGone: [first.mill_name, first.mill_batch_serial, first.harvest_batch_acidity, first.health_status].join('') === '' && first.maintenance_logs.length === 0 && first.harvest_status === 'growing',
       farmFromDb: first.farm_name_en, farmless: offered.find((tr) => tr.id === 'tree_02').farm_name_en,
       counts: Object.fromEntries([...document.querySelectorAll('[data-crop-count]')].map((el) => [el.getAttribute('data-crop-count'), el.classList.contains('hidden') ? 'hidden' : el.textContent])),
-      featured: state.featuredSeasonTreeId, calculator: [...document.getElementById('roi-region-select').options].map((o) => o.value)
+      featured: state.featuredSeasonTreeId, calculator: [...document.getElementById('roi-region-select').options].map((o) => o.value),
+      heroStats: ['hero-stat-trees', 'hero-stat-farms', 'hero-stat-regions'].map((id) => document.getElementById(id).textContent),
+      inventedNumbers: ['2,400', '45+', '6,900', '~25%', '840 شجرة'].filter((n) => [...document.querySelectorAll('#page-home *')].some((el) => el.childElementCount === 0 && el.textContent.includes(n) && el.getClientRects().length > 0))
     };
     return out;
   });
+  assert.deepEqual(catalog.heroStats, [String(catalog.offered.length), '1', '1'], 'landing figures are counted from the catalogue (3 trees, 1 farm, 1 region in the fixture)');
+  assert.deepEqual(catalog.inventedNumbers, [], 'no invented headline numbers on the landing page');
+  delete catalog.heroStats; delete catalog.inventedNumbers;
   // error and retry (the client object is frozen, so the failure is produced at the network level; 404 is the status the error filter above ignores)
   const failing = (r) => r.fulfill({ status: 404, contentType: 'application/json', body: '{"message":"not found"}' });
   await page.route('**/rest/v1/trees_public*', failing);
@@ -194,9 +204,9 @@ try {
   // ---- 2a. page and code belong together; a missing text never shows its key ----
   {
     const versions = await page.evaluate(() => ({ build: document.querySelector('meta[name="faseela-build"]').content,
-      urls: [...document.querySelectorAll('script[src], link[rel=stylesheet]')].map((n) => n.getAttribute('src') || n.getAttribute('href')).filter((u) => /(app|shop|events)\.js|supabase-client\.mjs|tailwind\.css/.test(u)) }));
+      urls: [...document.querySelectorAll('script[src], link[rel=stylesheet]')].map((n) => n.getAttribute('src') || n.getAttribute('href')).filter((u) => /(app|shop|events|assistant-knowledge)\.js|supabase-client\.mjs|tailwind\.css/.test(u)) }));
     assert.match(versions.build, /^[0-9a-f]{12}$/);
-    assert.equal(versions.urls.length, 5);
+    assert.equal(versions.urls.length, 6);
     assert.ok(versions.urls.every((u) => u.endsWith(`?v=${versions.build}`)), `every code URL carries the build id: ${versions.urls}`);
     const kept = await page.evaluate(() => {
       const before = state.currentLang;
@@ -280,6 +290,12 @@ try {
       flow: [ask('de', 'Wie kann ich bezahlen?'), ask('ar', 'كيف أستلم الزيت؟'), ask('en', 'How do I delete my account?')],
       noFalseHit: [ask('ar', 'هل يجوز لي التسجيل؟'), ask('ar', 'كم ينتج الزيتون؟'), ask('de', 'Ich bin Landwirt, wie mache ich mit?')],
       landText: (() => { state.currentLang = 'en'; return /currently not offered/.test(generateFaseelaResponse('Can I buy the land parcel?')); })(),
+      own: [ask('en', 'Who am I?'), ask('de', 'Wie wird das Wetter morgen in Berlin?'), ask('ar', 'ما هو الطقس اليوم؟')],
+      // Questions that used to reach the old rule set: none may promise land, deeds, cash, cards or insurance.
+      noPromises: ['Tell me about the escrow vault and arbitration', 'How does instant cash monetization work?', 'Do you accept Visa or Syriatel Cash?',
+        'What is the climate insurance?', 'كيف أحصل على سند الطابو؟', 'Wie funktioniert die Klimaversicherung?', 'hello']
+        .map((q) => { const html = generateFaseelaResponse(q); return /visa|mastercard|syriatel|cadastral|escrow|deed|insurance policy|cash monetization|طابو|تأمين|حساب أمانة|Grundbuch|Versicherungspolice/i.test(html.replace(/data-query="[^"]*"/g, '')) ? q : null; })
+        .filter(Boolean),
       chips: {}
     };
     for (const lang of ['ar', 'en', 'de']) {
@@ -295,8 +311,10 @@ try {
     land: ['land_off/de', 'land_off/en', 'land_off/ar'],
     money: ['not_investment/de', 'resale_off/en', 'reinvest_off/en'],
     flow: ['payment/de', 'oil/ar', 'account/en'],
-    noFalseHit: ['signup/ar', 'legacy/-', 'farmer/de'],
+    noFalseHit: ['signup/ar', 'fallback/ar', 'farmer/de'],
     landText: true,
+    own: ['own_account/en', 'fallback/de', 'fallback/ar'],
+    noPromises: [],
     chips: { ar: [10, 0], en: [10, 0], de: [10, 0] }
   }, 'assistant answers from the knowledge layer');
   assert.deepEqual(land, { enabled: false, flags: [false, false], track: 'mature', blocked: 2, investModalOpen: false,
@@ -721,10 +739,38 @@ try {
         out.payCopyBtn = !!document.querySelector('#local-pay-accounts button[data-account="SY00 TEST 1234"]');
         out.payReadyAfter = state.paymentReady;
         out.noDemoIban = !document.body.innerHTML.includes('SY98BBSF') && !document.body.innerHTML.includes('0944112233');
+        // Consent: without the box nothing is sent; an outdated document stops before the reservation; then the
+        // two documents are recorded (current versions) before the reservation is made.
+        document.getElementById('invest-gift-toggle').checked = false; investGiftToggled(false);
+        const before = window.FaseelaBackend.calls.length;
+        document.getElementById('invest-terms-ack').checked = false;
+        await confirmPurchase(); await wait(50);
+        out.consentBoxRequired = window.FaseelaBackend.calls.length === before;
+        out.consentLinks = [...document.querySelectorAll('label[for="invest-terms-ack"] a')].map((a) => a.getAttribute('href'));
+        document.getElementById('invest-terms-ack').checked = true;
+        window.__consentOutdated = true;
+        await confirmPurchase(); await wait(50);
+        out.outdatedStops = !window.FaseelaBackend.calls.slice(before).some((c) => c[0] === 'createInvestmentRequest');
+        window.__consentOutdated = false;
+        openInvestModal('tree_01'); await wait(100);
+        document.getElementById('invest-risk-ack').checked = true;
+        document.getElementById('invest-terms-ack').checked = true;
+        state.selectedReceiptFile = new File(['x'], 'r.png', { type: 'image/png' });
+        const mark = window.FaseelaBackend.calls.length;
+        await confirmPurchase(); await wait(100);
+        out.consentOrder = window.FaseelaBackend.calls.slice(mark).map((c) => c[0] + (c[0] === 'recordConsent' ? ':' + c[1].kind + ':' + c[1].version : ''));
         state.selectedReceiptFile = null;
         closeModal('modal-invest');
         // P2P stays demo-only: tab hidden, modal refuses, chatbot answer gated.
         out.tradeTabHidden = document.getElementById('btn-investor-tab-trade').classList.contains('hidden');
+        const visible = (el) => !!el && el.getClientRects().length > 0;
+        out.samplesHidden = ['btn-investor-tab-harvest', 'btn-investor-tab-certs', 'dash-carbon-offset', 'dash-land-area'].filter((id) => visible(document.getElementById(id)))
+          .concat([...document.querySelectorAll('[data-click="openEsgCertificateModal()"], [data-click="openInvestorTaxStatement()"], [data-click^="openLabQrPassportModal"]')].filter(visible).map((b) => b.getAttribute('data-click')));
+        switchInvestorSubTab('harvest'); await wait(50);
+        out.harvestForced = !document.getElementById('panel-investor-harvest').classList.contains('hidden');
+        switchInvestorSubTab('portfolio');
+        await revokeAllOtherSessions(); await wait(20);
+        out.otherSessions = window.FaseelaBackend.calls.filter((c) => c[0] === 'signOutOtherSessions').length;
         switchInvestorSubTab('trade'); await wait(50);
         out.tradePanelHidden = document.getElementById('panel-investor-trade').classList.contains('hidden');
         openP2PListModal(); await wait(50);
@@ -737,6 +783,13 @@ try {
         await loadFounderSystemStatus(); await wait(100);
         out.statusTiles = document.querySelectorAll('#fndr-system-status-body > div').length;
         out.statusVisible = !document.getElementById('fndr-system-status').classList.contains('hidden');
+        const shown = (n) => !!n && n.getClientRects().length > 0;
+        out.sampleTabs = ['fleet', 'telemetry', 'audit', 'decisions', 'contracts_editor'].filter((tab) => shown(document.getElementById('btn-fndr-tab-' + tab)));
+        switchFounderSubTab('telemetry');
+        out.sampleTabForced = shown(document.getElementById('panel-fndr-telemetry'));
+        out.sampleBlocks = [...document.querySelectorAll('#page-founder-control [data-demo]')].filter(shown).length;
+        out.adminLink = document.querySelector('#fndr-preview-banner a')?.getAttribute('href') || '';
+        out.bannerShown = shown(document.getElementById('fndr-preview-banner'));
         openFounderManageUserModal(state.users[0].id); await wait(300);
         out.assignBoxVisible = !document.getElementById('fndr-assign-box').classList.contains('hidden');
         out.assignChips = document.querySelectorAll('#fndr-assign-trees [data-click^="founderRemoveAssignment"]').length;
@@ -920,11 +973,18 @@ try {
       assert.equal(result.payUnconfigured, true, 'unconfigured accounts show a blocking notice');
       assert.equal(result.payReady, false);
       assert.equal(result.purchaseBlocked, true, 'purchase refused before reservation while accounts are unknown');
+      assert.equal(result.consentBoxRequired, true, 'no call without the consent box');
+      assert.deepEqual(result.consentLinks, ['legal/patenschaft.html', 'legal/datenschutz.html'], 'the consent links real documents');
+      assert.equal(result.outdatedStops, true, 'an outdated document stops before any reservation');
+      assert.deepEqual(result.consentOrder.slice(0, 3), ['recordConsent:sponsorship:2026-11-17', 'recordConsent:privacy:2026-11-17', 'createInvestmentRequest'], 'consent is recorded before the reservation');
       assert.equal(result.payRendered, true, 'server-managed accounts rendered with note');
       assert.equal(result.payCopyBtn, true, 'copy button carries the account');
       assert.equal(result.payReadyAfter, true);
       assert.equal(result.noDemoIban, true, 'no hard-coded demo account numbers in the DOM');
       assert.equal(result.tradeTabHidden, true, 'P2P tab hidden in server mode');
+      assert.deepEqual(result.samplesHidden, [], 'no sample harvest, documents, carbon, land or certificate buttons in a real session');
+      assert.equal(result.harvestForced, false, 'the sample harvest tab cannot be opened in a real session');
+      assert.equal(result.otherSessions, 1, 'ending other sessions calls the server');
       assert.equal(result.tradePanelHidden, true, 'P2P panel never opens in server mode');
       assert.equal(result.p2pModalHidden, true, 'P2P modal refused in server mode');
     }
@@ -934,6 +994,10 @@ try {
       assert.equal(result.assignChips, 1, 'assigned tree rendered');
       assert.equal(result.impersonateHidden, true, 'demo impersonation hidden in server mode');
       assert.equal(result.statusVisible, true, 'system status shown for admins');
+      assert.deepEqual(result.sampleTabs, [], 'illustrative tabs are not offered in a real session');
+      assert.equal(result.sampleTabForced, false, 'an illustrative panel cannot be opened in a real session');
+      assert.equal(result.sampleBlocks, 0, 'no sample figures next to live data');
+      assert.equal(result.bannerShown && result.adminLink === 'admin/', true, 'the page points to the admin panel');
       assert.equal(result.statusTiles, 6, 'system status renders all tiles');
       assert.equal(result.queueHasReport, true, 'farmer update reaches the approvals desk');
       assert.equal(result.blindApproveBlocked, true, 'approve without inspection is refused');
