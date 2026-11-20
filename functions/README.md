@@ -12,3 +12,7 @@ What is still used:
 What is retired: `index.js` (Cloud Functions), the emulator suites in `test/*.emulator.test.js`
 and `test/*.rules.test.js` (their rules files moved to `legacy/firebase/`). The equivalent checks
 now live in `supabase/tests/security.test.sql`.
+
+Since 2026-11-20 `package.json` lists no Firebase SDKs (they carried 17 known vulnerabilities and
+are not needed by `domain.js`). To run the retired code again, restore the dependencies from git
+history first.
