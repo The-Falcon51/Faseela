@@ -1,7 +1,7 @@
 {
-  "name": "فسيلة | الاستثمار التشاركي في أشجار الزيتون السورية",
+  "name": "فسيلة | كفالة أشجار الزيتون السورية مباشرةً من المزارع",
   "short_name": "فسيلة",
-  "description": "المنصة التشاركية الأولى لحيازة أشجار الزيتون السورية المعمرة ورعايتها واستلام محاصيل زيت الزيتون البكر الممتاز الموثق كيميائياً.",
+  "description": "اكفل شجرة زيتون سورية معمّرة لدى مزارع معروف بالاسم، تابع رعايتها، واستلم زيت الزيتون البكر الممتاز من محصولها.",
   "id": "com.faseela.app",
   "start_url": "./index.html",
   "scope": "./",
@@ -17,8 +17,8 @@
   "lang": "ar",
   "dir": "rtl",
   "categories": [
-    "finance",
-    "business",
+    "food",
+    "shopping",
     "agriculture",
     "lifestyle"
   ],
@@ -61,9 +61,9 @@
       ]
     },
     {
-      "name": "محفظتي الاستثمارية",
+      "name": "أشجاري",
       "short_name": "المحفظة",
-      "description": "متابعة صكوك الحيازة ومحاصيل الزيت المعتمدة",
+      "description": "متابعة الأشجار المكفولة ومحاصيل الزيت المعتمدة",
       "url": "./index.html#dashboard",
       "icons": [
         {
@@ -100,16 +100,16 @@
   "prefer_related_applications": false,
   "screenshots": [
     {
-      "src": "images/tree_ancient_khodairi.jpg",
-      "sizes": "1280x720",
-      "type": "image/jpeg",
+      "src": "images/tree_ancient_khodairi.webp",
+      "sizes": "960x717",
+      "type": "image/webp",
       "form_factor": "wide",
       "label": "Faseela Ancient Olive Grove Portfolio"
     },
     {
-      "src": "images/syrian_olive_oil_bottle.jpg",
-      "sizes": "1280x720",
-      "type": "image/jpeg",
+      "src": "images/syrian_olive_oil_bottle.webp",
+      "sizes": "960x717",
+      "type": "image/webp",
       "form_factor": "narrow",
       "label": "Syrian Extra Virgin Olive Oil Bottling & Lab Certification"
     }

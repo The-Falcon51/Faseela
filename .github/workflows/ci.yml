@@ -1,0 +1,119 @@
+# Faseela CI/CD (S9): typecheck/syntax → guards → unit tests → secret scan → (main) DB tests → deploy hosting.
+# Secrets (repository settings → Secrets):
+#   SUPABASE_DB_URL      Postgres connection string of a DEV/STAGING project (never production with real users)
+#   FIREBASE_SERVICE_ACCOUNT  JSON key of a service account with "Firebase Hosting Admin" on the hosting project
+name: ci
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+  checks: write
+  pull-requests: write
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    env:
+      # `secrets` is not available in step-level `if`, so expose it as job env and test that.
+      SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+    services:
+      # Throwaway PostgreSQL for the SQL suites (stub Supabase schemas, see scripts/local-db.cjs).
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # gitleaks scans history
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm --prefix functions ci
+      - name: Secret scan (blocking)
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build web assets
+        run: npm run build:web
+      - name: Sync + guards (CSP, self-hosting, inline handlers, secrets, claims)
+        run: npm run sync && npm run build
+      - name: Unit tests (domain + mappers)
+        run: npm test && npm run test:web
+      - name: Dependency audit (high and above)
+        run: npm audit --omit=dev --audit-level=high
+      - name: Database suites on local PostgreSQL (all migrations + seed, every push)
+        env:
+          LOCAL_PG_URL: postgresql://postgres:postgres@127.0.0.1:5432/postgres
+        run: |
+          command -v psql >/dev/null || (sudo apt-get update -qq && sudo apt-get install -y -qq postgresql-client >/dev/null)
+          npm run test:db:local
+      - name: Database security suite on the staging Supabase project (optional)
+        if: ${{ env.SUPABASE_DB_URL != '' }}
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq postgresql-client >/dev/null
+          npm run test:db
+      - name: Browser UI suite (handlers, mocked sessions, axe)
+        run: |
+          npx playwright install --with-deps chromium >/dev/null
+          npm run test:ui
+          npm run test:shop
+  preview:
+    # Pull requests from this repository only (forks get no secrets). Deploys to a Firebase preview
+    # channel with its own URL that expires after 7 days; the live site is not touched.
+    # Note: the preview talks to the same Supabase project as live (see CSP connect-src).
+    needs: verify
+    if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    env:
+      HAS_FIREBASE_SA: ${{ secrets.FIREBASE_SERVICE_ACCOUNT != '' }}
+    steps:
+      - name: Skip notice when the service account secret is missing
+        if: env.HAS_FIREBASE_SA != 'true'
+        run: echo "::notice::FIREBASE_SERVICE_ACCOUNT is not set; preview deploy skipped."
+      - uses: actions/checkout@v4
+        if: env.HAS_FIREBASE_SA == 'true'
+      - uses: actions/setup-node@v4
+        if: env.HAS_FIREBASE_SA == 'true'
+        with:
+          node-version: 22
+          cache: npm
+      - if: env.HAS_FIREBASE_SA == 'true'
+        run: npm ci && npm run build:web && npm run build
+      - name: Deploy Firebase Hosting preview channel (expires after 7 days)
+        if: env.HAS_FIREBASE_SA == 'true'
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          projectId: gen-lang-client-0319369264
+          expires: 7d
+  deploy:
+    needs: verify
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci && npm run build:web && npm run build
+      - name: Deploy Firebase Hosting (atomic release, rollback via Firebase console)
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          projectId: gen-lang-client-0319369264
+          channelId: live

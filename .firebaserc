@@ -1,0 +1,15 @@
+{
+  "projects": {
+    "default": "gen-lang-client-0319369264"
+  },
+  "targets": {
+    "gen-lang-client-0319369264": {
+      "hosting": {
+        "faseela": [
+          "faseela"
+        ]
+      }
+    }
+  },
+  "etags": {}
+}

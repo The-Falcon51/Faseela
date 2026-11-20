@@ -1,0 +1,1264 @@
+[
+ {
+  "verdict": "confirmed",
+  "fingerprint": "faseela/20261020000500_account_deletion/delete_my_account/oil-request-contacts-survive-deletion",
+  "title": "Account deletion leaves encrypted oil-delivery contact PII attached to the orphaned uid and in the finance review queue",
+  "description": "private.delete_my_account (DSGVO Art. 17 self-service) refuses deletion only while investment_requests are open or shares are 'active', then hard-deletes auth.users and relies on ON DELETE CASCADE foreign keys for cleanup. The later harvest/oil feature stores name, phone and postal address pgp-encrypted in private.oil_request_contacts keyed by oil_requests.id; public.oil_requests.user_id has no foreign key to auth.users and no code path deletes either table ('No DELETE anywhere'). Once the operator has set the user's shares to 'settled'/'transferred' (the only path the error text offers to a share holder who wants to delete; both statuses exist in the shares check constraint but no RPC sets them), the user can delete the account while directly identifying contact data of every non-donate oil request remains linked to the same orphaned uid that keys the 'pseudonymised' investment_requests/transactions/shares. Pending or approved oil requests of the deleted account stay in the finance queues, where list_review_queue decrypts the contact via private.oil_contact and returns it to finance_admin/admin, and review_oil_request can still approve/fulfil them for an account that no longer exists. The defect is fully decidable from source: the missing precondition, the missing FK/cascade and the missing delete are all absent predicates; Postgres semantics guarantee the rows survive. No runtime observation is required.",
+  "root_cause": "delete_my_account (migration 20261020000500) predates the oil feature (20261101000100) and was never extended: it checks only open investment_requests and active shares, oil_requests.user_id carries no FK to auth.users, private.oil_request_contacts references only oil_requests, and no statement deletes or anonymises oil_request_contacts, so the auth.users delete leaves contact PII behind.",
+  "intended_behavior": "Per the contract stated in the function comment, account deletion removes all personal data and leaves only financial records pseudonymised by the orphaned uid. Encrypted contact records (name, phone, address) are declared PII and should be deleted (or the deletion refused while oil requests are open), and the finance queue should not keep actionable requests for non-existent accounts.",
+  "trace": [
+   {
+    "kind": "entrypoint",
+    "file": "supabase/migrations/20261020000500_account_deletion.sql",
+    "line": 4,
+    "scope": "private.delete_my_account",
+    "description": "Authenticated owner calls public.delete_my_account -> private.delete_my_account with confirmation 'DELETE'."
+   },
+   {
+    "kind": "propagation",
+    "file": "supabase/migrations/20261020000500_account_deletion.sql",
+    "line": 16,
+    "scope": "private.delete_my_account preconditions",
+    "description": "Only open investment_requests (16-19) and active shares (20-22) block deletion; oil_requests/oil_request_contacts are not consulted."
+   },
+   {
+    "kind": "propagation",
+    "file": "supabase/migrations/20261020000500_account_deletion.sql",
+    "line": 28,
+    "scope": "delete from auth.users",
+    "description": "Hard delete; cleanup relies solely on ON DELETE CASCADE foreign keys from auth.users."
+   },
+   {
+    "kind": "propagation",
+    "file": "supabase/migrations/20261101000100_harvest_oil.sql",
+    "line": 51,
+    "scope": "public.oil_requests",
+    "description": "user_id uuid not null without any FK to auth.users: rows survive the delete with the orphaned uid."
+   },
+   {
+    "kind": "propagation",
+    "file": "supabase/migrations/20261101000100_harvest_oil.sql",
+    "line": 69,
+    "scope": "private.oil_request_contacts",
+    "description": "request_id references oil_requests only; the encrypted name/phone/address blob is never deleted by any statement in the schema."
+   },
+   {
+    "kind": "sink",
+    "file": "supabase/migrations/20261101000100_harvest_oil.sql",
+    "line": 407,
+    "scope": "private.list_review_queue (oil_requests / oil_fulfilment)",
+    "description": "finance_admin/admin receives private.oil_contact(r.id) decrypted for every pending/approved request, including those of the deleted account; review_oil_request (303-354) can still approve/fulfil them."
+   }
+  ],
+  "evidence": [
+   {
+    "file": "supabase/migrations/20261020000500_account_deletion.sql",
+    "line": 24,
+    "description": "Comment states the deletion contract: personal data goes, only financial records stay pseudonymised by the orphaned uid."
+   },
+   {
+    "file": "supabase/migrations/20261020000500_account_deletion.sql",
+    "line": 20,
+    "description": "Active-shares precondition; its error text directs the user to support to 'settle or transfer' shares, i.e. the operator path that makes deletion reachable for a share holder."
+   },
+   {
+    "file": "supabase/migrations/20261020000100_core_schema.sql",
+    "line": 195,
+    "description": "shares.status check constraint allows 'transferred' and 'settled'; no migration or RPC ever sets them (operator SQL only), so the deletion path for former share holders is a designed-in operator action."
+   },
+   {
+    "file": "supabase/migrations/20261101000100_harvest_oil.sql",
+    "line": 4,
+    "description": "Comment classifies oil contact data (name, phone, address) as PII stored only encrypted in private.oil_request_contacts."
+   },
+   {
+    "file": "supabase/migrations/20261101000100_harvest_oil.sql",
+    "line": 7,
+    "description": "'No DELETE anywhere' for oil tables: no cleanup path exists for contacts; verified by grep that no other migration references oil_requests or oil_request_contacts."
+   },
+   {
+    "file": "supabase/migrations/20261101000100_harvest_oil.sql",
+    "line": 117,
+    "description": "allocate_oil allocates only to shares with status 'active', so oil data always originates from a share that at that time blocked deletion; the share later becoming non-active (operator) is the only way both conditions coincide."
+   },
+   {
+    "file": "supabase/migrations/20261101000100_harvest_oil.sql",
+    "line": 258,
+    "description": "request_oil stores the encrypted contact for every delivery/pickup request; the record persists through approve/fulfil/reject/cancel (no path removes it)."
+   },
+   {
+    "file": "supabase/migrations/20261101000100_harvest_oil.sql",
+    "line": 367,
+    "description": "private.oil_contact decrypts with the Vault pii_key for any request id passed by list_review_queue."
+   },
+   {
+    "file": "supabase/migrations/20261020000300_rpc_operations.sql",
+    "line": 237,
+    "description": "private.submitter returns null for a uid without a profile, so list_review_queue does not fail on the deleted account's request; the item is returned with submitter null and a decrypted contact."
+   }
+  ],
+  "conditions": [
+   {
+    "kind": "data_state",
+    "description": "The user holds at least one non-donate oil request (any status) and, at deletion time, no 'active' shares and no open investment requests. Because allocations only arise from active shares, this requires the operator to have set the user's shares to 'settled' or 'transferred' via SQL beforehand (the path the error message points share holders to)."
+   },
+   {
+    "kind": "authentication_level",
+    "description": "Account deletion is triggered by the authenticated owner; reading the retained contact requires finance_admin/admin (list_review_queue) or database/SQL-editor access."
+   }
+  ],
+  "execution": {
+   "attacker_perspective": "Not an attacker-driven exploit: a data-lifecycle defect. The data subject exercising Art. 17 deletion is the affected party; finance staff and anyone with database access continue to see their decrypted name, phone and address linked to the orphaned uid. Result is established by static analysis of the migrations (target execution was not permitted in this run).",
+   "payloads": [
+    "select public.delete_my_account('{\"confirmation\":\"DELETE\"}'::jsonb);",
+    "select public.list_review_queue('{\"queue\":\"oil_requests\"}'::jsonb);"
+   ],
+   "instructions": [
+    "Investor A obtains a share (create/submit/review flow), a batch on that tree is certified so A receives an oil_allocation, and A calls request_oil with kind 'delivery' and a contact; a row is inserted into private.oil_request_contacts (harvest_oil 258-261).",
+    "Operator settles A's shares: update public.shares set status = 'settled' where user_id = A (the only way shares leave 'active'; core_schema 195).",
+    "A calls public.delete_my_account with confirmation 'DELETE'. Preconditions at account_deletion 16-22 pass (no open investment_requests, no active shares); the function does not query oil_requests or oil_request_contacts and executes delete from auth.users (line 28).",
+    "Cascade analysis: only tables with 'references auth.users (id) on delete cascade' are affected (profiles, role_applications, user_roles, farmer_assignments, mill_assignments, farmer_profiles). public.oil_requests.user_id has no FK (harvest_oil 51) and private.oil_request_contacts references only oil_requests (69). Both rows therefore remain.",
+    "finance_admin F calls list_review_queue({queue:'oil_requests'}); the query at harvest_oil 410-412 selects by status only and attaches private.oil_contact(r.id) (407), returning A's decrypted name, phone and address with submitter null. review_oil_request (303-354) accepts approve/fulfil for the same id."
+   ],
+   "observed_result": "Established from source without execution: after delete_my_account succeeds for a former share holder, the oil_requests row keyed by the orphaned uid and the pgp-encrypted contact (name, phone, postal address) in private.oil_request_contacts persist indefinitely, and for pending/approved requests the decrypted contact is still returned to finance_admin/admin by list_review_queue, contradicting the function's own stated contract that only pseudonymised financial records remain."
+  },
+  "remediation": {
+   "strategy": "Extend delete_my_account to the oil feature: (1) refuse deletion while the caller has oil_requests in status pending/approved (same pattern as open investment requests), (2) delete the caller's private.oil_request_contacts rows (join via oil_requests.user_id) before deleting auth.users, so fulfilled/rejected/cancelled requests stay as pseudonymised bookkeeping without PII, and (3) optionally add 'on delete cascade' from oil_request_contacts.request_id and keep oil_requests/oil_allocations as retained financial records. Also consider a retention job that purges contacts of fulfilled/rejected requests after a fixed period.",
+   "code_changes": [
+    {
+     "file_name": "supabase/migrations/20261020000500_account_deletion.sql",
+     "fixed_code": "  if exists (select 1 from public.oil_requests\n              where user_id = v_uid and status in ('pending', 'approved')) then\n    perform private.fail('failed-precondition', 'Cancel or wait for your open oil requests before deleting the account.');\n  end if;\n\n  -- Remove identifying contact data of all past oil requests; the requests themselves stay\n  -- pseudonymised (orphaned uid) like the other financial records.\n  delete from private.oil_request_contacts c\n   using public.oil_requests r\n   where r.id = c.request_id and r.user_id = v_uid;\n\n  perform private.audit(v_uid, 'account.deleted', 'profiles/' || v_uid, '{}'::jsonb);\n  delete from auth.users where id = v_uid;"
+    }
+   ]
+  },
+  "severity": {
+   "likelihood": {
+    "score": "medium",
+    "reason": "Every share holder receives oil allocations after certification and is expected to file delivery/pickup requests; any such user who later deletes the account (necessarily after operator settlement/transfer of shares, the path the UI error points to) triggers the retention automatically. No attacker action is needed, but the prerequisite operator step limits frequency."
+   },
+   "impact": {
+    "score": "medium",
+    "reason": "Directly identifying PII (name, phone, postal address) is retained after an Art. 17 erasure request and remains decryptable to finance staff and database operators, linked to the uid that keys the retained financial records (defeating the claimed pseudonymisation). Open requests of a deleted account remain actionable in the finance desk. Compliance/privacy exposure rather than confidentiality breach to unauthorised parties; data stays encrypted at rest."
+   },
+   "overall_severity": "medium"
+  },
+  "confidence": {
+   "score": "high",
+   "reason": "All decisive facts are static: absent precondition check, absent FK/cascade and absent delete statement are verified in the migrations; Postgres FK semantics guarantee the rows survive; the sink query filters by status only. The only non-source element is the operator settlement step, which the schema's status enum and the function's own error text explicitly provide for."
+  }
+ },
+ {
+  "verdict": "needs_validation",
+  "fingerprint": "faseela/account_deletion/delete_my_account/field-reports-and-media-survive-deletion",
+  "title": "Account deletion leaves a farmer's field reports, GPS positions and photos readable, publishable and publicly signable",
+  "description": "private.delete_my_account (the DSGVO Art. 17 self-service path, callable by any authenticated principal including farmers) deletes only the auth.users row and relies on ON DELETE CASCADE to remove personal data. The user-facing prompt promises 'This removes your profile and login. Financial records are kept pseudonymised'. For a farmer the cascade removes profiles, role_applications, private.user_roles, farmer_assignments, mill_assignments and farmer_profiles, but public.farmer_updates.farmer_uid is a plain uuid without a foreign key, so every field report (free-text notes up to 1200 chars, exact gps_lat/gps_lng of where the farmer stood, media_paths) survives unchanged; tree_events_public rows (no FK to the farmer) keep the published notes; and nothing in the repository deletes or re-keys storage.objects under field-media/<uid>/<tree>/ and field-media/<uid>/profile/ (the portrait whose consent record was just cascaded away). The same rows are treated by the project itself as the user's personal data: export_my_data (Art. 15/20) returns farmerUpdates keyed by farmer_uid. After deletion: (a) quality_auditor and admin (has_any_role passes admin for every role) still SELECT every farmer_updates row via RLS and every object in the field-media bucket via the bucket-wide SELECT policy; (b) pending_review rows still appear in list_review_queue and review_farmer_update publishes them - it checks only status and assert_not_self_review (which passes for any non-null, different uid), and notify_user silently no-ops because the auth.users row is gone, so the publish commits post-deletion; (c) tree_media_paths joins tree_events_public to farmer_updates by update_id, not by a living farmer, and the anonymous tree-media Edge Function signs the deleted farmer's photos for public visitors. The deletion contract is therefore not met for non-financial operator-generated personal content, with concrete later readers (auditor, admin, anon) and a later operation (post-deletion publication). Oil-request contact PII after deletion is the peer candidate oil-request-contacts-survive-deletion and is not claimed here. Verifier note: every trace and evidence location was re-read and matches; no later migration adds an FK, trigger or cleanup for farmer_updates, tree_events_public or storage.objects (the only DELETE statements in the repo are the auth.users delete and the two retention purges in prune_monitoring).",
+  "claimed_root_cause": "delete_my_account relies solely on ON DELETE CASCADE from auth.users; farmer_updates, tree_events_public and storage.objects are not linked to the principal by FK and the function performs no explicit anonymisation, retraction or object removal, while the read/publish/sign paths bind to the row (update_id / bucket-wide role policy) rather than to a living principal.",
+  "trace": [
+   {
+    "kind": "entrypoint",
+    "file": "supabase/migrations/20261020000500_account_deletion.sql",
+    "line": 11,
+    "scope": "private.delete_my_account",
+    "description": "Any authenticated principal (incl. farmer) calls delete_my_account with confirmation 'DELETE'; the only preconditions (lines 16-22) cover investor state (open requests, active shares)."
+   },
+   {
+    "kind": "propagation",
+    "file": "supabase/migrations/20261020000500_account_deletion.sql",
+    "line": 28,
+    "scope": "private.delete_my_account",
+    "description": "delete from auth.users - the sole destructive statement; cascades reach profiles/role_applications/user_roles/assignments/farmer_profiles only."
+   },
+   {
+    "kind": "propagation",
+    "file": "supabase/migrations/20261020000100_core_schema.sql",
+    "line": 222,
+    "scope": "public.farmer_updates",
+    "description": "farmer_uid uuid not null without FK (contrast farmer_assignments.farmer_uid / mill_assignments.operator_uid which reference auth.users on delete cascade); notes, media_paths, gps_lat, gps_lng (225-228) survive the deletion unchanged."
+   },
+   {
+    "kind": "propagation",
+    "file": "supabase/migrations/20261020000100_core_schema.sql",
+    "line": 328,
+    "scope": "RLS farmer_updates_select",
+    "description": "quality_auditor (and admin via has_any_role, core_schema 46-47) keep SELECT on all surviving rows incl. GPS and notes."
+   },
+   {
+    "kind": "propagation",
+    "file": "supabase/migrations/20261020000410_storage.sql",
+    "line": 68,
+    "scope": "RLS field_media_select",
+    "description": "quality_auditor keeps bucket-wide SELECT on field-media incl. the orphaned <uid>/profile/ portrait and <uid>/<tree>/ photos; the file header (line 3) states there are no UPDATE/DELETE policies and no code removes objects."
+   },
+   {
+    "kind": "propagation",
+    "file": "supabase/migrations/20261102000100_tree_profiles.sql",
+    "line": 108,
+    "scope": "private.review_farmer_update",
+    "description": "Pending rows of the deleted farmer are still publishable: only status (109-111) and assert_not_self_review (112; rpc_core 147-157 passes for any non-null differing uid) are checked; notify_user (notifications_monitoring 45-47) silently skips the missing auth.users row so the publish and the tree_events_public insert (118-119) commit."
+   },
+   {
+    "kind": "propagation",
+    "file": "supabase/migrations/20261102000100_tree_profiles.sql",
+    "line": 194,
+    "scope": "private.tree_media_paths",
+    "description": "Joins tree_events_public to farmer_updates by update_id (196-198) and returns the deleted farmer's media_paths; no predicate requires the farmer to exist."
+   },
+   {
+    "kind": "sink",
+    "file": "supabase/functions/tree-media/index.ts",
+    "line": 52,
+    "scope": "tree-media Edge Function (anonymous)",
+    "description": "createSignedUrls on the orphaned paths - the deleted farmer's photos remain publicly served for 1 h per signature; public_tree_profile (tree_profiles 154-160) likewise keeps serving the published notes."
+   }
+  ],
+  "evidence": [
+   {
+    "file": "supabase/migrations/20261020000500_account_deletion.sql",
+    "line": 24,
+    "description": "Comment: 'Personal data goes (profile, role application, role, assignments cascade from auth.users). Financial records stay keyed by the orphaned uid (pseudonymised)' - farmer_updates and storage objects are neither in the cascade nor financial."
+   },
+   {
+    "file": "public/app.js",
+    "line": 10478,
+    "description": "User-facing contract shown before deletion: 'This removes your profile and login. Financial records are kept pseudonymised as required by law.'"
+   },
+   {
+    "file": "supabase/migrations/20261020000300_rpc_operations.sql",
+    "line": 295,
+    "description": "export_my_data (Art. 15/20) returns 'farmerUpdates' keyed by farmer_uid - the project itself classifies these rows as the user's personal data, yet delete_my_account leaves them."
+   },
+   {
+    "file": "supabase/migrations/20261020000100_core_schema.sql",
+    "line": 227,
+    "description": "gps_lat/gps_lng double precision columns on farmer_updates - precise location data of the farmer, retained after deletion."
+   },
+   {
+    "file": "supabase/migrations/20261102000100_tree_profiles.sql",
+    "line": 12,
+    "description": "farmer_profiles cascades (consent record and photo_path pointer disappear) while the photo object under <uid>/profile/ is not removed by any code."
+   },
+   {
+    "file": "supabase/migrations/20261026000210_monitoring_retention.sql",
+    "line": 10,
+    "description": "The only DELETE statements in the repo besides auth.users are the retention purges of client_errors and sent outbox rows; a repo-wide grep finds no delete from storage.objects, no storage .remove() call and no anonymisation of farmer_updates."
+   },
+   {
+    "file": "supabase/migrations/20261101000100_harvest_oil.sql",
+    "line": 395,
+    "description": "list_review_queue lists all pending_review farmer_updates regardless of whether the farmer still exists (submitter() returns null for the missing profile)."
+   }
+  ],
+  "blockers": [
+   "No approved sandbox: the cascade result could not be observed on a local Postgres with dummy rows (expected: farmer_updates, tree_events_public and storage.objects rows remain after delete from auth.users, and a quality_auditor can still publish a pending row and read the objects).",
+   "Hosted storage schema fact: whether the deployed storage.objects still carries a foreign key from owner to auth.users (older Supabase projects: objects_owner_fkey). If a restrictive FK exists, delete_my_account fails entirely for any user who uploaded a file (a different defect); if it is absent or SET NULL, objects are orphaned as described. Only the project owner can observe this; the farmer_updates/tree_events_public retention does not depend on it.",
+   "Whether an out-of-band operational process (manual SQL/storage cleanup on deletion requests) exists is not visible in source."
+  ],
+  "validation_plan": {
+   "local": "In an approved sandbox with a local Postgres + storage schema fixture and all migrations applied: create dummy farmer A with an active farmer_assignments row, one published and one pending farmer_update with media_paths and gps, a farmer_profiles row with consent_public=true and photo_path, and dummy storage.objects rows under field-media/<A>/<tree>/ and field-media/<A>/profile/; create dummy quality_auditor B. Call private.delete_my_account as A with {\"confirmation\":\"DELETE\"}. Assert: select count(*) from public.farmer_updates where farmer_uid=<A> is unchanged; the tree_events_public row with update_id of the published report still exists; storage.objects rows under <A>/ still exist; as B, select on farmer_updates and storage.objects returns A's rows; as B, review_farmer_update({updateId: <pending>, decision: 'publish'}) succeeds and inserts a tree_events_public row; private.tree_media_paths(<tree>) still returns A's paths. Stop at these observations; do not delete anything else.",
+   "deployment": "Owner-observed on staging only: run the same scenario with staging accounts; after deletion run `select count(*) from public.farmer_updates where farmer_uid = '<uid>'`, `select count(*) from public.tree_events_public e join public.farmer_updates u on u.id = e.update_id where u.farmer_uid = '<uid>'`, `select count(*) from storage.objects where bucket_id='field-media' and name like '<uid>/%'`, inspect `\\d storage.objects` for any FK on owner/owner_id, and GET /functions/v1/tree-media?treeId=<tree> anonymously to confirm signed URLs for the deleted farmer's photos are still returned. Fix: in delete_my_account (or a companion job) anonymise or erase the farmer's farmer_updates (null gps, blank notes, delete pending rows), retract or scrub tree_events_public rows derived from them (status='retracted'), and delete storage.objects under <uid>/ in field-media and <uid>/profile/; additionally make review_farmer_update refuse rows whose farmer_uid no longer exists in auth.users and have tree_media_paths join on an existing farmer."
+  }
+ },
+ {
+  "verdict": "needs_validation",
+  "fingerprint": "faseela/admin_tools/admin_set_user_status/suspension-not-enforced-on-live-session",
+  "title": "Account suspension sets auth.users.banned_until only; no SQL authorization helper, RLS policy or Edge Function checks it and no sessions are revoked, so a suspended user keeps full access for the remaining access-token lifetime and can hard-delete the account to erase the ban",
+  "description": "private.admin_set_user_status('suspended') updates auth.users.banned_until = 'infinity' and updated_at, writes an audit row, and nothing else (supabase/migrations/20261026000100_admin_tools.sql:59-63). It does not delete the target's auth.sessions/auth.refresh_tokens rows. The whole server-side authorization chain derives the principal from auth.uid() alone: private.require_user fails only when auth.uid() is null (20261020000200_rpc_core.sql:30-35); private.current_app_role/has_any_role (and therefore require_role and every RLS policy built on them) read only private.user_roles (20261020000100_core_schema.sql:24-48). A repository-wide search shows banned_until is read in exactly three places, none of them an authorization control: the admin user directory ('disabled' flag, 20261020000300_rpc_operations.sql:262), e-mail recipient eligibility (20261026000200_notifications_monitoring.sql:47,60) and onboarding-mail eligibility (20261026000400_profile_onboarding_status.sql:107). The three Edge Functions do not reference it either. The client keeps the session alive (persistSession: true, autoRefreshToken: true, src/supabase-client.src.mjs:22-27). Consequently a user whose browser or Capacitor app holds a not-yet-expired access JWT at the moment of suspension can keep calling every public.* RPC wrapper its role permits and reading every RLS-permitted row until that JWT expires; the ban only bites at the next sign-in or refresh. During that window public.delete_my_account (20261020000500_account_deletion.sql:33-34 -> private.delete_my_account :4-29) succeeds whenever the user has no open investment requests and no active shares; it executes 'delete from auth.users where id = v_uid' (:28), which removes the row carrying banned_until and frees the e-mail address for re-registration, so the suspension leaves no enforceable trace. Operator documentation presents the action as 'Konto sperren' (docs/ARCHITECTURE_AND_OPERATIONS.md:43); the migration comment itself only promises that it 'blocks sign-in and token refresh' (admin_tools.sql:46).",
+  "claimed_root_cause": "Suspension is implemented purely as a GoTrue sign-in/refresh gate (auth.users.banned_until) while database-side authorization (private.require_user, private.has_any_role/current_app_role, all RLS policies) authorizes on auth.uid() from the stateless JWT and never consults banned_until, and admin_set_user_status does not revoke the target's sessions/refresh tokens. Stale authorization persists for the access-token lifetime, and delete_my_account lets the suspended principal erase the ban record itself.",
+  "trace": [
+   {
+    "kind": "entrypoint",
+    "file": "supabase/migrations/20261020000500_account_deletion.sql",
+    "line": 33,
+    "scope": "public.delete_my_account (representative of every public.* RPC wrapper granted to authenticated)",
+    "description": "Reachable over PostgREST by any holder of a still-valid access JWT, including a principal whose auth.users.banned_until was set after the JWT was issued."
+   },
+   {
+    "kind": "propagation",
+    "file": "supabase/migrations/20261020000200_rpc_core.sql",
+    "line": 30,
+    "scope": "private.require_user",
+    "description": "Identity check for every RPC: accepts any non-null auth.uid(); banned_until, deleted_at and session state are never read."
+   },
+   {
+    "kind": "propagation",
+    "file": "supabase/migrations/20261020000100_core_schema.sql",
+    "line": 46,
+    "scope": "private.has_any_role (used by require_role and all RLS policies)",
+    "description": "Role checks depend only on auth.uid() and private.user_roles; a suspended finance_admin/quality_auditor/admin still passes."
+   },
+   {
+    "kind": "propagation",
+    "file": "supabase/migrations/20261026000100_admin_tools.sql",
+    "line": 59,
+    "scope": "private.admin_set_user_status",
+    "description": "The only suspension control: sets banned_until = 'infinity'; no deletion of auth.sessions/auth.refresh_tokens, no application-side flag that require_user could consult."
+   },
+   {
+    "kind": "sink",
+    "file": "supabase/migrations/20261020000500_account_deletion.sql",
+    "line": 28,
+    "scope": "private.delete_my_account",
+    "description": "Any RPC succeeds for the suspended uid during the JWT window; this one hard-deletes the auth.users row, erasing the ban and freeing the e-mail for re-registration."
+   }
+  ],
+  "evidence": [
+   {
+    "file": "supabase/migrations/20261026000100_admin_tools.sql",
+    "line": 46,
+    "description": "Comment states suspension only 'blocks sign-in and token refresh (auth.users.banned_until)'."
+   },
+   {
+    "file": "supabase/migrations/20261026000100_admin_tools.sql",
+    "line": 60,
+    "description": "banned_until set to infinity / null and updated_at; no other state touched, no session revocation."
+   },
+   {
+    "file": "supabase/migrations/20261020000200_rpc_core.sql",
+    "line": 32,
+    "description": "require_user fails only when auth.uid() is null."
+   },
+   {
+    "file": "supabase/migrations/20261020000100_core_schema.sql",
+    "line": 31,
+    "description": "current_app_role reads only private.user_roles keyed by auth.uid()."
+   },
+   {
+    "file": "supabase/migrations/20261020000300_rpc_operations.sql",
+    "line": 262,
+    "description": "Admin user list reads banned_until only as a display flag ('disabled'); no authorization helper does."
+   },
+   {
+    "file": "supabase/migrations/20261026000200_notifications_monitoring.sql",
+    "line": 47,
+    "description": "notify_user excludes banned_until users from e-mail; the only other readers of banned_until are recipient filters, not access checks."
+   },
+   {
+    "file": "supabase/migrations/20261026000400_profile_onboarding_status.sql",
+    "line": 107,
+    "description": "Onboarding-mail eligibility excludes banned_until users, showing the intended 'inactive account' semantics are not mirrored in require_user."
+   },
+   {
+    "file": "supabase/migrations/20261020000500_account_deletion.sql",
+    "line": 16,
+    "description": "delete_my_account preconditions are only 'no open investment requests' and 'no active shares'; a suspended non-investor passes them."
+   },
+   {
+    "file": "src/supabase-client.src.mjs",
+    "line": 25,
+    "description": "Client uses persistSession: true and autoRefreshToken: true; the suspended user's existing access token stays in use until exp."
+   },
+   {
+    "file": "docs/ARCHITECTURE_AND_OPERATIONS.md",
+    "line": 43,
+    "description": "Admin documentation presents the action as blocking the account ('Konto sperren')."
+   }
+  ],
+  "blockers": [
+   "No target execution permitted in this run: cannot apply the migrations to an isolated Postgres and show an RPC succeeding for a uid whose banned_until is set.",
+   "Access-token lifetime (Supabase Auth 'JWT expiry', default 3600 s) is a dashboard setting not present in the repository (no supabase/config.toml); it bounds the stale-authorization window and therefore the severity.",
+   "That auth.uid() is derived from the stateless JWT without a GoTrue/DB ban lookup, and that the deployed GoTrue version refuses /token?grant_type=refresh_token for banned users (closing the window at expiry rather than never), are platform/runtime facts outside source."
+  ],
+  "validation_plan": {
+   "local": "In an isolated Postgres with the migrations applied and dummy users only: insert a dummy auth.users row, set request.jwt.claims to '{\"sub\":\"<uid>\",\"role\":\"authenticated\"}' and set role authenticated, run update auth.users set banned_until = 'infinity' where id = '<uid>', then call public.ensure_profile('{}'::jsonb) and public.export_my_data('{}'::jsonb) (and, with no investment_requests/shares for the uid, public.delete_my_account('{\"confirmation\":\"DELETE\"}'::jsonb)); expected: all succeed and the auth.users row is gone, demonstrating the ban is not enforced in SQL. Regression: after adding 'and not exists (select 1 from auth.users u where u.id = v_uid and (u.banned_until > now() or u.deleted_at is not null))' to private.require_user (and to current_app_role/has_any_role for RLS), the same calls must fail with hint 'permission-denied'.",
+   "deployment": "Owner reads Auth settings (JWT expiry) and GoTrue version from the Supabase dashboard; with a dummy test account signed in on a second browser, suspends it from the admin UI and observes that RPC calls from the still-open session keep succeeding until the token expires; verifies that auth.sessions/auth.refresh_tokens rows for that user remain after admin_set_user_status, and that the ban is enforced immediately once admin_set_user_status additionally deletes those rows (or the fix in require_user is deployed). Read-only except on the dummy account."
+  }
+ },
+ {
+  "verdict": "needs_validation",
+  "fingerprint": "faseela/core_schema/supabase_realtime-publication/delete-events-bypass-rls-role_applications-pk",
+  "title": "Realtime DELETE events on role_applications are delivered to every authenticated subscriber regardless of the owner/admin RLS policy",
+  "description": "public.role_applications is added to the supabase_realtime publication (core_schema.sql:338-340) with the publication's default publish set (which includes DELETE) and is protected only by an owner-or-admin SELECT policy (core_schema.sql:304-305). Supabase Realtime's documented behaviour is that RLS is not evaluated for DELETE change events: because the deleted row no longer exists, Realtime delivers the old record (primary-key columns only under REPLICA IDENTITY DEFAULT) to every subscriber whose role holds SELECT privilege on the table. `authenticated` holds SELECT on role_applications (core_schema.sql:282-285), so any signed-in investor can open a postgres_changes channel {event:'DELETE', schema:'public', table:'role_applications'} with no filter and receive old.user_id for every removed row. In source the only producer of DELETE WAL records on a published table is private.delete_my_account (`delete from auth.users`, account_deletion.sql:28) cascading through `references auth.users (id) on delete cascade` (core_schema.sql:65); no other published table is cascaded from auth.users or deleted by application code (grep of all migrations). A low-privilege account therefore learns the uuid and exact time of each farmer/mill-operator applicant's account deletion. That uuid remains the pseudonymous key on retained investment_requests/transactions/shares rows (owner-scoped, so not readable by the attacker) and is not exposed by public_tree_profile (which omits farmer_uid); however public.farmer_profiles is directly readable by anon and authenticated (tree_profiles.sql:26-30, policy consent_public or own row), so for farmers who consented to a public portrait an attacker who harvested farmer_uid/display_name/village beforehand can attribute the deletion event to a named farmer (the farmer_profiles row itself cascades away at deletion). Expected impact is low (bare identifier plus deletion event, no financial or contact data); the first-party client never renders Realtime payloads, but the Realtime API is reachable by any authenticated client holding the publishable key.",
+  "claimed_root_cause": "The publication publishes DELETE for RLS-protected tables (Supabase's default `publish = 'insert, update, delete, truncate'` on supabase_realtime), while the data-isolation guarantee stated at core_schema.sql:337 relies on a SELECT policy that the Realtime DELETE path cannot evaluate because the old record is gone; no REPLICA IDENTITY FULL exists so the leak is bounded to the primary key, and role_applications additionally receives cascaded DELETEs from account deletion.",
+  "trace": [
+   {
+    "kind": "entrypoint",
+    "file": "supabase/migrations/20261020000100_core_schema.sql",
+    "line": 338,
+    "scope": "alter publication supabase_realtime add table",
+    "description": "role_applications (with investment_requests, transactions, shares, farmer_updates, pressing_batches, trees_public) is added to the Realtime publication without restricting publish operations, so DELETE events are emitted to Realtime if the publication keeps its default publish set."
+   },
+   {
+    "kind": "propagation",
+    "file": "supabase/migrations/20261020000100_core_schema.sql",
+    "line": 304,
+    "scope": "create policy role_applications_select",
+    "description": "The only isolation control is a SELECT policy (user_id = auth.uid() or admin). Realtime applies SELECT policies to INSERT/UPDATE new records; for DELETE the row is gone and the policy is not evaluated."
+   },
+   {
+    "kind": "propagation",
+    "file": "supabase/migrations/20261020000500_account_deletion.sql",
+    "line": 28,
+    "scope": "private.delete_my_account",
+    "description": "`delete from auth.users where id = v_uid` is the only source-visible producer of DELETE events on a published table; an applicant with a role_applications row passes the function's preconditions (no open requests, no active shares)."
+   },
+   {
+    "kind": "propagation",
+    "file": "supabase/migrations/20261020000100_core_schema.sql",
+    "line": 65,
+    "scope": "public.role_applications.user_id",
+    "description": "`references auth.users (id) on delete cascade` removes the applicant's role_applications row in the same transaction, producing a DELETE WAL record whose old record contains only the primary key user_id (REPLICA IDENTITY DEFAULT)."
+   },
+   {
+    "kind": "sink",
+    "file": "src/supabase-client.src.mjs",
+    "line": 442,
+    "scope": "watchOwnRows postgres_changes subscription",
+    "description": "Shows the Realtime API shape available to any authenticated client (`.on('postgres_changes', { event, schema: 'public', table, filter })`); an attacker's own client using table 'role_applications', event 'DELETE' and no filter receives old.user_id of other users' deleted rows. The first-party client itself only re-queries under RLS and does not render payloads."
+   }
+  ],
+  "evidence": [
+   {
+    "file": "supabase/migrations/20261020000100_core_schema.sql",
+    "line": 282,
+    "description": "`grant select on ... public.role_applications ... to authenticated` satisfies Realtime's subscribe-time table-privilege check for every authenticated account."
+   },
+   {
+    "file": "supabase/migrations/20261020000100_core_schema.sql",
+    "line": 337,
+    "description": "Comment states the intended invariant: 'changes are delivered only to subscribers whose RLS SELECT policy matches' — the DELETE path cannot satisfy this."
+   },
+   {
+    "file": "supabase/migrations/20261101000100_harvest_oil.sql",
+    "line": 7,
+    "description": "'No DELETE anywhere' for oil tables; grep of supabase/migrations finds no `replica identity`, no `delete from` on any published table, and `on delete cascade` from auth.users only on private.user_roles, profiles, role_applications, farmer_assignments, mill_assignments, farmer_profiles — of which only role_applications is published. Exposure is bounded to primary keys and, in source, to the role_applications cascade."
+   },
+   {
+    "file": "supabase/migrations/20261102000100_tree_profiles.sql",
+    "line": 27,
+    "description": "public_tree_profile (line 129ff) omits farmer_uid, but public.farmer_profiles is granted SELECT to anon and authenticated (line 27) with policy consent_public or own row (lines 29-30), so farmer_uid of consenting farmers is publicly readable before deletion; the leaked uuid is therefore linkable to a public name only for consenting farmers. Impact remains bounded to the identifier and deletion event."
+   }
+  ],
+  "blockers": [
+   "Supabase Realtime's handling of DELETE events under RLS (delivery of primary-key-only old records to all subscribers with table SELECT privilege, without policy evaluation) is platform behaviour of the hosted Realtime service, not repository source; no Supabase stack or sandbox is available in this run to observe it.",
+   "The supabase_realtime publication is created by Supabase provisioning, not by a repository migration; whether the deployed project's publication retains `pubdelete = true` and whether Realtime is enabled for the project cannot be read from source.",
+   "Data-state prerequisite: the deleted account must hold a role_applications row (farmer/mill-operator applicants); the number of such deletions in production is unknown."
+  ],
+  "validation_plan": {
+   "local": "With a local Supabase stack (`supabase start`) apply the migrations, create two dummy users A and B via the local Auth API, insert a role_applications row for A (apply_for_role RPC or direct SQL as postgres), then as B open a Realtime channel `.on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'role_applications' }, cb)` using B's JWT and call `delete_my_account({confirmation:'DELETE'})` as A. Pass: B receives no event. Fail: B's callback fires with payload.old.user_id = A's uuid. Repeat after `alter publication supabase_realtime set (publish = 'insert, update')` (or after dropping role_applications from the publication) to confirm the fix.",
+   "deployment": "Owner, on a staging project with two test accounts only: run `select pubname, puballtables, pubinsert, pubupdate, pubdelete from pg_publication where pubname = 'supabase_realtime'` to confirm pubdelete, and `select tablename from pg_publication_tables where pubname = 'supabase_realtime'`; then in the Supabase Realtime Inspector subscribe as the low-privilege test account to DELETE on public.role_applications and delete the other test account (which holds a role_applications row) via delete_my_account; record whether old.user_id arrives."
+  }
+ },
+ {
+  "verdict": "rejected",
+  "fingerprint": "faseela/core_schema/tree_events_public_select/no-listed-tree-binding",
+  "title": "Anon direct SELECT on public.tree_events_public returns published events (and ids) of unlisted trees",
+  "description": "The hunter claimed that policy tree_events_public_select (status = 'published') should also require the parent tree to be listed (trees_public_select: status = 'listed'), so that unlisting a tree hides its published events and its tree_id from anon. All cited lines were re-read and are accurate: core_schema.sql:286 grants SELECT on tree_events_public to anon, core_schema.sql:310-311 is the bare status = 'published' predicate and no later migration alters the policy or grant; submit_farmer_update (notification_hooks.sql:381) checks only farmer_has_tree, and review_farmer_update (tree_profiles.sql:117-120) publishes the event for whatever tree_id the report names. The claimed invariant, however, is not the project's source-of-truth policy. The design documentation declares tree_events_public 'public, non-PII, published provenance events' without a listing qualifier (docs/firebase-security-context.md:29), while trees_public alone is documented as 'public reads only while listed' (line 23). The anon RPC public_tree_profile deliberately serves unlisted trees: it reads trees_public by id with no status filter (tree_profiles.sql:143) and returns 'status', v_tree.status to the caller (line 170), and the public page tree.mjs renders such a tree with the buy CTA disabled when status !== 'listed' (tree.mjs:104) and 'sold out' when no shares remain (lines 97-99). Farmers' public profiles link to tree.html for every assigned tree regardless of listing (app.js:16893), and the E2E/load teardown unlists rather than deletes test trees so their records survive (tests/e2e/run-e2e.cjs:49). 'unlisted' therefore means 'not on the marketplace', not 'confidential': published events of an unlisted tree are intentionally reachable by anyone who knows the id, and the only increment from the direct table read is learning the ids of unlisted trees, whose published, auditor-reviewed, non-PII provenance is already designed to be public. Events are only ever written by SECURITY DEFINER review/certify paths (quality_auditor), and the retracted status exists for withdrawal. No protected data or state crosses a boundary the source defines.",
+  "claimed_root_cause": "Child-table RLS predicate (status = 'published') omits the parent's confidentiality predicate (trees_public.status = 'listed'); the public read path is a bare table grant rather than a joined projection.",
+  "trace": [
+   {
+    "kind": "entrypoint",
+    "file": "supabase/migrations/20261020000100_core_schema.sql",
+    "line": 286,
+    "scope": "grant select on public.trees_public, public.tree_events_public to anon",
+    "description": "Anon may read tree_events_public rows through PostgREST (verified; no later migration revokes it)."
+   },
+   {
+    "kind": "propagation",
+    "file": "supabase/migrations/20261020000100_core_schema.sql",
+    "line": 311,
+    "scope": "policy tree_events_public_select",
+    "description": "using (status = 'published') only; no join to trees_public.status (verified; the policy is never replaced)."
+   },
+   {
+    "kind": "propagation",
+    "file": "supabase/migrations/20261026000300_notification_hooks.sql",
+    "line": 381,
+    "scope": "private.submit_farmer_update",
+    "description": "Only farmer_has_tree(v_uid, v_tree_id) is required; the tree need not be listed (verified)."
+   },
+   {
+    "kind": "sink",
+    "file": "supabase/migrations/20261102000100_tree_profiles.sql",
+    "line": 118,
+    "scope": "private.review_farmer_update publish branch",
+    "description": "quality_auditor publishes the event as status 'published' for the report's tree_id; anon-readable via the table policy (verified)."
+   }
+  ],
+  "evidence": [
+   {
+    "file": "docs/firebase-security-context.md",
+    "line": 29,
+    "description": "Design intent: tree_events_public is 'public, non-PII, published provenance events; server-only writes' with no listing condition, whereas line 23 qualifies trees_public with 'public reads only while listed'."
+   },
+   {
+    "file": "supabase/migrations/20261102000100_tree_profiles.sql",
+    "line": 143,
+    "description": "public_tree_profile (anon RPC) reads trees_public by id without status = 'listed' and (line 170) returns the tree's status to the caller, together with its published events (159-160): unlisted trees are designed to be viewable by id."
+   },
+   {
+    "file": "public/tree.mjs",
+    "line": 104,
+    "description": "The public tree page handles unlisted trees as a normal case: CTA aria-disabled when status !== 'listed'; lines 97-99 render 'sold out'. Unlisted means not purchasable, not hidden."
+   },
+   {
+    "file": "public/app.js",
+    "line": 16893,
+    "description": "A farmer's public-profile view links to tree.html?tree=<id> for every assigned tree, so ids of unlisted trees with active farmers are published by the product itself."
+   },
+   {
+    "file": "tests/e2e/run-e2e.cjs",
+    "line": 49,
+    "description": "E2E teardown sets tree_e2e to 'unlisted' instead of deleting it (docs/SUPABASE_MIGRATION.md:74-79 then instructs deletion before launch); the e2e run creates no farmer updates, so no test events exist to leak."
+   },
+   {
+    "file": "supabase/migrations/20261020000100_core_schema.sql",
+    "line": 136,
+    "description": "Event visibility is governed by its own lifecycle (published/retracted); withdrawal of an event is a retraction, not an unlisting of the tree."
+   }
+  ],
+  "reason": "Source refutes the claimed invariant: the repository treats published tree events as unconditionally public (docs/firebase-security-context.md:29) and deliberately serves unlisted trees and their events to anon through public_tree_profile and tree.html (tree_profiles.sql:143,159,170; tree.mjs:104), so trees_public.status = 'listed' is a marketplace filter, not a confidentiality boundary. The only increment a direct table read gives anon is the ids of unlisted trees, whose auditor-published, non-PII provenance is already intended to be public by id; no protected data or state is disclosed beyond design. Whether public_tree_profile should itself honour 'listed' is the separate peer candidate (definer-ignores-listed-status) and is not decided here. At most this is a hardening note (gate the public event feed behind the RPC or add the listed join if operators later decide unlisting should hide provenance)."
+ },
+ {
+  "verdict": "confirmed",
+  "fingerprint": "faseela/data-mappers/mapReviewItem/review-gate-blind-to-published-content",
+  "title": "Quality-auditor review gate publishes farmer notes and photos the reviewer is never shown",
+  "description": "A farmer (role `farmer`, active tree assignment) submits a field report through `submit_farmer_update` with up to 1200 characters of free-text `notes` and up to 5 `mediaPaths`. The only control between that content and anonymous visitors is the quality_auditor four-eyes gate (`review_farmer_update`, decision `publish`). The approvals desk that implements the gate never presents the content: `mapReviewItem('farmer_updates', …)` truncates `notes` to 300 characters and does not copy `mediaPaths` at all; the queue row template in `renderFounderApprovalsQueue` renders only id, submitter, role, type label, amount (always 0 for this queue), channel (= eventType) and date, and never references `item.notes`; the detail modal filled by `inspectFinancialRequest` has elements only for id/date, user, role, amount and channel (`public/index.html` modal `modal-fndr-fin-detail`), and no client code signs or shows `field-media` objects to a reviewer (the only `createSignedUrl` is for `payment-proofs`). The reviewer's Approve click calls `review_farmer_update({decision:'publish'})`, which copies the full `notes` of the locked row into `tree_events_public` (status `published`) and links the update via `update_id`; `public_tree_profile` (anon RPC) then returns those notes to anonymous callers and `tree_media_paths` hands every `media_paths` entry of the update to the anonymous `tree-media` Edge Function, which signs them. A farmer can therefore place arbitrary text (spam, phishing URLs, false yield/investment statements, defamation) and arbitrary images on the platform's public tree pages under the platform's brand while the record shows an auditor 'reviewed' it. HTML injection of the same strings is out of scope here (escaped by `esc`/`escapeHtml`; owned by the client-side unit); the media path-trust gap is the peer candidate unreviewed-media-path-trust.",
+  "root_cause": "The approvals desk (mapper, row template, detail modal) was built for payment review (amount/channel/receipt) and reused for `farmer_updates` without surfacing the report body or media: `mapReviewItem` deliberately truncates `notes` to 300 characters (the unit test asserts the truncation) and drops `media_paths`, and no reviewer-side view or signed-URL path for `field-media` exists. The server-side gate then publishes the complete, unreviewed content.",
+  "intended_behavior": "The four-eyes gate should let the quality_auditor read the exact notes and view the exact photos that a `publish` decision will release to anonymous visitors; the auditor already has SELECT on `field-media` objects for that purpose (storage policy `field_media_select`).",
+  "trace": [
+   {
+    "kind": "entrypoint",
+    "file": "supabase/migrations/20261026000300_notification_hooks.sql",
+    "line": 356,
+    "scope": "private.submit_farmer_update",
+    "description": "Farmer-controlled `notes` (string, <= 1200 chars) and `mediaPaths` (<= 5, prefix/`..` check only) are accepted and inserted into farmer_updates with status pending_review."
+   },
+   {
+    "kind": "propagation",
+    "file": "supabase/migrations/20261101000100_harvest_oil.sql",
+    "line": 392,
+    "scope": "private.list_review_queue (farmer_updates)",
+    "description": "`to_jsonb(r)` returns the full row (notes, media_paths, gps) to the quality_auditor client."
+   },
+   {
+    "kind": "propagation",
+    "file": "public/data-mappers.mjs",
+    "line": 197,
+    "scope": "mapReviewItem(queue === 'farmer_updates')",
+    "description": "`notes: (d.notes || '').slice(0, 300)`; `mediaPaths` is not copied into the mapped item."
+   },
+   {
+    "kind": "propagation",
+    "file": "public/app.js",
+    "line": 24120,
+    "scope": "renderFounderApprovalsQueue",
+    "description": "Row template renders id, user name/role, type label, amount, channel, date and Approve/Reject/inspect buttons; `item.notes` is never referenced."
+   },
+   {
+    "kind": "propagation",
+    "file": "public/app.js",
+    "line": 24434,
+    "scope": "inspectFinancialRequest",
+    "description": "Detail modal is filled with id/date, user, role, amount and channel only; no notes or media element exists in `modal-fndr-fin-detail`."
+   },
+   {
+    "kind": "propagation",
+    "file": "public/app.js",
+    "line": 24377,
+    "scope": "decideServerReviewItem",
+    "description": "Approve calls `reviewFarmerUpdate({updateId, decision:'publish', note:''})` without the reviewer having had any view of the content."
+   },
+   {
+    "kind": "propagation",
+    "file": "supabase/migrations/20261102000100_tree_profiles.sql",
+    "line": 118,
+    "scope": "private.review_farmer_update",
+    "description": "Inserts `v_upd.notes` (complete), `cardinality(v_upd.media_paths)` and `update_id` into tree_events_public with status published."
+   },
+   {
+    "kind": "sink",
+    "file": "supabase/migrations/20261102000100_tree_profiles.sql",
+    "line": 154,
+    "scope": "private.public_tree_profile (granted to anon)",
+    "description": "Returns `notes` of published events to anonymous callers (rendered by public/tree.mjs:91); `tree_media_paths` (lines 194-198) returns all `media_paths` of the published update to the anonymous `tree-media` Edge Function, which signs them (supabase/functions/tree-media/index.ts:52)."
+   }
+  ],
+  "evidence": [
+   {
+    "file": "public/data-mappers.mjs",
+    "line": 197,
+    "description": "`notes: (d.notes || '').slice(0, 300)` and no `mediaPaths` field in the mapped farmer_updates item; `base` sets amount_usd/amount_syp to 0."
+   },
+   {
+    "file": "tests/data-mappers.test.mjs",
+    "line": 79,
+    "description": "`assert.equal(fu.notes.length, 300)` — the truncation is intentional and tested."
+   },
+   {
+    "file": "public/app.js",
+    "line": 24126,
+    "description": "Approvals row template literal (lines 24126-24165) contains no reference to `item.notes` or any media."
+   },
+   {
+    "file": "public/app.js",
+    "line": 24438,
+    "description": "Last field set in the inspect modal is `cEl.innerText = item.channel`; the receipt container is shown only for `isServerInvestment || paymentProofPath`."
+   },
+   {
+    "file": "public/index.html",
+    "line": 10183,
+    "description": "`modal-fndr-fin-detail` body holds only user/role/amount/channel strongs, a payment-receipt container and a static compliance note — no notes or image element."
+   },
+   {
+    "file": "src/supabase-client.src.mjs",
+    "line": 508,
+    "description": "The only `createSignedUrl` call targets `payment-proofs`; the `field-media` bucket is only written (upload, lines 373/384), never signed or read for a reviewer."
+   },
+   {
+    "file": "supabase/migrations/20261020000410_storage.sql",
+    "line": 68,
+    "description": "`field_media_select` already grants quality_auditor SELECT on field-media objects, so a reviewer-side viewer is feasible but absent."
+   },
+   {
+    "file": "supabase/migrations/20261102000100_tree_profiles.sql",
+    "line": 119,
+    "description": "`values (v_upd.tree_id, v_upd.event_type, v_upd.notes, cardinality(v_upd.media_paths), v_upd.created_at, 'published', v_id)` — complete notes published."
+   },
+   {
+    "file": "supabase/migrations/20261102000100_tree_profiles.sql",
+    "line": 196,
+    "description": "`tree_media_paths` returns `u.media_paths` for every published update; granted to service_role and consumed by the anonymous tree-media function."
+   }
+  ],
+  "conditions": [
+   {
+    "kind": "authorization_role",
+    "description": "Attacker holds the `farmer` role with an active, unrevoked tree assignment (role applications are admin-approved)."
+   },
+   {
+    "kind": "user_interaction",
+    "description": "A quality_auditor (not the submitting farmer) presses Approve in the approvals desk; the desk gives them no content to base the decision on."
+   },
+   {
+    "kind": "system_configuration",
+    "description": "No out-of-band review procedure (e.g. a dashboard query of farmer_updates) exists in the repository; any such practice would be operational, not a source control."
+   }
+  ],
+  "execution": {
+   "attacker_perspective": "Authenticated farmer with an active tree assignment; goal: publish arbitrary text and images on the public tree page while the audit log records an auditor approval.",
+   "payloads": [
+    "{\"treeId\":\"<assignedTree>\",\"eventType\":\"other\",\"notes\":\"MARKER-7f3a … up to 1200 chars of attacker text / URLs\",\"mediaPaths\":[\"<farmerUid>/<assignedTree>/1700000000000_any.jpg\"]}"
+   ],
+   "instructions": [
+    "As the farmer, upload any JPEG to field-media at `<uid>/<treeId>/<ts>_any.jpg` (uploadFieldMedia) and call RPC `submit_farmer_update` with the payload above.",
+    "As a quality_auditor, open the approvals desk: `listReviewQueue('farmer_updates')` → `mapReviewItem` yields an item whose `notes` is the first 300 characters and which has no `mediaPaths`; `renderFounderApprovalsQueue` and `inspectFinancialRequest` display neither notes nor photos.",
+    "Press Approve → `review_farmer_update({updateId, decision:'publish'})` inserts the full notes into tree_events_public and links `update_id`.",
+    "Anonymously call `public_tree_profile({treeId})` and GET tree-media `?treeId=` → the full notes and signed URLs for the uploaded images are returned and rendered by tree.mjs."
+   ],
+   "observed_result": "Source-level demonstration (no target execution permitted in this run): the mapped review item cannot contain more than 300 characters of notes and never contains media paths; neither the row template nor the detail modal references notes or media; the publish RPC copies the complete `v_upd.notes` and exposes all `media_paths` to the anonymous surfaces. The shipped review gate is therefore blind to the exact content it releases."
+  },
+  "remediation": {
+   "strategy": "Make the gate inspect what it publishes: return full `notes`, `mediaPaths` (and `gpsLat/gpsLng` for context) from `mapReviewItem` for farmer_updates; render the full notes and a photo viewer in the approvals detail view, creating signed URLs for `field-media` with the quality_auditor's own session (storage policy already permits SELECT); optionally require the auditor to open the detail view before Approve is enabled for farmer_updates. Keep `decision` mandatory server-side (restore `req_id` instead of defaulting to 'publish').",
+   "code_changes": [
+    {
+     "file_name": "public/data-mappers.mjs",
+     "fixed_code": "if (queue === 'farmer_updates') {\n  return { ...base, role: 'farmer', type: 'farmer_update', type_label: 'تقرير ميداني', type_label_en: 'Field report',\n    channel: d.eventType || '', notes: d.notes || '', mediaPaths: Array.isArray(d.mediaPaths) ? d.mediaPaths : [],\n    gpsLat: d.gpsLat ?? null, gpsLng: d.gpsLng ?? null };\n}"
+    },
+    {
+     "file_name": "src/supabase-client.src.mjs",
+     "fixed_code": "async function getFieldMediaUrls(paths = []) {\n  const safe = paths.filter((p) => /^[0-9a-f-]{36}\\/[A-Za-z0-9_-]{1,80}\\/[^/]{1,200}$/.test(p));\n  if (!safe.length) return [];\n  const { data, error } = await supabase.storage.from('field-media').createSignedUrls(safe, SIGNED_URL_TTL_SECONDS);\n  if (error) throw toBackendError(error, 'permission-denied');\n  return (data || []).map((s) => s.signedUrl).filter(Boolean);\n}"
+    },
+    {
+     "file_name": "supabase/migrations/<new>_review_farmer_update_require_decision.sql",
+     "fixed_code": "-- in private.review_farmer_update:\n  v_decision text := private.req_id(p, 'decision', '^(publish|reject)$');"
+    }
+   ]
+  },
+  "severity": {
+   "likelihood": {
+    "score": "medium",
+    "reason": "Requires an admin-approved farmer account with an assignment, but once held the abuse is trivial and the gate gives the auditor nothing to reject on; approval of content-less rows is the expected operator behaviour."
+   },
+   "impact": {
+    "score": "medium",
+    "reason": "Arbitrary farmer text (up to 1200 chars, incl. URLs) and up to 5 images per report are served on public, investment-adjacent tree pages under the platform's brand with a recorded auditor approval; no credential, money or private-data compromise, and HTML is escaped."
+   },
+   "overall_severity": "medium"
+  },
+  "confidence": {
+   "score": "high",
+   "reason": "Every step is static, literal code (mapper slice, template literal without the field, modal markup without the element, SQL insert of the full column); no runtime fact can change the outcome in the shipped client."
+  }
+ },
+ {
+  "verdict": "needs_validation",
+  "fingerprint": "faseela/notifications_monitoring/enqueue_email/no-per-actor-enqueue-quota-fifo-outbox",
+  "title": "Transactional e-mail outbox has no per-actor enqueue quota; one verified investor can flood the FIFO queue (drained at <=20 mails/min platform-wide) and delay every other user's transactional mail",
+  "description": "All business RPCs enqueue e-mail through private.notify_user / private.notify_role -> private.enqueue_email, which inserts into private.email_outbox unconditionally for any syntactically valid recipient. The sender drains the outbox strictly FIFO by created_at: pg_cron invokes the send-emails Edge Function at most once per minute and the function claims p_limit 20 rows and delivers them sequentially, so the whole platform sends at most ~20 mails/min. The business quotas bound concurrent OPEN state only (3 open investment requests / 8 open shares; 3 open oil requests), not rate: private.cancel_investment_request and private.cancel_oil_request free the quota in the same call and send no mail, while every successful create/request enqueues mail. A verified investor (any confirmed e-mail account, no payment required) can loop public.create_investment_request with a fresh 16-char idempotencyKey -> public.cancel_investment_request and enqueue one 'reservation_created' mail per two cheap RPC calls, indefinitely. Variants with staff recipients: an investor holding >=1 available oil allocation can loop request_oil -> cancel_oil_request and additionally enqueue one 'review_needed' mail to every finance_admin and admin per cycle; a farmer can call submit_farmer_update without any rate bound, each call mailing every quality_auditor and admin; a mill operator likewise via submit_pressing_batch. Any producer above ~20 mails/min grows a pending backlog that all later transactional mail for other users (payment_approved, review_needed, reservation_created, oil_request_received, ops_alert) must wait behind, and every queued row becomes a paid provider delivery once sent. Neither private.ops_check nor public_status observes a pending backlog (both look only at status='failed'), so the condition is silent. Verified against source: every trace and evidence line resolves to the cited statement; no later migration replaces enqueue_email, notify_user, notify_role, outbox_claim or the two cancel RPCs, and no rate/cooldown/throttle construct exists anywhere under supabase/migrations or supabase/functions.",
+  "claimed_root_cause": "private.enqueue_email (supabase/migrations/20261026000200_notifications_monitoring.sql:28-37) and its callers notify_user (:39-49) / notify_role (:51-61) carry no per-recipient, per-actor, per-template or per-window bound, and the create/cancel RPC pairs (create_investment_request + cancel_investment_request; request_oil + cancel_oil_request) plus the unbounded submit_farmer_update / submit_pressing_batch let an authenticated actor repeat a mail-sending action indefinitely while staying under the open-state quotas. Combined with the strictly FIFO, once-per-minute, 20-row drain (outbox_claim :64-79; outbox_trigger.sql:17-28; send-emails/index.ts:291-307) a single actor's volume degrades mail delivery for all users and converts into operator provider spend. Not decidable from source alone: whether any deployed upstream limit (Supabase API gateway / PostgREST per-key or per-IP request rate limit on /rest/v1/rpc for authenticated users) bounds the cycle rate below the 20/min drain.",
+  "trace": [
+   {
+    "kind": "entrypoint",
+    "file": "supabase/migrations/20261020000400_api_surface.sql",
+    "line": 12,
+    "scope": "public.create_investment_request(payload jsonb)",
+    "description": "SECURITY INVOKER Data API wrapper, execute granted to authenticated (:67-74); reachable by any signed-in account via POST /rest/v1/rpc/create_investment_request."
+   },
+   {
+    "kind": "propagation",
+    "file": "supabase/migrations/20261026000300_notification_hooks.sql",
+    "line": 31,
+    "scope": "private.create_investment_request prerequisite",
+    "description": "Only gate before business logic is private.require_verified_email (email_confirmed_at not null, rpc_core.sql:56-68); no role, payment or history requirement."
+   },
+   {
+    "kind": "propagation",
+    "file": "supabase/migrations/20261026000300_notification_hooks.sql",
+    "line": 56,
+    "scope": "private.create_investment_request id derivation",
+    "description": "Request id = sha256(uid || ':' || idempotencyKey); a fresh 16..120-char key per call (:49-53) yields a new row each time instead of the idempotent replay return (:61-68)."
+   },
+   {
+    "kind": "propagation",
+    "file": "supabase/migrations/20261026000300_notification_hooks.sql",
+    "line": 86,
+    "scope": "private.create_investment_request quota check",
+    "description": "Caps (3 open requests, 8 open shares) count only rows in status awaiting_payment | under_review (:86-94); cancelled rows do not count, so the cap never limits repetitions over time."
+   },
+   {
+    "kind": "propagation",
+    "file": "supabase/migrations/20261026000300_notification_hooks.sql",
+    "line": 122,
+    "scope": "private.create_investment_request notify",
+    "description": "notify_user(v_uid, 'reservation_created', ...) enqueues one mail to the caller on every successful create, inside the same transaction."
+   },
+   {
+    "kind": "propagation",
+    "file": "supabase/migrations/20261020000200_rpc_core.sql",
+    "line": 508,
+    "scope": "private.cancel_investment_request",
+    "description": "Owner cancels an awaiting_payment request immediately (:519-525): reservation released (:526-527), status 'cancelled' (:528), no mail, quota freed for the next create."
+   },
+   {
+    "kind": "propagation",
+    "file": "supabase/migrations/20261026000200_notifications_monitoring.sql",
+    "line": 34,
+    "scope": "private.enqueue_email",
+    "description": "Unconditional insert into private.email_outbox; the only predicate is a recipient syntax regex (:36). No per-recipient, per-actor, per-template or per-window bound."
+   },
+   {
+    "kind": "propagation",
+    "file": "supabase/migrations/20261026000200_notifications_monitoring.sql",
+    "line": 70,
+    "scope": "public.outbox_claim",
+    "description": "Claims pending rows strictly `order by created_at` with limit clamped to <=100 (:76-77); an older backlog is always served before newer rows of other users."
+   },
+   {
+    "kind": "propagation",
+    "file": "supabase/migrations/20261026000220_outbox_trigger.sql",
+    "line": 17,
+    "scope": "cron faseela-send-emails",
+    "description": "Sender invoked at most once per minute ('* * * * *'), one net.http_post per tick while pending rows exist."
+   },
+   {
+    "kind": "sink",
+    "file": "supabase/functions/send-emails/index.ts",
+    "line": 291,
+    "scope": "send-emails handler",
+    "description": "outbox_claim(p_limit: 20) then sequential deliver() per row (:296-307): platform-wide drain <=20 mails/min, each a paid provider API call; later rows for all other users wait behind the attacker's backlog."
+   }
+  ],
+  "evidence": [
+   {
+    "file": "supabase/migrations/20261026000200_notifications_monitoring.sql",
+    "line": 36,
+    "description": "enqueue_email's only filter is a recipient syntax regex; no rate or count condition. Verified no later migration replaces enqueue_email, notify_user, notify_role or outbox_claim."
+   },
+   {
+    "file": "supabase/migrations/20261026000300_notification_hooks.sql",
+    "line": 12,
+    "description": "c_max_open_requests := 3 / c_max_open_shares := 8 bound open state only; nothing bounds creates per time window. A repository-wide search for rate-limit/cooldown/throttle constructs in supabase/migrations and supabase/functions finds only the report_client_error caps (:117), which do not apply to this path."
+   },
+   {
+    "file": "supabase/migrations/20261101000100_harvest_oil.sql",
+    "line": 267,
+    "description": "request_oil mails the caller (:266) and every finance_admin/admin (:267, notify_role) per request; cancel_oil_request (:275-298) frees the allocations and the quota without mail. Staff-recipient variant; prerequisite is >=1 available oil allocation."
+   },
+   {
+    "file": "supabase/migrations/20261026000300_notification_hooks.sql",
+    "line": 388,
+    "description": "submit_farmer_update mails every quality_auditor/admin per submission with no per-farmer rate limit (farmer-role variant)."
+   },
+   {
+    "file": "supabase/migrations/20261026000300_notification_hooks.sql",
+    "line": 463,
+    "description": "submit_pressing_batch mails every quality_auditor/admin per submission with no per-operator rate limit (mill_operator variant)."
+   },
+   {
+    "file": "supabase/migrations/20261026000210_monitoring_retention.sql",
+    "line": 25,
+    "description": "The effective (replaced) private.ops_check alerts only on status='failed' rows or client-error spikes; a growing pending backlog is never alerted. Same condition in the original at notifications_monitoring.sql:212."
+   },
+   {
+    "file": "supabase/migrations/20261026000400_profile_onboarding_status.sql",
+    "line": 144,
+    "description": "public_status derives mail health solely from the absence of 'failed' rows in 24h; a pending backlog reports 'ok'."
+   },
+   {
+    "file": "supabase/migrations/20261026000210_monitoring_retention.sql",
+    "line": 11,
+    "description": "Retention deletes only status='sent' rows after 90 days; pending and failed rows are never pruned."
+   },
+   {
+    "file": "supabase/functions/send-emails/index.ts",
+    "line": 296,
+    "description": "Rows are delivered one at a time in a for-await loop; no parallelism or adaptive batch size, so the drain rate is fixed by the cron tick and p_limit."
+   }
+  ],
+  "blockers": [
+   "No parent-approved OS-enforced sandbox in this run: the bounded local check (apply migrations to a throwaway Postgres, run N create/cancel cycles as a dummy verified user, assert N 'reservation_created' rows in private.email_outbox and that a later dummy user's row is claimed only after them) could not be executed.",
+   "Deployment fact (decisive for the shared-impact claim): whether the Supabase API gateway or PostgREST enforces any per-key / per-IP / per-user request rate limit on /rest/v1/rpc for authenticated callers is not visible in the repository; if such a limit holds the cycle rate below ~10 cycles/min, the backlog never grows and the finding reduces to spend/hardening.",
+   "Deployment fact (affects spend impact only): the e-mail provider's per-recipient throttling and account quota behind EMAIL_API_KEY are not visible in the repository; they determine cost and bounce behaviour but not the queue-delay effect."
+  ],
+  "validation_plan": {
+   "local": "In a sandboxed Postgres with all supabase/migrations applied (pg_cron/pg_net/vault stubbed or disabled), create dummy user A (auth.users row with email_confirmed_at set) and one listed tree with >=1 available share. As A, run 50 iterations of public.create_investment_request({treeId, shareCount:1, idempotencyKey:<fresh 16+ char string>}) followed by public.cancel_investment_request({requestId:<returned id>}). Then as dummy user B enqueue one row via any notify path (e.g. a single create_investment_request). Assert: (1) select count(*) from private.email_outbox where recipient = A.email and template = 'reservation_created' returns 50; (2) calling public.outbox_claim(20) three times as a service_role-equivalent returns B's row only in the third batch (FIFO delay); (3) wall-clock per cycle is on the order of milliseconds (two statements), i.e. far below the 3 s/cycle needed to stay under 20 mails/min. Optionally repeat with a user holding one available oil_allocations row via request_oil / cancel_oil_request and assert one 'review_needed' row per finance_admin/admin per cycle. All writes stay in the throwaway database.",
+   "deployment": "Owner checks: (a) Supabase project settings / API gateway for any rate limit applied to the Data API (/rest/v1/rpc) for authenticated requests and records the effective requests-per-minute; (b) the e-mail provider dashboard for per-recipient throttles and account quota; (c) confirms with `select count(*) from private.email_outbox where status = 'pending'` (SQL editor) that no alerting observes this value. Remediation to evaluate: a per-actor/per-template enqueue budget inside private.enqueue_email or the notify_* helpers (e.g. <=N rows per recipient per hour, coalesce or drop beyond, surfaced in ops_check), a per-user cooldown or cancel-count bound on create_investment_request / request_oil / submit_farmer_update / submit_pressing_batch, deduplicating 'review_needed' staff mails per queue per window, and a pending-backlog threshold in ops_check/public_status."
+  }
+ },
+ {
+  "verdict": "needs_validation",
+  "fingerprint": "faseela/reset/updatePassword/password-change-without-reauth-on-any-session",
+  "title": "Password-reset page accepts any existing session (not only a recovery session) and changes the password without current password or re-authentication nonce",
+  "description": "public/auth/reset.html loads the shared supabase-client bundle (persistSession: true, localStorage), so any persisted Faseela session is restored on that page. src/supabase-client.src.mjs publishes a 'faseela-auth-state' event for INITIAL_SESSION/SIGNED_IN/USER_UPDATED of that ordinary session (lines 246-247), and public/auth/reset.mjs unhides the new-password form on the first event with a non-null detail (lines 28-35) without any check that the session originated from a PASSWORD_RECOVERY event. The save handler (reset.mjs:48) calls FaseelaBackend.updatePassword, which calls supabase.auth.updateUser({ password }) (supabase-client.src.mjs:329) with no current-password check and no reauthenticate()/nonce. Verified against source: the comment at reset.mjs:2 asserts a short-lived recovery session, but nothing enforces it; the PASSWORD_RECOVERY branch (supabase-client.src.mjs:236-243) only navigates to reset.html and does not hand the page any recovery marker; no supabase/config.toml or other auth configuration exists in the repository. Consequence if the server does not demand re-authentication: anyone with transient access to a device or browser profile where a Faseela user is signed in (shared/unlocked device, copied localStorage) can open /auth/reset.html and set a new password, converting temporary session access into persistent account takeover and locking the owner out. Whether the deployed Supabase Auth project enables 'Secure password change' (GoTrue security_update_password_require_reauthentication), which would reject updateUser({password}) without a nonce for sessions outside the recency window, and whether other sessions are revoked on password change, are deployment facts not present in the repository, so the claim cannot be decided from source alone.",
+  "claimed_root_cause": "The recovery page gates on 'a session exists' instead of 'this session came from a PASSWORD_RECOVERY redirect', and the password update path supplies neither the current password nor a reauthentication nonce, relying entirely on an unverified deployment-side GoTrue policy.",
+  "trace": [
+   {
+    "kind": "entrypoint",
+    "file": "public/auth/reset.html",
+    "line": 44,
+    "scope": "reset.html",
+    "description": "Page loads the shared supabase-client bundle, which restores any persisted session from localStorage (persistSession: true, supabase-client.src.mjs:21-28)."
+   },
+   {
+    "kind": "propagation",
+    "file": "src/supabase-client.src.mjs",
+    "line": 246,
+    "scope": "onAuthStateChange",
+    "description": "INITIAL_SESSION/SIGNED_IN/USER_UPDATED of a normal session publishes the user via publishSession -> dispatchAuthState; PASSWORD_RECOVERY is not required."
+   },
+   {
+    "kind": "propagation",
+    "file": "public/auth/reset.mjs",
+    "line": 28,
+    "scope": "faseela-auth-state listener",
+    "description": "Form is unhidden for any non-null auth-state detail; no check of recovery origin."
+   },
+   {
+    "kind": "propagation",
+    "file": "public/auth/reset.mjs",
+    "line": 48,
+    "scope": "save click handler",
+    "description": "Calls api.updatePassword(pw1.value) with only length and match checks."
+   },
+   {
+    "kind": "sink",
+    "file": "src/supabase-client.src.mjs",
+    "line": 329,
+    "scope": "updatePassword",
+    "description": "supabase.auth.updateUser({ password }) without nonce or current password; new credential replaces the owner's."
+   }
+  ],
+  "evidence": [
+   {
+    "file": "public/auth/reset.mjs",
+    "line": 2,
+    "description": "Comment asserts the page is reached via a short-lived recovery session, but the code does not verify that."
+   },
+   {
+    "file": "public/auth/reset.mjs",
+    "line": 29,
+    "description": "if (event.detail && !ready) -> form shown for any session."
+   },
+   {
+    "file": "src/supabase-client.src.mjs",
+    "line": 236,
+    "description": "PASSWORD_RECOVERY handling only navigates to reset.html (or publishes the session when already there); reset.html itself never receives or checks the recovery event type."
+   },
+   {
+    "file": "src/supabase-client.src.mjs",
+    "line": 325,
+    "description": "updatePassword has no old-password or reauthenticate()/nonce step."
+   },
+   {
+    "file": "public/app.js",
+    "line": 11324,
+    "description": "Main app only offers requestPasswordReset; the reset page is the sole password-change surface."
+   }
+  ],
+  "blockers": [
+   "Supabase Auth setting 'Secure password change' (GoTrue security_update_password_require_reauthentication) and the deployed GoTrue version are not in the repository (no supabase/config.toml, no auth settings file); if enabled, updateUser({password}) without a nonce is rejected for sessions outside the recency window and the claim reduces to client-side hardening.",
+   "Whether the deployed GoTrue revokes the owner's other refresh tokens on password change (affecting lock-out impact) is a provider fact outside source.",
+   "No browser execution is permitted in this run, so the form appearing on a non-recovery session and the nonce-less PUT /auth/v1/user request cannot be demonstrated locally."
+  ],
+  "validation_plan": {
+   "local": "Serve public/ on isolated loopback (python3 -m http.server) with a mocked /auth/v1 that returns a stored dummy session; place a normal (non-recovery) session under the sb-*-auth-token localStorage key, open /auth/reset.html, and observe that #form becomes visible and that clicking Save sends PUT /auth/v1/user with {password} and no nonce. Regression: after gating the form on a PASSWORD_RECOVERY-derived flag (e.g. a sessionStorage marker set in the PASSWORD_RECOVERY branch of supabase-client.src.mjs and cleared after use) and/or calling supabase.auth.reauthenticate() and passing the e-mailed nonce to updateUser, the same page must not offer or complete the change for an ordinary session.",
+   "deployment": "Owner checks Supabase Dashboard -> Authentication -> Settings -> 'Secure password change'. With a dummy test account signed in normally (no recovery link), open /auth/reset.html on the deployed site and attempt a password change on that dummy account; if it succeeds, the finding is confirmed (account takeover from any live session); if the API returns reauthentication_needed, downgrade to hardening (client gating still recommended). Also check whether the dummy account's other session is signed out after the change."
+  }
+ },
+ {
+  "verdict": "confirmed",
+  "fingerprint": "faseela/tree_profiles/farmer_profiles_select/direct-read-exposes-uid-photo-path-and-unassigned-farmers",
+  "title": "Anon direct SELECT on public.farmer_profiles exposes farmer auth UIDs, private-bucket photo paths and consent metadata of farmers outside the consented tree-page scope",
+  "description": "supabase/migrations/20261102000100_tree_profiles.sql:27 grants SELECT on every column of public.farmer_profiles to anon and authenticated, and the only row policy (lines 29-30) is 'consent_public or farmer_uid = auth.uid()'. Because the project exposes schema public through PostgREST (the shipped client itself calls supabase.from('farmer_profiles') and the anon RPCs in public), any holder of the publishable anon key can issue GET /rest/v1/farmer_profiles?select=farmer_uid,display_name,village,photo_path,consent_at,consent_version and receive, for every consented farmer, the auth.users UUID, the object path '<uid>/profile/<file>' inside the private bucket field-media, and consent timestamps/version. The documented and tested public contract (docs/SUPABASE_MIGRATION.md:54 and docs/ARCHITECTURE_AND_OPERATIONS.md:92: 'keine UIDs, keine Medienpfade'; security.test.sql:585 'farmer uid never leaked') and the consent text shown to farmers (public/app.js:4496: published 'on the public pages of my trees') are enforced only inside the SECURITY DEFINER RPC public_tree_profile (lines 147-153), which projects display fields plus a boolean hasPhoto and joins through an active farmer_assignment. The table path bypasses both the projection and the tree binding: consented farmers whose assignments were revoked, or who tend only unlisted trees, are enumerable as a global directory. The shipped client reads the table only for the owner's own row (src/supabase-client.src.mjs:399), so the anon column grant is not needed. Limits established from source: the leaked photo_path cannot be fetched by anon or by other authenticated users (storage policy field_media_select, storage.sql:68-71, restricts object reads to the owner folder or quality_auditor), and the hunter's 'tree-membership oracle' via farmer_has_tree(p_uid, tree_id) is not reachable through PostgREST because that helper lives in schema private, which is not an exposed API schema; the uid leak is therefore an identifier/consent-scope disclosure, not a direct pivot.",
+  "root_cause": "Table-level SELECT grant on all columns of public.farmer_profiles to anon/authenticated combined with a consent-only RLS predicate, while the intended public projection (no uid, no storage path, hasPhoto boolean) and the active-assignment tree binding exist only inside the SECURITY DEFINER RPC public_tree_profile. Policy and query disagree (DATA-ISOLATION-AND-LIFECYCLE 'Policy and query disagreement'); no view, column grant or PostgREST schema restriction in the repository narrows the table surface.",
+  "intended_behavior": "Anonymous visitors see a consented farmer only on the public page of a tree that farmer actively tends, and only the display fields (name, village, region, years, bio, bioEn) plus whether a photo exists; auth UIDs, storage paths and consent metadata are never returned to anon (docs/SUPABASE_MIGRATION.md:54, docs/ARCHITECTURE_AND_OPERATIONS.md:92, consent text public/app.js:4496). The farmer alone may read their own full row.",
+  "trace": [
+   {
+    "kind": "entrypoint",
+    "file": "supabase/migrations/20261102000100_tree_profiles.sql",
+    "line": 27,
+    "scope": "grant select on public.farmer_profiles to anon, authenticated",
+    "description": "All columns of farmer_profiles (farmer_uid, photo_path, consent_at, consent_version, updated_at included) become readable through PostgREST by the anon role."
+   },
+   {
+    "kind": "propagation",
+    "file": "supabase/migrations/20261102000100_tree_profiles.sql",
+    "line": 30,
+    "scope": "policy farmer_profiles_select",
+    "description": "Row filter is 'consent_public or farmer_uid = auth.uid()': every consented row is returned regardless of any tree assignment or tree listing state, and without a column restriction."
+   },
+   {
+    "kind": "propagation",
+    "file": "supabase/migrations/20261102000100_tree_profiles.sql",
+    "line": 147,
+    "scope": "private.public_tree_profile farmer projection",
+    "description": "The intended public projection emits displayName, village, region, yearsFarming, bio, bioEn and hasPhoto only, joined via farmer_assignments with revoked_at is null (lines 150-153); this narrowing is not mirrored at the table."
+   },
+   {
+    "kind": "sink",
+    "file": "docs/SUPABASE_MIGRATION.md",
+    "line": 54,
+    "scope": "documented anon contract",
+    "description": "States the anon surface returns 'keine UIDs, keine Medienpfade'; the table read violates this: an anon Data API response carries farmer_uid and photo_path for every consented farmer, including those with no active or listed tree."
+   }
+  ],
+  "evidence": [
+   {
+    "file": "supabase/migrations/20261102000100_tree_profiles.sql",
+    "line": 11,
+    "description": "Table definition: farmer_uid uuid references auth.users, photo_path text matching '^[0-9a-f-]{36}/profile/...' (object path in the private field-media bucket), consent_at, consent_version."
+   },
+   {
+    "file": "supabase/migrations/20261102000100_tree_profiles.sql",
+    "line": 199,
+    "description": "tree_media_paths (service_role only, grant at line 216) is the only intended reader of fp.photo_path, confirming that paths were meant to stay server-side."
+   },
+   {
+    "file": "supabase/tests/security.test.sql",
+    "line": 585,
+    "description": "Test 'tree: farmer uid never leaked' asserts the invariant only for the RPC output; line 583 ('profile: consented row readable' as anon) shows the table itself is anon-readable, and no test checks the column set."
+   },
+   {
+    "file": "public/app.js",
+    "line": 4496,
+    "description": "Consent label: name, photo and bio are published 'on the public pages of my trees' — consent scope is tree pages, not a global directory."
+   },
+   {
+    "file": "docs/ARCHITECTURE_AND_OPERATIONS.md",
+    "line": 92,
+    "description": "Operations doc: public_tree_profile 'liefert keine UIDs und keine Storage-Pfade'."
+   },
+   {
+    "file": "src/supabase-client.src.mjs",
+    "line": 399,
+    "description": "The only client read of farmer_profiles is the owner's own row (eq farmer_uid = user.id) via supabase.from(), which also establishes that schema public is the exposed Data API schema; public pages use the RPC, so the anon grant is unused by the shipped client."
+   },
+   {
+    "file": "supabase/migrations/20261020000410_storage.sql",
+    "line": 68,
+    "description": "field_media_select restricts object reads to the owner folder or quality_auditor, so a leaked photo_path alone cannot be fetched by anon or other users (limits impact)."
+   },
+   {
+    "file": "supabase/migrations/20261026000100_admin_tools.sql",
+    "line": 148,
+    "description": "farmer_has_tree is granted to authenticated but lives in schema private, which is not an exposed PostgREST schema; the hunter's uid-to-tree oracle is therefore not reachable from the Data API (corrects the candidate)."
+   }
+  ],
+  "conditions": [
+   {
+    "kind": "authentication_level",
+    "description": "Unauthenticated: only the publishable anon key, which is embedded in the shipped client."
+   },
+   {
+    "kind": "data_state",
+    "description": "At least one farmer has set consent_public = true; rows with consent withdrawn are not returned."
+   },
+   {
+    "kind": "system_configuration",
+    "description": "Schema public is an exposed Data API schema (Supabase default, and required by the shipped client's supabase.from() and rpc() calls)."
+   }
+  ],
+  "execution": {
+   "attacker_perspective": "Anonymous visitor holding the publishable anon key from the public bundle, enumerating consented farmers directly from the table instead of through the tree page RPC.",
+   "payloads": [
+    "GET {SUPABASE_URL}/rest/v1/farmer_profiles?select=farmer_uid,display_name,village,region,photo_path,consent_at,consent_version  (headers: apikey: <anon key>, Authorization: Bearer <anon key>)",
+    "set role anon; select farmer_uid, photo_path, consent_at, consent_version from public.farmer_profiles;"
+   ],
+   "instructions": [
+    "Apply the migrations and the fixtures from supabase/tests/security.test.sql (consented farmer c_fa with photo '<uid>/profile/me.jpg').",
+    "As role anon, select farmer_uid, photo_path, consent_at, consent_version from public.farmer_profiles; the consented farmer's auth UUID and storage path are returned.",
+    "Set revoked_at = now() on that farmer's farmer_assignments rows (or point the assignment at an unlisted tree) and repeat: the row is still returned, while public_tree_profile for the tree no longer shows the farmer.",
+    "Owner-observed equivalent against their own project only: the GET above with the anon key."
+   ],
+   "observed_result": "Established from source without runtime execution (no target execution permitted in this run): the grant at tree_profiles.sql:27 covers every column and the sole SELECT policy at lines 29-30 admits every consent_public row with no join to farmer_assignments or trees_public, so PostgREST returns farmer_uid, photo_path, consent_at and consent_version for all consented farmers to anon. No later migration revokes or narrows this grant (grep of supabase/migrations for farmer_profiles)."
+  },
+  "remediation": {
+   "strategy": "Remove the direct table surface for non-owners: revoke SELECT on public.farmer_profiles from anon and keep authenticated reads owner-only (policy 'farmer_uid = auth.uid()'), since the client only reads its own row and public pages use public_tree_profile. If a public list is wanted later, expose a security-invoker view or a dedicated RPC limited to display_name, village, region, years_farming, bio, bio_en and (photo_path is not null), joined to an active assignment on a listed tree. Add a security.test.sql case asserting anon select on farmer_profiles fails (or at least that farmer_uid/photo_path are not selectable).",
+   "code_changes": [
+    {
+     "file_name": "supabase/migrations/<new>_farmer_profiles_owner_only.sql",
+     "fixed_code": "revoke select on public.farmer_profiles from anon;\ndrop policy if exists farmer_profiles_select on public.farmer_profiles;\ncreate policy farmer_profiles_select_own on public.farmer_profiles for select to authenticated\n  using (farmer_uid = (select auth.uid()));\n-- public_tree_profile and tree_media_paths are SECURITY DEFINER and unaffected."
+    },
+    {
+     "file_name": "supabase/tests/security.test.sql",
+     "fixed_code": "jsonb_build_array('anon', 'profile: table not anon-readable', 'select farmer_uid::text from public.farmer_profiles limit 1', 'err'),"
+    }
+   ]
+  },
+  "severity": {
+   "likelihood": {
+    "score": "high",
+    "reason": "No authentication, no precondition beyond a consented farmer existing; the anon key ships in the public bundle and the query is a single documented PostgREST GET."
+   },
+   "impact": {
+    "score": "low",
+    "reason": "Disclosure of stable auth UIDs, private-bucket object paths and consent timestamps for consented farmers, and enumeration of consented farmers beyond the tree-page scope they consented to (revoked or unlisted assignments), contradicting the documented contract and the consent text (DSGVO consent-scope relevance). No credential, money or private document is exposed: the storage policy prevents fetching the path, farmer_has_tree is not reachable from the API, and name/village/bio are already public for actively listed trees."
+   },
+   "overall_severity": "low"
+  },
+  "confidence": {
+   "score": "high",
+   "reason": "The defect is a grant plus RLS predicate fully visible in one migration, with no later migration, view or column grant narrowing it; the project's own client and tests demonstrate that schema public is exposed and that the table is anon-readable (security.test.sql:583)."
+  }
+ },
+ {
+  "verdict": "confirmed",
+  "fingerprint": "faseela/tree_profiles/public_tree_profile/definer-ignores-listed-status",
+  "title": "Anonymous public_tree_profile and tree_media_paths read trees_public as SECURITY DEFINER without the RLS predicate status = 'listed'",
+  "description": "The row policy trees_public_select grants anon and authenticated only rows with status = 'listed'. The SECURITY DEFINER function private.public_tree_profile, executable by anon through the public wrapper and called unauthenticated from public/tree.mjs, selects the tree by id with no status predicate and returns the full catalogue row (name, region, type, planted year, estimated yield, total/available shares, share and land prices, land area, currency, images) plus the status value itself; it raises not-found only for ids that do not exist. Any unlisted tree is therefore both detectable (existence oracle) and fully readable by anyone who knows or guesses its id, and the same omission in private.tree_media_paths lets the anonymous Edge Function tree-media sign published media for unlisted trees. The repository itself creates unlisted rows that are meant to stay hidden: the load test unlists its tree on teardown (tests/load/reserve.load.mjs:70) and docs/SUPABASE_MIGRATION.md:74 notes that e2e runs leave `tree_e2e` unlisted until removed before launch. No personal data is exposed (the farmer block stays consent-gated, uids and storage paths are omitted), so the impact is confidentiality of hidden catalogue entries and an id oracle.",
+  "root_cause": "private.public_tree_profile (supabase/migrations/20261102000100_tree_profiles.sql:143) and private.tree_media_paths (:194-201) run as the table owner (SECURITY DEFINER, no FORCE ROW LEVEL SECURITY on trees_public), so RLS does not apply, and neither function re-applies the `status = 'listed'` predicate that trees_public_select (20261020000100_core_schema.sql:307-308) imposes on direct anon reads. Other definer paths in the same codebase (create_investment_request, submit_pressing_batch) do re-apply it, so this is a policy/query disagreement specific to the public-profile pair.",
+  "intended_behavior": "Unlisted trees are hidden from the public: the only row policy on trees_public for anon/authenticated is `status = 'listed'`, the status domain is exactly {listed, unlisted}, the project's own test and documentation conventions treat unlisting as the way to hide test/load trees, and the legacy Firestore rules test asserted that guests cannot read an unlisted tree. The anonymous RPC and the media-path lookup should therefore raise not-found (and return no media) for an unlisted id, exactly like a non-existent id.",
+  "trace": [
+   {
+    "kind": "entrypoint",
+    "file": "supabase/migrations/20261102000100_tree_profiles.sql",
+    "line": 206,
+    "scope": "public.public_tree_profile(payload jsonb)",
+    "description": "SECURITY INVOKER wrapper granted to anon and authenticated (:215); invoked unauthenticated via PostgREST from public/tree.mjs:124 with the publishable key only."
+   },
+   {
+    "kind": "propagation",
+    "file": "supabase/migrations/20261102000100_tree_profiles.sql",
+    "line": 137,
+    "scope": "private.public_tree_profile",
+    "description": "treeId is validated by regex only (^[A-Za-z0-9_-]{1,80}$); any syntactically valid id can be probed."
+   },
+   {
+    "kind": "propagation",
+    "file": "supabase/migrations/20261102000100_tree_profiles.sql",
+    "line": 143,
+    "scope": "private.public_tree_profile (SECURITY DEFINER, owner bypasses RLS)",
+    "description": "`select * into v_tree from public.trees_public where tree_id = v_tree_id` carries no `status = 'listed'` predicate; not-found is raised only when the id is absent (:144-146), so an unlisted id falls through."
+   },
+   {
+    "kind": "sink",
+    "file": "supabase/migrations/20261102000100_tree_profiles.sql",
+    "line": 170,
+    "scope": "private.public_tree_profile return",
+    "description": "Returns v_tree.status, name/nameEn, region, treeType, plantedYear, estimatedAnnualYieldKg, totalShares, availableShares, pricePerShareMinor, landPriceMinor, hasLandOption, landAreaSqm, currency and images of the unlisted row to the anonymous caller (:170-175)."
+   }
+  ],
+  "evidence": [
+   {
+    "file": "supabase/migrations/20261020000100_core_schema.sql",
+    "line": 307,
+    "description": "Source-of-truth policy: trees_public_select for anon, authenticated using (status = 'listed'); the status check constraint (:83) allows exactly 'listed' and 'unlisted'; RLS is enabled (:290) but never FORCEd, so the definer owner bypasses it."
+   },
+   {
+    "file": "supabase/migrations/20261102000100_tree_profiles.sql",
+    "line": 194,
+    "description": "tree_media_paths filters events/updates by status = 'published' and the farmer by consent_public but never joins trees_public.status; the anonymous Edge Function tree-media (supabase/functions/tree-media/index.ts:36, service_role rpc) signs the resulting paths for unlisted trees."
+   },
+   {
+    "file": "supabase/migrations/20261026000300_notification_hooks.sql",
+    "line": 70,
+    "description": "Contrast: create_investment_request (:70) and submit_pressing_batch (:454) re-apply `status = 'listed'` inside SECURITY DEFINER code, showing the predicate is expected to be re-applied in definer paths."
+   },
+   {
+    "file": "tests/load/reserve.load.mjs",
+    "line": 70,
+    "description": "Teardown hides the load-test tree by setting status = 'unlisted', relying on unlisting to remove it from public view."
+   },
+   {
+    "file": "docs/SUPABASE_MIGRATION.md",
+    "line": 74,
+    "description": "Documents that e2e runs leave `tree_e2e` unlisted and that it must be removed before launch, i.e. unlisted rows are expected to exist in the deployed database and to be hidden meanwhile."
+   },
+   {
+    "file": "functions/test/firestore.rules.test.js",
+    "line": 50,
+    "description": "Legacy rules test asserted that a guest cannot read an unlisted tree document; the product intent predates the Supabase migration."
+   },
+   {
+    "file": "public/tree.mjs",
+    "line": 104,
+    "description": "Client only disables the CTA when tr.status !== 'listed'; it still renders the unlisted tree's data, so no client-side control compensates (and the client is not a security boundary)."
+   },
+   {
+    "file": "supabase/tests/security.test.sql",
+    "line": 576,
+    "description": "Public-profile tests (:576-590) cover farmer consent, media paths, unknown and malformed ids but contain no unlisted-tree case, so the gap is untested."
+   }
+  ],
+  "conditions": [
+   {
+    "kind": "data_state",
+    "description": "At least one row in public.trees_public must have status = 'unlisted' (e.g. the documented leftover e2e tree, a load-test tree after teardown, or any catalogue entry withdrawn by an operator)."
+   },
+   {
+    "kind": "authentication_level",
+    "description": "None required: anon role with the publishable key suffices; authenticated callers are equally affected."
+   }
+  ],
+  "execution": {
+   "attacker_perspective": "Unauthenticated visitor (anon role) who knows or guesses a tree id; ids follow the predictable `tree_NN` / `tree_e2e` convention used throughout the repository.",
+   "payloads": [
+    "POST /rest/v1/rpc/public_tree_profile with body {\"payload\":{\"treeId\":\"tree_e2e\"}} and header apikey: <publishable key>",
+    "GET /functions/v1/tree-media?treeId=tree_e2e"
+   ],
+   "instructions": [
+    "Local, non-destructive, on a sandboxed Postgres with all migrations applied: insert into public.trees_public (tree_id, status, total_shares, available_shares, price_per_share_minor) values ('tree_hidden', 'unlisted', 4, 4, 1000);",
+    "set role anon; select count(*) from public.trees_public where tree_id = 'tree_hidden'; -- RLS: expect 0",
+    "select public.public_tree_profile('{\"treeId\":\"tree_hidden\"}'); -- expect a JSON object whose tree.status is 'unlisted' instead of the not-found error raised for 'tree_nope'",
+    "set role service_role; select public.tree_media_paths('tree_hidden'); -- expect published media paths/farmer photo to be returned without regard to the tree's listing"
+   ],
+   "observed_result": "Source-established (no runtime execution permitted in this run): the only predicate between the anon caller and the row is `tree_id = v_tree_id` at tree_profiles.sql:143 inside a SECURITY DEFINER function on a table whose RLS is not FORCEd, so an unlisted row is returned with its full catalogue fields at :170-175, whereas the same anon principal's direct `select` is filtered to zero rows by trees_public_select (core_schema.sql:307-308). The defect is a present-vs-absent predicate decidable from source alone."
+  },
+  "remediation": {
+   "strategy": "Re-apply the listing predicate inside both definer functions so they agree with the row policy: look the tree up with `and status = 'listed'` in private.public_tree_profile (unlisted ids then raise the same not-found error as unknown ids, closing the oracle) and join trees_public with `status = 'listed'` in private.tree_media_paths so tree-media signs nothing for unlisted trees. Add an unlisted-tree case to supabase/tests/security.test.sql (anon profile -> err:not-found; service_role media -> empty). If shareable profiles for unlisted trees are ever wanted, change the policy and document it instead of leaving the RPC and RLS in disagreement.",
+   "code_changes": [
+    {
+     "file_name": "supabase/migrations/20261102000100_tree_profiles.sql",
+     "fixed_code": "  select * into v_tree from public.trees_public where tree_id = v_tree_id and status = 'listed';\n  if not found then\n    perform private.fail('not-found', 'Tree not found.');\n  end if;"
+    },
+    {
+     "file_name": "supabase/migrations/20261102000100_tree_profiles.sql",
+     "fixed_code": "  select jsonb_build_object(\n    'events', coalesce((select jsonb_agg(jsonb_build_object('eventId', e.id, 'paths', u.media_paths) order by e.created_at desc)\n                          from public.tree_events_public e join public.farmer_updates u on u.id = e.update_id\n                          join public.trees_public t on t.tree_id = e.tree_id and t.status = 'listed'\n                         where e.tree_id = p_tree_id and e.status = 'published' and u.status = 'published'\n                           and cardinality(u.media_paths) > 0), '[]'::jsonb),\n    'farmerPhoto', (select fp.photo_path from public.farmer_assignments a\n                      join public.farmer_profiles fp on fp.farmer_uid = a.farmer_uid and fp.consent_public\n                      join public.trees_public t on t.tree_id = a.tree_id and t.status = 'listed'\n                     where a.tree_id = p_tree_id and a.revoked_at is null order by a.assigned_at desc limit 1));"
+    }
+   ]
+  },
+  "severity": {
+   "likelihood": {
+    "score": "medium",
+    "reason": "Reachable by anyone without credentials through a documented public endpoint; tree ids are short and conventional (tree_01, tree_e2e), so probing is trivial, but a target row with status 'unlisted' must exist."
+   },
+   "impact": {
+    "score": "low",
+    "reason": "Discloses catalogue attributes (names, region, prices, share counts, land data, images) of withdrawn or test trees and reveals their existence, plus signed URLs of their already-published media; no personal data, money or state mutation is involved, and the farmer block remains consent-gated."
+   },
+   "overall_severity": "low"
+  },
+  "confidence": {
+   "score": "high",
+   "reason": "Every trace line was verified in source; the predicate is present in the RLS policy and absent in both definer functions, RLS is not FORCEd, the grant to anon is explicit, and the repository's own tests and docs show unlisted rows are expected to exist and to be hidden."
+  }
+ },
+ {
+  "verdict": "needs_validation",
+  "fingerprint": "faseela/tree_profiles/tree_media_paths/unreviewed-media-path-trust",
+  "title": "Farmer-supplied field media reaches the anonymous tree page without any reviewer seeing it; publish decision binds the report row, not the media objects",
+  "description": "A farmer uploads JPEG/PNG/WebP objects into field-media/<uid>/<treeId>/ (client path, insert-only RLS) and submits a field report whose mediaPaths are validated only for the '<uid>/<treeId>/' prefix, length and absence of '..' (object existence is not checked). The quality auditor's review queue returns the farmer_updates row (to_jsonb, including media_paths) but the auditor client discards it in mapReviewItem and renders only eventType and 300 chars of notes; the only client-side signed-URL viewer is for payment proofs, so no auditor ever sees the images. review_farmer_update publishes the event with update_id and no existence check, hash or snapshot of the media. private.tree_media_paths then returns u.media_paths verbatim for every published event/report pair and the anonymous tree-media Edge Function signs those keys with service_role and serves 1-hour URLs with public caching, which tree.mjs renders on the public tree page. Two consequences follow from source: (a) every published report's images become public without human review of their content, and (b) because the storage insert policy (final can_upload_field_media) only requires farmer role, own-uid folder, filename regex, an active assignment and <30 objects in the folder, a farmer can list a not-yet-existing path at submission, let the auditor publish, and create the object afterwards; the signer then serves it. The verifier confirmed every trace line and found no compensating control: the storage SELECT policy does grant quality_auditor read access to field-media (storage.sql:68-71), but no client or RPC path exercises it, and the bucket's allowed_mime_types (image/*, audio/*) bounds content class, not content.",
+  "claimed_root_cause": "The publication control for field reports (quality_auditor review in review_farmer_update) covers the farmer_updates row, not the referenced storage objects; tree_media_paths treats u.media_paths as a trusted allowlist; can_upload_field_media and the insert-only storage policy permit creating a referenced-but-missing object after publication; and the auditor client (mapReviewItem) discards media_paths so no reviewer ever views the media before it becomes public.",
+  "trace": [
+   {
+    "kind": "entrypoint",
+    "file": "supabase/migrations/20261026000300_notification_hooks.sql",
+    "line": 366,
+    "scope": "private.submit_farmer_update (farmer-authenticated RPC)",
+    "description": "mediaPaths items are accepted when they are strings <=300 chars starting with '<uid>/<treeId>/' and containing no '..'; object existence and reviewability are not checked (verified lines 360-371)."
+   },
+   {
+    "kind": "propagation",
+    "file": "public/data-mappers.mjs",
+    "line": 197,
+    "scope": "mapReviewItem (farmer_updates queue)",
+    "description": "Review item exposes eventType and the first 300 chars of notes only; media_paths returned by list_review_queue (to_jsonb(r), rpc_operations.sql:206-210) are dropped, so the auditor UI has no way to view the media being published."
+   },
+   {
+    "kind": "propagation",
+    "file": "supabase/migrations/20261102000100_tree_profiles.sql",
+    "line": 118,
+    "scope": "private.review_farmer_update (final definition)",
+    "description": "Publish inserts a tree_events_public row linked by update_id; the decision is not bound to the media objects (no existence check, no hash, no snapshot)."
+   },
+   {
+    "kind": "propagation",
+    "file": "supabase/migrations/20261102000100_tree_profiles.sql",
+    "line": 195,
+    "scope": "private.tree_media_paths (service_role)",
+    "description": "Returns u.media_paths verbatim for every published event joined to a published report as the set of publicly signable objects."
+   },
+   {
+    "kind": "propagation",
+    "file": "supabase/migrations/20261102000100_tree_profiles.sql",
+    "line": 226,
+    "scope": "private.can_upload_field_media (final definition, lines 219-237)",
+    "description": "After publication the farmer may still insert an object at the referenced path: only farmer role, own-uid first folder, filename regex, active assignment (farmer_has_tree, revoked_at is null) and <30 objects in the folder are required; storage.sql:65-66 is insert-only, so write-once blocks overwrite, not first creation."
+   },
+   {
+    "kind": "sink",
+    "file": "supabase/functions/tree-media/index.ts",
+    "line": 52,
+    "scope": "Deno.serve handler (anonymous GET, verify_jwt=false)",
+    "description": "service_role createSignedUrls signs the listed paths; line 66 returns 1-hour URLs to anonymous callers with cache-control public, max-age=300; public/tree.mjs:125 fetches and renders them on the public tree page."
+   }
+  ],
+  "evidence": [
+   {
+    "file": "supabase/migrations/20261026000300_notification_hooks.sql",
+    "line": 418,
+    "description": "Comment in the earlier review_farmer_update: 'Media stays private in Storage; only the count is published.' The review step was designed under that assumption; 20261102000100 later made media public without adding a media review step."
+   },
+   {
+    "file": "supabase/functions/tree-media/index.ts",
+    "line": 44,
+    "description": "Only the path's extension (.jpg/.jpeg/.png/.webp) is checked before signing; nothing about the object's provenance or review status. Lines 58-59 skip entries without a signedUrl, which is how a still-missing object would be silently omitted until it exists."
+   },
+   {
+    "file": "src/supabase-client.src.mjs",
+    "line": 508,
+    "description": "The only client-side createSignedUrl is for payment-proofs (getPaymentProofUrl); uploadFieldMedia (line 373) only uploads. There is no code path by which an auditor views field-media before publishing; app.js:24441 shows the receipt viewer only for investment items."
+   },
+   {
+    "file": "supabase/migrations/20261020000410_storage.sql",
+    "line": 68,
+    "description": "field_media_select grants quality_auditor read access to field-media objects: a data-layer control that would permit a media review step exists but is never exercised by any client or RPC path."
+   },
+   {
+    "file": "supabase/migrations/20261020000410_storage.sql",
+    "line": 8,
+    "description": "Bucket allowed_mime_types restricts declared content types to image/jpeg, image/png, image/webp and audio/*, bounding the attack to arbitrary image (or audio) content rather than active content; this bounds the class of content, not its appropriateness."
+   },
+   {
+    "file": "supabase/migrations/20261020000410_storage.sql",
+    "line": 65,
+    "description": "field_media_insert policy: authenticated INSERT allowed when can_upload_field_media(name); no UPDATE/DELETE policies, so an object can be created later but not replaced."
+   },
+   {
+    "file": "supabase/migrations/20261020000300_rpc_operations.sql",
+    "line": 206,
+    "description": "list_review_queue for farmer_updates returns to_jsonb(r) including media_paths, confirming the auditor client receives the path list and chooses not to render it."
+   }
+  ],
+  "blockers": [
+   "No parent-approved OS sandbox or local Postgres/Supabase stack in this run, so the fixture (upload or defer an image -> submit report -> publish -> tree_media_paths lists it -> farmer inserts the object -> tree-media signs it -> tree.html renders it) could not be executed; the claim rests on source reading of the RLS policy, RPC bodies and client code, which the verifier independently confirmed line by line.",
+   "Behaviour of supabase-js storage.createSignedUrls for a not-yet-existing object (per-item error skipped by index.ts:59 versus a whole-call error at index.ts:54) is a hosted-platform fact not visible in source; it decides whether the deferred-upload variant degrades gracefully or temporarily breaks the tree page.",
+   "Deployed enforcement of storage.buckets.allowed_mime_types and of the field_media_insert RLS policy by the Storage API (which bounds content class and permits the late insert) is a hosted-platform fact.",
+   "The confirmed schema requires an observed_result; none can be produced without target execution in this run."
+  ],
+  "validation_plan": {
+   "local": "In a local Supabase stack seeded with supabase/seed.sql and dummy accounts (farmer F assigned to tree T, auditor A, no real users): (1) as F upload a benign test image to field-media at '<F>/T/early.jpg' via the Storage API and call public.submit_farmer_update({treeId:T,eventType:'other',notes:'x',mediaPaths:['<F>/T/early.jpg','<F>/T/late.jpg']}) where late.jpg does not exist; assert success. (2) as A call public.list_review_queue({queue:'farmer_updates'}) and confirm the payload carries media_paths; load the built auditor UI and confirm no image preview or link is offered for the pending field report. (3) as A call public.review_farmer_update({updateId,decision:'publish'}). (4) as service_role call public.tree_media_paths('T') and assert both paths are listed. (5) as F upload a second benign test image to '<F>/T/late.jpg' through the Storage API and assert the insert policy accepts (HTTP 200). (6) run `supabase functions serve tree-media` and GET /functions/v1/tree-media?treeId=T anonymously; assert the JSON contains signed URLs for both early.jpg and late.jpg and that each URL returns the image. Also record the response of step 6 before step 5 to settle the createSignedUrls-missing-object blocker.",
+   "deployment": "Owner, in a staging project with dummy accounts and benign test images only: repeat steps 1-6 through the real UI/API and observe /tree.html?tree=T rendering both the pre-uploaded and the late-uploaded image; separately confirm in the auditor review UI that no image preview is offered for pending field reports. Do not perform on production."
+  }
+ }
+]

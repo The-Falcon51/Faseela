@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://riyvlhlhzxxerlwqoxsy.supabase.co; object-src 'none'; base-uri 'self'; form-action 'none'">
+  <meta name="referrer" content="no-referrer">
+  <meta name="description" content="Verify a Faseela stewardship certificate · التحقق من شهادة فسيلة">
+  <title>التحقق من الشهادة · Faseela certificate check</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="fonts/fonts.css">
+  <style>
+    :root { color-scheme: light dark; --bg:#fafaf9; --fg:#1c1917; --muted:#57534e; --line:#d6d3d1; --accent:#424830; --accent-fg:#fff; --ok:#15803d; --err:#b91c1c; --ok-bg:#dcfce7; --err-bg:#fee2e2; }
+    @media (prefers-color-scheme: dark) { :root { --bg:#1c1917; --fg:#fafaf9; --muted:#d6d3d1; --line:#57534e; --accent:#bcc3a1; --accent-fg:#1c1917; --ok:#86efac; --err:#fca5a5; --ok-bg:#14532d; --err-bg:#7f1d1d; } }
+    * { box-sizing: border-box; }
+    body { margin:0; min-height:100vh; display:grid; place-items:center; background:var(--bg); color:var(--fg); font:16px/1.6 'Cairo','Plus Jakarta Sans',system-ui,sans-serif; padding:1rem; }
+    main { width:100%; max-width:30rem; border:1px solid var(--line); border-radius:1rem; padding:1.5rem; }
+    h1 { font-size:1.35rem; margin:0 0 .25rem; } p { margin:.25rem 0 1rem; color:var(--muted); }
+    .en { direction:ltr; text-align:left; font-family:'Plus Jakarta Sans',system-ui,sans-serif; }
+    label { display:block; font-weight:600; margin:1rem 0 .25rem; }
+    input { width:100%; padding:.75rem; font:inherit; font-family:ui-monospace,monospace; direction:ltr; text-align:left; border:1px solid var(--line); border-radius:.75rem; background:transparent; color:inherit; text-transform:uppercase; }
+    input:focus-visible, button:focus-visible, a:focus-visible { outline:3px solid var(--accent); outline-offset:2px; }
+    button { margin-top:1rem; width:100%; padding:.8rem; font:inherit; font-weight:700; border:0; border-radius:.75rem; background:var(--accent); color:var(--accent-fg); cursor:pointer; }
+    button:disabled { opacity:.55; cursor:progress; }
+    #result { margin-top:1.25rem; padding:1rem; border-radius:.9rem; display:none; }
+    #result[data-state="ok"] { display:block; background:var(--ok-bg); color:var(--ok); }
+    #result[data-state="bad"] { display:block; background:var(--err-bg); color:var(--err); }
+    #result h2 { margin:0 0 .5rem; font-size:1.05rem; }
+    dl { display:grid; grid-template-columns:auto 1fr; gap:.25rem .75rem; margin:0; color:var(--fg); font-size:.92rem; }
+    dt { color:var(--muted); font-weight:600; } dd { margin:0; }
+    footer { margin-top:1.25rem; font-size:.8rem; color:var(--muted); }
+    a { color:var(--accent); }
+  </style>
+</head>
+<body>
+<main aria-labelledby="title">
+  <h1 id="title">التحقق من شهادة فسيلة</h1>
+  <p class="en">Check whether a Faseela stewardship certificate is genuine. Only non-personal facts are shown.</p>
+  <label for="serial">الرقم التسلسلي · Serial</label>
+  <input id="serial" type="text" inputmode="latin" autocomplete="off" spellcheck="false" placeholder="FSL-2026-XXXXXXXXXXXXXXXX" maxlength="25" aria-describedby="hint">
+  <p id="hint">كما يظهر على الشهادة · as printed on the certificate</p>
+  <button id="check" type="button">تحقق · Verify</button>
+  <section id="result" role="status" aria-live="polite"></section>
+  <footer><a href="./">العودة إلى فسيلة · Back to Faseela</a></footer>
+</main>
+<script type="module" src="verify.mjs"></script>
+</body>
+</html>

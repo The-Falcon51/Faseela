@@ -1,90 +1,100 @@
-const CACHE_NAME = 'faseela-app-v5';
-const CORE_ASSETS = [
+// Faseela service worker (review F-14): small app-shell precache, bounded image cache.
+// CACHE_VERSION and the ?v= of the code files below are written by scripts/version-assets.cjs on every build:
+// a cached file only ever answers for the build it belongs to, so page and code cannot drift apart.
+const CACHE_VERSION = 'b44c1604db59e';
+const SHELL_CACHE = `faseela-shell-${CACHE_VERSION}`;
+const IMAGE_CACHE = `faseela-images-${CACHE_VERSION}`;
+const IMAGE_CACHE_LIMIT = 40;
+
+const SHELL_ASSETS = [
   './',
   './index.html',
+  './app.js?v=44c1604db59e',
+  './events.js?v=44c1604db59e',
+  './assistant-knowledge.js?v=44c1604db59e',
+  './shop.js?v=44c1604db59e',
   './manifest.json',
-  './images/favicon.svg',
-  './images/icon-192.png',
-  './images/icon-512.png',
-  './images/icon-1024.png',
-  './images/apple-touch-icon.png',
-  './images/tree_ancient_khodairi.jpg',
-  './images/tree_sourani_idlib.jpg',
-  './images/tree_qaisi_daraa.jpg',
-  './images/tree_pistachio_ashouri.jpg',
-  './images/tree_pistachio_batouri.jpg',
-  './images/tree_pistachio_mork.jpg',
-  './images/pistachio_clusters_macro.jpg',
-  './images/tree_almond_farak.jpg',
-  './images/tree_almond_homs.jpg',
-  './images/tree_pomegranate_hourani.jpg',
-  './images/tree_pomegranate_jabbi.jpg',
-  './images/pomegranate_tree_daraa.jpg',
-  './images/tree_walnut_barada.jpg',
-  './images/tree_walnut_saydnaya.jpg',
-  './images/walnut_tree_barada.jpg',
-  './images/syrian_olive_oil_bottle.jpg',
-  './images/olive_branches_macro.jpg',
-  './images/olive_harvest_festival.jpg',
-  './images/syrian_transfer_receipt.jpg'
+  './assets/tailwind.css?v=44c1604db59e',
+  './fonts/fonts.css',
+  './fonts/cairo-arabic-wght-normal.woff2',
+  './fonts/cairo-latin-wght-normal.woff2',
+  './vendor/lucide.min.js',
+  './supabase-client.mjs?v=44c1604db59e',
+  './images/faseela-olive-tree-logo.svg',
+  './images/icon-192.png'
 ];
 
-self.addEventListener('install', event => {
+const OFFLINE_HTML = '<!doctype html><html lang="ar" dir="rtl"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>فسيلة</title><body style="font-family:Cairo,sans-serif;text-align:center;padding:4rem 2rem;background:#f5f0e8;color:#2c3e2d"><h1>فسيلة — وضع عدم الاتصال</h1><p>لا يوجد اتصال بالإنترنت. يرجى المحاولة لاحقاً.</p><p style="color:#57534e;font-size:.9rem">Faseela — you are offline.</p></body></html>';
+
+self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => {
-      return cache.addAll(CORE_ASSETS).catch(err => {
-        console.warn('Some assets could not be cached immediately:', err);
-      });
-    }).then(() => self.skipWaiting())
+    caches.open(SHELL_CACHE)
+      .then((cache) => cache.addAll(SHELL_ASSETS))
+      .catch((error) => console.warn('[sw] shell precache incomplete:', error && error.message))
+      .then(() => self.skipWaiting())
   );
 });
 
-self.addEventListener('activate', event => {
+self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then(cacheNames => {
-      return Promise.all(
-        cacheNames.filter(name => name !== CACHE_NAME).map(name => caches.delete(name))
-      );
-    }).then(() => self.clients.claim())
+    caches.keys()
+      .then((names) => Promise.all(names.filter((n) => n !== SHELL_CACHE && n !== IMAGE_CACHE).map((n) => caches.delete(n))))
+      .then(() => self.clients.claim())
   );
 });
 
-self.addEventListener('fetch', event => {
-  if (event.request.method !== 'GET') return;
+async function trimCache(name, limit) {
+  const cache = await caches.open(name);
+  const keys = await cache.keys();
+  for (let i = 0; i < keys.length - limit; i += 1) await cache.delete(keys[i]);
+}
 
-  // Navigation requests — network first with offline fallback
-  if (event.request.mode === 'navigate') {
+self.addEventListener('fetch', (event) => {
+  const { request } = event;
+  if (request.method !== 'GET') return;
+  const url = new URL(request.url);
+  // Never intercept cross-origin traffic (Supabase API, Realtime, auth redirects, uploads).
+  if (url.origin !== self.location.origin) return;
+
+  if (request.mode === 'navigate') {
     event.respondWith(
-      fetch(event.request)
-        .then(response => {
-          if (response && response.status === 200) {
-            const clone = response.clone();
-            caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
-          }
+      fetch(request, { cache: 'no-cache' })
+        .then((response) => {
+          if (response.ok) caches.open(SHELL_CACHE).then((cache) => cache.put('./index.html', response.clone()));
           return response;
         })
-        .catch(() => caches.match('./index.html').then(r => r || new Response(
-          '<html dir="rtl"><body style="font-family:Cairo,sans-serif;text-align:center;padding:4rem 2rem;background:#f5f0e8"><h1 style="color:#2c3e2d">فسيلة — وضع عدم الاتصال</h1><p style="color:#666">لا يوجد اتصال بالإنترنت. يرجى المحاولة لاحقاً.</p><p style="color:#999;font-size:0.85rem">Faseela — Offline Mode</p></body></html>',
-          { headers: { 'Content-Type': 'text/html; charset=utf-8' } }
-        )))
+        .catch(async () => (await caches.match('./index.html'))
+          || new Response(OFFLINE_HTML, { headers: { 'Content-Type': 'text/html; charset=utf-8' } }))
     );
     return;
   }
 
-  // Other resources — stale-while-revalidate
-  event.respondWith(
-    caches.match(event.request).then(cachedResponse => {
-      const fetchPromise = fetch(event.request).then(networkResponse => {
-        if (networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic') {
-          const responseToCache = networkResponse.clone();
-          caches.open(CACHE_NAME).then(cache => {
-            cache.put(event.request, responseToCache);
-          });
+  if (url.pathname.includes('/images/')) {
+    // Cache-first for images, bounded so the device storage stays small.
+    event.respondWith(
+      caches.match(request).then((cached) => cached || fetch(request).then((response) => {
+        if (response.ok && response.type === 'basic') {
+          const copy = response.clone();
+          caches.open(IMAGE_CACHE).then((cache) => cache.put(request, copy)).then(() => trimCache(IMAGE_CACHE, IMAGE_CACHE_LIMIT));
         }
-        return networkResponse;
-      }).catch(() => cachedResponse || new Response('', { status: 408 }));
+        return response;
+      }))
+    );
+    return;
+  }
 
-      return cachedResponse || fetchPromise;
-    })
+  // Code and styles: network-first, so a new deploy is visible on the first load (no second
+  // reload needed). The cached copy is only an offline fallback.
+  event.respondWith(
+    // cache: 'no-cache' revalidates with the server (cheap 304) instead of trusting the HTTP cache.
+    fetch(request, { cache: 'no-cache' })
+      .then((response) => {
+        if (response.ok && response.type === 'basic') {
+          const copy = response.clone();
+          caches.open(SHELL_CACHE).then((cache) => cache.put(request, copy));
+        }
+        return response;
+      })
+      .catch(async () => (await caches.match(request)) || new Response('', { status: 504 }))
   );
 });
