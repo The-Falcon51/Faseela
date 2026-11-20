@@ -15,7 +15,7 @@ const {
 
 test('Integration Suite: Deterministic Request ID Generation and Proof Path Validation', () => {
   const uid = 'investor_usr_42';
-  const idempotencyKey = 'inv_test_key_0123456789abcdef';
+  const idempotencyKey = 'test-idempotency-key-1';
   const reqId = requestIdFor(uid, idempotencyKey);
 
   assert.equal(typeof reqId, 'string');
