@@ -68,6 +68,36 @@ jobs:
           npx playwright install --with-deps chromium >/dev/null
           npm run test:ui
           npm run test:shop
+  preview:
+    # Pull requests from this repository only (forks get no secrets). Deploys to a Firebase preview
+    # channel with its own URL that expires after 7 days; the live site is not touched.
+    # Note: the preview talks to the same Supabase project as live (see CSP connect-src).
+    needs: verify
+    if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    env:
+      HAS_FIREBASE_SA: ${{ secrets.FIREBASE_SERVICE_ACCOUNT != '' }}
+    steps:
+      - name: Skip notice when the service account secret is missing
+        if: env.HAS_FIREBASE_SA != 'true'
+        run: echo "::notice::FIREBASE_SERVICE_ACCOUNT is not set; preview deploy skipped."
+      - uses: actions/checkout@v4
+        if: env.HAS_FIREBASE_SA == 'true'
+      - uses: actions/setup-node@v4
+        if: env.HAS_FIREBASE_SA == 'true'
+        with:
+          node-version: 22
+          cache: npm
+      - if: env.HAS_FIREBASE_SA == 'true'
+        run: npm ci && npm run build:web && npm run build
+      - name: Deploy Firebase Hosting preview channel (expires after 7 days)
+        if: env.HAS_FIREBASE_SA == 'true'
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          projectId: gen-lang-client-0319369264
+          expires: 7d
   deploy:
     needs: verify
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
