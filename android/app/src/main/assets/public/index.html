@@ -42,13 +42,13 @@
   <title>فسيلة | المنصة التشاركية لأشجار الزيتون في سوريا</title>
   <!-- Fonts: self-hosted (scripts/build-web.cjs), no Google Fonts requests -->
   <link rel="preload" href="fonts/cairo-arabic-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
-  <meta name="faseela-build" content="44c1604db59e">
+  <meta name="faseela-build" content="3558bc32533a">
   <link rel="stylesheet" href="fonts/fonts.css">
   <!-- Styles: Tailwind is prebuilt by scripts/build-web.cjs (no runtime CDN) -->
-  <link rel="stylesheet" href="assets/tailwind.css?v=44c1604db59e">
+  <link rel="stylesheet" href="assets/tailwind.css?v=3558bc32533a">
   <!-- Lucide Icons (self-hosted, version pinned in package.json) -->
   <script src="vendor/lucide.min.js"></script>
-  <script src="events.js?v=44c1604db59e"></script>
+  <script src="events.js?v=3558bc32533a"></script>
   <style>
     :root {
       --sat: env(safe-area-inset-top, 0px);
@@ -762,6 +762,8 @@
   <!-- Isolated Single-Page Print Stage (Universal Multi-Platform Output Engine) -->
   <div id="faseela-print-stage" class="print-stage-container" aria-hidden="true"></div>
   <a href="#page-home" class="skip-link" data-i18n="skip_to_content">تخطي إلى المحتوى الرئيسي</a>
+  <!-- Test phase notice (remove when the platform leaves the test phase) -->
+  <div id="test-phase-banner" role="note" class="bg-amber-100 dark:bg-amber-950 text-amber-950 dark:text-amber-100 border-b border-amber-300 dark:border-amber-800 px-4 py-2 text-center text-xs font-bold"><span data-i18n="test_phase_banner">مرحلة تجريبية: منصة فسيلة في طور التشغيل التجريبي، وقد تتغير المحتويات والوظائف.</span></div>
   <!-- Executive Impersonation / Preview Mode Banner -->
   <div id="admin-impersonation-banner" class="hidden sticky top-0 z-50 bg-gradient-to-r from-purple-900 via-indigo-950 to-purple-950 text-white px-4 py-2.5 shadow-xl border-b border-purple-400/40 text-xs">
     <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
@@ -9233,9 +9235,9 @@
   </nav>
 
   <!-- ================= JAVASCRIPT LOGIC & STATE ================= -->
-  <script src="app.js?v=44c1604db59e"></script>
-  <script src="assistant-knowledge.js?v=44c1604db59e"></script>
-  <script src="shop.js?v=44c1604db59e"></script>
+  <script src="app.js?v=3558bc32533a"></script>
+  <script src="assistant-knowledge.js?v=3558bc32533a"></script>
+  <script src="shop.js?v=3558bc32533a"></script>
 
   <!-- ================= 1. MODAL: FOUNDER EDIT TREE & PRICING ================= -->
   <div id="modal-fndr-edit-tree" role="dialog" aria-modal="true" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 mobile-sheet-overlay">
@@ -10649,6 +10651,6 @@
     </div>
   </div>
 
-  <script type="module" src="./supabase-client.mjs?v=44c1604db59e"></script>
+  <script type="module" src="./supabase-client.mjs?v=3558bc32533a"></script>
 </body>
 </html>
