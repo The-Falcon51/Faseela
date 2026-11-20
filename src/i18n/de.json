@@ -2765,5 +2765,6 @@
  "prefs_push_busy": "Wird ausgeführt …",
  "prefs_push_denied": "Benachrichtigungen sind in den Systemeinstellungen blockiert. Erlauben Sie sie für Faseela und versuchen Sie es erneut.",
  "prefs_push_failed": "Die Einstellung konnte nicht geändert werden. Bitte versuchen Sie es erneut.",
- "prefs_push_login_first": "Melden Sie sich zuerst an, um Benachrichtigungen einzuschalten."
+ "prefs_push_login_first": "Melden Sie sich zuerst an, um Benachrichtigungen einzuschalten.",
+ "test_phase_banner": "Testphase: Faseela befindet sich im Testbetrieb. Inhalte und Funktionen können sich noch ändern."
 }
