@@ -68,6 +68,26 @@ jobs:
           npx playwright install --with-deps chromium >/dev/null
           npm run test:ui
           npm run test:shop
+  android:
+    # Builds the Android app (debug APK) so a Capacitor or Gradle change is compiled on every pull request and push.
+    # GitHub's Ubuntu runners ship the Android SDK; Capacitor 8 needs JDK 21.
+    needs: verify
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - run: npm ci && npm run build:web && npm run sync
+      - run: npx cap sync android
+      - name: Build debug APK
+        working-directory: android
+        run: ./gradlew assembleDebug --no-daemon --stacktrace
   preview:
     # Pull requests from this repository only (forks get no secrets). Deploys to a Firebase preview
     # channel with its own URL that expires after 7 days; the live site is not touched.

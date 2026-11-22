@@ -1,6 +1,7 @@
 // Catalogue suite: the database is the source of truth for the tree catalogue. A tree that exists only on the
 // server appears in the marketplace, server texts replace the built-in ones, unlisted trees stay hidden.
 import { chromium } from 'playwright';
+import { hermetic } from './hermetic.mjs';
 import assert from 'node:assert/strict';
 import path from 'node:path';
 import { spawn } from 'node:child_process';
@@ -22,7 +23,7 @@ const rows = [
 window.FaseelaFirebase = window.FaseelaBackend = { backend: 'supabase', listPublicTrees: async () => rows.map((row) => mappers.mapPublicTree(row)), pendingGiftCode: () => '', pendingReferralCode: () => '' };
 setTimeout(() => window.dispatchEvent(new CustomEvent('faseela-auth-state', { detail: null })), 200);`;
 
-const browser = await chromium.launch({ executablePath: process.env.CHR || undefined });
+const browser = hermetic(await chromium.launch({ executablePath: process.env.CHR || undefined }));
 try {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, serviceWorkers: 'block' });
   await ctx.route('**/supabase-client.mjs*', (r) => r.fulfill({ contentType: 'text/javascript', body: MOCK }));

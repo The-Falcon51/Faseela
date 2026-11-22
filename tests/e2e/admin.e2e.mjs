@@ -2,6 +2,7 @@
 // behaviour: access control by role, every view's loading/empty/error state, confirmations, text-only rendering,
 // CSV injection guard, four-eyes rules in the UI, and axe (WCAG 2.x A/AA) in both themes.
 import { chromium } from 'playwright';
+import { hermetic } from './hermetic.mjs';
 import AxeBuilder from '@axe-core/playwright';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -139,7 +140,7 @@ function emit(r) { window.dispatchEvent(new CustomEvent('faseela-auth-state', { 
 setTimeout(() => emit(role), 150);
 `;
 
-const browser = await chromium.launch({ executablePath: process.env.CHR || undefined });
+const browser = hermetic(await chromium.launch({ executablePath: process.env.CHR || undefined }));
 const failures = [];
 async function open(query, viewport = { width: 1280, height: 900 }) {
   const ctx = await browser.newContext({ viewport, acceptDownloads: true });

@@ -5,6 +5,7 @@
 //   4. the tab stays away when there is nothing behind it; German texts; axe in light and dark.
 // Run: node tests/e2e/shop.e2e.mjs   (CHR=/path/to/chrome to use a preinstalled Chromium)
 import { chromium } from 'playwright';
+import { hermetic } from './hermetic.mjs';
 import AxeBuilder from '@axe-core/playwright';
 import assert from 'node:assert/strict';
 import path from 'node:path';
@@ -67,7 +68,7 @@ setTimeout(() => window.dispatchEvent(new CustomEvent('faseela-auth-state', { de
   auth_provider: 'email', permittedPages: ['home', 'marketplace', 'dashboard'] } : null })), 200);
 `;
 
-const browser = await chromium.launch({ executablePath: process.env.CHR || undefined });
+const browser = hermetic(await chromium.launch({ executablePath: process.env.CHR || undefined }));
 const failures = [];
 const open = async (query) => {
   const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 }, locale: 'en-US' });
