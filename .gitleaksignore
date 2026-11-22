@@ -1,3 +1,5 @@
 # One entry per reviewed false positive (format: commit:file:rule:line).
-# Test fixture `idempotencyKey = 'test-idempotency-key-1'` in a historical commit; not a credential.
+# 1) Plain test string in the investment-flow test fixture of a historical commit; not a credential.
+# 2) An earlier comment in this file that quoted that fixture line.
 a1cd0eec3db90a0075366f2d9039c126562bcab0:functions/test/investment-flow.test.js:generic-api-key:18
+932de10570d5a7aa99757daf531e4e90e87505d7:.gitleaksignore:generic-api-key:2
