@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="rtl" class="land-offer-off boutique-off">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -42,13 +42,13 @@
   <title>فسيلة | المنصة التشاركية لأشجار الزيتون في سوريا</title>
   <!-- Fonts: self-hosted (scripts/build-web.cjs), no Google Fonts requests -->
   <link rel="preload" href="fonts/cairo-arabic-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
-  <meta name="faseela-build" content="3241b7c71964">
+  <meta name="faseela-build" content="4fb80137b9fe">
   <link rel="stylesheet" href="fonts/fonts.css">
   <!-- Styles: Tailwind is prebuilt by scripts/build-web.cjs (no runtime CDN) -->
-  <link rel="stylesheet" href="assets/tailwind.css?v=3241b7c71964">
+  <link rel="stylesheet" href="assets/tailwind.css?v=4fb80137b9fe">
   <!-- Lucide Icons (self-hosted, version pinned in package.json) -->
   <script src="vendor/lucide.min.js"></script>
-  <script src="events.js?v=3241b7c71964"></script>
+  <script src="events.js?v=4fb80137b9fe"></script>
   <style>
     :root {
       --sat: env(safe-area-inset-top, 0px);
@@ -984,7 +984,7 @@
               </div>
               <h1 class="text-4xl sm:text-6xl font-black leading-tight tracking-tight" data-i18n="hero_title_full">
                 اكفل <span class="text-terracotta-500 underline decoration-olive-600 underline-offset-8">شجرة زيتون</span><br>
-                وشارك الأرض بركتها وثمارها
+                <span data-i18n="hero_title_sub">واحصل على حصة من محصولها</span>
               </h1>
               <p class="text-stone-300 text-base sm:text-lg font-normal leading-relaxed max-w-2xl" data-i18n="hero_desc">
                 اكفل حصة من محصول شجرة زيتون مدرجة في سوريا، وتابع رعايتها عبر تحديثات المزارع. بعد العصر تُخصَّص لك حصتك من الزيت، ويمكنك طلب توصيلها أو استلامها أو التبرع بها، ويراجع فريق فسيلة كل طلب.
@@ -1018,7 +1018,7 @@
             </div>
 
             <!-- Hero Feature Card (Dynamically rendered by renderHeroFeaturedTree) -->
-            <div class="lg:col-span-5" id="hero-featured-tree-container">
+            <div class="lg:col-span-5 hidden" id="hero-featured-tree-container">
               <div class="bg-white text-stone-900 rounded-3xl p-6 sm:p-8 shadow-2xl border border-stone-200 relative overflow-hidden transition-all duration-300" id="hero-featured-tree-card">
                 <div class="absolute top-0 right-0 bg-terracotta-600 text-white px-4 py-1.5 rounded-bl-2xl text-xs font-bold flex items-center gap-1 shadow-xs">
                   <i data-lucide="flame" class="w-3.5 h-3.5"></i>
@@ -1593,12 +1593,12 @@
 
 
 <!-- Interactive Harvest & Carbon Impact Calculator -->
-      <section id="section-harvest-calculator" class="py-14 bg-white border-b border-stone-200">
+      <section id="section-harvest-calculator" class="hidden py-14 bg-white border-b border-stone-200">
         <div class="max-w-5xl mx-auto px-4 sm:px-6 text-start">
           <div class="text-center max-w-2xl mx-auto mb-10">
             <span class="bg-olive-100 text-olive-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider" data-i18n="calc_badge">حاسبة الكفالة والأثر التفاعلية</span>
-            <h2 class="text-2xl sm:text-3xl font-black text-olive-950 mt-2" data-i18n="calc_title">احسب محاصيلك وأثرك البيئي المباشر في سوريا</h2>
-            <p class="text-xs text-stone-600 mt-1" data-i18n="calc_desc">حرك المؤشر لاختيار عدد الحصص واكتشف كمية زيت الزيتون البكر المتوقعة ومقدار الكربون الممتص سنوياً</p>
+            <h2 class="text-2xl sm:text-3xl font-black text-olive-950 mt-2" data-i18n="calc_title">احسب حصتك التقديرية من المحصول</h2>
+            <p class="text-xs text-stone-600 mt-1" data-i18n="calc_desc">اختر عدد الحصص لمعرفة التكلفة وتقدير غير ملزم لحصتك من الزيت</p>
           </div>
 
           <div class="bg-stone-50 border border-stone-200 rounded-3xl p-6 sm:p-8 shadow-sm">
@@ -1615,17 +1615,6 @@
                       <span id="roi-region-price-badge" class="text-[11px] font-black text-olive-800 bg-olive-50 border border-olive-200 px-2.5 py-0.5 rounded-lg">$38.00 / حصة</span>
                     </div>
                     <select id="roi-region-select" data-change="handleROIRegionChange(this.value)" class="w-full bg-stone-50 border border-stone-200 text-stone-900 font-bold text-xs rounded-xl py-2 px-3 focus:outline-none focus:ring-2 focus:ring-olive-600 cursor-pointer">
-                      <option value="tree_01">طرطوس (الدريكيش) - خضيري ساحلي عتيق (78 سنة) • $38 / حصة • أرض $22</option>
-                      <option value="tree_05">اللاذقية - خضيري ساحلي نقي (65 سنة) • $37 / حصة • أرض $21</option>
-                      <option value="tree_08">ريف دمشق - مصعبي دمشقي عريق (82 سنة) • $36 / حصة • أرض $18</option>
-                      <option value="tree_04">عفرين / حلب - زيتي كردي أصيل (91 سنة) • $35 / حصة • أرض $19</option>
-                      <option value="tree_02">إدلب (جبل الزاوية) - صوراني تراثي (41 سنة) • $34 / حصة • أرض $18</option>
-                      <option value="tree_07">حمص (وادي النضارة) - دعيبلي وخضيري (55 سنة) • $31 / حصة • أرض $17</option>
-                      <option value="tree_06">حماة (مصياف) - صوراني جبلي (48 سنة) • $30 / حصة • أرض $16</option>
-                      <option value="tree_09" data-i18n="roi_opt_suwayda">السويداء - صوراني ونبالي بركاني عضوي (70 سنة) • $29 / حصة • أرض $15</option>
-                      <option value="tree_10" data-i18n="roi_opt_quneitra">القنيطرة - قيسي وصوراني جولاني (38 سنة) • $27 / حصة • أرض $14</option>
-                      <option value="tree_03" data-i18n="roi_opt_daraa">درعا (سهل حوران) - قيسي مروي (21 سنة) • $26 / حصة • أرض $14</option>
-                      <option value="tree_11" data-i18n="roi_opt_deir_ezzor">دير الزور (حوض الفرات) - قيسي فراتي مقاوم (24 سنة) • $24 / حصة • أرض $12</option>
                     </select>
                   </div>
 
@@ -1736,9 +1725,9 @@
                   <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center mx-auto mb-2">
                     <i data-lucide="droplets" class="w-5 h-5"></i>
                   </div>
-                  <span class="text-xs text-stone-500 font-bold block" data-i18n="calc_card1_title">زيت زيتون بكر ممتاز</span>
-                  <div id="calc-oil-liters" class="text-2xl font-black text-stone-900 mt-1">~ 3.7 لتر</div>
-                  <span class="text-[10px] text-stone-500 dark:text-stone-400" data-i18n="calc_card1_sub">تقدير غير ملزم لحصتك من الزيت</span>
+                  <span class="text-xs text-stone-500 font-bold block" data-i18n="calc_card1_title">المحصول التقديري لحصصك</span>
+                  <div id="calc-oil-liters" class="text-2xl font-black text-stone-900 mt-1">—</div>
+                  <span class="text-[10px] text-stone-500 dark:text-stone-400" data-i18n="calc_card1_sub">تقدير غير ملزم من بيانات الشجرة، دون التزام بكمية محددة</span>
                 </div>
 
                 <div data-off="no-offer" class="bg-white p-5 rounded-2xl border border-stone-200 text-center shadow-sm">
@@ -2279,7 +2268,7 @@
               <i data-lucide="droplets" class="w-3.5 h-3.5"></i>
             </div>
           </div>
-          <div id="dash-expected-oil" class="text-lg sm:text-xl font-black text-olive-900 dark:text-olive-300 font-mono">7.4 L</div>
+          <div id="dash-expected-oil" class="text-lg sm:text-xl font-black text-olive-900 dark:text-olive-300 font-mono">—</div>
           <span class="text-[10px] text-emerald-600 dark:text-emerald-400 block font-semibold" data-i18n="dash_stat_oil_sub">تقدير غير ملزم</span>
         </div>
 
@@ -8046,7 +8035,7 @@
   </div>
 
   <!-- 2. Dynamic Lab Quality Certificate Modal -->
-  <div id="modal-lab-cert" role="dialog" aria-modal="true" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4">
+  <div id="modal-lab-cert" data-off="no-offer" role="dialog" aria-modal="true" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4">
     <div class="bg-white dark:bg-stone-900 dark:border-stone-800 dark:text-stone-100 w-full max-w-xl rounded-3xl p-6 sm:p-8 shadow-2xl border border-stone-200 max-h-[92vh] overflow-y-auto text-start text-xs space-y-4">
       <div class="flex items-center justify-between pb-3 border-b border-stone-100">
         <div class="flex items-center gap-2.5">
@@ -8673,8 +8662,8 @@
             <span id="invest-summary-total" class="text-base text-terracotta-600 font-black">$35.00</span>
           </div>
           <div class="flex justify-between text-stone-600">
-            <span data-i18n="invest_modal_oil_lbl">حصتك المتوقعة من زيت الزيتون البكر:</span>
-            <span id="invest-summary-oil" class="font-bold text-olive-800">~ 7.4 لتر صافي</span><span id="invest-summary-carbon" class="hidden"></span>
+            <span data-i18n="invest_modal_oil_lbl">المحصول التقديري لحصصك (غير ملزم):</span>
+            <span id="invest-summary-oil" class="font-bold text-olive-800">—</span><span id="invest-summary-carbon" class="hidden"></span>
           </div>
           <div class="flex justify-between text-stone-600">
             <span data-i18n="invest_modal_cert_lbl">شهادة ملكية رقمية بالـ GPS:</span>
@@ -9228,9 +9217,9 @@
   </nav>
 
   <!-- ================= JAVASCRIPT LOGIC & STATE ================= -->
-  <script src="app.js?v=3241b7c71964"></script>
-  <script src="assistant-knowledge.js?v=3241b7c71964"></script>
-  <script src="shop.js?v=3241b7c71964"></script>
+  <script src="app.js?v=4fb80137b9fe"></script>
+  <script src="assistant-knowledge.js?v=4fb80137b9fe"></script>
+  <script src="shop.js?v=4fb80137b9fe"></script>
 
   <!-- ================= 1. MODAL: FOUNDER EDIT TREE & PRICING ================= -->
   <div id="modal-fndr-edit-tree" role="dialog" aria-modal="true" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 mobile-sheet-overlay">
@@ -10644,6 +10633,6 @@
     </div>
   </div>
 
-  <script type="module" src="./supabase-client.mjs?v=3241b7c71964"></script>
+  <script type="module" src="./supabase-client.mjs?v=4fb80137b9fe"></script>
 </body>
 </html>

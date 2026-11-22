@@ -1817,16 +1817,16 @@
         cert_soil_lbl: "طبيعة التربة:",
         chat_chip_land: "🌿 استفسر عن خدمة (الشجرة مع 5 م² أرض)",
         calc_badge: "حاسبة الكفالة والأثر التفاعلية",
-        calc_title: "احسب محاصيلك وأثرك البيئي المباشر في سوريا",
-        calc_desc: "حرك المؤشر لاختيار عدد الحصص واكتشف كمية زيت الزيتون البكر المتوقعة ومقدار الكربون الممتص سنوياً",
+        calc_title: "احسب حصتك التقديرية من المحصول",
+        calc_desc: "اختر عدد الحصص لمعرفة التكلفة وتقدير غير ملزم لحصتك من الزيت",
         calc_shares_label: "حجم الكفالة (عدد الحصص):",
         calc_scale_1: "1 حصة (25%)",
         calc_scale_4: "شجرة كاملة (4 حصص)",
         calc_scale_8: "شجرتان (8 حصص)",
         calc_include_title: "ماذا تشمل الحصة الواحدة؟",
         calc_include_desc: "رعاية المزارع للشجرة خلال الموسم مع تحديثات ميدانية + العصر في معصرة شريكة + شهادة كفالة (PDF) + حصة من الزيت بعد العصر.",
-        calc_card1_title: "زيت زيتون بكر ممتاز",
-        calc_card1_sub: "تقدير غير ملزم لحصتك من الزيت",
+        calc_card1_title: "المحصول التقديري لحصصك",
+        calc_card1_sub: "تقدير غير ملزم من بيانات الشجرة، دون التزام بكمية محددة",
         calc_card2_title: "امتصاص ثاني أكسيد الكربون",
         calc_card2_sub: "أثر بيئي ومكافحة تصحر",
         calc_card3_title: "تكلفة الكفالة الكلية",
@@ -2107,7 +2107,7 @@
         invest_modal_tree_lbl: "الشجرة المختارة:",
         invest_modal_share_lbl: "اختر نسبة الحصة المطلوبة:",
         invest_modal_total_lbl: "المبلغ الإجمالي للكفالة:",
-        invest_modal_oil_lbl: "حصتك المتوقعة من زيت الزيتون البكر:",
+        invest_modal_oil_lbl: "المحصول التقديري لحصصك (غير ملزم):",
         invest_modal_cert_lbl: "شهادة الكفالة (PDF):",
         invest_modal_cert_val: "بعد اعتماد الدفعة",
         invest_modal_pay_method_lbl: "طريقة الدفع والتسوية:",
@@ -4657,16 +4657,16 @@
         cert_soil_lbl: "Soil Profile:",
         chat_chip_land: "🌿 Ask about the 5m² Land Plot Option",
         calc_badge: "Interactive Sponsorship & Impact Calculator",
-        calc_title: "Calculate Your Real Harvest & Syrian Impact",
-        calc_desc: "Slide to adjust your share fraction and see estimated extra virgin oil, carbon offset, and economics",
+        calc_title: "Estimate your share of the harvest",
+        calc_desc: "Choose the number of shares to see the cost and a non-binding estimate of your oil share",
         calc_shares_label: "Stewardship Size (Shares):",
         calc_scale_1: "1 Share (25%)",
         calc_scale_4: "Whole Tree (4 Shares)",
         calc_scale_8: "Two Trees (8 Shares)",
         calc_include_title: "What does a single share include?",
         calc_include_desc: "The farmer's care of the tree through the season with field updates + pressing at a partner mill + a sponsorship certificate (PDF) + a share of the oil after pressing.",
-        calc_card1_title: "Extra Virgin Olive Oil",
-        calc_card1_sub: "Non-binding estimate of your oil share",
+        calc_card1_title: "Estimated harvest for your shares",
+        calc_card1_sub: "Non-binding estimate from the tree's listing; no quantity is promised",
         calc_card2_title: "Annual CO2 Absorption",
         calc_card2_sub: "Environmental Impact & Green Cover",
         calc_card3_title: "Total Stewardship Cost",
@@ -4926,7 +4926,7 @@
         invest_modal_tree_lbl: "Selected Olive Tree:",
         invest_modal_share_lbl: "Choose Desired Share Size:",
         invest_modal_total_lbl: "Total Stewardship Cost:",
-        invest_modal_oil_lbl: "Expected Extra Virgin Oil Yield:",
+        invest_modal_oil_lbl: "Estimated harvest for your shares (non-binding):",
         invest_modal_cert_lbl: "Sponsorship certificate (PDF):",
         invest_modal_cert_val: "after the payment is approved",
         invest_modal_pay_method_lbl: "Payment & Settlement Method:",
@@ -5207,7 +5207,7 @@
         dash_certs_card_contract_desc: "Explains what the sponsorship includes and what it does not.",
         dash_btn_view_contract: "Read Certified Contract",
         dash_tx_subtitle: "Your transfers and the status of their review",
-        dash_tx_audit_badge: "Reviewed by finance staff",
+        dash_tx_audit_badge: "Finance team review",
 
         // Farmer Modern Portal 5 Pillars
         farmer_kpi1_trees: "Assigned Groves",
@@ -7162,7 +7162,7 @@
       if (action === 'dashboard') {
         navigateTo('dashboard');
       } else if (action === 'lab_cert') {
-        if (typeof openLabCertModal === 'function') openLabCertModal('tree_01');
+        navigateTo('dashboard');
       } else if (action === 'p2p_market') {
         navigateTo('dashboard');
         if (typeof switchInvestorSubTab === 'function') switchInvestorSubTab('trade');
@@ -7872,39 +7872,8 @@
           action: "founder_control"
         },
 
-        // --- GUEST / GENERAL BROADCAST NOTIFICATIONS ---
-        {
-          id: "notif_gst_01",
-          role: "all",
-          type: "system",
-          title_ar: "مرحباً بك في منصة فسيلة الزراعية",
-          title_en: "Welcome to Faseela Agritech Platform",
-          body_ar: "استكشف أشجار الزيتون السورية المعمرة وبساتين الغراس البكر مع الأرض الطابو.",
-          body_en: "Explore Syrian productive olive trees and greenfield virgin groves with title deeds.",
-          timestamp: "2026-09-12T16:00:00Z",
-          time_ar: "الآن",
-          time_en: "Just now",
-          read: false,
-          icon: "sprout",
-          badgeColor: "emerald",
-          action: "marketplace"
-        },
-        {
-          id: "notif_gst_02",
-          role: "all",
-          type: "financial",
-          title_ar: "افتتاح موسم كفالة أشجار 2026",
-          title_en: "2026 Olive Sponsorship Season Open",
-          body_ar: "احسب محاصيلك وأثرك البيئي المباشر في محافظات سوريا واستلم زيتك الفاخر.",
-          body_en: "Estimate your harvest and environmental impact across Syrian governorates.",
-          timestamp: "2026-09-12T10:00:00Z",
-          time_ar: "منذ 7 ساعات",
-          time_en: "7 hours ago",
-          read: false,
-          icon: "calculator",
-          badgeColor: "blue",
-          action: "home"
-        }
+        // No built-in broadcast entries (role "all"): visitors only see notifications that really exist,
+        // otherwise the bell shows the empty state (notif_empty_title / notif_empty_desc).
       ],
       currentLang: normalizeLang(localStorage.getItem('faseela_lang')),
       currentTheme: localStorage.getItem('faseela_theme') || ((window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light'),
@@ -10493,8 +10462,14 @@
       if (catalog.planted_year) {
         local.planted_year = catalog.planted_year;
         local.age_years = Math.max(0, new Date().getFullYear() - catalog.planted_year);
+      } else {
+        // No planting year in the database: the tree has none. The year of the built-in template it was copied from is not shown.
+        local.planted_year = null;
+        local.age_years = null;
       }
-      if (catalog.estimated_annual_yield_kg) local.estimated_annual_yield_kg = catalog.estimated_annual_yield_kg;
+      // The yield estimate is the one field where an empty database value does change something: the entry is a copy
+      // of a built-in template whose figure belongs to another tree, so it must not survive as this tree's estimate.
+      local.estimated_annual_yield_kg = Number(catalog.estimated_annual_yield_kg) > 0 ? Number(catalog.estimated_annual_yield_kg) : 0;
       if (Array.isArray(catalog.images) && catalog.images.length) local.images = catalog.images.slice();
     }
 
@@ -10529,6 +10504,7 @@
       entry.harvest_status_ar = 'قيد الرعاية';
       entry.harvest_status_en = 'In care';
       entry.harvest_ready_liters_per_share = 0;
+      delete entry.carbon_offset_kg_year;
       entry.maintenance_logs = [];
       if (entry.land_parcel) entry.land_parcel.has_land_option = false;
       entry.sample_stripped = true;
@@ -10548,6 +10524,25 @@
     function catalogTrees() {
       if (state.catalogState !== 'ready') return [];
       return (state.trees || []).filter(tr => tr.server_listed);
+    }
+
+    /**
+     * Non-binding harvest estimate for a number of shares: the yearly yield (kg of fruit) the database lists for this
+     * tree, split by the tree's shares. No built-in figure and no conversion rate; without a database figure it is '—'.
+     */
+    function harvestShareEstimate(tree, shares) {
+      const row = tree && state.catalogState === 'ready'
+        ? (state.serverPublicTrees || []).find(pt => pt.id === tree.id && pt.server_listed && pt.catalog)
+        : null;
+      const yieldKg = row ? Number(row.catalog.estimated_annual_yield_kg) || 0 : 0;
+      const totalShares = row ? Number(row.total_shares) || 0 : 0;
+      const count = Number(shares) || 0;
+      if (!(yieldKg > 0) || !(totalShares > 0) || !(count > 0)) return '—';
+      const cat = row.catalog.crop_category || 'olive';
+      const unit = cat === 'olive'
+        ? (state.currentLang === 'ar' ? 'كغ زيتون' : state.currentLang === 'de' ? 'kg Oliven' : 'kg olives')
+        : t('calc_' + cat + '_unit');
+      return `~ ${(count * yieldKg / totalShares).toFixed(1)} ${unit}`;
     }
 
     /** Loading and error states of the catalogue (the empty state is rendered by renderMarketplace itself). */
@@ -10694,7 +10689,9 @@
           local.country_code = pt.country_code || 'SY';
           local.farm_id = pt.farm_id || null;
         });
-        (state.trees || []).forEach(local => { if (local.server_listed && !local.sample_stripped) stripSampleDetails(local); });
+        // Every built-in entry loses its invented operating data once the database has answered, listed or not:
+        // an unlisted or delisted tree is still reachable from a sponsor's own records and must not show sample data.
+        (state.trees || []).forEach(local => { if (!local.sample_stripped) stripSampleDetails(local); });
         state.catalogState = 'ready';
         await loadOrigins();
         updateCropCounts();
@@ -10703,7 +10700,7 @@
         if (typeof renderMarketplace === 'function' && getCurrentVisiblePage() === 'marketplace') renderMarketplace();
         // Deep link from the public tree page (/tree.html -> ./?tree=<id>#marketplace): open that tree once.
         const wantedTree = new URLSearchParams(location.search).get('tree');
-        if (wantedTree && !state._deepLinkedTree && /^[A-Za-z0-9_-]{1,80}$/.test(wantedTree) && (state.trees || []).some(tr => tr.id === wantedTree)) {
+        if (wantedTree && !state._deepLinkedTree && /^[A-Za-z0-9_-]{1,80}$/.test(wantedTree) && catalogTrees().some(tr => tr.id === wantedTree)) {
           state._deepLinkedTree = true;
           navigateTo('marketplace');
           setTimeout(() => { if (typeof viewTreeDetails === 'function') viewTreeDetails(wantedTree); }, 250);
@@ -10753,9 +10750,11 @@
 
     function serverListenerFailed(label) {
       return () => {
-        showToast(state.currentLang !== 'ar'
-          ? `Could not load your ${label}. Please reload the page.`
-          : 'تعذر تحميل بياناتك من الخادم. يرجى إعادة تحميل الصفحة.');
+        showToast(state.currentLang === 'ar'
+          ? 'تعذر تحميل بياناتك من الخادم. يرجى إعادة تحميل الصفحة.'
+          : state.currentLang === 'de'
+            ? 'Ihre Daten konnten nicht vom Server geladen werden. Bitte laden Sie die Seite neu.'
+            : `Could not load your ${label}. Please reload the page.`);
       };
     }
 
@@ -10814,7 +10813,7 @@
           subscribeServer('watchMyInvestments', (items) => {
             state.myInvestments = items.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
             rerenderServerViews();
-          }, 'investment requests');
+          }, 'sponsorship requests');
           subscribeServer('watchMyShares', (items) => {
             state.userShares = items;
             rerenderServerViews();
@@ -10904,10 +10903,12 @@
 
       if (pageId === 'dashboard') {
         if (role === 'investor' || role === 'admin') return true;
-        const reqRole = state.currentLang !== 'ar' ? 'Verified Investor' : 'كافل زراعي معتمد';
-        const msg = state.currentLang !== 'ar' 
-          ? 'Farmers and mill operators cannot access investor financial portfolios and private share records.' 
-          : 'لا يمكن للمزارع أو أصحاب المعاصر الاطلاع على محافظ الكافلين المالية وسجلات دفعاتهم وحصصهم.';
+        const reqRole = state.currentLang === 'ar' ? 'كافل زراعي معتمد' : state.currentLang === 'de' ? 'Baumpate' : 'Tree sponsor';
+        const msg = state.currentLang === 'ar'
+          ? 'لا يمكن للمزارع أو أصحاب المعاصر الاطلاع على صفحات الكافلين وسجلات دفعاتهم وحصصهم.'
+          : state.currentLang === 'de'
+            ? 'Landwirte und Mühlenbetreiber können die Seiten der Baumpaten mit ihren Zahlungen und Anteilen nicht öffnen.'
+            : 'Farmers and mill operators cannot open the sponsors\' pages with their payments and shares.';
         showAccessDenied(t('nav_dashboard'), reqRole, msg);
         return false;
       }
@@ -12810,10 +12811,10 @@
       state.roiSelectedTreeId = currentVal;
       select.innerHTML = offers.map(t => {
         const name = isEn ? ((t.region_en || t.region) + ' - ' + (t.tree_type_en || t.tree_type)) : (t.region + ' - ' + t.tree_type);
-        const age = `${t.age_years} ${isEn ? 'yrs' : 'سنة'}`;
+        const age = t.age_years != null ? ` (${t.age_years} ${isEn ? 'yrs' : 'سنة'})` : '';
         const price = `${formatMoney(t.price_per_share)} ${isEn ? '/ sh' : '/ حصة'}`;
         const landPrice = (landOfferEnabled() && t.land_parcel) ? `${isEn ? '• land ' : '• أرض '}${formatMoney(t.land_parcel.land_addon_price_usd)}` : '';
-        return `<option value="${t.id}">${name} (${age}) • ${price} ${landPrice}</option>`;
+        return `<option value="${t.id}">${name}${age} • ${price} ${landPrice}</option>`;
       }).join('');
       select.value = currentVal;
     }
@@ -12886,9 +12887,6 @@
 
       const pricePerShare = tree.price_per_share || 35.00;
       const landAddonPerPlot = (tree.land_parcel && tree.land_parcel.land_addon_price_usd) || 18.00;
-      const oilPerShare = (tree.harvest_ready_liters_per_share && tree.harvest_ready_liters_per_share > 0)
-        ? tree.harvest_ready_liters_per_share
-        : parseFloat(((tree.estimated_annual_yield_kg || 50) * 0.22 / 4).toFixed(1));
       const carbonPerShare = parseFloat(((tree.carbon_offset_kg_year || 24.0) / 4).toFixed(1));
 
       // Update region price badge
@@ -12925,7 +12923,6 @@
       const landSqm = withLand ? (treesWholeOrMin * 5.0) : 0;
       const landAddonCost = withLand ? (treesWholeOrMin * landAddonPerPlot) : 0;
 
-      const totalOil = (s * oilPerShare).toFixed(1);
       const totalCarbon = (s * carbonPerShare).toFixed(1);
       const totalCost = (s * pricePerShare) + landAddonCost;
       
@@ -12947,7 +12944,7 @@
       }
 
       const oilEl = document.getElementById('calc-oil-liters');
-      if (oilEl) oilEl.innerText = isEn ? `~ ${totalOil} L` : `~ ${totalOil} لتر`;
+      if (oilEl) oilEl.innerText = harvestShareEstimate(tree, s);
 
       // Cards that used invented figures (carbon, oil "market value", labour hours, soil area) are hidden.
       ['calc-carbon-val', 'calc-market-val', 'calc-labor-hours', 'calc-soil-area'].forEach(id => {
@@ -13674,6 +13671,9 @@ function togglePasswordVisibility(inputId, iconId) {
 
     // Dynamic Lab Quality & Physicochemical Certificate Modal Generator
     function openLabCertModal(treeId) {
+      // The certificate modal is switched off (data-off): no approved lab results exist to show.
+      const labModal = document.getElementById('modal-lab-cert');
+      if (!labModal || (typeof labModal.hasAttribute === 'function' && labModal.hasAttribute('data-off'))) return;
       const tree = (state.trees || []).find(t => t.id === treeId) || state.trees[0];
       if (!tree) return;
       const isEn = state.currentLang !== 'ar';
@@ -13955,54 +13955,62 @@ function setMarketplaceViewMode(mode) {
       resetMarketplaceFilters();
     }
 
+    /**
+     * Card texts per crop. The badge names the crop only; the yield is the tree's own estimate from the database
+     * (kg of fruit per year) or empty. No built-in defaults and no laboratory values: nothing has been measured here.
+     */
     function getTreeCropMeta(tree, isEn) {
       const cat = (tree && tree.crop_category) || 'olive';
+      const L3 = (ar, en, de) => state.currentLang === 'ar' ? ar : (state.currentLang === 'de' ? de : en);
+      const kg = Number(tree && tree.estimated_annual_yield_kg);
+      const yieldOf = unit => kg > 0 ? `~ ${kg} ${unit}` : '';
+      const yieldLabel = L3('تقدير محصول الشجرة سنوياً:', 'Est. tree harvest / year:', 'Geschätzte Ernte des Baums / Jahr:');
       if (cat === 'pistachio') {
         return {
           emoji: '🌰',
-          yieldLabel: isEn ? 'Annual Pistachio:' : 'الإنتاج السنوي:',
-          yieldValue: `~ ${(tree.estimated_annual_yield_kg || 38)} ${isEn ? 'kg Pistachio' : 'كغ فستق حلبي'}`,
-          badge: isEn ? 'Purity 99.5% • Split' : 'نقاء 99.5% • تفتح طبيعي',
+          yieldLabel,
+          yieldValue: yieldOf(L3('كغ فستق', 'kg pistachios', 'kg Pistazien')),
+          badge: L3('فستق حلبي', 'Pistachio', 'Pistazie'),
           badgeBg: 'bg-amber-600/90 text-white'
         };
       } else if (cat === 'almond') {
         return {
           emoji: '🌸',
-          yieldLabel: isEn ? 'Annual Almonds:' : 'الإنتاج السنوي:',
-          yieldValue: `~ ${(tree.estimated_annual_yield_kg || 28)} ${isEn ? 'kg Almonds' : 'كغ لوز بلدي'}`,
-          badge: isEn ? 'Soft-Shell • Moisture <5%' : 'لوز فرك • رطوبة <5%',
+          yieldLabel,
+          yieldValue: yieldOf(L3('كغ لوز', 'kg almonds', 'kg Mandeln')),
+          badge: L3('لوز', 'Almond', 'Mandel'),
           badgeBg: 'bg-rose-600/90 text-white'
         };
       } else if (cat === 'walnut') {
         return {
           emoji: '🪵',
-          yieldLabel: isEn ? 'Annual Walnuts:' : 'الإنتاج السنوي:',
-          yieldValue: `~ ${(tree.estimated_annual_yield_kg || 45)} ${isEn ? 'kg Walnuts' : 'كغ جوز بلدي'}`,
-          badge: isEn ? 'Heritage • Extra Rich' : 'صنف أول • عالي الزيت',
+          yieldLabel,
+          yieldValue: yieldOf(L3('كغ جوز', 'kg walnuts', 'kg Walnüsse')),
+          badge: L3('جوز', 'Walnut', 'Walnuss'),
           badgeBg: 'bg-stone-800/90 text-white'
         };
       } else if (cat === 'pomegranate') {
         return {
           emoji: '🍇',
-          yieldLabel: isEn ? 'Annual Fruit:' : 'الإنتاج السنوي:',
-          yieldValue: `~ ${(tree.estimated_annual_yield_kg || 58)} ${isEn ? 'kg Pomegranate' : 'كغ رمان سكري'}`,
-          badge: isEn ? 'Brix 16.8° • Sweet' : 'بريكس 16.8° • عصير سكري',
+          yieldLabel,
+          yieldValue: yieldOf(L3('كغ رمان', 'kg pomegranates', 'kg Granatäpfel')),
+          badge: L3('رمان', 'Pomegranate', 'Granatapfel'),
           badgeBg: 'bg-red-600/90 text-white'
         };
       } else if (cat === 'date') {
         return {
           emoji: '🌴',
-          yieldLabel: isEn ? 'Annual Dates:' : 'الإنتاج السنوي:',
-          yieldValue: tree.estimated_annual_yield_kg ? `~ ${tree.estimated_annual_yield_kg} ${t('calc_date_unit')}` : '—',
-          badge: isEn ? 'Palmyra & Euphrates' : 'تدمر والفرات',
+          yieldLabel,
+          yieldValue: yieldOf(t('calc_date_unit')),
+          badge: L3('نخيل التمر', 'Date palm', 'Dattelpalme'),
           badgeBg: 'bg-amber-700/90 text-white'
         };
       } else {
         return {
           emoji: '🫒',
-          yieldLabel: isEn ? 'Annual Oil:' : 'الإنتاج السنوي:',
-          yieldValue: `~ 14.5 ${t('calc_oil_unit')}`,
-          badge: `${isEn ? 'Acidity' : 'حموضة'} < 0.32%`,
+          yieldLabel,
+          yieldValue: yieldOf(L3('كغ زيتون', 'kg olives', 'kg Oliven')),
+          badge: L3('زيتون', 'Olive', 'Olive'),
           badgeBg: 'bg-amber-500/90 text-stone-950'
         };
       }
@@ -14136,7 +14144,7 @@ function setMarketplaceViewMode(mode) {
                         regionDetail.includes(searchVal) ||
                         (searchVal.includes('أرض') && t.land_parcel) ||
                         (searchVal.includes('طابو') && t.land_parcel) ||
-                        (searchVal.includes('معمر') && t.planted_year <= 1976);
+                        (searchVal.includes('معمر') && t.planted_year && t.planted_year <= 1976);
         if (!isMatch) return false;
       }
 
@@ -14150,6 +14158,7 @@ function setMarketplaceViewMode(mode) {
       // Age Filter
       const currentYear = new Date().getFullYear();
       const age = currentYear - t.planted_year;
+      if (filterAge !== 'all' && !t.planted_year) return false;
       if (filterAge === 'heritage' && age < 50) return false;
       if (filterAge === 'prime' && (age < 20 || age >= 50)) return false;
       if (filterAge === 'young' && age >= 20) return false;
@@ -14174,7 +14183,7 @@ function setMarketplaceViewMode(mode) {
 
     // Sorting Logic
     if (filterSort === 'age_desc') {
-      filtered.sort((a, b) => b.planted_year - a.planted_year === 0 ? 0 : a.planted_year - b.planted_year);
+      filtered.sort((a, b) => (a.planted_year || Infinity) - (b.planted_year || Infinity) || 0);
     } else if (filterSort === 'yield_desc') {
       filtered.sort((a, b) => (b.estimated_annual_yield_kg || 0) - (a.estimated_annual_yield_kg || 0));
     } else if (filterSort === 'price_asc') {
@@ -14249,14 +14258,13 @@ function setMarketplaceViewMode(mode) {
               <div class="space-y-1">
                 <div class="flex items-center gap-2">
                   <span class="bg-olive-100 text-olive-800 text-[10px] font-black px-2.5 py-0.5 rounded-full">${displayRegion}</span>
-                  <span class="text-[10px] font-mono text-stone-500 font-bold">${treeAge} ${t('year_unit')}</span>
+                  ${tree.planted_year ? `<span class="text-[10px] font-mono text-stone-500 font-bold">${treeAge} ${t('year_unit')}</span>` : ''}
                 </div>
                 <h3 class="font-black text-stone-900 text-base group-hover:text-olive-800 transition-colors">${displayName}</h3>
                 <p class="text-xs text-stone-500">${displayFarm} • <span class="font-bold text-olive-900">${displayType}</span></p>
                 <div class="flex items-center gap-3 text-[11px] text-stone-600 pt-1">
-                  <span>${meta.emoji} ${meta.yieldValue}</span>
-                  <span>🌱 ${tree.carbon_offset_kg_year} ${t('carbon_label')}</span>
-                  <span class="text-emerald-700 font-bold">🧪 ${meta.badge}</span>
+                  ${meta.yieldValue ? `<span>${meta.emoji} ${meta.yieldValue}</span>` : ''}
+                  <span class="text-emerald-700 font-bold">${meta.badge}</span>
                 </div>
               </div>
             </div>
@@ -14337,7 +14345,7 @@ function setMarketplaceViewMode(mode) {
                     <span>${displayName}</span>
                     <i data-lucide="badge-check" class="w-4 h-4 text-emerald-600 inline-block"></i>
                   </h3>
-                  <span class="text-xs font-bold text-stone-500 font-mono">${treeAge} ${t('year_unit')}</span>
+                  ${tree.planted_year ? `<span class="text-xs font-bold text-stone-500 font-mono">${treeAge} ${t('year_unit')}</span>` : ''}
                 </div>
                 <p class="text-xs text-stone-500 flex items-center gap-1">
                   <i data-lucide="map-pin" class="w-3.5 h-3.5 text-stone-400"></i>
@@ -14345,14 +14353,10 @@ function setMarketplaceViewMode(mode) {
                 </p>
 
                 <!-- Specs Grid -->
-                <div class="grid grid-cols-2 gap-2 bg-stone-50 dark:bg-stone-800/80 border border-stone-100 dark:border-stone-700/60 p-2.5 rounded-xl text-[11px] text-stone-600 dark:text-stone-300">
+                <div class="grid grid-cols-1 gap-2 bg-stone-50 dark:bg-stone-800/80 border border-stone-100 dark:border-stone-700/60 p-2.5 rounded-xl text-[11px] text-stone-600 dark:text-stone-300">
                   <div>
                     <span class="text-[10px] text-stone-400 block">${meta.yieldLabel}</span>
-                    <span class="font-bold text-stone-900 dark:text-white">${meta.yieldValue}</span>
-                  </div>
-                  <div>
-                    <span class="text-[10px] text-stone-400 block">${state.currentLang !== 'ar' ? 'CO2 Offset:' : 'امتصاص CO2:'}</span>
-                    <span class="font-bold text-emerald-700">${tree.carbon_offset_kg_year} ${t('carbon_label')}</span>
+                    <span class="font-bold text-stone-900 dark:text-white">${meta.yieldValue || '—'}</span>
                   </div>
                 </div>
 
@@ -14541,7 +14545,6 @@ function setMarketplaceViewMode(mode) {
           <div class="bg-white dark:bg-stone-900 rounded-3xl p-6 sm:p-8 border border-stone-200 dark:border-stone-800 shadow-sm">
             <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
               <span class="bg-olive-100 dark:bg-olive-950 text-olive-800 dark:text-olive-300 text-xs font-bold px-3 py-1 rounded-full">${displayRegion}</span>
-              <span class="text-xs font-bold text-stone-500 dark:text-stone-400 font-mono">GPS: ${tree.gps_lat.toFixed(4)}, ${tree.gps_lng.toFixed(4)}</span>
             </div>
             <h1 class="text-3xl font-black text-stone-900 dark:text-white mb-2">${displayName}</h1>
             <p class="text-stone-600 dark:text-stone-300 text-xs">${displayFarm} • ${state.currentLang === 'ar' ? 'مزرعة شريكة' : state.currentLang === 'de' ? 'Partnerbetrieb' : 'Partner farm'}</p>
@@ -14561,28 +14564,13 @@ function setMarketplaceViewMode(mode) {
             let facName = displayMill || (state.currentLang === 'ar' ? 'تُحدَّد بعد الحصاد' : state.currentLang === 'de' ? 'Wird nach der Ernte festgelegt' : 'Assigned after the harvest');
             let facDesc = state.currentLang === 'ar' ? 'تُنشر نتائج العصر بعد اعتمادها' : state.currentLang === 'de' ? 'Pressergebnisse werden nach Freigabe veröffentlicht' : 'Pressing results are published once approved';
             let facIcon = 'award';
-            let facBtn = state.currentLang !== 'ar' ? 'View Certificate' : 'جواز الجودة الرقمي';
 
-            if (tree.crop_category === 'pistachio') {
-              facTitle = state.currentLang !== 'ar' ? 'Certified Processing & Roasting Facility:' : 'مركز الفرز والتقشير والتحميص الآلي المعتمد:';
-              facName = tree.processing_center || (state.currentLang !== 'ar' ? 'Mork Modern Pistachio Facility' : 'مركز فرز وتحميص فستق مورك الحديث');
-              facDesc = state.currentLang !== 'ar' ? 'Automated Optical Sorting • 94% Natural Split • Aflatoxin < 2 ppb' : 'فرز بصري آلي • نسبة تفتح 94% • خلو تام من الأفلاطوكسين (< 2 ppb)';
-              facIcon = 'shield-check';
-            } else if (tree.crop_category === 'almond') {
-              facTitle = state.currentLang !== 'ar' ? 'Certified Almond Dehulling & Curing Unit:' : 'مركز تقشير وتجفيف اللوز السوري المعتمد:';
-              facName = tree.processing_center || (state.currentLang !== 'ar' ? 'Mukharram Almond Center' : 'وحدة تقشير وتجفيف لوز المخرم المركزية');
-              facDesc = state.currentLang !== 'ar' ? 'Cold Dehulling • Moisture 5.2% • High Natural Oils' : 'تقشير بارد • رطوبة 5.2% • زيت طبيعي 54%';
+            if (['pistachio', 'almond', 'walnut', 'pomegranate'].includes(tree.crop_category)) {
+              // No facility is assigned and no quality figure is measured before the harvest; nothing from the built-in templates is shown.
+              facTitle = state.currentLang === 'ar' ? 'مركز التجهيز:' : state.currentLang === 'de' ? 'Verarbeitungsbetrieb:' : 'Processing facility:';
+              facName = state.currentLang === 'ar' ? 'تُحدَّد بعد الحصاد' : state.currentLang === 'de' ? 'Wird nach der Ernte festgelegt' : 'Assigned after the harvest';
+              facDesc = state.currentLang === 'ar' ? 'تُنشر النتائج بعد اعتمادها' : state.currentLang === 'de' ? 'Ergebnisse werden nach Freigabe veröffentlicht' : 'Results are published once approved';
               facIcon = 'package-check';
-            } else if (tree.crop_category === 'walnut') {
-              facTitle = state.currentLang !== 'ar' ? 'Certified Mountain Nut Curing Station:' : 'محطة تجفيف وتعبئة الجوز البلدي المعتمدة:';
-              facName = tree.processing_center || (state.currentLang !== 'ar' ? 'Barada Valley Nut Center' : 'مركز فرز وتجفيف مكسرات القلمون وبردى');
-              facDesc = state.currentLang !== 'ar' ? 'Natural Air Drying • Grade-A White Kernels • 65% Oil' : 'تجفيف طبيعي مظلل • لب أبيض صنف أول • دسم 65%';
-              facIcon = 'sparkles';
-            } else if (tree.crop_category === 'pomegranate') {
-              facTitle = state.currentLang !== 'ar' ? 'Certified Juicing & Molasses Extraction Plant:' : 'محطة عصر وتكثيف دبس الرمان الطبيعي:';
-              facName = tree.processing_center || (state.currentLang !== 'ar' ? 'Daraa Pomegranate Station' : 'محطة عصر وتكثيف دبس الرمان بدرعا');
-              facDesc = state.currentLang !== 'ar' ? 'Pure Direct Extraction • 100% Natural • Zero Additives' : 'استخلاص نقي مباشر • 100% طبيعي بدون أي إضافات';
-              facIcon = 'flame';
             } else if (tree.crop_category === 'date') {
               facTitle = state.currentLang !== 'ar' ? 'Date Sorting & Packing Station:' : 'محطة فرز وتعبئة التمور:';
               facName = tree.processing_center || (state.currentLang !== 'ar' ? 'Assigned after the harvest' : 'تُحدَّد بعد الحصاد');
@@ -14602,10 +14590,6 @@ function setMarketplaceViewMode(mode) {
                     <p class="text-[11px] text-stone-600 dark:text-stone-300">${facDesc}</p>
                   </div>
                 </div>
-                <button data-click="openLabCertModalForCurrentTree()" class="bg-amber-700 hover:bg-amber-800 text-white px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm transition-all whitespace-nowrap cursor-pointer">
-                  <i data-lucide="file-check" class="w-4 h-4"></i>
-                  <span>${facBtn}</span>
-                </button>
               </div>
             `;
           })()}
@@ -14802,10 +14786,10 @@ function setMarketplaceViewMode(mode) {
             </div>
 
             <div class="space-y-3 py-4 border-y border-stone-100 text-xs">
-              <div class="flex justify-between">
+              ${tree.planted_year ? `<div class="flex justify-between">
                 <span class="text-stone-500">${state.currentLang !== 'ar' ? 'Planted Year:' : 'العمر:'}</span>
                 <span class="font-bold text-stone-900">${tree.planted_year} (${treeAge} ${t('year_unit')})</span>
-              </div>
+              </div>` : ''}
               <div class="flex justify-between">
                 <span class="text-stone-500">${state.currentLang !== 'ar' ? 'Variety:' : 'الصنف:'}</span>
                 <span class="font-bold text-stone-900">${displayType}</span>
@@ -14828,10 +14812,6 @@ function setMarketplaceViewMode(mode) {
                   <span>${t('btn_buy_share')}</span>
                 </button>
               `}
-              ${state.serverMode ? '' : `<button data-click="openCertificateModal('${tree.id}')" class="w-full bg-stone-100 hover:bg-stone-200 text-stone-800 py-3 rounded-2xl font-bold text-xs transition-all flex items-center justify-center gap-2">
-                <i data-lucide="award" class="w-4 h-4 text-amber-600"></i>
-                <span>${t('btn_view_cert')}</span>
-              </button>`}
               <button type="button" data-click="openLegalContract('investor')" class="w-full bg-stone-50 hover:bg-stone-100 text-stone-700 py-2.5 rounded-2xl font-bold text-xs border border-stone-200 transition-all flex items-center justify-center gap-2">
                 <i data-lucide="file-text" class="w-4 h-4 text-olive-700"></i>
                 <span>${t('footer_link_investor_contract')}</span>
@@ -15102,7 +15082,6 @@ function setMarketplaceViewMode(mode) {
         const totalLandSqm = withLand ? (treesWholeOrMin * 5.0).toFixed(1) : 0;
 
         const costUsd = (tree.price_per_share * s) + landAddon;
-        const estOil = (s * 3.65).toFixed(1);
         const estCarbon = (s * 7.1).toFixed(1);
 
         const landRow = document.getElementById('invest-summary-land-row');
@@ -15125,21 +15104,8 @@ function setMarketplaceViewMode(mode) {
         const sTotal = document.getElementById('invest-summary-total') || document.getElementById('calc-total-price');
         if (sTotal) sTotal.innerText = formatMoney(costUsd);
         const sOil = document.getElementById('invest-summary-oil') || document.getElementById('calc-expected-oil');
-        let estYieldDisplay = `~ ${estOil} ${t('calc_oil_unit')}`;
-        const cat = (tree && tree.crop_category) || 'olive';
-        if (cat === 'pistachio') {
-          estYieldDisplay = `~ ${(s * 9.5).toFixed(1)} ${t('calc_pistachio_unit')}`;
-        } else if (cat === 'almond') {
-          estYieldDisplay = `~ ${(s * 7.0).toFixed(1)} ${t('calc_almond_unit')}`;
-        } else if (cat === 'walnut') {
-          estYieldDisplay = `~ ${(s * 11.2).toFixed(1)} ${t('calc_walnut_unit')}`;
-        } else if (cat === 'pomegranate') {
-          estYieldDisplay = `~ ${(s * 14.5).toFixed(1)} ${t('calc_pomegranate_unit')}`;
-        } else if (cat === 'date') {
-          // From the tree's own figure, never a built-in constant; unknown stays unknown.
-          const perShare = (Number(tree.estimated_annual_yield_kg) || 0) / (Number(tree.total_shares) || 4);
-          estYieldDisplay = perShare > 0 ? `~ ${(s * perShare).toFixed(1)} ${t('calc_date_unit')}` : '—';
-        }
+        // From the tree's own database figure, never a built-in constant; unknown stays unknown.
+        const estYieldDisplay = harvestShareEstimate(tree, s);
         if (sOil) sOil.innerText = estYieldDisplay;
         const sCarbon = document.getElementById('invest-summary-carbon');
         if (sCarbon) sCarbon.innerText = `${estCarbon} ${t('carbon_label')}`;
@@ -15250,14 +15216,15 @@ function setMarketplaceViewMode(mode) {
 
     async function confirmPurchase() {
       const isEn = state.currentLang !== 'ar';
+      const L3 = (ar, en, de) => state.currentLang === 'ar' ? ar : (state.currentLang === 'de' ? de : en);
       if (!state.currentUser) {
         openModal('modal-auth');
-        showToast(isEn ? 'Please sign in to complete your investment.' : 'يرجى تسجيل الدخول أولاً لتثبيت كفالتك الزراعية.');
+        showToast(L3('يرجى تسجيل الدخول أولاً لتثبيت كفالتك الزراعية.', 'Please sign in to complete your sponsorship.', 'Bitte melden Sie sich an, um Ihre Patenschaft abzuschließen.'));
         return;
       }
 
       if (!state.currentUser.email_verified && state.currentUser.auth_provider === 'password') {
-        showToast(isEn ? 'Please verify your email address before investing.' : 'يرجى تأكيد بريدك الإلكتروني قبل إجراء الكفالة.');
+        showToast(L3('يرجى تأكيد بريدك الإلكتروني قبل إجراء الكفالة.', 'Please verify your email address before sponsoring a tree.', 'Bitte bestätigen Sie Ihre E-Mail-Adresse, bevor Sie eine Patenschaft übernehmen.'));
         return;
       }
 
@@ -15295,9 +15262,10 @@ function setMarketplaceViewMode(mode) {
       }
 
       if (state.serverCatalogLoaded && !tree.server_listed) {
-        showToast(isEn
-          ? 'This tree is not open for investment yet. Please choose a tree marked as available.'
-          : 'هذه الشجرة غير متاحة للكفالة بعد. يرجى اختيار شجرة متاحة.');
+        showToast(L3(
+          'هذه الشجرة غير متاحة للكفالة بعد. يرجى اختيار شجرة متاحة.',
+          'This tree is not open for sponsorship yet. Please choose a tree marked as available.',
+          'Dieser Baum ist noch nicht für eine Patenschaft freigegeben. Bitte wählen Sie einen als verfügbar markierten Baum.'));
         return;
       }
 
@@ -15318,7 +15286,7 @@ function setMarketplaceViewMode(mode) {
       }
 
       if (!window.FaseelaFirebase?.createInvestmentRequest || !window.FaseelaFirebase?.uploadPaymentProof) {
-        showToast(isEn ? 'The investment service is currently unavailable.' : 'خدمة الكفالة السحابية غير متوفرة حالياً.');
+        showToast(L3('خدمة الكفالة السحابية غير متوفرة حالياً.', 'The sponsorship service is currently unavailable.', 'Der Patenschaftsdienst ist derzeit nicht verfügbar.'));
         return;
       }
 
@@ -15430,7 +15398,8 @@ function setMarketplaceViewMode(mode) {
 
     async function cancelPendingInvestment(requestId) {
       const isEn = state.currentLang !== 'ar';
-      if (!confirm(isEn ? 'Are you sure you want to cancel this pending investment request?' : 'هل أنت متأكد من رغبتك بإلغاء طلب الكفالة هذا وتحرير الحصة المحجوزة؟')) {
+      const L3 = (ar, en, de) => state.currentLang === 'ar' ? ar : (state.currentLang === 'de' ? de : en);
+      if (!confirm(L3('هل أنت متأكد من رغبتك بإلغاء طلب الكفالة هذا وتحرير الحصة المحجوزة؟', 'Are you sure you want to cancel this pending sponsorship request?', 'Möchten Sie diese offene Patenschaftsanfrage wirklich stornieren?'))) {
         return;
       }
       try {
@@ -15438,7 +15407,7 @@ function setMarketplaceViewMode(mode) {
           throw new Error('Cancel service unavailable.');
         }
         await window.FaseelaFirebase.cancelInvestmentRequest({ requestId });
-        showToast(isEn ? 'Investment request cancelled.' : 'تم إلغاء طلب الكفالة بنجاح.');
+        showToast(L3('تم إلغاء طلب الكفالة بنجاح.', 'Sponsorship request cancelled.', 'Patenschaftsanfrage storniert.'));
         renderDashboard();
       } catch (err) {
         showToast(isEn ? `Could not cancel request: ${err.message}` : `تعذر إلغاء الطلب: ${err.message}`);
@@ -17455,7 +17424,7 @@ function setMarketplaceViewMode(mode) {
 
       const oilEl = document.getElementById('dash-expected-oil');
       const allocatedMl = (state.myOilAllocations || []).reduce((sum, a) => sum + (a.litersMl || 0), 0);
-      if (oilEl) oilEl.innerText = state.serverMode && allocatedMl > 0 ? OIL_LITERS(allocatedMl) : `~${totals.expectedOilLiters.toFixed(1)} ${t('calc_oil_unit')}`;
+      if (oilEl) oilEl.innerText = allocatedMl > 0 ? OIL_LITERS(allocatedMl) : '—';
       if (typeof renderMyOil === 'function') renderMyOil();
       if (state.myGifts === undefined && rewardsVisible()) loadRewards(); else renderMyRewards();
       document.getElementById('btn-investor-tab-trade')?.classList.toggle('hidden', !p2pEnabled());
@@ -18624,7 +18593,7 @@ function setMarketplaceViewMode(mode) {
                   <div class="flex flex-wrap items-center gap-2">
                     <h4 class="text-base sm:text-lg font-black text-stone-900 dark:text-white">${displayName}</h4>
                     <span class="bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 text-[10px] font-black px-2.5 py-0.5 rounded-full">${displayHealth}</span>
-                    <span class="bg-stone-100 dark:bg-stone-700 text-stone-600 dark:text-stone-300 text-[10px] font-bold px-2 py-0.5 rounded">${tree.age_years} ${t('year_unit')}</span>
+                    ${tree.age_years != null ? `<span class="bg-stone-100 dark:bg-stone-700 text-stone-600 dark:text-stone-300 text-[10px] font-bold px-2 py-0.5 rounded">${tree.age_years} ${t('year_unit')}</span>` : ''}
                   </div>
                   <p class="text-xs text-stone-500 dark:text-stone-400">${displayRegion} • ${tree.maintenance_logs.length} ${isEn ? 'Field Reports' : 'تقارير موثقة'}</p>
 
@@ -19821,7 +19790,7 @@ function setMarketplaceViewMode(mode) {
                       ${pct === 100 ? (isEn ? '100% Sold Out' : 'اكتمل 100%') : `${pct}% ${isEn ? 'Subscribed' : 'مكتتب'}`}
                     </span>
                   </div>
-                  <p class="text-[11px] text-stone-500 dark:text-stone-400">${region} • ${tree.age_years} ${t('year_unit')}</p>
+                  <p class="text-[11px] text-stone-500 dark:text-stone-400">${region}${tree.age_years != null ? ` • ${tree.age_years} ${t('year_unit')}` : ''}</p>
                   
                   <!-- Progress Bar -->
                   <div class="w-full bg-stone-200 dark:bg-stone-700 h-1.5 rounded-full overflow-hidden mt-1.5">
@@ -23180,7 +23149,7 @@ function setMarketplaceViewMode(mode) {
       const altitude = isEn ? data.altitude_en : data.altitude;
       // Count of trees really listed for sponsorship in this governorate (no invented counts, acidity or mill).
       const listedCount = state.catalogState === 'ready'
-        ? catalogTrees().filter(tr => tr.region === mapRegionCatalogName(regionKey)).length
+        ? catalogTrees().filter(tr => mapRegionCatalogNames(regionKey).includes(tr.region)).length
         : '–';
       const L3 = (ar, en, de) => state.currentLang === 'ar' ? ar : (state.currentLang === 'de' ? de : en);
       const desc = isEn ? data.description_en : data.description;
@@ -23260,15 +23229,23 @@ function setMarketplaceViewMode(mode) {
         'damascus': 'ريف دمشق',
         'suwayda': 'السويداء',
         'quneitra': 'القنيطرة',
-        'euphrates': 'حوض الفرات'
+        'euphrates': 'دير الزور'
       };
       return regionMap[regionKey] || 'طرطوس';
     }
 
+    /** All catalogue region values that belong to one map region (Aleppo trees are stored as "حلب" or "حلب وعفرين"). */
+    function mapRegionCatalogNames(regionKey) {
+      return regionKey === 'afrin' ? ['حلب وعفرين', 'حلب'] : [mapRegionCatalogName(regionKey)];
+    }
+
     function filterMarketplaceByRegion(regionKey) {
-      const regName = mapRegionCatalogName(regionKey);
       const filterEl = document.getElementById('filter-region');
-      if (filterEl) filterEl.value = regName;
+      if (filterEl) {
+        // Preselect a region the catalogue really offers; otherwise show all regions.
+        const offered = Array.from(filterEl.options).map(o => o.value);
+        filterEl.value = mapRegionCatalogNames(regionKey).find(n => offered.includes(n)) || 'all';
+      }
       navigateTo('marketplace');
       window.scrollTo({ top: 0, behavior: 'smooth' });
       playAcousticChime(700, 0.15);
