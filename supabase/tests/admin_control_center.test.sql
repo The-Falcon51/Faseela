@@ -89,7 +89,7 @@ begin
   -- automation state and job control
   perform pg_temp.as_user(c_a);
   v_j := public.admin_automation_state();
-  perform pg_temp.chk('state lists rules, jobs and log', jsonb_array_length(v_j->'rules') = 2 and exists (select 1 from jsonb_array_elements(v_j->'jobs') e where e->>'name' = 'faseela-automations' and (e->>'active')::boolean)
+  perform pg_temp.chk('state lists rules, jobs and log', jsonb_array_length(v_j->'rules') = 4 and exists (select 1 from jsonb_array_elements(v_j->'jobs') e where e->>'name' = 'faseela-automations' and (e->>'active')::boolean)
     and exists (select 1 from jsonb_array_elements(v_j->'jobs') e where e->>'name' = 'faseela-kpi-snapshot') and jsonb_array_length(v_j->'log') >= 2, left(v_j::text, 300));
   perform pg_temp.chk('job commands are not exposed', v_j::text not like '%http_post%' and v_j::text not like '%outbox_token%');
   perform pg_temp.chk('foreign job name refused', pg_temp.call_as(c_a, $q$select public.admin_set_job_active('{"name":"other-job","active":false}'::jsonb)$q$) = 'invalid-argument');

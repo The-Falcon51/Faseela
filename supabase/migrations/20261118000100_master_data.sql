@@ -97,7 +97,10 @@ insert into public.mills (mill_id, country_code)
 alter table private.trees add constraint trees_farm_id_fkey foreign key (farm_id) references public.farms (farm_id);
 alter table private.trees add constraint trees_mill_id_fkey foreign key (mill_id) references public.mills (mill_id);
 
-alter table public.trees_public add column country_code text not null default 'SY' references public.countries (code);
+-- The column may already exist: the country registry applied to the live project created it as "country"
+-- (renamed in 20261117000050_country_column_bridge.sql). The foreign key is added either way.
+alter table public.trees_public add column if not exists country_code text not null default 'SY';
+alter table public.trees_public add constraint trees_public_country_code_fkey foreign key (country_code) references public.countries (code);
 alter table public.trees_public add column farm_id text references public.farms (farm_id);
 update public.trees_public p set farm_id = t.farm_id from private.trees t where t.tree_id = p.tree_id and t.farm_id is not null;
 create index trees_public_country_idx on public.trees_public (country_code);
