@@ -7,11 +7,11 @@
 'use strict';
 
 // ============================================================
-// Assistant knowledge layer (answers first, before the legacy keyword rules below)
+// Assistant knowledge layer (topic answers first; otherwise the person's own data or the honest fallback)
 // ============================================================
 // Each topic states only what the platform does today. Offers that are switched off (land parcels,
-// greenfield plots, resale between users, insurance, reinvestment) are answered as "not offered",
-// so the older rule set can no longer describe them as available. Answers exist in Arabic, English
+// greenfield plots, resale between users, insurance, reinvestment) are answered as "not offered".
+// Answers exist in Arabic, English
 // and German; keywords of all three languages match regardless of the interface language.
 const FASEELA_FAQ_ACTIONS = {
   market: (label) => `<button type="button" data-click="navigateTo('marketplace')" class="bg-olive-800 hover:bg-olive-900 text-white px-3 py-1.5 rounded-lg text-xs font-bold cursor-pointer">${label}</button>`,

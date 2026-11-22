@@ -1,18 +1,18 @@
 {
   "public/index.html": {
     "land title (ar)": 29,
-    "land title": 38,
-    "deed / usufruct": 37,
+    "land title": 35,
+    "deed / usufruct": 34,
     "investment wording": 73,
     "return / profit wording": 26,
     "escrow": 4
   },
   "public/app.js": {
-    "land title (ar)": 87,
-    "land title": 199,
-    "deed / usufruct": 292,
-    "investment wording": 181,
-    "return / profit wording": 27,
+    "land title (ar)": 79,
+    "land title": 184,
+    "deed / usufruct": 266,
+    "investment wording": 175,
+    "return / profit wording": 26,
     "escrow": 8
   },
   "public/assistant-knowledge.js": {

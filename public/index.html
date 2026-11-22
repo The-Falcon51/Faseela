@@ -15,15 +15,15 @@
   <meta name="format-detection" content="telephone=no">
   <meta name="mobile-web-app-capable" content="yes">
   <!-- Primary SEO Meta Tags -->
-  <meta name="description" content="فسيلة | منصة تربطك مباشرةً بالمزارع السوري: اكفل شجرة زيتون معمّرة، تابع رعايتها، واستلم زيت الزيتون البكر الممتاز المفحوص مخبرياً من محصولها.">
+  <meta name="description" content="فسيلة | منصة تربطك بمزارعي الزيتون في سوريا: اكفل حصة من محصول شجرة زيتون مدرجة، تابع تحديثات المزارع، واطلب حصتك من الزيت بعد العصر.">
   <meta name="keywords" content="فسيلة, زيتون سوريا, كفالة شجرة زيتون, من المزارع إلى المستهلك, زيت زيتون بكر ممتاز, معاصر حديثة, عفرين, طرطوس, إدلب, درعا">
-  <meta name="author" content="منصة فسيلة - الجمهورية العربية السورية">
+  <meta name="author" content="فسيلة (Faseela)">
 
   <!-- Open Graph / Facebook / WhatsApp / Telegram -->
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://faseela.web.app/">
   <meta property="og:title" content="فسيلة | المنصة التشاركية لأشجار وبساتين الزيتون في سوريا">
-  <meta property="og:description" content="اكفل شجرة زيتون سورية معمّرة لدى مزارع معروف بالاسم، تابع رعايتها، واستلم حصتك من الزيت البكر الممتاز من محصولها.">
+  <meta property="og:description" content="اكفل حصة من محصول شجرة زيتون مدرجة في سوريا، تابع تحديثات المزارع، واطلب حصتك من الزيت بعد العصر.">
   <meta property="og:image" content="https://faseela.web.app/images/tree_ancient_khodairi.jpg">
   <meta property="og:locale" content="ar_SY">
   <meta property="og:locale:alternate" content="en_US">
@@ -42,13 +42,13 @@
   <title>فسيلة | المنصة التشاركية لأشجار الزيتون في سوريا</title>
   <!-- Fonts: self-hosted (scripts/build-web.cjs), no Google Fonts requests -->
   <link rel="preload" href="fonts/cairo-arabic-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
-  <meta name="faseela-build" content="3558bc32533a">
+  <meta name="faseela-build" content="3241b7c71964">
   <link rel="stylesheet" href="fonts/fonts.css">
   <!-- Styles: Tailwind is prebuilt by scripts/build-web.cjs (no runtime CDN) -->
-  <link rel="stylesheet" href="assets/tailwind.css?v=3558bc32533a">
+  <link rel="stylesheet" href="assets/tailwind.css?v=3241b7c71964">
   <!-- Lucide Icons (self-hosted, version pinned in package.json) -->
   <script src="vendor/lucide.min.js"></script>
-  <script src="events.js?v=3558bc32533a"></script>
+  <script src="events.js?v=3241b7c71964"></script>
   <style>
     :root {
       --sat: env(safe-area-inset-top, 0px);
@@ -808,7 +808,7 @@
             سوق الأشجار
           </button>
           <button data-click="navigateTo('dashboard')" id="nav-dashboard" class="px-3.5 py-1.5 rounded-full transition-all text-stone-600 hover:text-olive-900 hover:bg-stone-200/50 flex items-center gap-1.5">
-            <span data-i18n="nav_dashboard">محفظتي</span>
+            <span data-i18n="nav_dashboard">كفالاتي</span>
             <span id="user-shares-count-static" class="bg-olive-600 text-white text-[10px] px-1.5 py-0.2 rounded-full font-bold">1</span>
           </button>
           <button data-click="navigateTo('farmer-portal')" id="nav-farmer" class="px-3.5 py-1.5 rounded-full transition-all text-stone-600 hover:text-olive-900 hover:bg-stone-200/50 flex items-center gap-1">
@@ -910,7 +910,7 @@
         <button data-click="navigateTo('dashboard'); toggleMobileNavMenu();" class="w-full text-start px-3 py-2 rounded-xl font-bold text-stone-800 dark:text-stone-200 hover:bg-stone-100 dark:hover:bg-stone-800 flex items-center justify-between">
           <div class="flex items-center gap-2">
             <i data-lucide="wallet" class="w-4 h-4 text-olive-700 dark:text-olive-400"></i>
-            <span data-i18n="nav_dashboard">محفظتي</span>
+            <span data-i18n="nav_dashboard">كفالاتي</span>
           </div>
           <span id="mobile-user-shares-count" class="bg-olive-600 text-white text-[10px] px-2 py-0.5 rounded-full font-bold">1</span>
         </button>
@@ -987,7 +987,7 @@
                 وشارك الأرض بركتها وثمارها
               </h1>
               <p class="text-stone-300 text-base sm:text-lg font-normal leading-relaxed max-w-2xl" data-i18n="hero_desc">
-                اشترِ حصة موثقة في شجرة زيتون عريقة في سوريا، تابع نموها ورعايتها، وراقب عصر ثمارها في أحدث المعاصر المعتمدة مع شهادات جودة مخبرية ونسب حموضة موثّقة مخبرياً، واستلم زيتك البكر أو محاصيلك أينما كنت.
+                اكفل حصة من محصول شجرة زيتون مدرجة في سوريا، وتابع رعايتها عبر تحديثات المزارع. بعد العصر تُخصَّص لك حصتك من الزيت، ويمكنك طلب توصيلها أو استلامها أو التبرع بها، ويراجع فريق فسيلة كل طلب.
               </p>
               <div class="flex flex-wrap gap-4 pt-2">
                 <button data-click="navigateTo('marketplace')" class="bg-terracotta-600 hover:bg-terracotta-700 text-white px-8 py-4 rounded-2xl font-black text-base shadow-xl hover:shadow-terracotta-500/30 transition-all flex items-center gap-3">
@@ -1034,10 +1034,10 @@
                     <span id="hero-feat-price-wrap" class="text-xl font-black text-terracotta-600 formatted-price" data-usd="38"><span id="hero-feat-price-val">$38</span> <span class="text-xs font-semibold text-stone-500" data-i18n="per_share_unit">/ الحصة</span></span>
                   </div>
                   <p id="hero-feat-desc" class="text-xs text-stone-600 leading-relaxed" data-i18n="hero_feat_desc">
-                    زيتون خضيري أصيل غرس عام 1948. معتمدة لدى معصرة الدريكيش الحديثة لإنتاج زيت فائق النقاء بحموضة 0.32%.
+                    شجرة زيتون مدرجة للكفالة
                   </p>
                   <div class="bg-stone-50 p-3 rounded-xl flex items-center justify-between text-xs text-stone-700">
-                    <span class="flex items-center gap-1 font-semibold text-amber-900"><i data-lucide="award" class="w-4 h-4 text-amber-600"></i> <span id="hero-feat-lab-txt" data-i18n="hero_feat_lab">شهادة جودة مخبرية</span></span>
+                    <span class="flex items-center gap-1 font-semibold text-amber-900"><i data-lucide="info" class="w-4 h-4 text-amber-600"></i> <span id="hero-feat-lab-txt" data-i18n="hero_feat_lab">نتائج العصر تُنشر بعد اعتمادها</span></span>
                     <span id="hero-feat-avail" class="font-bold text-olive-800" data-i18n="hero_feat_avail">متاح 50% من الحصص</span>
                   </div>
                   <div id="hero-feat-land-pkg" data-feature="land" class="bg-gradient-to-r from-emerald-50 via-white to-emerald-50 border border-emerald-300/80 p-2.5 rounded-xl flex items-center justify-between text-xs text-emerald-950 font-bold shadow-2xs">
@@ -1070,7 +1070,7 @@
       </div>
 
             <!-- Live Agro-Weather & Microclimate Telemetry Section -->
-      <section class="py-12 bg-white border-b border-stone-200">
+      <section data-off="no-offer" class="py-12 bg-white border-b border-stone-200">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-start">
           <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
             <div>
@@ -1120,8 +1120,8 @@
                 </div>
               </div>
               <div class="pt-3 border-t border-stone-200/60 flex items-center justify-between text-[11px] text-stone-500">
-                <span class="flex items-center gap-1 font-bold text-olive-800"><i data-lucide="satellite" class="w-3.5 h-3.5 text-olive-600"></i> Sentinel-2 Telemetry</span>
-                <span id="tele-tartus-sync" data-i18n="tele_updated_min">محدث قبل دقيقة</span>
+                <span class="flex items-center gap-1 font-bold text-olive-800"><i data-lucide="info" class="w-3.5 h-3.5 text-olive-600"></i> <span data-i18n="agro_weather_badge">قيم توضيحية — ليست قياسات مباشرة</span></span>
+                <span id="tele-tartus-sync" data-i18n="tele_updated_min">ليست قراءة حية</span>
               </div>
             </div>
 
@@ -1157,8 +1157,8 @@
                 </div>
               </div>
               <div class="pt-3 border-t border-stone-200/60 flex items-center justify-between text-[11px] text-stone-500">
-                <span class="flex items-center gap-1 font-bold text-olive-800"><i data-lucide="satellite" class="w-3.5 h-3.5 text-olive-600"></i> Sentinel-2 Telemetry</span>
-                <span id="tele-idlib-sync" data-i18n="tele_updated_min">محدث قبل دقيقة</span>
+                <span class="flex items-center gap-1 font-bold text-olive-800"><i data-lucide="info" class="w-3.5 h-3.5 text-olive-600"></i> <span data-i18n="agro_weather_badge">قيم توضيحية — ليست قياسات مباشرة</span></span>
+                <span id="tele-idlib-sync" data-i18n="tele_updated_min">ليست قراءة حية</span>
               </div>
             </div>
 
@@ -1194,8 +1194,8 @@
                 </div>
               </div>
               <div class="pt-3 border-t border-stone-200/60 flex items-center justify-between text-[11px] text-stone-500">
-                <span class="flex items-center gap-1 font-bold text-olive-800"><i data-lucide="satellite" class="w-3.5 h-3.5 text-olive-600"></i> Sentinel-2 Telemetry</span>
-                <span id="tele-daraa-sync" data-i18n="tele_updated_min">محدث قبل دقيقة</span>
+                <span class="flex items-center gap-1 font-bold text-olive-800"><i data-lucide="info" class="w-3.5 h-3.5 text-olive-600"></i> <span data-i18n="agro_weather_badge">قيم توضيحية — ليست قياسات مباشرة</span></span>
+                <span id="tele-daraa-sync" data-i18n="tele_updated_min">ليست قراءة حية</span>
               </div>
             </div>
           </div>
@@ -1251,7 +1251,7 @@
               <span class="text-xs font-black text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-lg block w-fit mb-3" data-i18n="cal_q2_month">نيسان – أيار</span>
               <h3 class="text-lg font-black text-stone-900 mb-1" data-i18n="cal_q2_title">الإزهار والعقد الأولي</h3>
               <p class="text-xs text-stone-600 leading-relaxed" data-i18n="cal_q2_desc">
-                ظهور الأزهار البيضاء الكثيفة وتحولها إلى حبات زيتون صغيرة واعدة، مع مراقبة رطوبة الأرض.
+                ظهور الأزهار البيضاء وتحولها إلى حبات زيتون صغيرة، ويتابع المزارع حاجة الأشجار إلى الري.
               </p>
               <div class="mt-4 pt-3 border-t border-stone-100 text-[11px] font-bold text-emerald-800 flex items-center gap-1">
                 <i data-lucide="sprout" class="w-3.5 h-3.5 text-emerald-600"></i>
@@ -1417,9 +1417,9 @@
       <section id="syrian-groves-map" class="py-14 bg-gradient-to-b from-olive-50 via-stone-100 to-olive-50 dark:from-stone-950 dark:via-stone-900 dark:to-stone-950 border-b border-stone-200 dark:border-stone-800">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-start">
           <div class="text-center max-w-2xl mx-auto mb-10">
-            <span class="bg-olive-200 text-olive-900 text-xs font-bold px-3.5 py-1 rounded-full uppercase tracking-wider" data-i18n="map_section_badge">مستكشف البساتين السورية الحي</span>
+            <span class="bg-olive-200 text-olive-900 text-xs font-bold px-3.5 py-1 rounded-full uppercase tracking-wider" data-i18n="map_section_badge">مناطق زراعة الزيتون في سوريا</span>
             <h2 class="text-2xl sm:text-3xl font-black text-olive-950 mt-2" data-i18n="map_section_title">التوزع الجغرافي لبساتين الزيتون والمناخ الميداني</h2>
-            <p class="text-xs text-stone-600 mt-1" data-i18n="map_section_sub">اختر المحافظة لاستعراض خصائص التربة، معدل الأمطار، الأصناف السائدة، والأشجار المتاحة للكفالة الفورية</p>
+            <p class="text-xs text-stone-600 mt-1" data-i18n="map_section_sub">اختر المحافظة لتعرف مناخها وأصنافها، واعرض الأشجار المدرجة فيها للكفالة</p>
           </div>
 
           <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
@@ -1686,7 +1686,7 @@
                         10 أشجار • بستان المغتربين
                       </button>
                       <button type="button" data-click="setROIPreset(100)" id="roi-chip-100" class="roi-chip px-2.5 py-1 rounded-xl text-[11px] font-bold border border-stone-200 bg-white hover:border-olive-600 text-stone-700 transition-all shadow-xs" data-i18n="calc_preset_100">
-                        25 شجرة • كبار الرعاة ESG
+                        25 شجرة
                       </button>
                     </div>
                   </div>
@@ -1705,17 +1705,17 @@
 
 
                   <!-- Dynamic Sponsor Tier / Perks Banner -->
-                  <div id="roi-tier-banner" class="bg-gradient-to-r from-amber-500/15 via-olive-600/10 to-emerald-600/15 border border-amber-300/60 p-3 rounded-2xl flex items-center justify-between gap-3 text-xs">
+                  <div id="roi-tier-banner" data-off="no-offer" class="bg-gradient-to-r from-amber-500/15 via-olive-600/10 to-emerald-600/15 border border-amber-300/60 p-3 rounded-2xl flex items-center justify-between gap-3 text-xs">
                     <div class="flex items-center gap-2">
                       <div class="w-7 h-7 rounded-lg bg-amber-500 text-white flex items-center justify-center flex-shrink-0">
                         <i data-lucide="award" class="w-4 h-4"></i>
                       </div>
                       <div>
-                        <span id="roi-tier-title" class="font-black text-stone-900 block text-xs" data-i18n="tier_individual_title">المساهم الفردي</span>
-                        <span id="roi-tier-perk" class="text-[10px] text-stone-600" data-i18n="tier_individual_desc">شهادة ملكية رقمية موثقة بنظام GPS وحصة زيت موثّقة بعد الحصاد</span>
+                        <span id="roi-tier-title" class="font-black text-stone-900 block text-xs" data-i18n="tier_individual_title">كفالة حصص الأشجار</span>
+                        <span id="roi-tier-perk" class="text-[10px] text-stone-600" data-i18n="tier_individual_desc">شهادة كفالة (PDF) وحصتك من الزيت بعد العصر</span>
                       </div>
                     </div>
-                    <span id="roi-tier-tag" class="text-[10px] font-black bg-amber-100 text-amber-900 px-2 py-0.5 rounded-md uppercase" data-i18n="tier_individual_tag">أساسي</span>
+                    <span id="roi-tier-tag" class="text-[10px] font-black bg-amber-100 text-amber-900 px-2 py-0.5 rounded-md uppercase" data-i18n="tier_individual_tag">كفالة</span>
                   </div>
                 </div>
 
@@ -1725,7 +1725,7 @@
                     <span data-i18n="calc_include_title">ماذا تشمل الحصة الواحدة؟</span>
                   </div>
                   <p class="text-[11px] leading-relaxed text-stone-600" data-i18n="calc_include_desc">
-                    رعاية زراعية سنوية متكاملة (سقاية، تقليم، مكافحة حيوية) + عصر على البارد في معصرة معتمدة + شهادة ملكية وجودة رقمية موثقة بالـ GPS.
+                    رعاية المزارع للشجرة خلال الموسم مع تحديثات ميدانية + العصر في معصرة شريكة + شهادة كفالة (PDF) + حصة من الزيت بعد العصر.
                   </p>
                 </div>
               </div>
@@ -1738,10 +1738,10 @@
                   </div>
                   <span class="text-xs text-stone-500 font-bold block" data-i18n="calc_card1_title">زيت زيتون بكر ممتاز</span>
                   <div id="calc-oil-liters" class="text-2xl font-black text-stone-900 mt-1">~ 3.7 لتر</div>
-                  <span class="text-[10px] text-stone-500 dark:text-stone-400" data-i18n="calc_card1_sub">عصر بارد حموضة &lt; 0.4%</span>
+                  <span class="text-[10px] text-stone-500 dark:text-stone-400" data-i18n="calc_card1_sub">تقدير غير ملزم لحصتك من الزيت</span>
                 </div>
 
-                <div class="bg-white p-5 rounded-2xl border border-stone-200 text-center shadow-sm">
+                <div data-off="no-offer" class="bg-white p-5 rounded-2xl border border-stone-200 text-center shadow-sm">
                   <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center mx-auto mb-2">
                     <i data-lucide="leaf" class="w-5 h-5"></i>
                   </div>
@@ -1759,22 +1759,22 @@
                   <span class="text-[10px] text-stone-500 dark:text-stone-400" data-i18n="calc_card3_sub">دفع محلي أو دولي</span>
                 </div>
 
-                <div class="bg-white p-5 rounded-2xl border border-stone-200 text-center shadow-sm">
+                <div data-off="no-offer" class="bg-white p-5 rounded-2xl border border-stone-200 text-center shadow-sm">
                   <div class="w-10 h-10 rounded-xl bg-terracotta-500/10 text-terracotta-600 flex items-center justify-center mx-auto mb-2">
                     <i data-lucide="trending-up" class="w-5 h-5"></i>
                   </div>
-                  <span class="text-xs text-stone-500 font-bold block" data-i18n="calc_card4_title">المحصول التقديري السنوي</span>
+                  <span class="text-xs text-stone-500 font-bold block" data-i18n="calc_card4_title">القيمة التقديرية السنوية للزيت</span>
                   <div id="calc-market-val" class="text-xl sm:text-2xl font-black text-terracotta-600 mt-1">$29.60</div>
-                  <span class="text-[10px] text-stone-500 dark:text-stone-400" data-i18n="calc_card4_sub">قيمة الزيت أو المردود</span>
+                  <span class="text-[10px] text-stone-500 dark:text-stone-400" data-i18n="calc_card4_sub">قيمة تقديرية للزيت، ليست عائداً ولا دفعة نقدية</span>
                 </div>
 
-                <div class="col-span-2 bg-gradient-to-r from-emerald-900 via-olive-900 to-stone-900 text-white p-4 sm:p-5 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4 text-xs shadow-md border border-emerald-700/30">
+                <div data-off="no-offer" class="col-span-2 bg-gradient-to-r from-emerald-900 via-olive-900 to-stone-900 text-white p-4 sm:p-5 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4 text-xs shadow-md border border-emerald-700/30">
                   <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-2xl bg-white/10 flex items-center justify-center flex-shrink-0">
                       <i data-lucide="shield-check" class="w-5 h-5 text-emerald-400"></i>
                     </div>
                     <div class="text-start">
-                      <span class="font-black text-sm block" data-i18n="calc_esg_title">الأثر البيئي والتمكين المجتمعي (ESG Impact)</span>
+                      <span class="font-black text-sm block" data-i18n="calc_esg_title">دعم المزارعين في سوريا:</span>
                       <span class="text-[11px] text-stone-300" data-i18n="calc_esg_sub">مساهمتك تدعم الأسر الريفية وتحمي البيئة مباشرة</span>
                     </div>
                   </div>
@@ -1855,7 +1855,7 @@
         </div>
         <div class="flex items-center gap-2">
           <span class="text-xs font-bold text-stone-500 dark:text-stone-400" data-i18n="market_available_label">المتاح للاكتتاب:</span>
-          <span id="marketplace-count-badge" class="bg-olive-100 text-olive-800 dark:bg-olive-900/60 dark:text-olive-300 text-xs font-black px-3 py-1 rounded-full" data-i18n="marketplace_count_initial">11 شجرة و 4 بساتين</span>
+          <span id="marketplace-count-badge" class="bg-olive-100 text-olive-800 dark:bg-olive-900/60 dark:text-olive-300 text-xs font-black px-3 py-1 rounded-full" data-i18n="marketplace_count_initial">جارٍ تحميل الأشجار المتاحة…</span>
         </div>
       </div>
 
@@ -2172,17 +2172,17 @@
             <i data-lucide="shield-check" class="w-3.5 h-3.5 text-amber-300"></i>
             <span data-i18n="dash_badge_verified">كفالاتك على فسيلة</span>
           </div>
-          <h1 class="text-2xl sm:text-3xl font-black" data-i18n="dash_title">محفظتي في فسيلة</h1>
+          <h1 class="text-2xl sm:text-3xl font-black" data-i18n="dash_title">كفالاتي في فسيلة</h1>
           <p class="text-stone-300 text-xs mt-1" data-i18n="dash_subtitle">متابعة أداء أشجارك، الحصص المملوكة، محاصيل الزيت الفاخر، والشهادات الرسمية</p>
         </div>
         <div class="flex flex-wrap items-center gap-2 relative z-10">
           <button data-demo type="button" data-click="openCertificateModal('tree_01')" class="bg-amber-600 hover:bg-amber-700 text-white px-4 sm:px-5 py-2.5 sm:py-3 rounded-2xl font-bold text-xs flex items-center gap-2 shadow-lg transition-all cursor-pointer">
             <i data-lucide="award" class="w-4 h-4"></i>
-            <span data-i18n="dash_btn_cert">شهادة الملكية الرقمية</span>
+            <span data-i18n="dash_btn_cert">نموذج شهادة الكفالة</span>
           </button>
           <button data-demo type="button" data-click="openLabQrPassportModal('SYR-MILL-2025-0981')" class="bg-white/10 hover:bg-white/20 text-emerald-200 border border-emerald-400/30 px-3.5 sm:px-4 py-2.5 sm:py-3 rounded-2xl font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer">
             <i data-lucide="qr-code" class="w-4 h-4 text-emerald-300"></i>
-            <span data-i18n="dash_btn_qr_pass">جواز الزيت المخبري (IOC)</span>
+            <span data-i18n="dash_btn_qr_pass">نموذج بطاقة جودة الزيت</span>
           </button>
           <button data-off="no-offer" type="button" data-click="openEsgCertificateModal()" class="bg-emerald-700/80 hover:bg-emerald-600 text-white border border-emerald-400/40 px-3.5 sm:px-4 py-2.5 sm:py-3 rounded-2xl font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer shadow-xs">
             <i data-lucide="leaf" class="w-4 h-4 text-lime-300"></i>
@@ -2263,7 +2263,7 @@
       <div class="grid grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4 mb-6 text-xs text-start">
         <div class="bg-white dark:bg-stone-900 p-4 rounded-2xl border border-stone-200 dark:border-stone-800 shadow-2xs">
           <div class="flex items-center justify-between text-stone-500 dark:text-stone-400 mb-1">
-            <span class="font-bold text-[11px]" data-i18n="dash_stat_invest">إجمالي الكفالة</span>
+            <span class="font-bold text-[11px]" data-i18n="dash_stat_invest">إجمالي مبلغ الكفالة</span>
             <div class="w-7 h-7 rounded-lg bg-olive-100 dark:bg-olive-950 text-olive-800 dark:text-olive-400 flex items-center justify-center">
               <i data-lucide="wallet" class="w-3.5 h-3.5"></i>
             </div>
@@ -2274,7 +2274,7 @@
 
         <div class="bg-white dark:bg-stone-900 p-4 rounded-2xl border border-stone-200 dark:border-stone-800 shadow-2xs">
           <div class="flex items-center justify-between text-stone-500 dark:text-stone-400 mb-1">
-            <span class="font-bold text-[11px]" data-i18n="dash_stat_oil">إنتاج الزيت المتوقع</span>
+            <span class="font-bold text-[11px]" data-i18n="dash_stat_oil">حصة الزيت المتوقعة</span>
             <div class="w-7 h-7 rounded-lg bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-400 flex items-center justify-center">
               <i data-lucide="droplets" class="w-3.5 h-3.5"></i>
             </div>
@@ -2296,7 +2296,7 @@
 
         <div class="bg-white dark:bg-stone-900 p-4 rounded-2xl border border-stone-200 dark:border-stone-800 shadow-2xs">
           <div class="flex items-center justify-between text-stone-500 dark:text-stone-400 mb-1">
-            <span class="font-bold text-[11px]" data-i18n="dash_stat_trees">الأشجار المملوكة</span>
+            <span class="font-bold text-[11px]" data-i18n="dash_stat_trees">الأشجار المكفولة</span>
             <div class="w-7 h-7 rounded-lg bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300 flex items-center justify-center">
               <i data-lucide="tree-pine" class="w-3.5 h-3.5"></i>
             </div>
@@ -2327,17 +2327,17 @@
           <i data-lucide="package-check" class="w-4 h-4 text-amber-600"></i>
           <span data-i18n="dash_tab_harvest" class="truncate">إدارة محاصيل المحصول والشحن</span>
         </button>
-        <button type="button" data-click="switchInvestorSubTab('trade')" id="btn-investor-tab-trade" class="flex-1 min-w-[130px] py-2.5 px-2.5 rounded-xl transition-all flex items-center justify-center gap-1.5 text-stone-500 hover:text-stone-900 dark:text-stone-400 font-bold cursor-pointer">
+        <button data-off="no-offer" type="button" data-click="switchInvestorSubTab('trade')" id="btn-investor-tab-trade" class="flex-1 min-w-[130px] py-2.5 px-2.5 rounded-xl transition-all flex items-center justify-center gap-1.5 text-stone-500 hover:text-stone-900 dark:text-stone-400 font-bold cursor-pointer">
           <i data-lucide="arrow-left-right" class="w-4 h-4 text-cyan-600"></i>
           <span data-i18n="dash_tab_trade" class="truncate">سوق التداول وإعادة البيع P2P</span>
         </button>
         <button data-demo type="button" data-click="switchInvestorSubTab('certs')" id="btn-investor-tab-certs" class="flex-1 min-w-[130px] py-2.5 px-2.5 rounded-xl transition-all flex items-center justify-center gap-1.5 text-stone-500 hover:text-stone-900 dark:text-stone-400 font-bold cursor-pointer">
           <i data-lucide="award" class="w-4 h-4 text-emerald-600"></i>
-          <span data-i18n="dash_tab_certs" class="truncate">الوثائق الرسمية وجواز الجودة</span>
+          <span data-i18n="dash_tab_certs" class="truncate">نماذج الوثائق</span>
         </button>
         <button type="button" data-click="switchInvestorSubTab('finance')" id="btn-investor-tab-finance" class="flex-1 min-w-[130px] py-2.5 px-2.5 rounded-xl transition-all flex items-center justify-center gap-1.5 text-stone-500 hover:text-stone-900 dark:text-stone-400 font-bold cursor-pointer">
           <i data-lucide="receipt" class="w-4 h-4 text-purple-600"></i>
-          <span data-i18n="dash_tab_finance" class="truncate">المحفظة المالية والمدفوعات</span>
+          <span data-i18n="dash_tab_finance" class="truncate">دفعاتي</span>
         </button>
       </div>
 
@@ -2370,7 +2370,7 @@
                 <i data-lucide="droplets" class="w-5 h-5 text-amber-600 dark:text-amber-400" aria-hidden="true"></i>
                 <span data-i18n="oil_section_title">زيتي</span>
               </h2>
-              <p class="text-xs text-stone-500 dark:text-stone-400 mt-0.5" data-i18n="oil_section_sub">نصيبك من كل دفعة عصر معتمدة لأشجارك. اطلب التسليم أو الاستلام من المعصرة أو تبرّع به.</p>
+              <p class="text-xs text-stone-500 dark:text-stone-400 mt-0.5" data-i18n="oil_section_sub">نصيبك من كل دفعة عصر معتمدة لأشجارك. اطلب توصيله أو استلامه من المعصرة أو التبرع به، ويُراجَع كل طلب.</p>
             </div>
             <div class="flex items-center gap-2 self-start sm:self-auto">
               <span class="text-xs font-bold text-stone-600 dark:text-stone-300"><span data-i18n="oil_available_lbl">متاح:</span> <span id="oil-available-liters" class="font-mono text-amber-700 dark:text-amber-300">0 L</span></span>
@@ -2441,7 +2441,7 @@
                 <i data-lucide="clock" class="w-5 h-5 text-amber-600 dark:text-amber-400"></i>
                 <span data-i18n="dash_investments_title">طلبات الكفالة والاكتتاب الجارية</span>
               </h2>
-              <p class="text-xs text-stone-500 dark:text-stone-400 mt-0.5" data-i18n="dash_investments_sub">متابعة الحجز المؤقت وتدقيق إشعار الدفع واعتماد الحصص</p>
+              <p class="text-xs text-stone-500 dark:text-stone-400 mt-0.5" data-i18n="dash_investments_sub">تابع حالة الحجز ومراجعة إيصال التحويل البنكي واعتماد حصتك</p>
             </div>
           </div>
           <div id="my-investments-container" class="space-y-4">
@@ -2495,7 +2495,7 @@
             </label>
 
             <!-- Pathway 2: Cash Liquidation -->
-            <label class="cursor-pointer border-2 border-stone-200 dark:border-stone-700 rounded-3xl p-5 block hover:border-purple-600 has-[:checked]:border-purple-600 has-[:checked]:bg-purple-50/50 dark:has-[:checked]:bg-purple-950/20 transition-all space-y-3">
+            <label data-off="no-offer" class="cursor-pointer border-2 border-stone-200 dark:border-stone-700 rounded-3xl p-5 block hover:border-purple-600 has-[:checked]:border-purple-600 has-[:checked]:bg-purple-50/50 dark:has-[:checked]:bg-purple-950/20 transition-all space-y-3">
               <input type="radio" name="investor-yield-mode" value="liquidate" data-change="selectHarvestYieldAction('liquidate')" class="hidden">
               <div class="flex items-center justify-between">
                 <div class="w-9 h-9 rounded-xl bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-300 flex items-center justify-center font-bold">
@@ -2539,7 +2539,7 @@
       <!-- ================= SPONSOR PANEL 3: OFFICIAL CERTS & LAB QUALITY ================= -->
       
       <!-- ================= SPONSOR PANEL 3: P2P SECONDARY MARKET & TRADING ================= -->
-      <div id="panel-investor-trade" class="space-y-6 hidden text-start">
+      <div id="panel-investor-trade" data-off="no-offer" class="space-y-6 hidden text-start">
         <div class="bg-gradient-to-br from-cyan-950/20 via-white to-stone-50 dark:from-stone-900 dark:via-stone-900 dark:to-stone-850 rounded-3xl border border-cyan-200/80 dark:border-stone-800 p-6 shadow-sm space-y-6">
           <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-4 border-b border-cyan-100 dark:border-stone-800">
             <div>
@@ -2588,7 +2588,7 @@
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-stone-100 dark:border-stone-800">
             <div>
               <h3 class="font-black text-stone-900 dark:text-white text-base" data-i18n="dash_certs_vault_title">خزينة الوثائق الرسمية وجواز الجودة المخبري</h3>
-              <p class="text-xs text-stone-500 dark:text-stone-400" data-i18n="dash_certs_vault_sub">كافة الشهادات والعقود المعتمدة قانونياً ومخبرياً لشجرتك المعمرة</p>
+              <p class="text-xs text-stone-500 dark:text-stone-400" data-i18n="dash_certs_vault_sub">نماذج توضيحية: شهادة الكفالة ونتائج العصر</p>
             </div>
             <span class="bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 text-[10px] font-black px-3 py-1 rounded-full self-start sm:self-auto" data-i18n="dash_certs_verified_badge">
               ✓ مصادقة رقمية مشفرة
@@ -2600,7 +2600,7 @@
             <div class="bg-gradient-to-br from-amber-950 via-stone-900 to-stone-950 text-white p-5 rounded-2xl border border-amber-600/40 shadow-md space-y-3">
               <div class="flex items-center justify-between">
                 <i data-lucide="qr-code" class="w-6 h-6 text-amber-300"></i>
-                <span class="text-[9px] font-mono bg-amber-900/60 text-amber-200 px-2 py-0.5 rounded border border-amber-600/30">IOC PASSPORT</span>
+                <span class="text-[9px] font-mono bg-amber-900/60 text-amber-200 px-2 py-0.5 rounded border border-amber-600/30">SAMPLE · عينة · MUSTER</span>
               </div>
               <div>
                 <h4 class="font-black text-sm text-white" data-i18n="dash_certs_card_qr_title">جواز جودة الزيت المخبري (EVOO)</h4>
@@ -2613,14 +2613,14 @@
             </div>
 
             <!-- Cert 2: Title Deed / Certificate -->
-            <div class="bg-white dark:bg-stone-800 p-5 rounded-2xl border border-stone-200 dark:border-stone-700 shadow-2xs space-y-3">
+            <div data-off="no-offer" class="bg-white dark:bg-stone-800 p-5 rounded-2xl border border-stone-200 dark:border-stone-700 shadow-2xs space-y-3">
               <div class="flex items-center justify-between">
                 <i data-lucide="award" class="w-6 h-6 text-olive-700 dark:text-olive-400"></i>
                 <span class="text-[9px] font-mono bg-stone-100 dark:bg-stone-700 text-stone-700 dark:text-stone-300 px-2 py-0.5 rounded">DEED 2026</span>
               </div>
               <div>
-                <h4 class="font-black text-sm text-stone-900 dark:text-white" data-i18n="dash_certs_card_title_deed">شهادة الملكية الكاداسترية</h4>
-                <p class="text-[11px] text-stone-500 dark:text-stone-400 mt-1" data-i18n="dash_certs_card_title_desc">سند حيازة رسمي يوثق حصتك في الشجرة ورقم المحضر العقاري في السجل المساحي.</p>
+                <h4 class="font-black text-sm text-stone-900 dark:text-white" data-i18n="dash_certs_card_title_deed">شهادة الكفالة (PDF)</h4>
+                <p class="text-[11px] text-stone-500 dark:text-stone-400 mt-1" data-i18n="dash_certs_card_title_desc">تؤكد حصتك المكفولة من محصول الشجرة، وتصدر بعد اعتماد دفعتك.</p>
               </div>
               <button type="button" data-click="openCertificateModal('tree_01')" class="w-full bg-stone-100 dark:bg-stone-700 hover:bg-stone-200 dark:hover:bg-stone-600 text-stone-800 dark:text-stone-100 py-2 rounded-xl font-bold text-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer">
                 <i data-lucide="eye" class="w-3.5 h-3.5"></i>
@@ -2629,14 +2629,14 @@
             </div>
 
             <!-- Cert 3: Legal Partnership Contract -->
-            <div class="bg-white dark:bg-stone-800 p-5 rounded-2xl border border-stone-200 dark:border-stone-700 shadow-2xs space-y-3">
+            <div data-off="no-offer" class="bg-white dark:bg-stone-800 p-5 rounded-2xl border border-stone-200 dark:border-stone-700 shadow-2xs space-y-3">
               <div class="flex items-center justify-between">
                 <i data-lucide="file-check-2" class="w-6 h-6 text-purple-700 dark:text-purple-400"></i>
                 <span class="text-[9px] font-mono bg-purple-100 dark:bg-purple-950 text-purple-800 dark:text-purple-300 px-2 py-0.5 rounded">LEGAL CONTRACT</span>
               </div>
               <div>
-                <h4 class="font-black text-sm text-stone-900 dark:text-white" data-i18n="dash_certs_card_contract">عقد الكفالة الزراعية الموثق</h4>
-                <p class="text-[11px] text-stone-500 dark:text-stone-400 mt-1" data-i18n="dash_certs_card_contract_desc">عقد قانوني خاضع لأحكام القانون المدني السوري ومعتمد من غرف الزراعة.</p>
+                <h4 class="font-black text-sm text-stone-900 dark:text-white" data-i18n="dash_certs_card_contract">وصف خدمة الكفالة</h4>
+                <p class="text-[11px] text-stone-500 dark:text-stone-400 mt-1" data-i18n="dash_certs_card_contract_desc">يشرح ما تشمله الكفالة وما لا تشمله.</p>
               </div>
               <button type="button" data-click="openLegalContract('investor')" class="w-full bg-purple-100 dark:bg-purple-950 hover:bg-purple-200 dark:hover:bg-purple-900 text-purple-900 dark:text-purple-200 py-2 rounded-xl font-bold text-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer">
                 <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
@@ -2658,7 +2658,7 @@
               </h2>
               <p class="text-xs text-stone-500 dark:text-stone-400 mt-0.5" data-i18n="dash_tx_subtitle">كافة إيصالات الدفع وعمليات التحويل الموثقة عبر سيريتل كاش والبطاقات</p>
             </div>
-            <span class="bg-purple-100 dark:bg-purple-950 text-purple-800 dark:text-purple-300 text-[10px] font-bold px-2.5 py-0.5 rounded-full self-start sm:self-auto" data-i18n="dash_tx_audit_badge">سجل مدقق مالياً</span>
+            <span class="bg-purple-100 dark:bg-purple-950 text-purple-800 dark:text-purple-300 text-[10px] font-bold px-2.5 py-0.5 rounded-full self-start sm:self-auto" data-i18n="dash_tx_audit_badge">يراجعه فريق المالية</span>
           </div>
 
           <div class="overflow-x-auto">
@@ -3164,14 +3164,14 @@
   </div>
 
   <!-- 6. Farmer Financial Payout Modal (Syriatel Cash & Al-Haram) -->
-  <div id="modal-farmer-payout" role="dialog" aria-modal="true" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+  <div id="modal-farmer-payout" data-demo role="dialog" aria-modal="true" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
     <div class="bg-white dark:bg-stone-900 dark:border-stone-800 dark:text-stone-100 w-full max-w-md rounded-3xl p-6 sm:p-8 shadow-2xl border border-stone-200 text-start space-y-4">
       <div class="flex items-center justify-between pb-3 border-b border-stone-100">
         <div class="flex items-center gap-2">
           <div class="w-8 h-8 rounded-xl bg-olive-700 text-white flex items-center justify-center">
             <i data-lucide="wallet" class="w-4 h-4 text-amber-300"></i>
           </div>
-          <h3 class="text-lg font-black text-olive-950" data-i18n="farmer_payout_modal_title">طلب سحب مستحقات الرعاية</h3>
+          <h3 class="text-lg font-black text-olive-950" data-i18n="farmer_payout_modal_title">طلب صرف (عرض تجريبي)</h3>
         </div>
         <button data-click="closeModal('modal-farmer-payout')" class="w-8 h-8 rounded-full bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-600 dark:text-stone-300 flex items-center justify-center transition-colors cursor-pointer">
           <i data-lucide="x" class="w-4 h-4"></i>
@@ -3179,7 +3179,7 @@
       </div>
 
       <div class="bg-emerald-50 p-4 rounded-2xl border border-emerald-200">
-        <span class="text-[11px] font-bold text-emerald-800 block" data-i18n="farmer_payout_avail_lbl">المبلغ المتاح للصرف الفوري الآن:</span>
+        <span class="text-[11px] font-bold text-emerald-800 block" data-i18n="farmer_payout_avail_lbl">رصيد تجريبي (عرض)</span>
         <div class="flex items-baseline gap-2 mt-0.5">
           <span class="text-2xl font-black text-emerald-950">630,000</span>
           <span class="text-xs font-bold text-emerald-800" data-i18n="payout_currency_equiv">ليرة سورية ($42)</span>
@@ -3194,7 +3194,7 @@
             <label class="p-2.5 border-2 border-olive-700 bg-olive-50/50 rounded-xl cursor-pointer text-center font-bold flex flex-col items-center">
               <input type="radio" name="farmer_payout_method" value="syriatel_cash" checked class="hidden">
               <span class="text-stone-900" data-i18n="payout_method_syriatel">سيريتل كاش</span>
-              <span class="text-[10px] text-olive-700" data-i18n="payout_method_syriatel_sub">تحويل فوري لرقمك</span>
+              <span class="text-[10px] text-olive-700" data-i18n="payout_method_syriatel_sub">للعرض فقط</span>
             </label>
             <label class="p-2.5 border border-stone-200 rounded-xl cursor-pointer text-center font-bold flex flex-col items-center">
               <input type="radio" name="farmer_payout_method" value="al_haram" class="hidden">
@@ -3211,7 +3211,7 @@
       </div>
 
       <button data-click="submitFarmerPayout()" class="w-full bg-olive-800 hover:bg-olive-900 text-white py-3 rounded-2xl font-bold text-xs shadow-md transition-all" data-i18n="farmer_payout_confirm_btn">
-        تأكيد طلب الصرف وتحويل الرصيد
+        إغلاق العرض
       </button>
     </div>
   </div>
@@ -3571,7 +3571,7 @@
             <i data-lucide="shield-check" class="w-5 h-5 text-emerald-300"></i>
           </div>
           <div>
-            <h3 class="text-base sm:text-lg font-black text-olive-950 dark:text-white" id="auth-modal-title" data-i18n="auth_modal_title">تصريح الدخول والمصادقة على الهوية</h3>
+            <h3 class="text-base sm:text-lg font-black text-olive-950 dark:text-white" id="auth-modal-title" data-i18n="auth_modal_title">حسابك في فسيلة</h3>
             <p class="text-[11px] text-stone-500 dark:text-stone-400" id="auth-modal-subtitle" data-i18n="auth_modal_subtitle">التعرف على البريد الإلكتروني ورقم الهاتف وتخويل الصلاحيات</p>
           </div>
         </div>
@@ -3596,7 +3596,7 @@
           </button>
           <button type="button" data-click="switchAuthProfileSubTab('assets')" id="btn-subtab-assets" class="flex-1 py-2.5 px-2 sm:px-3 rounded-xl transition-all flex items-center justify-center gap-1.5 text-stone-500 hover:text-stone-900 dark:text-stone-400 font-bold cursor-pointer whitespace-nowrap">
             <i data-lucide="layers" class="w-4 h-4 text-amber-500"></i>
-            <span data-i18n="auth_tab_assets">أصولي ونشاطي</span>
+            <span data-i18n="auth_tab_assets">نشاطي</span>
           </button>
           <button type="button" data-click="switchAuthProfileSubTab('prefs')" id="btn-subtab-prefs" class="flex-1 py-2.5 px-2 sm:px-3 rounded-xl transition-all flex items-center justify-center gap-1.5 text-stone-500 hover:text-stone-900 dark:text-stone-400 font-bold cursor-pointer whitespace-nowrap">
             <i data-lucide="sliders" class="w-4 h-4 text-olive-600 dark:text-olive-400"></i>
@@ -3658,7 +3658,7 @@
                       <span id="auth-profile-region-val">المنطقة</span>
                     </span>
                   </div>
-                  <div class="flex items-center gap-1.5 pt-0.5">
+                  <div data-off="no-offer" class="flex items-center gap-1.5 pt-0.5">
                     <span id="auth-profile-did" class="text-[10px] font-mono text-stone-300 opacity-90 truncate">DID: SYR-AGR-2026-FNDR01</span>
                     <button type="button" data-click="copyCurrentDID()" aria-label="نسخ المعرف الرقمي" class="p-1 rounded-md bg-white/10 hover:bg-white/20 text-stone-300 hover:text-white transition-all cursor-pointer">
                       <i data-lucide="copy" class="w-3 h-3"></i>
@@ -3731,7 +3731,7 @@
             </div>
 
             <!-- Card Security Specs Footer with Live Cryptographic Hash -->
-            <div class="flex items-center justify-between pt-3 mt-3 border-t border-white/10 relative z-10 text-[10px] font-mono text-stone-300">
+            <div data-off="no-offer" class="flex items-center justify-between pt-3 mt-3 border-t border-white/10 relative z-10 text-[10px] font-mono text-stone-300">
               <span class="flex items-center gap-1"><i data-lucide="lock" class="w-3 h-3 text-emerald-400"></i> AES-256-GCM</span>
               <span class="flex items-center gap-1" id="auth-pass-crypto-hash"><i data-lucide="fingerprint" class="w-3 h-3 text-amber-400"></i> SIG: 0x8F3A...E91C</span>
               <span class="opacity-75">Syrian Agritech Pass</span>
@@ -4028,8 +4028,8 @@
                 <i data-lucide="lock" class="w-4 h-4"></i>
               </div>
               <div class="space-y-0.5">
-                <strong class="font-bold text-stone-900 dark:text-white block" data-i18n="auth_sec_item1_title">التشفير الهجين للبيانات (AES-256 + TLS 1.3)</strong>
-                <p class="text-[11px] text-stone-500 dark:text-stone-400" data-i18n="auth_sec_item1_desc">تُنقل بياناتك وطلبات الدفع عبر اتصال مشفّر (TLS) وتُخزَّن مشفّرة.</p>
+                <strong class="font-bold text-stone-900 dark:text-white block" data-i18n="auth_sec_item1_title">اتصال مشفّر</strong>
+                <p class="text-[11px] text-stone-500 dark:text-stone-400" data-i18n="auth_sec_item1_desc">تُنقل بيانات حسابك وإيصالات التحويل عبر اتصال مشفّر (HTTPS).</p>
               </div>
             </div>
 
@@ -4185,7 +4185,7 @@
           </div>
 
           <div class="flex items-center justify-between text-[11px] text-stone-600 dark:text-stone-300 pt-0.5">
-            <label class="flex items-center gap-1.5 cursor-pointer select-none">
+            <label data-off="no-offer" class="flex items-center gap-1.5 cursor-pointer select-none">
               <input type="checkbox" id="auth-remember-me" checked class="rounded border-stone-300 text-olive-700 focus:ring-olive-600">
               <span data-i18n="auth_remember_me">تذكر هذا الجهاز بأمان</span>
             </label>
@@ -4230,7 +4230,7 @@
                 <input type="radio" name="reg-role" value="investor" checked class="hidden">
                 <div class="flex items-center gap-2 mb-1">
                   <span class="text-base">💼</span>
-                  <span class="font-black text-stone-900 dark:text-white text-xs block" data-i18n="auth_role_investor">كافل زراعي</span>
+                  <span class="font-black text-stone-900 dark:text-white text-xs block" data-i18n="auth_role_investor">كافل</span>
                 </div>
                 <span class="text-[10px] text-stone-600 dark:text-stone-300 block leading-tight" data-i18n="auth_role_investor_sub">رعاية واستلام زيت</span>
               </label>
@@ -4241,7 +4241,7 @@
                   <span class="text-base">👨‍🌾</span>
                   <span class="font-black text-stone-900 dark:text-white text-xs block" data-i18n="auth_role_farmer">مزارع شريك</span>
                 </div>
-                <span class="text-[10px] text-stone-600 dark:text-stone-300 block leading-tight" data-i18n="auth_role_farmer_sub">إدارة الحقول، تسجيل المهام، وسحب الأجور والسلف</span>
+                <span class="text-[10px] text-stone-600 dark:text-stone-300 block leading-tight" data-i18n="auth_role_farmer_sub">تحديثات ميدانية لأشجارك</span>
               </label>
 
               <label class="cursor-pointer border border-stone-200 dark:border-stone-700 rounded-2xl p-3 text-start block hover:border-amber-600 has-[:checked]:border-amber-700 has-[:checked]:bg-amber-50 dark:has-[:checked]:bg-amber-950/60 transition-all shadow-2xs">
@@ -4422,7 +4422,7 @@
             </div>
           </div>
           <p class="text-[11px] text-stone-500 dark:text-stone-400 leading-relaxed" data-i18n="auth_reset_pwd_desc">
-            تم إثبات ملكيتك للحساب عبر المصادقة الثنائية بنجاح. أدخل كلمة مرور قوية وجديدة لحسابك:
+            تم التحقق من بريدك الإلكتروني. أدخل كلمة مرور جديدة وقوية لحسابك:
           </p>
           <div class="font-mono text-xs font-bold text-olive-800 dark:text-olive-300 pt-0.5" id="reset-pwd-user-name"></div>
         </div>
@@ -4460,7 +4460,7 @@
           <span data-i18n="auth_rbac_footer_title">حماية وتخويل الوصول الصارم (Strict RBAC):</span>
         </div>
         <p class="leading-relaxed text-amber-800 text-[10px]" data-i18n="auth_rbac_footer_desc">
-          يتم التأكد من مطابقة البريد والهاتف وتخويل المستخدم بالوصول حصراً لما يملكه: الكافل إلى محفظته وحصصه فقط، والمزارع إلى أشجاره وأتعابه، وصاحب المعصرة إلى دفعات العصر، لمنع أي اختراق أو كشف لبيانات المستخدمين الآخرين.
+          يصل كل حساب إلى صفحاته فقط: الكافل إلى كفالاته، والمزارع إلى الأشجار المسندة إليه، وصاحب المعصرة إلى دفعات العصر الخاصة بمعصرته.
         </p>
       </div>
     </div>
@@ -4710,7 +4710,7 @@
           <div class="flex items-center justify-between border-b border-stone-100 dark:border-stone-800 pb-2">
             <h4 class="font-black text-stone-900 dark:text-white text-xs sm:text-sm flex items-center gap-2">
               <i data-lucide="trees" class="w-4 h-4 text-olive-600"></i>
-              <span data-i18n="modal_dossier_assets_title">حصص الأشجار المسجلة باسم المستخدم</span>
+              <span data-i18n="modal_dossier_assets_title">كفالات المستخدم</span>
             </h4>
             <span id="fndr-dossier-shares-count" class="text-[11px] font-bold text-olive-700 dark:text-olive-400 bg-olive-100 dark:bg-olive-950 px-2 py-0.5 rounded-full" data-i18n="modal_dossier_zero_shares">0 حصص</span>
           </div>
@@ -4743,7 +4743,7 @@
               <i data-lucide="edit" class="w-3.5 h-3.5"></i>
               <span data-i18n="dossier_btn_edit_perms">تعديل الصلاحيات</span>
             </button>
-            <button type="button" id="fndr-dossier-btn-alert" class="bg-amber-600 hover:bg-amber-700 text-white px-3 py-1.5 rounded-xl font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer">
+            <button data-demo type="button" id="fndr-dossier-btn-alert" class="bg-amber-600 hover:bg-amber-700 text-white px-3 py-1.5 rounded-xl font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer">
               <i data-lucide="bell" class="w-3.5 h-3.5"></i>
               <span data-i18n="modal_btn_send_alert">إرسال تنبيه</span>
             </button>
@@ -4936,7 +4936,7 @@
           <div class="space-y-1">
             <label class="text-xs font-bold text-stone-700 dark:text-stone-300 block" data-i18n="fndr_user_role_lbl">الصلاحية ونوع الحساب</label>
             <select id="fndr-edit-role" class="w-full bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-xl px-3 py-2 text-xs text-stone-900 dark:text-white font-bold cursor-pointer focus:outline-none focus:ring-2 focus:ring-purple-500">
-              <option value="investor" data-i18n="fndr_filter_investor">كافل زراعي</option>
+              <option value="investor" data-i18n="fndr_filter_investor">كافل</option>
               <option value="farmer" data-i18n="fndr_filter_farmer">مزارع شريك</option>
               <option value="mill_owner" data-i18n="fndr_filter_mill">صاحب معصرة</option>
               <option value="finance_admin" data-i18n="fndr_role_finance">مدقق مالي</option>
@@ -5083,7 +5083,7 @@
           <div class="space-y-1">
             <label class="text-xs font-bold text-stone-700 dark:text-stone-300 block" data-i18n="fndr_user_role_lbl">الصلاحية</label>
             <select id="fndr-new-role" class="w-full bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-xl px-3 py-2 text-xs text-stone-900 dark:text-white font-bold cursor-pointer focus:outline-none focus:ring-2 focus:ring-emerald-500">
-              <option value="investor" data-i18n="fndr_filter_investor">كافل زراعي</option>
+              <option value="investor" data-i18n="fndr_filter_investor">كافل</option>
               <option value="farmer" data-i18n="fndr_filter_farmer">مزارع شريك</option>
               <option value="mill_owner" data-i18n="fndr_filter_mill">صاحب معصرة</option>
               <option value="admin" data-i18n="fndr_filter_admin">الإدارة والمؤسس</option>
@@ -5161,7 +5161,7 @@
           <label class="text-xs font-bold text-stone-700 dark:text-stone-300 block" data-i18n="fndr_alert_prio_lbl">تصنيف الأولوية</label>
           <select id="fndr-alert-priority" class="w-full bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-xl px-3 py-2 text-xs text-stone-900 dark:text-white font-bold cursor-pointer">
             <option value="normal" data-i18n="alert_prio_normal">عادي (تحديث روتيني)</option>
-            <option value="financial" data-i18n="alert_prio_financial">مالي (استحقاقات وصكوك)</option>
+            <option value="financial" data-i18n="alert_prio_financial">مالي (دفعات)</option>
             <option value="urgent" data-i18n="alert_prio_urgent">عاجل وطارئ (تنبيه فوري بنغمة صوتية)</option>
           </select>
         </div>
@@ -5345,7 +5345,7 @@
           </button>
           <button type="button" data-click="setNotificationFilter('financial')" id="notif-tab-financial" class="px-3 py-1.5 rounded-xl text-xs font-bold transition-all text-stone-600 dark:text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-800 flex items-center gap-1.5 cursor-pointer">
             <i data-lucide="coins" class="w-3.5 h-3.5 text-emerald-600"></i>
-            <span data-i18n="notif_tab_financial">مالية وكفالة</span>
+            <span data-i18n="notif_tab_financial">الدفعات والكفالة</span>
             <span id="notif-count-financial" class="bg-stone-200 dark:bg-stone-700 text-stone-700 dark:text-stone-300 text-[10px] px-1.5 py-0.2 rounded-full font-bold">0</span>
           </button>
           <button type="button" data-click="setNotificationFilter('field')" id="notif-tab-field" class="px-3 py-1.5 rounded-xl text-xs font-bold transition-all text-stone-600 dark:text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-800 flex items-center gap-1.5 cursor-pointer">
@@ -5374,13 +5374,13 @@
 
       <!-- Modal Footer (Preferences & Channel Indicators) -->
       <div class="p-3 sm:p-4 border-t border-stone-100 dark:border-stone-800 bg-stone-50 dark:bg-stone-900/80 flex flex-wrap items-center justify-between gap-3 text-xs text-stone-500 dark:text-stone-400">
-        <div class="flex items-center gap-3">
+        <div data-off="no-offer" class="flex items-center gap-3">
           <span class="font-bold text-stone-700 dark:text-stone-300 flex items-center gap-1.5">
             <i data-lucide="radio" class="w-3.5 h-3.5 text-emerald-500 animate-pulse"></i>
-            <span data-i18n="notif_channels_active">قنوات التنبيه النشطة:</span>
+            <span data-i18n="notif_channels_active">قنوات التنبيه:</span>
           </span>
           <div class="flex items-center gap-2 text-[11px]">
-            <span class="px-2 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 font-semibold" data-i18n="notif_pref_push">إشعارات الويب (Push)</span>
+            <span class="px-2 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 font-semibold" data-i18n="notif_pref_push">إشعارات الهاتف</span>
             <span class="px-2 py-0.5 rounded-md bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 font-semibold" data-i18n="notif_pref_email">البريد الإلكتروني</span>
           </div>
         </div>
@@ -5979,7 +5979,7 @@
           </div>
           <h2 class="text-lg sm:text-xl font-black text-white" data-i18n="mill_banner_partner_title">هل تمتلك معصرة زيتون حديثة؟ انضم كمعصرة شريكة معتمدة في فسيلة</h2>
           <p class="text-xs text-stone-200 max-w-2xl leading-relaxed" data-i18n="mill_banner_partner_desc">
-            نربط معصرتك مباشرة بآلاف الكافلين والمزارعين لعصر محاصيل الأشجار المكفولة وفق أعلى معايير الجودة العالمية، وتوفير أتعاب فورية عينية ونقدية مع عقود سنوية موقّعة.
+            نبحث عن معاصر شريكة لعصر ثمار الأشجار المكفولة. أرسل طلبك، ويراجعه فريق فسيلة ويتواصل معك للاتفاق على التفاصيل.
           </p>
         </div>
         <div class="flex items-center gap-2 flex-shrink-0">
@@ -5989,7 +5989,7 @@
           </button>
           <button type="button" data-click="openLegalContract('mill')" class="bg-white/10 hover:bg-white/20 text-amber-200 border border-amber-300/30 px-3.5 py-2.5 sm:py-3 rounded-2xl font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer">
             <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
-            <span data-i18n="mill_btn_view_charter">معايير الاعتماد</span>
+            <span data-i18n="mill_btn_view_charter">التواصل والجهة المشغّلة</span>
           </button>
         </div>
       </div>
@@ -6002,13 +6002,13 @@
             <i data-lucide="cog" class="w-3.5 h-3.5 text-amber-400"></i>
             <span data-i18n="mill_badge_tech">بوابة المعاصر الإيطالية الحديثة (Continuous Cold-Press Desk)</span>
           </div>
-          <h1 id="mill-active-title" class="text-2xl sm:text-3xl font-black" data-i18n="mill_title">معصرة الدريكيش الإيطالية الحديثة</h1>
-          <p id="mill-active-subtitle" class="text-stone-300 text-xs mt-1" data-i18n="mill_subtitle">المهندس سمير الدريكيشي • تقنية العصر البارد مرحلتين بدون زيبار • طرطوس</p>
+          <h1 id="mill-active-title" class="text-2xl sm:text-3xl font-black" data-i18n="mill_title">بوابة المعاصر الشريكة</h1>
+          <p id="mill-active-subtitle" class="text-stone-300 text-xs mt-1" data-i18n="mill_subtitle">تسجيل دفعات العصر وقياس الحموضة وإرسالها لمراجعة الجودة</p>
         </div>
         <div class="flex flex-wrap items-center gap-2 relative z-10">
           <button type="button" data-click="openMillBatchModal()" class="bg-amber-600 hover:bg-amber-700 text-white px-4 sm:px-5 py-2.5 sm:py-3 rounded-2xl font-bold text-xs flex items-center gap-2 shadow-lg transition-all cursor-pointer">
             <i data-lucide="plus-circle" class="w-4 h-4"></i>
-            <span data-i18n="mill_btn_new_batch">تسجيل دفعة عصر وإصدار شهادة جودة</span>
+            <span data-i18n="mill_btn_new_batch">تسجيل دفعة عصر</span>
           </button>
           <button type="button" data-click="openPartnerMillRegistrationModal()" class="bg-white/10 hover:bg-white/20 text-amber-200 border border-amber-400/30 px-3.5 sm:px-4 py-2.5 sm:py-3 rounded-2xl font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer">
             <i data-lucide="file-plus" class="w-4 h-4 text-amber-300"></i>
@@ -6519,11 +6519,11 @@
           </div>
 
           <p class="text-xs sm:text-sm text-stone-300 leading-relaxed pt-1" data-i18n="fndr_hero_desc">
-            مرصد عمليات منصة فسيلة الموحد: تتبع لحظي للاكتتابات وصكوك الحيازة الكاداسترية، ومستحقات المزارعين، ودفعات عصر الزيتون، وسلامة الحقول ومحطات الاستشعار المناخي عبر سوريا.
+            لوحة الفريق: مراجعة طلبات الكفالة والدفعات، وإدارة المستخدمين، واعتماد دفعات العصر وطلبات الزيت.
           </p>
 
           <!-- System Status Bar Pills -->
-          <div class="flex flex-wrap items-center gap-2 pt-2 text-[11px] font-mono">
+          <div data-off="no-offer" class="flex flex-wrap items-center gap-2 pt-2 text-[11px] font-mono">
             <span class="bg-white/10 px-2.5 py-1 rounded-lg border border-white/15 text-stone-200">
               ⚡ Node: <strong class="text-emerald-300">Damascus-Tartus Primary Edge</strong>
             </span>
@@ -6698,7 +6698,7 @@
         </div>
 
         <!-- Commercial Monetization & Revenue Streams Card (sample figures: hidden in real sessions) -->
-        <div data-demo class="bg-gradient-to-br from-purple-950 via-stone-900 to-purple-950 text-white rounded-3xl p-6 sm:p-7 border-2 border-purple-500/50 shadow-xl space-y-5 text-start">
+        <div data-off="no-offer" data-demo class="bg-gradient-to-br from-purple-950 via-stone-900 to-purple-950 text-white rounded-3xl p-6 sm:p-7 border-2 border-purple-500/50 shadow-xl space-y-5 text-start">
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/10 pb-4">
             <div class="flex items-center gap-3">
               <div class="w-10 h-10 rounded-2xl bg-amber-400 text-purple-950 font-black flex items-center justify-center shadow-md">
@@ -6763,7 +6763,7 @@
         </div>
 
         <!-- Financial Payment Review & Liquidity Monitor (sample figures: hidden in real sessions) -->
-        <div data-demo class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+        <div data-off="no-offer" data-demo class="grid grid-cols-1 lg:grid-cols-3 gap-5">
           <div class="lg:col-span-2 bg-gradient-to-br from-stone-900 to-stone-950 text-white p-6 sm:p-7 rounded-3xl shadow-sm border border-stone-800 space-y-4 text-xs">
             <div class="flex items-center justify-between border-b border-stone-800 pb-3">
               <div class="flex items-center gap-2.5">
@@ -6941,7 +6941,7 @@
               </div>
               <select id="fndr-user-role-filter" data-change="filterFounderUsers()" class="bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-xl px-3 py-2 text-xs text-stone-900 dark:text-white font-bold cursor-pointer">
                 <option value="all" data-i18n="fndr_filter_all_roles">كافة الصلاحيات</option>
-                <option value="investor" data-i18n="fndr_filter_investor">كافل زراعي</option>
+                <option value="investor" data-i18n="fndr_filter_investor">كافل</option>
                 <option value="farmer" data-i18n="fndr_filter_farmer">مزارع شريك</option>
                 <option value="mill_owner" data-i18n="fndr_filter_mill">صاحب معصرة</option>
                 <option value="admin" data-i18n="fndr_filter_admin">الإدارة والمؤسس</option>
@@ -7475,7 +7475,7 @@
               </div>
               <div>
                 <h3 class="text-base sm:text-lg font-black text-stone-900 dark:text-white" data-i18n="fndr_approvals_title">مركز تدقيق واعتماد السحوبات والمستحقات المالية (Financial Clearances Desk)</h3>
-                <p class="text-xs text-stone-500 dark:text-stone-400" data-i18n="fndr_approvals_sub">مراجعة واعتماد طلبات السحب والسلف للمزارعين والكافلين مع التحقق الفوري من الملاءة والأرصدة</p>
+                <p class="text-xs text-stone-500 dark:text-stone-400" data-i18n="fndr_approvals_sub">مراجعة الطلبات المعلّقة واعتمادها أو رفضها: إيصالات التحويل، التحديثات الميدانية، دفعات العصر، طلبات الأدوار وطلبات الزيت</p>
               </div>
             </div>
             <div class="flex items-center gap-2">
@@ -7795,7 +7795,7 @@
 
   
   <!-- Modal: P2P List Share / Plot on Secondary Market -->
-  <div id="modal-p2p-list" role="dialog" aria-modal="true" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+  <div id="modal-p2p-list" data-off="no-offer" role="dialog" aria-modal="true" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
     <div class="bg-white dark:bg-stone-900 dark:border-stone-800 dark:text-stone-100 w-full max-w-md rounded-3xl p-6 shadow-2xl border border-stone-200 text-start space-y-4">
       <div class="flex items-center justify-between pb-3 border-b border-stone-100 dark:border-stone-800">
         <div class="flex items-center gap-2">
@@ -7830,7 +7830,7 @@
   </div>
 
   <!-- Modal: Farmer Emergency Micro-Advance -->
-  <div id="modal-farmer-advance" role="dialog" aria-modal="true" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+  <div id="modal-farmer-advance" data-demo role="dialog" aria-modal="true" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
     <div class="bg-white dark:bg-stone-900 dark:border-stone-800 dark:text-stone-100 w-full max-w-md rounded-3xl p-6 shadow-2xl border border-stone-200 text-start space-y-4">
       <div class="flex items-center justify-between pb-3 border-b border-stone-100 dark:border-stone-800">
         <div class="flex items-center gap-2">
@@ -7864,7 +7864,7 @@
           </select>
         </div>
         <div class="bg-emerald-50 dark:bg-emerald-950/40 p-3 rounded-xl border border-emerald-200 dark:border-emerald-800 text-[11px] text-emerald-900 dark:text-emerald-200 leading-relaxed" data-i18n="farmer_adv_terms_note">
-          تُصرف السلفة فورياً إلى محفظتك الرقمية وتُسدد تلقائياً من محاصيل موسم القطاف القادم دون أي فوائد ربوية.
+          للعرض فقط، لا تُقدَّم سلف.
         </div>
         <button type="submit" class="w-full bg-emerald-700 hover:bg-emerald-800 text-white py-3 rounded-xl font-bold text-xs shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer">
           <i data-lucide="check" class="w-4 h-4"></i>
@@ -7942,11 +7942,11 @@
         <div>
           <div class="flex items-center gap-1.5">
             <h4 class="text-sm font-black" data-i18n="chat_title">فَسِيلَة</h4>
-            <span class="text-[10px] bg-olive-800 text-olive-200 px-2 py-0.5 rounded-full font-bold border border-olive-600/30" data-i18n="chat_badge">دليلك الفلاحي</span>
+            <span class="text-[10px] bg-olive-800 text-olive-200 px-2 py-0.5 rounded-full font-bold border border-olive-600/30" data-i18n="chat_badge">مساعدة المنصة</span>
           </div>
           <span class="text-[10px] text-stone-300 flex items-center gap-1 mt-0.5">
             <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-            <span data-i18n="chat_status">جاهزة للإجابة بدقة عن كافة التفاصيل</span>
+            <span data-i18n="chat_status">أجيب عن أسئلة الكفالة الشائعة</span>
           </span>
         </div>
       </div>
@@ -7981,15 +7981,8 @@
               <span class="text-[10px] text-stone-400 dark:text-stone-500 font-mono">الآن</span>
             </div>
             <p class="leading-relaxed text-stone-700 dark:text-stone-300">
-              أنا رفيقتك ودليلكِ الشامل في منصة الكفالة الزراعية بزيتون سوريا.
-              أجيبك بدقة عن:
+              أجيب عن الكفالة والدفع والزيت والهدايا وحسابك، وفقط عمّا تقدمه المنصة فعلاً. اختر موضوعاً من الأعلى أو اكتب سؤالك.
             </p>
-            <ul class="list-disc pr-4 space-y-0.5 text-stone-600 dark:text-stone-400 text-[11px]">
-              <li>محاصيل الأشجار السنوية وحسابات لترات الزيت الصافي.</li>
-              <li>خطوات الدفع المحلي (سيريتل كاش، بيمو، الهرم) والدولي.</li>
-              <li>معايير العصر البارد ونسب الحموضة في المعاصر الحديثة.</li>
-              <li>طرق شحن وتوصيل الزيت للمغتربين أو بيعه في السوق.</li>
-            </ul>
           </div>
         </div>
       </div>
@@ -8163,7 +8156,7 @@
           </div>
           <div>
             <h3 class="text-base sm:text-lg font-black text-amber-950 dark:text-amber-200" data-i18n="qr_passport_modal_title">جواز جودة الزيت المخبري الرقمي (EVOO Lab Passport)</h3>
-            <p class="text-[11px] text-stone-500 dark:text-stone-400" data-i18n="qr_passport_modal_sub">معايير المجلس الدولي للزيتون (IOC Standards) • مصادقة مخبرية مشفرة</p>
+            <p class="text-[11px] text-stone-500 dark:text-stone-400" data-i18n="qr_passport_modal_sub">مثال توضيحي لبطاقة جودة الزيت</p>
           </div>
         </div>
         <div class="flex items-center gap-2 no-print">
@@ -8181,10 +8174,10 @@
       <div class="bg-gradient-to-br from-stone-950 via-stone-900 to-amber-950 text-white p-5 sm:p-6 rounded-3xl border border-amber-500/30 shadow-xl space-y-4 relative overflow-hidden">
         <div class="flex items-center justify-between pb-3 border-b border-white/10">
           <div>
-            <span class="text-[9px] font-mono tracking-widest text-amber-300 uppercase block">SYRIAN EVOO CERTIFICATE</span>
+            <span class="text-[9px] font-mono tracking-widest text-amber-300 uppercase block">عينة · Sample · Muster</span>
             <span class="text-xs font-black text-white" id="qr-pass-serial">SYR-MILL-2026-0081</span>
           </div>
-          <span class="bg-emerald-500/20 text-emerald-300 border border-emerald-400/40 text-[10px] font-black px-2.5 py-1 rounded-full flex items-center gap-1">
+          <span data-off="no-offer" class="bg-emerald-500/20 text-emerald-300 border border-emerald-400/40 text-[10px] font-black px-2.5 py-1 rounded-full flex items-center gap-1">
             <i data-lucide="award" class="w-3 h-3 text-emerald-300"></i>
             <span>IOC Extra Virgin Class</span>
           </span>
@@ -8194,7 +8187,7 @@
           <!-- Live QR Code Placeholder -->
           <div class="w-24 h-24 bg-white p-2 rounded-2xl flex-shrink-0 flex flex-col items-center justify-center shadow-lg border border-white/20 text-stone-900">
             <i data-lucide="qr-code" class="w-16 h-16 text-amber-900"></i>
-            <span class="text-[8px] font-mono font-bold">SCAN TO VERIFY</span>
+            <span data-off="no-offer" class="text-[8px] font-mono font-bold">SCAN TO VERIFY</span>
           </div>
           <div class="space-y-1 text-start">
             <h4 id="qr-pass-tree-name" class="font-black text-base text-white">الشجرة المعمرة - حارسة الجبل</h4>
@@ -8396,7 +8389,7 @@
           <label class="flex items-start gap-2 p-3 rounded-xl border border-amber-200 dark:border-amber-800/80 bg-amber-50/40 dark:bg-amber-950/20 cursor-pointer">
             <input type="checkbox" id="reg-mill-terms" required class="rounded text-amber-600 focus:ring-amber-500 w-4 h-4 mt-0.5">
             <span class="text-stone-700 dark:text-stone-300 text-[11px] leading-relaxed">
-              <span data-i18n="mill_reg_terms">أقر بصحة البيانات أعلاه والتزامي التام بميثاق جودة العصر البارد الإيطالي ومطابقة معايير المجلس الدولي للزيتون (IOC)، وقبول الرقابة الميدانية الدورية من إدارة منصة فسيلة.</span>
+              <span data-i18n="mill_reg_terms">أؤكد صحة البيانات أعلاه، وأعلم أن فريق فسيلة يراجع الطلب ويتواصل معي قبل أي اعتماد.</span>
             </span>
           </label>
         </div>
@@ -8696,7 +8689,7 @@
         <div>
           <label class="block text-xs font-bold text-stone-700 mb-2" data-i18n="invest_modal_pay_method_lbl">طريقة الدفع والتسوية:</label>
           <div class="space-y-2 text-xs">
-            <label class="flex items-center gap-3 p-3 rounded-xl border border-stone-200 cursor-not-allowed bg-stone-50 opacity-60">
+            <label data-off="no-offer" class="flex items-center gap-3 p-3 rounded-xl border border-stone-200 cursor-not-allowed bg-stone-50 opacity-60">
               <input type="radio" name="pay-method" value="credit_card" disabled aria-disabled="true" class="text-olive-700 focus:ring-olive-600">
               <div class="flex-grow">
                 <span class="font-bold block text-stone-900" data-i18n="pay_method_card_title_soon">بطاقة مصرفية دولية (قريباً)</span>
@@ -8708,8 +8701,8 @@
             <label class="flex items-center gap-3 p-3 rounded-xl border border-stone-200 hover:border-olive-500 cursor-pointer bg-stone-50">
               <input type="radio" name="pay-method" value="local_syria" checked data-change="togglePayFields('local')" class="text-olive-700 focus:ring-olive-600">
               <div class="flex-grow">
-                <span class="font-bold block text-stone-900" data-i18n="pay_method_local_title">تحويل محلي داخل سوريا (سيريتل كاش / بيمو / الهرم)</span>
-                <span class="text-stone-500 text-[11px]" data-i18n="pay_method_local_sub">دفع فوري مع إمكانية نسخ الحساب ورفع إشعار التحويل</span>
+                <span class="font-bold block text-stone-900" data-i18n="pay_method_local_title">تحويل بنكي</span>
+                <span class="text-stone-500 text-[11px]" data-i18n="pay_method_local_sub">حوّل المبلغ ثم أرفق إيصال التحويل؛ تُعتمد الحصة بعد مراجعة الإيصال.</span>
               </div>
               <i data-lucide="smartphone" class="w-5 h-5 text-stone-600"></i>
             </label>
@@ -8936,7 +8929,7 @@
                 <span data-i18n="voice_stt_title">التسجيل الصوتي للمعاينة فقط؛ أرسل التقرير النصي للمراجعة:</span>
               </span>
               <span id="transcription-badge" class="text-[9px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full font-bold hidden" data-i18n="voice_stt_ready_badge">
-                جاهز للإرسال
+                جاهز للإرسال للمراجعة
               </span>
             </div>
             <textarea id="log-notes" rows="2" data-i18n-ph="voice_textarea_ph" placeholder="سيظهر ما تقوله بصوتك هنا تلقائياً، أو يمكنك الكتابة يدوياً إن أردت..." class="w-full bg-stone-50 border border-stone-200 rounded-xl p-2.5 text-xs text-stone-800 focus:outline-none focus:ring-1 focus:ring-olive-600"></textarea>
@@ -9154,25 +9147,25 @@
             </div>
           </div>
           <p class="text-xs leading-relaxed text-stone-400" data-i18n="footer_tagline">
-            أول منظومة زراعية تشاركية رقمية متكاملة لربط المزارعين والمعاصر بالكافلين والمغتربين مع رفيقك "فسيلة".
+            منصة لكفالة أشجار الزيتون السورية العريقة ودعم مزارعيها.
           </p>
         </div>
         <div>
           <h4 class="text-white text-sm font-bold mb-3" data-i18n="footer_portals_title">البوابات والخدمات</h4>
           <ul class="space-y-2 text-xs">
             <li><a href="#" data-click="navigateTo('marketplace')" class="hover:text-olive-300 transition-colors flex items-center gap-1.5" data-i18n="footer_link_marketplace">سوق الأشجار</a></li>
-            <li><a href="#" data-click="navigateTo('dashboard')" class="hover:text-olive-300 transition-colors flex items-center gap-1.5" data-i18n="footer_link_dashboard">محفظة الكافل</a></li>
+            <li><a href="#" data-click="navigateTo('dashboard')" class="hover:text-olive-300 transition-colors flex items-center gap-1.5" data-i18n="footer_link_dashboard">كفالاتي</a></li>
             <li><a href="#" data-click="navigateTo('mill-portal')" class="hover:text-olive-300 transition-colors flex items-center gap-1.5" data-i18n="footer_link_mill">بوابة أصحاب المعاصر</a></li>
             <li><a href="#" data-click="navigateTo('farmer-portal')" class="hover:text-olive-300 transition-colors flex items-center gap-1.5" data-i18n="footer_link_farmer">بوابة المزارعين الشركاء</a></li>
           </ul>
         </div>
         <div>
-          <h4 class="text-white text-sm font-bold mb-3" data-i18n="footer_payment_title">طرق الدفع والتسوية</h4>
+          <h4 class="text-white text-sm font-bold mb-3" data-i18n="footer_payment_title">طريقة الدفع</h4>
           <ul class="space-y-2 text-xs text-stone-400">
-            <li class="flex items-center gap-1.5" data-i18n="footer_pay_cards_soon">• بطاقات ائتمان دولية (قريباً)</li>
-            <li class="flex items-center gap-1.5" data-i18n="footer_pay_cash">• سيريتل كاش / MTN كاش</li>
-            <li class="flex items-center gap-1.5" data-i18n="footer_pay_bank">• تحويلات بنكية (بنك بيمو / البركة)</li>
-            <li class="flex items-center gap-1.5" data-i18n="footer_pay_exchange">• شركة الهرم / الفؤاد للصرافة</li>
+            <li data-off="no-offer" class="flex items-center gap-1.5" data-i18n="footer_pay_cards_soon">• بطاقات ائتمان دولية (قريباً)</li>
+            <li data-off="no-offer" class="flex items-center gap-1.5" data-i18n="footer_pay_cash">• سيريتل كاش / MTN كاش</li>
+            <li class="flex items-center gap-1.5" data-i18n="footer_pay_bank">• تحويل بنكي إلى الحساب المعروض عند إتمام الكفالة، ويراجعه فريق المالية</li>
+            <li data-off="no-offer" class="flex items-center gap-1.5" data-i18n="footer_pay_exchange">• شركة الهرم / الفؤاد للصرافة</li>
           </ul>
         </div>
         <div>
@@ -9189,11 +9182,11 @@
         <div>
           <h4 class="text-white text-sm font-bold mb-3" data-i18n="footer_quality_title">الجودة والتواصل</h4>
           <p class="text-xs leading-relaxed text-stone-400 mb-4" data-i18n="footer_quality_desc">
-            تحليل مخبري لكل دفعة عصر لضمان حموضة أقل من 0.4% مع إمكانية التحدث مع "فسيلة" في أي وقت للمساعدة.
+            تُسجَّل دفعات العصر ويراجعها فريق فسيلة قبل توزيع الزيت، ويجيب المساعد الآلي «فسيلة» عن الأسئلة العامة.
           </p>
           <div class="inline-flex items-center gap-2 bg-stone-800/80 border border-stone-700/60 px-3 py-1.5 rounded-xl text-[11px] text-emerald-400">
             <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-            <span data-i18n="footer_trust_badge">توثيق GPS • عصر بارد معتمد • محصول عضوي سوري 100%</span>
+            <span data-i18n="footer_trust_badge">تحديثات ميدانية من المزارعين • مزارع شريكة في سوريا</span>
           </div>
         </div>
       </div>
@@ -9201,7 +9194,7 @@
         <span data-i18n="footer_rights">© 2026 فسيلة (Faseela). جميع الحقوق محفوظة لمنصة الكفالة الزراعية التشاركي.</span>
         <div class="flex items-center gap-2 text-stone-400">
           <i data-lucide="shield-check" class="w-4 h-4 text-emerald-400"></i>
-          <span data-i18n="footer_compliance">منظومة موثقة زراعياً ومحمية بنظام أمان متعدد الطبقات</span>
+          <span data-i18n="footer_compliance">يراجع فريق فسيلة الدفعات وطلبات الزيت</span>
         </div>
       </div>
     </div>
@@ -9220,7 +9213,7 @@
       </button>
       <button data-click="triggerHaptic('light'); navigateTo('dashboard')" id="mob-nav-dashboard" class="flex flex-col items-center gap-1 py-1 px-3 rounded-xl transition-all text-stone-500 dark:text-stone-400 hover:text-stone-800 dark:hover:text-stone-200 relative cursor-pointer">
         <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
-        <span class="text-[10px] tracking-tight" data-i18n="mob_nav_dashboard">محفظتي</span>
+        <span class="text-[10px] tracking-tight" data-i18n="mob_nav_dashboard">كفالاتي</span>
         <span class="w-2 h-2 rounded-full bg-emerald-500 absolute top-1 end-3"></span>
       </button>
       <button data-click="triggerHaptic('light'); navigateTo('farmer-portal')" id="mob-nav-farmer-portal" class="flex flex-col items-center gap-1 py-1 px-3 rounded-xl transition-all text-stone-500 dark:text-stone-400 hover:text-stone-800 dark:hover:text-stone-200 cursor-pointer">
@@ -9235,9 +9228,9 @@
   </nav>
 
   <!-- ================= JAVASCRIPT LOGIC & STATE ================= -->
-  <script src="app.js?v=3558bc32533a"></script>
-  <script src="assistant-knowledge.js?v=3558bc32533a"></script>
-  <script src="shop.js?v=3558bc32533a"></script>
+  <script src="app.js?v=3241b7c71964"></script>
+  <script src="assistant-knowledge.js?v=3241b7c71964"></script>
+  <script src="shop.js?v=3241b7c71964"></script>
 
   <!-- ================= 1. MODAL: FOUNDER EDIT TREE & PRICING ================= -->
   <div id="modal-fndr-edit-tree" role="dialog" aria-modal="true" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 mobile-sheet-overlay">
@@ -9888,7 +9881,7 @@
   </div>
 
   <!-- ================= 5. MODAL: LIVE OIL SHIPMENT TRACKER ================= -->
-  <div id="modal-track-oil-delivery" role="dialog" aria-modal="true" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 mobile-sheet-overlay">
+  <div id="modal-track-oil-delivery" data-demo role="dialog" aria-modal="true" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 mobile-sheet-overlay">
     <div class="bg-white dark:bg-stone-900 dark:text-stone-100 rounded-3xl border border-stone-200 dark:border-stone-800 p-6 sm:p-7 max-w-xl w-full space-y-5 shadow-2xl relative max-h-[90vh] overflow-y-auto text-start">
       <div class="flex items-center justify-between pb-3 border-b border-stone-100 dark:border-stone-800">
         <div class="flex items-center gap-2.5">
@@ -9946,7 +9939,7 @@
           <div class="w-7 h-7 rounded-full bg-stone-300 dark:bg-stone-700 text-stone-700 dark:text-stone-300 flex items-center justify-center font-bold text-[11px] shrink-0 mt-0.5">4</div>
           <div>
             <h5 class="font-black text-stone-900 dark:text-white" data-i18n="stage_delivery_4">المرحلة 4: التوصيل لباب المنزل واستلام الأمانة</h5>
-            <p class="text-[10px] text-stone-500" data-i18n="modal_track_delivery_eta_val">الموعد المتوقع للتسليم: خلال 48 ساعة مع إشعار استلام</p>
+            <p class="text-[10px] text-stone-500" data-i18n="modal_track_delivery_eta_val">يُحدَّد موعد التسليم بعد مراجعة فريقنا لطلبك.</p>
           </div>
         </div>
       </div>
@@ -10233,7 +10226,7 @@
             <label class="font-bold text-stone-700 dark:text-stone-300 block" data-i18n="modal_notif_auto_target_role_lbl">الفئة المستهدفة:</label>
             <select id="fndr-broadcast-target" class="w-full bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-xl px-3 py-2 text-stone-900 dark:text-white font-bold cursor-pointer">
               <option value="all" data-i18n="modal_notif_auto_role_all">كافة المستخدمين (الكل)</option>
-              <option value="investor" data-i18n="role_agricultural_investors">الكافلون الزراعيون</option>
+              <option value="investor" data-i18n="role_agricultural_investors">الكافلون</option>
               <option value="farmer" data-i18n="role_partner_farmers">المزارعون الشركاء</option>
               <option value="mill_owner" data-i18n="modal_broadcast_target_mills">أصحاب المعاصر</option>
             </select>
@@ -10370,7 +10363,7 @@
               <i data-lucide="check-circle" class="w-3.5 h-3.5 text-emerald-600"></i>
               <span data-i18n="modal_fin_detail_escrow_100">يُعتمد الرصيد بعد مراجعة إيصال التحويل</span>
             </div>
-            <p class="text-[10px] text-emerald-800/80 dark:text-emerald-300/80" data-i18n="modal_fin_detail_compliance_note">المعاملة مطابقة للسجل الكاداستري وأتعاب الرعاية الحقلية المستحقة بعد توثيق المهندس الزراعي.</p>
+            <p class="text-[10px] text-emerald-800/80 dark:text-emerald-300/80" data-i18n="modal_fin_detail_compliance_note">تحقّق من البيانات والإيصال أو المرفق مع الطلب قبل الاعتماد.</p>
           </div>
         </div>
 
@@ -10379,7 +10372,7 @@
           <button type="button" id="fndr-fin-modal-btn-reject" class="bg-red-100 dark:bg-red-950 text-red-700 dark:text-red-300 hover:bg-red-200 px-4 py-2 rounded-xl font-bold transition-all cursor-pointer" data-i18n="modal_fin_detail_reject_btn">رفض المعاملة</button>
           <button type="button" id="fndr-fin-modal-btn-approve" class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2 rounded-xl font-black shadow-md transition-all flex items-center gap-1.5 cursor-pointer">
             <i data-lucide="check" class="w-4 h-4"></i>
-            <span data-i18n="modal_fin_detail_approve_btn">اعتماد وصرف فوري</span>
+            <span data-i18n="modal_fin_detail_approve_btn">اعتماد</span>
           </button>
         </div>
       </div>
@@ -10651,6 +10644,6 @@
     </div>
   </div>
 
-  <script type="module" src="./supabase-client.mjs?v=3558bc32533a"></script>
+  <script type="module" src="./supabase-client.mjs?v=3241b7c71964"></script>
 </body>
 </html>

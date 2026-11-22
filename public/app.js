@@ -95,7 +95,7 @@
         gift_redeem_sub: "أدخل الرمز المكوّن من 12 حرفاً كما وصلك. يُستعمل مرة واحدة فقط.",
         gift_redeem_btn: "استلام",
         gift_redeem_format: "صيغة الرمز غير صحيحة: 12 حرفاً أو رقماً، مثل ABCD-EFGH-2345.",
-        gift_redeem_ok: "🎁 مبارك! انتقلت الحصة إلى حسابك وستظهر في محفظتك خلال لحظات.",
+        gift_redeem_ok: "🎁 مبارك! انتقلت الحصة إلى حسابك وستظهر في كفالاتك خلال لحظات.",
         gift_redeem_invalid: "الرمز غير صالح أو مستعمَل أو منتهي الصلاحية. تحقق منه وحاول مجدداً.",
         gift_redeem_self_or_format: "لا يمكنك استلام هديتك الخاصة، أو أن صيغة الرمز غير صحيحة.",
         gift_redeem_limit: "محاولات كثيرة. انتظر ساعة ثم حاول مجدداً.",
@@ -249,7 +249,7 @@
         // --- Comprehensive Platform Completion Keys ---
         fndr_tab_approvals: "مركز الاعتماد المالي والسحوبات",
         fndr_approvals_title: "مركز تدقيق واعتماد السحوبات والمستحقات المالية",
-        fndr_approvals_sub: "مراجعة واعتماد طلبات السحب والسلف للمزارعين والكافلين مع التحقق من الأرصدة",
+        fndr_approvals_sub: "مراجعة الطلبات المعلّقة واعتمادها أو رفضها: إيصالات التحويل، التحديثات الميدانية، دفعات العصر، طلبات الأدوار وطلبات الزيت",
         fndr_approvals_pending_badge: "طلبات معلقة بانتظار السيادة",
         fndr_btn_approve_payout: "اعتماد وصرف فوري",
         fndr_btn_reject_payout: "رفض مع السبب",
@@ -314,7 +314,7 @@
       market_empty_sub: "جرّب تعديل خيارات التصفية أو إلغاء تحديد بعض المناطق والصنوف",
       market_empty_reset_btn: "إعادة ضبط كل الفلاتر",
       filter_region_afrin: "عفرين والشمال",
-      voice_textarea_ph: "سيظهر ما تقوله بصوتك هنا تلقائياً، أو يمكنك الكتابة يدوياً إن أردت...",
+      voice_textarea_ph: "اكتب تقريرك هنا؛ التسجيل الصوتي للاستماع على جهازك فقط.",
       local_pay_ref_ph: "رقم العملية أو مرجع الحوالة",
       oil_cash_account_ph: "IBAN: SY... أو رقم الهاتف لحساب سيريتل كاش",
       voice_instructions_title: "استمع للتعليمات بصوت ناطق",
@@ -324,7 +324,7 @@
       auth_session_active: "جلسة موثقة ونشطة",
       demo_reset_confirm: "تمت إعادة ضبط البيانات التجريبية للمنظومة بنجاح",
       voice_mic_recording: "جاري تسجيل تقريرك الصوتي من الحقل...",
-      voice_mic_saved: "تم حفظ التسجيل الصوتي وتجهيزه للمزامنة",
+      voice_mic_saved: "انتهى التسجيل (على جهازك فقط، لا يُرفع)",
       telem_soil_sub: '• متوازنة',
       telem_wind_dir: '• شمالية غربية',
       auth_subtab_login: 'تصريح دخول لحساب مسجل',
@@ -342,8 +342,8 @@
       prefs_curr_usd_sub: 'للحصص وعقود التصدير',
       prefs_curr_syp_title: 'الليرة السورية (SYP)',
       prefs_curr_syp_sub: 'للمعاملات وأتعاب الفلاحة',
-      auth_sec_item1_title: 'التشفير الهجين للبيانات (AES-256 + TLS 1.3)',
-      auth_sec_item1_desc: 'تُنقل بياناتك وطلبات الدفع عبر اتصال مشفّر (TLS) وتُخزَّن مشفّرة.',
+      auth_sec_item1_title: "اتصال مشفّر",
+      auth_sec_item1_desc: "تُنقل بيانات حسابك وإيصالات التحويل عبر اتصال مشفّر (HTTPS).",
       auth_sec_item2_title: 'عزل البيانات الدقيق (Multi-Tenant RLS)',
       auth_sec_item2_desc: 'سياسة أمنية صارمة تمنع تسريب أو تداخل سجلات أي مستخدم أو مزارع مع حسابات أخرى.',
       auth_sec_item3_title: 'البريد الإلكتروني موثّق',
@@ -372,7 +372,7 @@
         // Navigation & Brand
         brand_title: "فَسِيلَة",
         auth_tab_identity: "الهوية والبيانات",
-        auth_tab_assets: "أصولي ونشاطي",
+        auth_tab_assets: "نشاطي",
         auth_tab_security: "درع الأمان",
         auth_profile_email_lbl: "البريد الإلكتروني المعتمد:",
         auth_profile_phone_lbl: "رقم الهاتف:",
@@ -419,7 +419,7 @@
         auth_demo_founder: "🏛️ المؤسس (م. وسام)",
         fndr_badge: "غرفة العمليات والرادار التنفيذي للمؤسس (Mission Control)",
         fndr_hero_title: "لوحة المراقبة الشاملة والتحكم الاستراتيجي",
-        fndr_hero_desc: "مرصد عمليات منصة فسيلة الموحد: تتبع لحظي للاكتتابات وصكوك الحيازة الكاداسترية، ومستحقات المزارعين، ودفعات عصر الزيتون، وسلامة الحقول ومحطات الاستشعار المناخي عبر سوريا.",
+        fndr_hero_desc: "لوحة الفريق: مراجعة طلبات الكفالة والدفعات، وإدارة المستخدمين، واعتماد دفعات العصر وطلبات الزيت.",
         fndr_system_nominal: "جميع الأنظمة تعمل بكفاءة 100%",
         fndr_kpi_escrow: "إجمالي أصول مراجعة الدفعات (Payment Review)",
         fndr_escrow_secured: "محمي 100% بنكياً",
@@ -465,16 +465,16 @@
         fndr_btn_freeze_desc: "قفل التعديلات المالية لحماية المنصة عند إجراء تدقيق أمني عاجل",
         nav_founder: "لوحة المراقبة",
         drawer_prefs_title: "تفضيلات العرض والعملة",
-        tele_updated_min: "محدث قبل دقيقة",
+        tele_updated_min: "ليست قراءة حية",
         acidity_khodairi: "حموضة &lt; 0.28%",
         poly_khodairi: "480 mg/kg (فائق)",
         acidity_sourani: "حموضة &lt; 0.31%",
         poly_sourani: "520 mg/kg (استثنائي)",
         acidity_qaysi: "حموضة &lt; 0.35%",
         poly_qaysi: "390 mg/kg (متوازن)",
-        map_section_badge: "مستكشف البساتين السورية الحي",
+        map_section_badge: "مناطق زراعة الزيتون في سوريا",
         map_section_title: "التوزع الجغرافي لبساتين الزيتون والمناخ الميداني",
-        map_section_sub: "اختر المحافظة لاستعراض خصائص التربة، معدل الأمطار، الأصناف السائدة، والأشجار المتاحة للكفالة الفورية",
+        map_section_sub: "اختر المحافظة لتعرف مناخها وأصنافها، واعرض الأشجار المدرجة فيها للكفالة",
         map_region_tartus_name: "طرطوس وجبال الساحل",
         map_region_tartus_sub: "خضيري ساحلي • هطول 850 مم",
         map_count_840: "840 شجرة",
@@ -532,12 +532,12 @@
         calc_preset_12: "3 أشجار (12)",
         calc_preset_20: "5 أشجار • باقة العائلة",
         calc_preset_40: "10 أشجار • بستان المغتربين",
-        calc_preset_100: "25 شجرة • كبار الرعاة ESG",
+        calc_preset_100: "25 شجرة",
         calc_land_sqm_default: "~ 5 م² أرض",
-        tier_individual_title: "المساهم الفردي",
-        tier_individual_desc: "شهادة ملكية رقمية موثقة بنظام GPS وحصة زيت موثّقة بعد الحصاد",
-        tier_individual_tag: "أساسي",
-        calc_esg_title: "الأثر البيئي والتمكين المجتمعي (ESG Impact)",
+        tier_individual_title: "كفالة حصص الأشجار",
+        tier_individual_desc: "شهادة كفالة (PDF) وحصتك من الزيت بعد العصر",
+        tier_individual_tag: "كفالة",
+        calc_esg_title: "دعم المزارعين في سوريا:",
         calc_esg_sub: "مساهمتك تدعم الأسر الريفية وتحمي البيئة مباشرة",
         calc_card5_title: "ساعات عمل ريفية مدعومة",
         calc_card6_title: "حماية مدرجات التربة",
@@ -591,7 +591,7 @@
         fndr_system_nominal: "جميع الأنظمة تعمل بكفاءة 100%",
         fndr_badge: "غرفة العمليات والرادار التنفيذي للمؤسس (Mission Control)",
         fndr_hero_title: "لوحة المراقبة الشاملة والتحكم الاستراتيجي",
-        fndr_hero_desc: "مرصد عمليات منصة فسيلة الموحد: تتبع لحظي للاكتتابات وصكوك الحيازة الكاداسترية، ومستحقات المزارعين، ودفعات عصر الزيتون، وسلامة الحقول ومحطات الاستشعار المناخي عبر سوريا.",
+        fndr_hero_desc: "لوحة الفريق: مراجعة طلبات الكفالة والدفعات، وإدارة المستخدمين، واعتماد دفعات العصر وطلبات الزيت.",
         fndr_kpi_escrow: "إجمالي أصول مراجعة الدفعات (Payment Review)",
         fndr_escrow_secured: "محمي 100% بنكياً",
         fndr_kpi_subscription: "الحصص وصكوك الحيازة المصدرة",
@@ -655,7 +655,7 @@
         invest_modal_bulk_perk: "🎉 باقة كبار الكافلين: شحن دولي مجاني وتوثيق مخصص للعائلة مشمول فوراً!",
         modal_land_badge_txt: "+ 5 م² أرض طابو",
         pay_method_card_sub: "مخصص للمغتربين والمقيمين خارج سوريا",
-        pay_method_local_sub: "دفع فوري مع إمكانية نسخ الحساب ورفع إشعار التحويل",
+        pay_method_local_sub: "حوّل المبلغ ثم أرفق إيصال التحويل؛ تُعتمد الحصة بعد مراجعة الإيصال.",
         local_pay_accounts_title: "الحسابات المعتمدة داخل سوريا (اضغط لنسخ الرقم):",
         local_pay_syriatel_title: "سيريتل كاش (حساب فسيلة)",
         btn_copy: "نسخ",
@@ -686,7 +686,7 @@
         voice_step3_title: "3. سجّل تفاصيل العمل بصوتك:",
         voice_status_ready: "اضغط على الميكروفون وتحدث بحرية",
         voice_stt_title: "التسجيل الصوتي للمعاينة فقط؛ أرسل التقرير النصي للمراجعة:",
-        voice_stt_ready_badge: "جاهز للإرسال",
+        voice_stt_ready_badge: "جاهز للإرسال للمراجعة",
         voice_playback_ready: "تسجيلك الصوتي جاهز",
         voice_playback_duration: "0:18 ثانية",
         voice_playback_retry: "إعادة التسجيل",
@@ -697,7 +697,7 @@
         payout_currency_equiv: "ليرة سورية ($42)",
         payout_trees_care_sub: "عن رعاية 3 أشجار معمرة (أعمال السقاية والتقليم)",
         payout_method_syriatel: "سيريتل كاش",
-        payout_method_syriatel_sub: "تحويل فوري لرقمك",
+        payout_method_syriatel_sub: "للعرض فقط",
         payout_method_haram: "شركة الهرم",
         payout_method_haram_sub: "استلام فرع الدريكيش",
         emergency_modal_desc: "في حال حدوث موجة صقيع مباغتة، كسر أغصان بسبب رياح شديدة، أو اشتباه بذبابة ثمار الزيتون، سجل رسالتك الصوتية فوراً وسيتم إشعار المهندس الزراعي المسؤول للتدخل الميداني!",
@@ -722,7 +722,7 @@
         auth_role_investor: "كافل",
         auth_role_investor_sub: "رعاية واستلام زيت",
         auth_role_farmer: "مزارع",
-        auth_role_farmer_sub: "توثيق وسحب أتعاب",
+        auth_role_farmer_sub: "تحديثات ميدانية لأشجارك",
         auth_role_mill: "صاحب معصرة",
         auth_role_mill_sub: "عصر وفحص مخبري",
         auth_reg_submit: "إنشاء الحساب ومتابعة التحقق (Create Account)",
@@ -735,26 +735,26 @@
         auth_otp_resend: "إعادة إرسال الرمز",
         auth_otp_verify_btn: "تأكيد الهوية وتخويل الدخول (Verify & Authorize)",
         auth_rbac_footer_title: "حماية وتخويل الوصول الصارم (Strict RBAC):",
-        auth_rbac_footer_desc: "يتم التأكد من مطابقة البريد والهاتف وتخويل المستخدم بالوصول حصراً لما يملكه: الكافل إلى محفظته وحصصه فقط، والمزارع إلى أشجاره وأتعابه، وصاحب المعصرة إلى دفعات العصر، لمنع أي اختراق أو كشف لبيانات المستخدمين الآخرين.",
+        auth_rbac_footer_desc: "يصل كل حساب إلى صفحاته فقط: الكافل إلى كفالاته، والمزارع إلى الأشجار المسندة إليه، وصاحب المعصرة إلى دفعات العصر الخاصة بمعصرته.",
         oil_spec_banner_title: "زيت زيتون سوري بكر ممتاز معصور على البارد &lt; 0.4% حموضة",
         toast_default_msg: "تم حفظ التغييرات بنجاح",
         mob_nav_home: "الرئيسية",
         mob_nav_marketplace: "السوق",
-        mob_nav_dashboard: "محفظتي",
+        mob_nav_dashboard: "كفالاتي",
         mob_nav_farmer: "المزارع",
         mob_nav_assistant: "المساعد",
         nav_founder: "لوحة المراقبة",
         drawer_prefs_title: "تفضيلات العرض والعملة",
-        tele_updated_min: "محدث قبل دقيقة",
+        tele_updated_min: "ليست قراءة حية",
         acidity_khodairi: "حموضة &lt; 0.28%",
         poly_khodairi: "480 mg/kg (فائق)",
         acidity_sourani: "حموضة &lt; 0.31%",
         poly_sourani: "520 mg/kg (استثنائي)",
         acidity_qaysi: "حموضة &lt; 0.35%",
         poly_qaysi: "390 mg/kg (متوازن)",
-        map_section_badge: "مستكشف البساتين السورية الحي",
+        map_section_badge: "مناطق زراعة الزيتون في سوريا",
         map_section_title: "التوزع الجغرافي لبساتين الزيتون والمناخ الميداني",
-        map_section_sub: "اختر المحافظة لاستعراض خصائص التربة، معدل الأمطار، الأصناف السائدة، والأشجار المتاحة للكفالة الفورية",
+        map_section_sub: "اختر المحافظة لتعرف مناخها وأصنافها، واعرض الأشجار المدرجة فيها للكفالة",
         map_region_tartus_name: "طرطوس وجبال الساحل",
         map_region_tartus_sub: "خضيري ساحلي • هطول 850 مم",
         map_count_840: "840 شجرة",
@@ -812,12 +812,12 @@
         calc_preset_12: "3 أشجار (12)",
         calc_preset_20: "5 أشجار • باقة العائلة",
         calc_preset_40: "10 أشجار • بستان المغتربين",
-        calc_preset_100: "25 شجرة • كبار الرعاة ESG",
+        calc_preset_100: "25 شجرة",
         calc_land_sqm_default: "~ 5 م² أرض",
-        tier_individual_title: "المساهم الفردي",
-        tier_individual_desc: "شهادة ملكية رقمية موثقة بنظام GPS وحصة زيت موثّقة بعد الحصاد",
-        tier_individual_tag: "أساسي",
-        calc_esg_title: "الأثر البيئي والتمكين المجتمعي (ESG Impact)",
+        tier_individual_title: "كفالة حصص الأشجار",
+        tier_individual_desc: "شهادة كفالة (PDF) وحصتك من الزيت بعد العصر",
+        tier_individual_tag: "كفالة",
+        calc_esg_title: "دعم المزارعين في سوريا:",
         calc_esg_sub: "مساهمتك تدعم الأسر الريفية وتحمي البيئة مباشرة",
         calc_card5_title: "ساعات عمل ريفية مدعومة",
         calc_card6_title: "حماية مدرجات التربة",
@@ -871,7 +871,7 @@
         fndr_system_nominal: "جميع الأنظمة تعمل بكفاءة 100%",
         fndr_badge: "غرفة العمليات والرادار التنفيذي للمؤسس (Mission Control)",
         fndr_hero_title: "لوحة المراقبة الشاملة والتحكم الاستراتيجي",
-        fndr_hero_desc: "مرصد عمليات منصة فسيلة الموحد: تتبع لحظي للاكتتابات وصكوك الحيازة الكاداسترية، ومستحقات المزارعين، ودفعات عصر الزيتون، وسلامة الحقول ومحطات الاستشعار المناخي عبر سوريا.",
+        fndr_hero_desc: "لوحة الفريق: مراجعة طلبات الكفالة والدفعات، وإدارة المستخدمين، واعتماد دفعات العصر وطلبات الزيت.",
         fndr_kpi_escrow: "إجمالي أصول مراجعة الدفعات (Payment Review)",
         fndr_escrow_secured: "محمي 100% بنكياً",
         fndr_kpi_subscription: "الحصص وصكوك الحيازة المصدرة",
@@ -935,7 +935,7 @@
         invest_modal_bulk_perk: "🎉 باقة كبار الكافلين: شحن دولي مجاني وتوثيق مخصص للعائلة مشمول فوراً!",
         modal_land_badge_txt: "+ 5 م² أرض طابو",
         pay_method_card_sub: "مخصص للمغتربين والمقيمين خارج سوريا",
-        pay_method_local_sub: "دفع فوري مع إمكانية نسخ الحساب ورفع إشعار التحويل",
+        pay_method_local_sub: "حوّل المبلغ ثم أرفق إيصال التحويل؛ تُعتمد الحصة بعد مراجعة الإيصال.",
         local_pay_accounts_title: "الحسابات المعتمدة داخل سوريا (اضغط لنسخ الرقم):",
         local_pay_syriatel_title: "سيريتل كاش (حساب فسيلة)",
         btn_copy: "نسخ",
@@ -966,7 +966,7 @@
         voice_step3_title: "3. سجّل تفاصيل العمل بصوتك:",
         voice_status_ready: "اضغط على الميكروفون وتحدث بحرية",
         voice_stt_title: "التسجيل الصوتي للمعاينة فقط؛ أرسل التقرير النصي للمراجعة:",
-        voice_stt_ready_badge: "جاهز للإرسال",
+        voice_stt_ready_badge: "جاهز للإرسال للمراجعة",
         voice_playback_ready: "تسجيلك الصوتي جاهز",
         voice_playback_duration: "0:18 ثانية",
         voice_playback_retry: "إعادة التسجيل",
@@ -977,7 +977,7 @@
         payout_currency_equiv: "ليرة سورية ($42)",
         payout_trees_care_sub: "عن رعاية 3 أشجار معمرة (أعمال السقاية والتقليم)",
         payout_method_syriatel: "سيريتل كاش",
-        payout_method_syriatel_sub: "تحويل فوري لرقمك",
+        payout_method_syriatel_sub: "للعرض فقط",
         payout_method_haram: "شركة الهرم",
         payout_method_haram_sub: "استلام فرع الدريكيش",
         emergency_modal_desc: "في حال حدوث موجة صقيع مباغتة، كسر أغصان بسبب رياح شديدة، أو اشتباه بذبابة ثمار الزيتون، سجل رسالتك الصوتية فوراً وسيتم إشعار المهندس الزراعي المسؤول للتدخل الميداني!",
@@ -1002,7 +1002,7 @@
         auth_role_investor: "كافل",
         auth_role_investor_sub: "رعاية واستلام زيت",
         auth_role_farmer: "مزارع",
-        auth_role_farmer_sub: "توثيق وسحب أتعاب",
+        auth_role_farmer_sub: "تحديثات ميدانية لأشجارك",
         auth_role_mill: "صاحب معصرة",
         auth_role_mill_sub: "عصر وفحص مخبري",
         auth_reg_submit: "إنشاء الحساب ومتابعة التحقق (Create Account)",
@@ -1015,27 +1015,27 @@
         auth_otp_resend: "إعادة إرسال الرمز",
         auth_otp_verify_btn: "تأكيد الهوية وتخويل الدخول (Verify & Authorize)",
         auth_rbac_footer_title: "حماية وتخويل الوصول الصارم (Strict RBAC):",
-        auth_rbac_footer_desc: "يتم التأكد من مطابقة البريد والهاتف وتخويل المستخدم بالوصول حصراً لما يملكه: الكافل إلى محفظته وحصصه فقط، والمزارع إلى أشجاره وأتعابه، وصاحب المعصرة إلى دفعات العصر، لمنع أي اختراق أو كشف لبيانات المستخدمين الآخرين.",
+        auth_rbac_footer_desc: "يصل كل حساب إلى صفحاته فقط: الكافل إلى كفالاته، والمزارع إلى الأشجار المسندة إليه، وصاحب المعصرة إلى دفعات العصر الخاصة بمعصرته.",
         oil_spec_banner_title: "زيت زيتون سوري بكر ممتاز معصور على البارد &lt; 0.4% حموضة",
         toast_default_msg: "تم حفظ التغييرات بنجاح",
         mob_nav_home: "الرئيسية",
         mob_nav_marketplace: "السوق",
-        mob_nav_dashboard: "محفظتي",
+        mob_nav_dashboard: "كفالاتي",
         mob_nav_farmer: "المزارع",
         mob_nav_assistant: "المساعد",
 
 
         drawer_prefs_title: "تفضيلات العرض والعملة",
-        tele_updated_min: "محدث قبل دقيقة",
+        tele_updated_min: "ليست قراءة حية",
         acidity_khodairi: "حموضة &lt; 0.28%",
         poly_khodairi: "480 mg/kg (فائق)",
         acidity_sourani: "حموضة &lt; 0.31%",
         poly_sourani: "520 mg/kg (استثنائي)",
         acidity_qaysi: "حموضة &lt; 0.35%",
         poly_qaysi: "390 mg/kg (متوازن)",
-        map_section_badge: "مستكشف البساتين السورية الحي",
+        map_section_badge: "مناطق زراعة الزيتون في سوريا",
         map_section_title: "التوزع الجغرافي لبساتين الزيتون والمناخ الميداني",
-        map_section_sub: "اختر المحافظة لاستعراض خصائص التربة، معدل الأمطار، الأصناف السائدة، والأشجار المتاحة للكفالة الفورية",
+        map_section_sub: "اختر المحافظة لتعرف مناخها وأصنافها، واعرض الأشجار المدرجة فيها للكفالة",
         map_region_tartus_name: "طرطوس وجبال الساحل",
         map_region_tartus_sub: "خضيري ساحلي • هطول 850 مم",
         map_count_840: "840 شجرة",
@@ -1093,12 +1093,12 @@
         calc_preset_12: "3 أشجار (12)",
         calc_preset_20: "5 أشجار • باقة العائلة",
         calc_preset_40: "10 أشجار • بستان المغتربين",
-        calc_preset_100: "25 شجرة • كبار الرعاة ESG",
+        calc_preset_100: "25 شجرة",
         calc_land_sqm_default: "~ 5 م² أرض",
-        tier_individual_title: "المساهم الفردي",
-        tier_individual_desc: "شهادة ملكية رقمية موثقة بنظام GPS وحصة زيت موثّقة بعد الحصاد",
-        tier_individual_tag: "أساسي",
-        calc_esg_title: "الأثر البيئي والتمكين المجتمعي (ESG Impact)",
+        tier_individual_title: "كفالة حصص الأشجار",
+        tier_individual_desc: "شهادة كفالة (PDF) وحصتك من الزيت بعد العصر",
+        tier_individual_tag: "كفالة",
+        calc_esg_title: "دعم المزارعين في سوريا:",
         calc_esg_sub: "مساهمتك تدعم الأسر الريفية وتحمي البيئة مباشرة",
         calc_card5_title: "ساعات عمل ريفية مدعومة",
         calc_card6_title: "حماية مدرجات التربة",
@@ -1192,7 +1192,7 @@
         invest_modal_bulk_perk: "🎉 باقة كبار الكافلين: شحن دولي مجاني وتوثيق مخصص للعائلة مشمول فوراً!",
         modal_land_badge_txt: "+ 5 م² أرض طابو",
         pay_method_card_sub: "مخصص للمغتربين والمقيمين خارج سوريا",
-        pay_method_local_sub: "دفع فوري مع إمكانية نسخ الحساب ورفع إشعار التحويل",
+        pay_method_local_sub: "حوّل المبلغ ثم أرفق إيصال التحويل؛ تُعتمد الحصة بعد مراجعة الإيصال.",
         local_pay_accounts_title: "الحسابات المعتمدة داخل سوريا (اضغط لنسخ الرقم):",
         local_pay_syriatel_title: "سيريتل كاش (حساب فسيلة)",
         btn_copy: "نسخ",
@@ -1223,7 +1223,7 @@
         voice_step3_title: "3. سجّل تفاصيل العمل بصوتك:",
         voice_status_ready: "اضغط على الميكروفون وتحدث بحرية",
         voice_stt_title: "التسجيل الصوتي للمعاينة فقط؛ أرسل التقرير النصي للمراجعة:",
-        voice_stt_ready_badge: "جاهز للإرسال",
+        voice_stt_ready_badge: "جاهز للإرسال للمراجعة",
         voice_playback_ready: "تسجيلك الصوتي جاهز",
         voice_playback_duration: "0:18 ثانية",
         voice_playback_retry: "إعادة التسجيل",
@@ -1234,7 +1234,7 @@
         payout_currency_equiv: "ليرة سورية ($42)",
         payout_trees_care_sub: "عن رعاية 3 أشجار معمرة (أعمال السقاية والتقليم)",
         payout_method_syriatel: "سيريتل كاش",
-        payout_method_syriatel_sub: "تحويل فوري لرقمك",
+        payout_method_syriatel_sub: "للعرض فقط",
         payout_method_haram: "شركة الهرم",
         payout_method_haram_sub: "استلام فرع الدريكيش",
         emergency_modal_desc: "في حال حدوث موجة صقيع مباغتة، كسر أغصان بسبب رياح شديدة، أو اشتباه بذبابة ثمار الزيتون، سجل رسالتك الصوتية فوراً وسيتم إشعار المهندس الزراعي المسؤول للتدخل الميداني!",
@@ -1259,7 +1259,7 @@
         auth_role_investor: "كافل",
         auth_role_investor_sub: "رعاية واستلام زيت",
         auth_role_farmer: "مزارع",
-        auth_role_farmer_sub: "توثيق وسحب أتعاب",
+        auth_role_farmer_sub: "تحديثات ميدانية لأشجارك",
         auth_role_mill: "صاحب معصرة",
         auth_role_mill_sub: "عصر وفحص مخبري",
         auth_reg_submit: "إنشاء الحساب ومتابعة التحقق (Create Account)",
@@ -1272,21 +1272,21 @@
         auth_otp_resend: "إعادة إرسال الرمز",
         auth_otp_verify_btn: "تأكيد الهوية وتخويل الدخول (Verify & Authorize)",
         auth_rbac_footer_title: "حماية وتخويل الوصول الصارم (Strict RBAC):",
-        auth_rbac_footer_desc: "يتم التأكد من مطابقة البريد والهاتف وتخويل المستخدم بالوصول حصراً لما يملكه: الكافل إلى محفظته وحصصه فقط، والمزارع إلى أشجاره وأتعابه، وصاحب المعصرة إلى دفعات العصر، لمنع أي اختراق أو كشف لبيانات المستخدمين الآخرين.",
+        auth_rbac_footer_desc: "يصل كل حساب إلى صفحاته فقط: الكافل إلى كفالاته، والمزارع إلى الأشجار المسندة إليه، وصاحب المعصرة إلى دفعات العصر الخاصة بمعصرته.",
         oil_spec_banner_title: "زيت زيتون سوري بكر ممتاز معصور على البارد &lt; 0.4% حموضة",
         toast_default_msg: "تم حفظ التغييرات بنجاح",
 
         drawer_prefs_title: "تفضيلات العرض والعملة",
-        tele_updated_min: "محدث قبل دقيقة",
+        tele_updated_min: "ليست قراءة حية",
         acidity_khodairi: "حموضة &lt; 0.28%",
         poly_khodairi: "480 mg/kg (فائق)",
         acidity_sourani: "حموضة &lt; 0.31%",
         poly_sourani: "520 mg/kg (استثنائي)",
         acidity_qaysi: "حموضة &lt; 0.35%",
         poly_qaysi: "390 mg/kg (متوازن)",
-        map_section_badge: "مستكشف البساتين السورية الحي",
+        map_section_badge: "مناطق زراعة الزيتون في سوريا",
         map_section_title: "التوزع الجغرافي لبساتين الزيتون والمناخ الميداني",
-        map_section_sub: "اختر المحافظة لاستعراض خصائص التربة، معدل الأمطار، الأصناف السائدة، والأشجار المتاحة للكفالة الفورية",
+        map_section_sub: "اختر المحافظة لتعرف مناخها وأصنافها، واعرض الأشجار المدرجة فيها للكفالة",
         map_region_tartus_name: "طرطوس وجبال الساحل",
         map_region_tartus_sub: "خضيري ساحلي • هطول 850 مم",
         map_count_840: "840 شجرة",
@@ -1344,12 +1344,12 @@
         calc_preset_12: "3 أشجار (12)",
         calc_preset_20: "5 أشجار • باقة العائلة",
         calc_preset_40: "10 أشجار • بستان المغتربين",
-        calc_preset_100: "25 شجرة • كبار الرعاة ESG",
+        calc_preset_100: "25 شجرة",
         calc_land_sqm_default: "~ 5 م² أرض",
-        tier_individual_title: "المساهم الفردي",
-        tier_individual_desc: "شهادة ملكية رقمية موثقة بنظام GPS وحصة زيت موثّقة بعد الحصاد",
-        tier_individual_tag: "أساسي",
-        calc_esg_title: "الأثر البيئي والتمكين المجتمعي (ESG Impact)",
+        tier_individual_title: "كفالة حصص الأشجار",
+        tier_individual_desc: "شهادة كفالة (PDF) وحصتك من الزيت بعد العصر",
+        tier_individual_tag: "كفالة",
+        calc_esg_title: "دعم المزارعين في سوريا:",
         calc_esg_sub: "مساهمتك تدعم الأسر الريفية وتحمي البيئة مباشرة",
         calc_card5_title: "ساعات عمل ريفية مدعومة",
         calc_card6_title: "حماية مدرجات التربة",
@@ -1409,21 +1409,21 @@
 
         mob_nav_home: "الرئيسية",
         mob_nav_marketplace: "سوق الأشجار",
-        mob_nav_dashboard: "محفظتي",
+        mob_nav_dashboard: "كفالاتي",
         mob_nav_farmer: "المزارع",
         mob_nav_assistant: "المساعد",
         nav_founder: "لوحة المراقبة",
         drawer_prefs_title: "تفضيلات العرض والعملة",
-        tele_updated_min: "محدث قبل دقيقة",
+        tele_updated_min: "ليست قراءة حية",
         acidity_khodairi: "حموضة &lt; 0.28%",
         poly_khodairi: "480 mg/kg (فائق)",
         acidity_sourani: "حموضة &lt; 0.31%",
         poly_sourani: "520 mg/kg (استثنائي)",
         acidity_qaysi: "حموضة &lt; 0.35%",
         poly_qaysi: "390 mg/kg (متوازن)",
-        map_section_badge: "مستكشف البساتين السورية الحي",
+        map_section_badge: "مناطق زراعة الزيتون في سوريا",
         map_section_title: "التوزع الجغرافي لبساتين الزيتون والمناخ الميداني",
-        map_section_sub: "اختر المحافظة لاستعراض خصائص التربة، معدل الأمطار، الأصناف السائدة، والأشجار المتاحة للكفالة الفورية",
+        map_section_sub: "اختر المحافظة لتعرف مناخها وأصنافها، واعرض الأشجار المدرجة فيها للكفالة",
         map_region_tartus_name: "طرطوس وجبال الساحل",
         map_region_tartus_sub: "خضيري ساحلي • هطول 850 مم",
         map_count_840: "840 شجرة",
@@ -1481,12 +1481,12 @@
         calc_preset_12: "3 أشجار (12)",
         calc_preset_20: "5 أشجار • باقة العائلة",
         calc_preset_40: "10 أشجار • بستان المغتربين",
-        calc_preset_100: "25 شجرة • كبار الرعاة ESG",
+        calc_preset_100: "25 شجرة",
         calc_land_sqm_default: "~ 5 م² أرض",
-        tier_individual_title: "المساهم الفردي",
-        tier_individual_desc: "شهادة ملكية رقمية موثقة بنظام GPS وحصة زيت موثّقة بعد الحصاد",
-        tier_individual_tag: "أساسي",
-        calc_esg_title: "الأثر البيئي والتمكين المجتمعي (ESG Impact)",
+        tier_individual_title: "كفالة حصص الأشجار",
+        tier_individual_desc: "شهادة كفالة (PDF) وحصتك من الزيت بعد العصر",
+        tier_individual_tag: "كفالة",
+        calc_esg_title: "دعم المزارعين في سوريا:",
         calc_esg_sub: "مساهمتك تدعم الأسر الريفية وتحمي البيئة مباشرة",
         calc_card5_title: "ساعات عمل ريفية مدعومة",
         calc_card6_title: "حماية مدرجات التربة",
@@ -1540,7 +1540,7 @@
         fndr_system_nominal: "جميع الأنظمة تعمل بكفاءة 100%",
         fndr_badge: "غرفة العمليات والرادار التنفيذي للمؤسس (Mission Control)",
         fndr_hero_title: "لوحة المراقبة الشاملة والتحكم الاستراتيجي",
-        fndr_hero_desc: "مرصد عمليات منصة فسيلة الموحد: تتبع لحظي للاكتتابات وصكوك الحيازة الكاداسترية، ومستحقات المزارعين، ودفعات عصر الزيتون، وسلامة الحقول ومحطات الاستشعار المناخي عبر سوريا.",
+        fndr_hero_desc: "لوحة الفريق: مراجعة طلبات الكفالة والدفعات، وإدارة المستخدمين، واعتماد دفعات العصر وطلبات الزيت.",
         fndr_kpi_escrow: "إجمالي أصول مراجعة الدفعات (Payment Review)",
         fndr_escrow_secured: "محمي 100% بنكياً",
         fndr_kpi_subscription: "الحصص وصكوك الحيازة المصدرة",
@@ -1604,7 +1604,7 @@
         invest_modal_bulk_perk: "🎉 باقة كبار الكافلين: شحن دولي مجاني وتوثيق مخصص للعائلة مشمول فوراً!",
         modal_land_badge_txt: "+ 5 م² أرض طابو",
         pay_method_card_sub: "مخصص للمغتربين والمقيمين خارج سوريا",
-        pay_method_local_sub: "دفع فوري مع إمكانية نسخ الحساب ورفع إشعار التحويل",
+        pay_method_local_sub: "حوّل المبلغ ثم أرفق إيصال التحويل؛ تُعتمد الحصة بعد مراجعة الإيصال.",
         local_pay_accounts_title: "الحسابات المعتمدة داخل سوريا (اضغط لنسخ الرقم):",
         local_pay_syriatel_title: "سيريتل كاش (حساب فسيلة)",
         btn_copy: "نسخ",
@@ -1635,7 +1635,7 @@
         voice_step3_title: "3. سجّل تفاصيل العمل بصوتك:",
         voice_status_ready: "اضغط على الميكروفون وتحدث بحرية",
         voice_stt_title: "التسجيل الصوتي للمعاينة فقط؛ أرسل التقرير النصي للمراجعة:",
-        voice_stt_ready_badge: "جاهز للإرسال",
+        voice_stt_ready_badge: "جاهز للإرسال للمراجعة",
         voice_playback_ready: "تسجيلك الصوتي جاهز",
         voice_playback_duration: "0:18 ثانية",
         voice_playback_retry: "إعادة التسجيل",
@@ -1646,7 +1646,7 @@
         payout_currency_equiv: "ليرة سورية ($42)",
         payout_trees_care_sub: "عن رعاية 3 أشجار معمرة (أعمال السقاية والتقليم)",
         payout_method_syriatel: "سيريتل كاش",
-        payout_method_syriatel_sub: "تحويل فوري لرقمك",
+        payout_method_syriatel_sub: "للعرض فقط",
         payout_method_haram: "شركة الهرم",
         payout_method_haram_sub: "استلام فرع الدريكيش",
         emergency_modal_desc: "في حال حدوث موجة صقيع مباغتة، كسر أغصان بسبب رياح شديدة، أو اشتباه بذبابة ثمار الزيتون، سجل رسالتك الصوتية فوراً وسيتم إشعار المهندس الزراعي المسؤول للتدخل الميداني!",
@@ -1671,7 +1671,7 @@
         auth_role_investor: "كافل",
         auth_role_investor_sub: "رعاية واستلام زيت",
         auth_role_farmer: "مزارع",
-        auth_role_farmer_sub: "توثيق وسحب أتعاب",
+        auth_role_farmer_sub: "تحديثات ميدانية لأشجارك",
         auth_role_mill: "صاحب معصرة",
         auth_role_mill_sub: "عصر وفحص مخبري",
         auth_reg_submit: "إنشاء الحساب ومتابعة التحقق (Create Account)",
@@ -1684,17 +1684,17 @@
         auth_otp_resend: "إعادة إرسال الرمز",
         auth_otp_verify_btn: "تأكيد الهوية وتخويل الدخول (Verify & Authorize)",
         auth_rbac_footer_title: "حماية وتخويل الوصول الصارم (Strict RBAC):",
-        auth_rbac_footer_desc: "يتم التأكد من مطابقة البريد والهاتف وتخويل المستخدم بالوصول حصراً لما يملكه: الكافل إلى محفظته وحصصه فقط، والمزارع إلى أشجاره وأتعابه، وصاحب المعصرة إلى دفعات العصر، لمنع أي اختراق أو كشف لبيانات المستخدمين الآخرين.",
+        auth_rbac_footer_desc: "يصل كل حساب إلى صفحاته فقط: الكافل إلى كفالاته، والمزارع إلى الأشجار المسندة إليه، وصاحب المعصرة إلى دفعات العصر الخاصة بمعصرته.",
         oil_spec_banner_title: "زيت زيتون سوري بكر ممتاز معصور على البارد &lt; 0.4% حموضة",
         toast_default_msg: "تم حفظ التغييرات بنجاح",
         mob_nav_home: "الرئيسية",
         mob_nav_marketplace: "السوق",
-        mob_nav_dashboard: "محفظتي",
+        mob_nav_dashboard: "كفالاتي",
         mob_nav_farmer: "المزارع",
         mob_nav_assistant: "المساعد",
 
         nav_marketplace: "سوق الأشجار",
-        nav_dashboard: "محفظتي",
+        nav_dashboard: "كفالاتي",
         nav_farmer: "بوابة المزارع",
         nav_mill: "بوابة المعاصر",
         nav_chat: "تحدث مع فسيلة",
@@ -1705,8 +1705,8 @@
         hero_title_1: "اكفل في",
         hero_title_2: "شجرة زيتون",
         hero_title_3: "وشارك الأرض بركتها وثمارها",
-        hero_title_full: `اكفل <span class="text-terracotta-500 underline decoration-olive-600 underline-offset-8">شجرة زيتون</span><br><span data-i18n="hero_title_sub">وشارك الأرض بركتها وثمارها</span>`,
-        hero_desc: "اشترِ حصة موثقة في شجرة زيتون عريقة في سوريا، تابع نموها ورعايتها، وراقب عصر ثمارها في أحدث المعاصر المعتمدة مع شهادات جودة مخبرية ونسب حموضة موثّقة مخبرياً، واستلم زيتك البكر أو محاصيلك أينما كنت.",
+        hero_title_full: "اكفل <span class=\"text-terracotta-500 underline decoration-olive-600 underline-offset-8\">شجرة زيتون</span><br><span data-i18n=\"hero_title_sub\">واحصل على حصة من محصولها</span>",
+        hero_desc: "اكفل حصة من محصول شجرة زيتون مدرجة في سوريا، وتابع رعايتها عبر تحديثات المزارع. بعد العصر تُخصَّص لك حصتك من الزيت، ويمكنك طلب توصيلها أو استلامها أو التبرع بها، ويراجع فريق فسيلة كل طلب.",
         hero_btn_explore: "تصفح سوق الأشجار المتاحة",
         hero_btn_chat: "استشر 'فسيلة' فوراً",
         hero_stat_1_lbl: "شجرة متاحة للكفالة",
@@ -1721,8 +1721,8 @@
         fndr_set_featured_success: "⭐ تم تعيين الشجرة كشجرة الموسم المميزة في الصفحة الرئيسية بنجاح!",
         hero_feat_region: "طرطوس • الدريكيش",
         hero_feat_name: "الشجرة المعمرة - حارسة الجبل",
-        hero_feat_desc: "زيتون خضيري أصيل غرس عام 1948. معتمدة لدى معصرة الدريكيش الحديثة لإنتاج زيت فائق النقاء بحموضة 0.32%.",
-        hero_feat_lab: "شهادة جودة مخبرية",
+        hero_feat_desc: "شجرة زيتون مدرجة للكفالة",
+        hero_feat_lab: "نتائج العصر تُنشر بعد اعتمادها",
         hero_feat_avail: "متاح 50% من الحصص",
         per_share_unit: "/ الحصة",
 
@@ -1736,7 +1736,7 @@
         cal_q1_badge: "تقرير وصور التقليم",
         cal_q2_month: "نيسان – أيار",
         cal_q2_title: "الإزهار والعقد الأولي",
-        cal_q2_desc: "ظهور الأزهار البيضاء الكثيفة وتحولها إلى حبات زيتون صغيرة واعدة، مع مراقبة رطوبة الأرض.",
+        cal_q2_desc: "ظهور الأزهار البيضاء وتحولها إلى حبات زيتون صغيرة، ويتابع المزارع حاجة الأشجار إلى الري.",
         cal_q2_badge: "تقرير نسبة عقد الثمار",
         cal_q3_month: "تموز – آب",
         cal_q3_title: "الري التكميلي والمكافحة",
@@ -1824,15 +1824,15 @@
         calc_scale_4: "شجرة كاملة (4 حصص)",
         calc_scale_8: "شجرتان (8 حصص)",
         calc_include_title: "ماذا تشمل الحصة الواحدة؟",
-        calc_include_desc: "رعاية زراعية سنوية متكاملة (سقاية، تقليم، مكافحة حيوية) + عصر على البارد في معصرة معتمدة + شهادة ملكية وجودة رقمية موثقة بالـ GPS.",
+        calc_include_desc: "رعاية المزارع للشجرة خلال الموسم مع تحديثات ميدانية + العصر في معصرة شريكة + شهادة كفالة (PDF) + حصة من الزيت بعد العصر.",
         calc_card1_title: "زيت زيتون بكر ممتاز",
-        calc_card1_sub: "عصر بارد حموضة < 0.4%",
+        calc_card1_sub: "تقدير غير ملزم لحصتك من الزيت",
         calc_card2_title: "امتصاص ثاني أكسيد الكربون",
         calc_card2_sub: "أثر بيئي ومكافحة تصحر",
         calc_card3_title: "تكلفة الكفالة الكلية",
         calc_card3_sub: "دفع محلي أو دولي",
-        calc_card4_title: "المحصول التقديري السنوي",
-        calc_card4_sub: "قيمة الزيت أو المردود",
+        calc_card4_title: "القيمة التقديرية السنوية للزيت",
+        calc_card4_sub: "قيمة تقديرية للزيت، ليست عائداً ولا دفعة نقدية",
         calc_oil_lbl: "ناتج الزيت السنوي",
         calc_carbon_lbl: "امتصاص الكربون",
         calc_oil_unit: "لتر زيت صافي",
@@ -1880,21 +1880,21 @@
         tree_by_farmer: "بواسطة المزارع: ",
 
         // Sponsor Dashboard
-        dash_title: "محفظتي في فسيلة",
+        dash_title: "كفالاتي في فسيلة",
         dash_subtitle: "متابعة أشجارك وحصصك وشهاداتك",
-        dash_btn_cert: "عرض شهادة الملكية الرقمية",
+        dash_btn_cert: "نموذج شهادة الكفالة",
         dash_btn_order_oil: "طلب تسليم عبوات الزيت",
         dash_harvest_hub_title: "جاهزية المحصول واستلام المحاصيل",
         harvest_modal_tree_lbl: "الشجرة والموقع:",
         harvest_modal_ready_lbl: "كمية الزيت الجاهزة:",
         harvest_modal_quality_lbl: "الجودة المعملية:",
-        dash_stat_invest: "إجمالي الكفالة",
+        dash_stat_invest: "إجمالي مبلغ الكفالة",
         dash_stat_invest_sub: "حصة موثقة في شجرة معمرة",
-        dash_stat_oil: "إنتاج الزيت المتوقع",
+        dash_stat_oil: "حصة الزيت المتوقعة",
         dash_stat_oil_sub: "تقدير غير ملزم",
         dash_stat_carbon: "أثر امتصاص الكربون",
         dash_stat_carbon_sub: "مساهمة بيئية مستدامة",
-        dash_stat_trees: "الأشجار المملوكة",
+        dash_stat_trees: "الأشجار المكفولة",
         dash_stat_trees_sub: "أشجار تكفلها",
         dash_tab_trees: "أشجاري في فسيلة",
         dash_tab_txs: "سجل العمليات والمدفوعات",
@@ -1922,9 +1922,9 @@
         farmer_audio_feed_title: "أحدث التسجيلات الصوتية الميدانية",
 
         // Mill Portal
-        mill_title: "بوابة أصحاب معاصر الزيتون الحديثة (Olive Mills)",
-        mill_subtitle: "إدارة دفعات العصر، قياس نسب الحموضة، وإصدار شهادات الجودة المخبرية",
-        mill_btn_new_batch: "تسجيل دفعة عصر وإصدار شهادة جودة",
+        mill_title: "بوابة المعاصر الشريكة",
+        mill_subtitle: "تسجيل دفعات العصر وقياس الحموضة وإرسالها لمراجعة الجودة",
+        mill_btn_new_batch: "تسجيل دفعة عصر",
 
         btn_inspect_contract: "معاينة العقد الرسمي",
         footer_link_legal: "العقود واللوائح القانونية المعتمدة",
@@ -1962,8 +1962,8 @@
         // Faseela Assistant Chat
         chat_launcher_text: "تحدث مع فسيلة",
         chat_title: "فَسِيلَة",
-        chat_badge: "دليلك الفلاحي",
-        chat_status: "جاهزة للإجابة بدقة عن كافة التفاصيل",
+        chat_badge: "مساعدة المنصة",
+        chat_status: "أجيب عن أسئلة الكفالة الشائعة",
         chat_input_ph: "اكتب سؤالك لفسيلة بكل وضوح...",
         chat_chip_pay: "💳 الدفع بسيريتل كاش",
         chat_chip_yield: "🫒 إنتاج الزيت والمحاصيل",
@@ -2038,7 +2038,7 @@
       review_content_lbl: "المحتوى الذي سيُنشر للعامة",
       review_media_missing: "بعض الصور المُعلنة غير موجودة في المخزن؛ لن تُنشر.",
       oil_section_title: "زيتي",
-      oil_section_sub: "نصيبك من كل دفعة عصر معتمدة لأشجارك. اطلب التسليم أو الاستلام من المعصرة أو تبرّع به.",
+      oil_section_sub: "نصيبك من كل دفعة عصر معتمدة لأشجارك. اطلب توصيله أو استلامه من المعصرة أو التبرع به، ويُراجَع كل طلب.",
       oil_available_lbl: "متاح:",
       oil_request_btn: "طلب الزيت",
       oil_modal_title: "طلب الزيت",
@@ -2082,9 +2082,9 @@
         btn_confirm: "تأكيد الكفالة",
         mill_batches_title: "سجل دفعات العصر وشهادات التحليل المخبري",
         footer_portals_title: "البوابات والخدمات",
-        footer_payment_title: "طرق الدفع والتسوية",
+        footer_payment_title: "طريقة الدفع",
         footer_quality_title: "الجودة والتواصل",
-        footer_quality_desc: "تحليل مخبري لكل دفعة عصر لضمان حموضة أقل من 0.4% مع إمكانية التحدث مع \'فسيلة\' في أي وقت للمساعدة.",
+        footer_quality_desc: "تُسجَّل دفعات العصر ويراجعها فريق فسيلة قبل توزيع الزيت، ويجيب المساعد الآلي «فسيلة» عن الأسئلة العامة.",
         role_investor: "كافل",
         role_farmer: "مزارع شريك",
         role_mill: "صاحب معصرة",
@@ -2112,13 +2112,13 @@
         invest_modal_cert_val: "بعد اعتماد الدفعة",
         invest_modal_pay_method_lbl: "طريقة الدفع والتسوية:",
         pay_method_card_title: "بطاقة مصرفية دولية (Visa / MasterCard)",
-        pay_method_local_title: "تحويل محلي داخل سوريا (سيريتل كاش / بيمو / الهرم)",
+        pay_method_local_title: "تحويل بنكي",
         invest_modal_confirm_btn: "تأكيد الكفالة وشراء الحصة الآن",
-        farmer_payout_modal_title: "طلب سحب مستحقات الرعاية",
-        farmer_payout_avail_lbl: "المبلغ المتاح للصرف الفوري الآن:",
+        farmer_payout_modal_title: "طلب صرف (عرض تجريبي)",
+        farmer_payout_avail_lbl: "رصيد تجريبي (عرض)",
         farmer_payout_method_lbl: "طريقة الاستلام المفضلة:",
         farmer_payout_phone_lbl: "رقم هاتف المزارع (سيريتل):",
-        farmer_payout_confirm_btn: "تأكيد طلب الصرف وتحويل الرصيد",
+        farmer_payout_confirm_btn: "إغلاق العرض",
         emergency_modal_title: "نداء طوارئ زراعي صوتي",
         emergency_modal_send_btn: "بث نداء الطوارئ للمهندس الزراعي فوراً",
         farmer_guide_title: "إرشادات موسم قطاف وعصر أيلول / تشرين الأول",
@@ -2141,21 +2141,21 @@
         share_unit: "الحصة (25%)",
 
         // Footer
-        footer_tagline: "منصة تشاركية لحماية وتنمية أشجار الزيتون السورية العريقة وربط المغتربين بأرض الوطن.",
+        footer_tagline: "منصة لكفالة أشجار الزيتون السورية العريقة ودعم مزارعيها.",
         footer_regions_title: "المحافظات المشمولة بالتوثيق:",
         footer_regions_list: "طرطوس • اللاذقية • إدلب • حلب (عفرين) • حماة • حمص • درعا • ريف دمشق • السويداء • القنيطرة • حوض الفرات (دير الزور)",
         footer_support_title: "مركز الدعم والاستعلام:",
         footer_rights: "جميع الحقوق محفوظة لمنصة فسيلة © 2026 • حماية وتنمية الزيتون السوري",
         footer_link_marketplace: "سوق الأشجار",
-        footer_link_dashboard: "محفظة الكافل",
+        footer_link_dashboard: "كفالاتي",
         footer_link_mill: "بوابة أصحاب المعاصر",
         footer_link_farmer: "بوابة المزارعين الشركاء",
         footer_pay_cards: "• بطاقات ائتمان دولية (Visa / MasterCard)",
         footer_pay_cash: "• سيريتل كاش / MTN كاش",
-        footer_pay_bank: "• تحويلات بنكية (بنك بيمو / البركة)",
+        footer_pay_bank: "• تحويل بنكي إلى الحساب المعروض عند إتمام الكفالة، ويراجعه فريق المالية",
         footer_pay_exchange: "• شركة الهرم / الفؤاد للصرافة",
-        footer_trust_badge: "توثيق GPS • عصر بارد معتمد • محصول عضوي سوري 100%",
-        footer_compliance: "منظومة موثقة زراعياً ومحمية بنظام أمان متعدد الطبقات",
+        footer_trust_badge: "تحديثات ميدانية من المزارعين • مزارع شريكة في سوريا",
+        footer_compliance: "يراجع فريق فسيلة الدفعات وطلبات الزيت",
 
         // Agro-Weather Telemetry
         agro_weather_badge: "قيم توضيحية — ليست قياسات مباشرة",
@@ -2246,9 +2246,9 @@
         denied_btn_switch: "تبديل الحساب للدور المصرح",
         // Olive Mill Modern 5-Pillar Portal
         mill_badge_tech: "بوابة المعاصر الإيطالية الحديثة (Continuous Cold-Press)",
-        mill_title: "معصرة الدريكيش الإيطالية الحديثة",
-        mill_subtitle: "المهندس سمير الدريكيشي • تقنية العصر البارد مرحلتين بدون زيبار • طرطوس",
-        mill_btn_new_batch: "تسجيل دفعة عصر وإصدار شهادة جودة",
+        mill_title: "بوابة المعاصر الشريكة",
+        mill_subtitle: "تسجيل دفعات العصر وقياس الحموضة وإرسالها لمراجعة الجودة",
+        mill_btn_new_batch: "تسجيل دفعة عصر",
         mill_btn_contract: "ميثاق المعاصر المعتمدة",
         mill_kpi1_title: "إجمالي الزيتون المستلم",
         mill_kpi1_sub: "موسم خريف 2026 الحالي",
@@ -2341,20 +2341,20 @@
         mill_circ_dispatch_sub: "توثيق تسليم الحطب للمجتمع المحلي أو السماد لمزارع طرطوس وإدلب",
         mill_circ_dispatch_btn: "+ تسجيل دفعة توزيع",
         qr_passport_modal_title: "جواز جودة الزيت المخبري الرقمي (EVOO Lab Passport)",
-        qr_passport_modal_sub: "معايير المجلس الدولي للزيتون (IOC Standards) • مصادقة مخبرية مشفرة",
+        qr_passport_modal_sub: "مثال توضيحي لبطاقة جودة الزيت",
         qr_passport_print_btn: "طباعة وتصدير الجواز (Print / PDF)",
         // Sponsor Modern Dashboard 4 Pillars
         dash_badge_verified: "كفالاتك على فسيلة",
-        dash_btn_qr_pass: "جواز الزيت المخبري (IOC)",
+        dash_btn_qr_pass: "نموذج بطاقة جودة الزيت",
         dash_tab_portfolio: "أشجاري وكفالاتي",
         dash_tab_harvest: "إدارة محاصيل المحصول والشحن",
-        dash_tab_certs: "الوثائق الرسمية وجواز الجودة",
-        dash_tab_finance: "المحفظة المالية والمدفوعات",
+        dash_tab_certs: "نماذج الوثائق",
+        dash_tab_finance: "دفعاتي",
         dash_trees_sub: "حصصك المعتمدة في أشجار المزارع الشريكة",
         dash_investments_title: "طلبات الكفالة الجارية",
-        dash_investments_sub: "متابعة الحجز المؤقت وتدقيق إشعار الدفع واعتماد الحصص",
+        dash_investments_sub: "تابع حالة الحجز ومراجعة إيصال التحويل البنكي واعتماد حصتك",
         dash_investments_empty_title: "لا توجد طلبات كفالة جارية حالياً",
-        dash_investments_empty_sub: "يمكنك استكشاف بستان الأشجار وحجز حصتك الزراعية مع سند الحيازة الكاداستري.",
+        dash_investments_empty_sub: "تصفّح الأشجار المدرجة واكفل حصة من محصول إحداها.",
         dash_btn_cancel_request: "إلغاء الطلب وتحرير الحصة",
         dash_status_awaiting_payment: "بانتظار إرفاق إشعار التحويل",
         dash_status_under_review: "قيد التدقيق المالي ومطابقة الإشعار",
@@ -2378,17 +2378,17 @@
         dash_dispatch_pkg_bottle: "عبوات زجاجية داكنة معتمة فاخرة (500 مل)",
         dash_dispatch_dest_lbl: "عنوان التوصيل وشركة الشحن:",
         dash_certs_vault_title: "خزينة الوثائق الرسمية وجواز الجودة المخبري",
-        dash_certs_vault_sub: "كافة الشهادات والعقود المعتمدة قانونياً ومخبرياً لشجرتك المعمرة",
+        dash_certs_vault_sub: "نماذج توضيحية: شهادة الكفالة ونتائج العصر",
         dash_certs_card_qr_title: "جواز جودة الزيت المخبري (EVOO)",
         dash_certs_card_qr_desc: "فحص مخبري معتمد يثبت الحموضة < 0.28% ومضادات الأكسدة 495 mg/kg مع باركود فحص.",
         dash_btn_view_passport: "معاينة الجواز المخبري",
-        dash_certs_card_title_deed: "شهادة الملكية الكاداسترية",
-        dash_certs_card_title_desc: "سند حيازة رسمي يوثق حصتك في الشجرة ورقم المحضر العقاري في السجل المساحي.",
-        dash_certs_card_contract: "عقد الكفالة الزراعية الموثق",
-        dash_certs_card_contract_desc: "عقد قانوني خاضع لأحكام القانون المدني السوري ومعتمد من غرف الزراعة.",
+        dash_certs_card_title_deed: "شهادة الكفالة (PDF)",
+        dash_certs_card_title_desc: "تؤكد حصتك المكفولة من محصول الشجرة، وتصدر بعد اعتماد دفعتك.",
+        dash_certs_card_contract: "وصف خدمة الكفالة",
+        dash_certs_card_contract_desc: "يشرح ما تشمله الكفالة وما لا تشمله.",
         dash_btn_view_contract: "قراءة العقد الموثق",
         dash_tx_subtitle: "دفعاتك بالتحويل وحالة مراجعتها",
-        dash_tx_audit_badge: "سجل مدقق مالياً",
+        dash_tx_audit_badge: "يراجعه فريق المالية",
 
         // Farmer Modern Portal 5 Pillars
         farmer_kpi1_trees: "الأشجار الموكلة",
@@ -2470,7 +2470,7 @@
         econ_bar_packaging: "12% تعبئة ونيتروجين خامل",
         econ_bar_relief: "8% صندوق تكافل ضد الكوارث",
         econ_bar_platform: "25% ربحية واستدامة المنصة",
-        market_tab_mature: "الأشجار المعمرة المنتجة (محصول فوري 2026)",
+        market_tab_mature: "الأشجار المعمرة المنتجة",
         market_tab_virgin: "بساتين الغراس البكر مع الأرض (من الصفر)",
         virgin_badge: "فرصة التأسيس ال (Greenfield Projects)",
         virgin_hero_title: "اكفل غراس الزيتون البكر مع الأرض (عمر 1 - 3 سنوات) من الصفر",
@@ -2519,7 +2519,7 @@
         farmer_adv_purpose_opt2: "صيانة وتوسيع شبكة الري بالتنقيط",
         farmer_adv_purpose_opt3: "صيانة مضخات الطاقة الشمسية وبطاريات الحقل",
         farmer_adv_amount_lbl: "مبلغ السلفة المطلوب:",
-        farmer_adv_terms_note: "تُصرف السلفة فورياً إلى محفظتك الرقمية وتُسدد تلقائياً من محاصيل موسم القطاف القادم دون أي فوائد ربوية.",
+        farmer_adv_terms_note: "للعرض فقط، لا تُقدَّم سلف.",
         farmer_adv_submit_btn: "تأكيد طلب السلفة وصرفها الآن",
         mill_btn_log_tank_test: "تسجيل فحص مخبري للحموضة",
         mill_tank_test_modal_title: "توثيق الفحص المخبري الدوري لخزان الزيت",
@@ -2547,7 +2547,7 @@
         notif_mark_all_read: "تحديد الكل كمقروء",
         notif_clear_all: "تفريغ المقروء",
         notif_tab_all: "كافة الإشعارات",
-        notif_tab_financial: "مالية وكفالة",
+        notif_tab_financial: "الدفعات والكفالة",
         notif_tab_field: "الحقل والمعاصر",
         notif_tab_system: "الأمان والنظام",
         notif_unread_only: "غير المقروءة فقط",
@@ -2557,17 +2557,17 @@
         notif_dismiss: "حذف",
         notif_sound_enabled: "نغمة التنبيه مفعلة",
         notif_sound_disabled: "نغمة التنبيه صامتة",
-        notif_pref_push: "إشعارات الويب (Push)",
+        notif_pref_push: "إشعارات الهاتف",
         notif_pref_email: "البريد الإلكتروني",
         notif_pref_sms: "رسائل SMS للعمليات المالية",
-        notif_channels_active: "قنوات التنبيه النشطة:",
+        notif_channels_active: "قنوات التنبيه:",
         notif_time_just_now: "الآن",
         notif_time_mins_ago: "منذ دقائق",
         notif_time_hours_ago: "منذ ساعات",
         notif_time_yesterday: "أمس",
         notif_toast_marked_all_read: "تم تحديد جميع الإشعارات كمقروءة",
         notif_toast_dismissed: "تم حذف الإشعار بنجاح",
-        auth_modal_title: "تصريح الدخول والمصادقة على الهوية",
+        auth_modal_title: "حسابك في فسيلة",
         auth_modal_subtitle: "التحقق المعتمد وتخويل الصلاحيات (Strict RBAC)",
         auth_login_pwd_ph: "••••••••",
         auth_reg_email_ph: "name@example.com",
@@ -2628,8 +2628,8 @@
         prefs_curr_usd_sub: "للحصص وعقود التصدير",
         prefs_curr_syp_title: "الليرة السورية (SYP)",
         prefs_curr_syp_sub: "للمعاملات وأتعاب الفلاحة",
-        auth_sec_item1_title: "التشفير الهجين للبيانات (AES-256 + TLS 1.3)",
-        auth_sec_item1_desc: "تُنقل بياناتك وطلبات الدفع عبر اتصال مشفّر (TLS) وتُخزَّن مشفّرة.",
+        auth_sec_item1_title: "اتصال مشفّر",
+        auth_sec_item1_desc: "تُنقل بيانات حسابك وإيصالات التحويل عبر اتصال مشفّر (HTTPS).",
         auth_sec_item2_title: "عزل البيانات الدقيق (Multi-Tenant RLS)",
         auth_sec_item2_desc: "سياسة أمنية صارمة تمنع تسريب أو تداخل سجلات أي مستخدم أو مزارع مع حسابات أخرى.",
         auth_sec_item3_title: "البريد الإلكتروني موثّق",
@@ -2673,7 +2673,7 @@
         auth_demo_fill_summary: "خيارات الملء التجريبي السريع (للاختبار):",
         auth_forgot_password_link: "نسيت كلمة المرور؟",
         auth_reset_pwd_title: "تعيين كلمة المرور الجديدة",
-        auth_reset_pwd_desc: "تم إثبات ملكيتك للحساب عبر المصادقة الثنائية بنجاح. أدخل كلمة مرور قوية وجديدة لحسابك:",
+        auth_reset_pwd_desc: "تم التحقق من بريدك الإلكتروني. أدخل كلمة مرور جديدة وقوية لحسابك:",
         auth_new_pwd_lbl: "كلمة المرور الجديدة (10 خانات على الأقل):",
         auth_confirm_new_pwd_lbl: "تأكيد كلمة المرور الجديدة:",
         auth_btn_save_new_pwd: "حفظ كلمة المرور وتأكيد الدخول",
@@ -2707,7 +2707,7 @@
         fndr_users_sub: "إدارة صلاحيات الكافلين والمزارعين الشركاء وأصحاب المعاصر وتوثيق هوياتهم",
         fndr_user_search_ph: "البحث بالاسم أو البريد أو الهاتف أو المحافظة...",
         fndr_filter_all_roles: "كافة الصلاحيات",
-        fndr_filter_investor: "كافل زراعي",
+        fndr_filter_investor: "كافل",
         fndr_filter_farmer: "مزارع شريك",
         fndr_filter_mill: "صاحب معصرة",
         fndr_filter_admin: "الإدارة والمؤسس",
@@ -2892,9 +2892,9 @@
                 // --- Mill Portal & Partner Registration Extensions ---
         mill_banner_partner_badge: "فرصة شراكة استراتيجية لأصحاب المعاصر السورية",
         mill_banner_partner_title: "هل تمتلك معصرة زيتون حديثة؟ انضم كمعصرة شريكة معتمدة في فسيلة",
-        mill_banner_partner_desc: "نربط معصرتك مباشرة بآلاف الكافلين والمزارعين لعصر محاصيل الأشجار المكفولة وفق أعلى معايير الجودة العالمية، وتوفير أتعاب فورية عينية ونقدية مع عقود سنوية موقّعة.",
+        mill_banner_partner_desc: "نبحث عن معاصر شريكة لعصر ثمار الأشجار المكفولة. أرسل طلبك، ويراجعه فريق فسيلة ويتواصل معك للاتفاق على التفاصيل.",
         mill_btn_apply_partner: "انضم كمعصرة شريكة معتمدة",
-        mill_btn_view_charter: "معايير الاعتماد",
+        mill_btn_view_charter: "التواصل والجهة المشغّلة",
         mill_btn_register_another: "تسجيل فرع أو معصرة إضافية",
         mill_reg_modal_title: "طلب انضمام واعتماد معصرة شريكة",
         mill_reg_modal_badge: "عصر بارد 2-Phase",
@@ -3003,7 +3003,7 @@
         bundle_benefit_almond: "🌸 2.5 كغ لوز سوري فرك",
         bundle_benefit_discount: "وفر 7% مع سند حيازة مجمع",
               hero_title_accent: "شجرة زيتون",
-        hero_title_sub: "وشارك الأرض بركتها وثمارها",
+        hero_title_sub: "واحصل على حصة من محصولها",
         fndr_p2p_circuit_title: "قاطع تداول الحصص P2P",
         fndr_p2p_circuit_badge_on: "التداول متاح",
         fndr_p2p_circuit_desc: "وقف مؤقت لسوق بيع الحصص الثانوي لمنع المضاربات وحماية أسعار المزارعين.",
@@ -3053,7 +3053,7 @@
         modal_vg_add_name_ar_lbl: "اسم المشروع (عربي):",
         modal_vg_edit_name_lbl: "اسم المشروع:",
         modal_dispute_resolve_btn: "اعتماد الحل وإرسال الرد",
-        modal_fin_detail_approve_btn: "اعتماد وصرف فوري",
+        modal_fin_detail_approve_btn: "اعتماد",
         modal_broadcast_schedule_now: "الآن (بث مباشر)",
         modal_notif_auto_today_count_lbl: "الإشعارات المعتمدة اليوم:",
         modal_fndr_edit_tree_yield_lbl: "الإنتاج المتوقع / حصة:",
@@ -3257,12 +3257,12 @@
         role_partner_farmers: "المزارعون الشركاء",
         modal_notif_auto_farmer_role: "المزارعون الشركاء (تذكير ميداني/ري)",
         modal_notif_auto_inv_role: "الكافلون (تذكير تشاركي/مالي)",
-        role_agricultural_investors: "الكافلون الزراعيون",
+        role_agricultural_investors: "الكافلون",
         modal_broadcast_affected_users_lbl: "المستخدمون المتأثرون:",
         modal_notif_auto_recipient_lbl: "المستهدف بالإشعار:",
         modal_notif_auto_instant_dispatch_btn: "المصادقة والإرسال الفوري المؤتمت",
-        modal_fin_detail_compliance_note: "المعاملة مطابقة للسجل الكاداستري وأتعاب الرعاية الحقلية المستحقة بعد توثيق المهندس الزراعي.",
-        modal_track_delivery_eta_val: "الموعد المتوقع للتسليم: خلال 48 ساعة مع إشعار استلام",
+        modal_fin_detail_compliance_note: "تحقّق من البيانات والإيصال أو المرفق مع الطلب قبل الاعتماد.",
+        modal_track_delivery_eta_val: "يُحدَّد موعد التسليم بعد مراجعة فريقنا لطلبك.",
         modal_farmer_mill_est_weight_lbl: "الوزن التقديري (كغ):",
         modal_tank_transfer_confirm_btn: "تأكيد المناقلة وضبط الضغط",
         modal_farmer_mill_confirm_btn: "تأكيد وإرسال الحجز للمعصرة",
@@ -3450,7 +3450,7 @@
         modal_inputs_guide: "اختر المواد الزراعية المعتمدة التي تحتاجها لمزرعتك اليوم، وسيتم تسليمها لك مباشرة عبر أقرب نقطة توزيع تعاونية، مع تأجيل سداد القيمة ليتم استقطاعها من حصتك في زيت الموسم بعد العصر:",
         modal_specimen_user_lbl: "اسم الكافل للتجربة:",
         modal_contracts_legal_approval_lbl: "اعتماد الإدارة القانونية العليا:",
-        modal_dossier_assets_title: "حصص الأشجار المسجلة باسم المستخدم",
+        modal_dossier_assets_title: "كفالات المستخدم",
         modal_manage_user_trees_lbl: "الأشجار والبساتين المربوطة بالحساب:",
         modal_manage_user_aml_lbl: "الأمان المالي ومكافحة غسيل الأموال (AML)",
         modal_specimen_coords_lbl: "الإحداثيات المساحية WGS-84:",
@@ -3654,7 +3654,7 @@
         roi_opt_deir_ezzor: "دير الزور (حوض الفرات) - قيسي فراتي مقاوم (24 سنة) • $24 / حصة • أرض $12",
         fndr_btn_escrow_audit_now: "إجراء فحص تدقيق الملاءة المالية الآن",
         fndr_p2p_fee_setting_desc: "حدد نسبة اقتطاع رسوم معالجة الدفعات من صفقات التداول الثانوي وتغذية المحفظة (الافتراضي: 2.5%):",
-              marketplace_count_initial: "11 شجرة و 4 بساتين",
+              marketplace_count_initial: "جارٍ تحميل الأشجار المتاحة…",
         modal_compounding_fee_lbl: "رسوم إدارة إعادة الكفالة:",
         modal_compounding_target_lbl: "توجيه التراكم المفضل:",
         modal_compounding_opt_mature: "شراء حصص في أشجار زيتون معمرة منتجة فوراً (محصول سنوي سريع)",
@@ -3688,7 +3688,7 @@
         mill_pomace_zero_waste_badge: "صفر نفايات • بيئة نقية",
         fndr_audit_solvency_now_btn: "إجراء فحص تدقيق الملاءة المالية الآن",
         // --- Additional Curated DOM & Platform Keys ---
-        alert_prio_financial: "مالي (استحقاقات وصكوك)",
+        alert_prio_financial: "مالي (دفعات)",
         alert_prio_normal: "عادي (تحديث روتيني)",
         alert_prio_urgent: "عاجل وطارئ (تنبيه فوري بنغمة صوتية)",
         auto_notif_body_ph: "اكتب نص الإشعار بدقة ووضوح...",
@@ -3812,7 +3812,7 @@
         mill_reg_tech_amenduni: "أميندوني نيكولا (Amenduni Inox)",
         mill_reg_tech_moritem: "موري-تيم إيطالي (Mori-Tem Cold)",
         mill_reg_tech_pieralisi: "بييراليسي إيطالي (Pieralisi 2-Phase)",
-        mill_reg_terms: "أقر بصحة البيانات أعلاه والتزامي التام بميثاق جودة العصر البارد الإيطالي ومطابقة معايير المجلس الدولي للزيتون (IOC)، وقبول الرقابة الميدانية الدورية من إدارة منصة فسيلة.",
+        mill_reg_terms: "أؤكد صحة البيانات أعلاه، وأعلم أن فريق فسيلة يراجع الطلب ويتواصل معي قبل أي اعتماد.",
         mill_tank_opt_1: "خزان رقم 1 (T-101 - خضيري الساحل)",
         mill_tank_opt_2: "خزان رقم 2 (T-102 - صوراني جبل الزاوية)",
         modal_clause_dna_text: "يُذكر صنف الشجرة (صوراني، قيسي، دعيبلي، خضيري) كما أفادت به المزرعة الشريكة. تظهر نتيجة فحص الصنف في صفحة الشجرة فقط إذا أُجري الفحص فعلاً.",
@@ -3912,7 +3912,7 @@
         gift_redeem_sub: "Enter the 12-character code exactly as you received it. It can be used once.",
         gift_redeem_btn: "Redeem",
         gift_redeem_format: "Invalid format: 12 letters/digits, e.g. ABCD-EFGH-2345.",
-        gift_redeem_ok: "🎁 Congratulations! The share is now yours and appears in your portfolio in a moment.",
+        gift_redeem_ok: "🎁 Congratulations! The share is now in your account and will appear in your sponsorships in a moment.",
         gift_redeem_invalid: "This code is invalid, already used or expired. Check it and try again.",
         gift_redeem_self_or_format: "You cannot redeem your own gift, or the code format is invalid.",
         gift_redeem_limit: "Too many attempts. Wait an hour and try again.",
@@ -4066,7 +4066,7 @@
         // --- Comprehensive Platform Completion Keys ---
         fndr_tab_approvals: "Financial Approvals & Clearance",
         fndr_approvals_title: "Financial Clearance & Payouts Approval Queue",
-        fndr_approvals_sub: "Review and disburse farmer wage withdrawals, emergency advances and sponsor cashouts",
+        fndr_approvals_sub: "Review pending items and approve or reject them: transfer receipts, field updates, pressing batches, role applications and oil requests",
         fndr_approvals_pending_badge: "Pending Approval",
         fndr_btn_approve_payout: "Approve & Disburse",
         fndr_btn_reject_payout: "Reject with Reason",
@@ -4131,7 +4131,7 @@
       market_empty_sub: "Try adjusting filters or clearing region and variety selections",
       market_empty_reset_btn: "Reset All Filters",
       filter_region_afrin: "Afrin & Northern Terroir",
-      voice_textarea_ph: "Your voice notes will be transcribed here automatically, or you can type manually...",
+      voice_textarea_ph: "Write your report here; the audio recording is only for listening on your device.",
       local_pay_ref_ph: "Transaction number or transfer reference",
       oil_cash_account_ph: "IBAN: SY... or mobile number for Syriatel Cash account",
       voice_instructions_title: "Listen to spoken instructions",
@@ -4141,7 +4141,7 @@
       auth_session_active: "Authenticated & Active Session",
       demo_reset_confirm: "Demo system state successfully restored to defaults",
       voice_mic_recording: "Recording field audio report live...",
-      voice_mic_saved: "Voice recording saved and staged for sync",
+      voice_mic_saved: "Recording finished (kept on your device only, not uploaded)",
       telem_soil_sub: '• Balanced',
       telem_wind_dir: '• North-West',
       auth_subtab_login: 'Sign In (Registered User)',
@@ -4159,8 +4159,8 @@
       prefs_curr_usd_sub: 'For Shares & Export Contracts',
       prefs_curr_syp_title: 'Syrian Pound (SYP)',
       prefs_curr_syp_sub: 'For Field Labor & Transactions',
-      auth_sec_item1_title: 'Hybrid Data Encryption (AES-256 + TLS 1.3)',
-      auth_sec_item1_desc: 'Your data and payment requests travel over an encrypted connection (TLS) and are stored encrypted.',
+      auth_sec_item1_title: "Encrypted connection",
+      auth_sec_item1_desc: "Your account data and transfer receipts are sent over an encrypted connection (HTTPS).",
       auth_sec_item2_title: 'Strict Tenant Isolation (Multi-Tenant RLS)',
       auth_sec_item2_desc: 'Rigorous row-level security preventing cross-account leakage between investors, farmers, and mills.',
       auth_sec_item3_title: 'Email verified',
@@ -4210,7 +4210,7 @@
         auth_demo_founder: "🏛️ Founder (Eng. Wissam)",
         fndr_badge: "Founder Executive Mission Control & Operations Radar",
         fndr_hero_title: "Comprehensive Operations & Strategic Radar",
-        fndr_hero_desc: "Unified Faseela Operations Hub: Real-time telemetry tracking fractional tree subscriptions, cadastral land deeds, farmer stipends, cold milling batches, and microclimate IoT field stations across Syria.",
+        fndr_hero_desc: "Team overview: review sponsorship requests and payments, manage users, approve pressing batches and oil requests.",
         fndr_system_nominal: "All Systems Operating at 100% Efficiency",
         fndr_kpi_escrow: "Payment Review",
         fndr_escrow_secured: "Audited Bank Reserve",
@@ -4254,16 +4254,16 @@
         fndr_btn_relief_desc: "Instant liquidity injection to partner farmers",
         fndr_btn_freeze: "Emergency Payment Review Freeze",
         fndr_btn_freeze_desc: "Halt all outward disbursements pending audit",
-        tele_updated_min: "Updated 10 mins ago",
+        tele_updated_min: "Not a live reading",
         acidity_khodairi: "Acidity 0.32% (Extra Virgin)",
         poly_khodairi: "Polyphenols: 380 mg/kg",
         acidity_sourani: "Acidity 0.28% (Super Extra Virgin)",
         poly_sourani: "Polyphenols: 510 mg/kg",
         acidity_qaysi: "Acidity 0.35% (Extra Virgin)",
         poly_qaysi: "Polyphenols: 420 mg/kg",
-        map_section_badge: "Interactive Agrarian Map • Syria",
+        map_section_badge: "Olive-growing regions of Syria",
         map_section_title: "Syria's Historic Olive Groves Map",
-        map_section_sub: "Explore our partnered olive groves and modern mills across Syrian governorates",
+        map_section_sub: "Choose a governorate to see its climate and cultivars and the trees listed there for sponsorship",
         map_region_tartus_name: "Tartus & Dreikish",
         map_region_tartus_sub: "Coastal Khodairi • 850mm Rain",
         map_count_840: "840 Trees",
@@ -4321,12 +4321,12 @@
         calc_preset_12: "Small Grove (3 Trees)",
         calc_preset_20: "Family Grove (5 Trees)",
         calc_preset_40: "Diaspora Estate (10 Trees)",
-        calc_preset_100: "Commercial Farm (25 Trees)",
+        calc_preset_100: "25 trees",
         calc_land_sqm_default: "~ 5.0 m² Cadastral Land",
-        tier_individual_title: "Individual Tree Share",
-        tier_individual_desc: "Quarter-share sponsorship in a heritage olive tree. Ideal for families and personal EVOO supply.",
-        tier_individual_tag: "Family Choice",
-        calc_esg_title: "Agrarian Impact & Direct Farmer Support:",
+        tier_individual_title: "Tree share sponsorship",
+        tier_individual_desc: "Sponsorship certificate (PDF) and your oil share after pressing",
+        tier_individual_tag: "Sponsorship",
+        calc_esg_title: "Supporting farmers in Syria:",
         calc_esg_sub: "Every share directly finances fair wages, organic pruning, and sustainable soil revitalization across Syria.",
         calc_card5_title: "Agricultural Labor Funded",
         calc_card6_title: "Restored Topsoil Area",
@@ -4398,7 +4398,7 @@
         invest_modal_bulk_perk: "Bulk perk: Free cadastral deed for orders over 100%",
         modal_land_badge_txt: "Cadastral Deed Included",
         pay_method_card_sub: "Instant checkout in USD/EUR",
-        pay_method_local_sub: "Syriatel Cash, BEMO Bank & Al-Haram",
+        pay_method_local_sub: "Transfer the amount and attach the receipt; the share is approved after the receipt is reviewed.",
         local_pay_accounts_title: "Official Domestic Payment Accounts:",
         local_pay_syriatel_title: "Syriatel Cash (Syria):",
         btn_copy: "Copy",
@@ -4429,7 +4429,7 @@
         voice_step3_title: "3. Record Field Voice Notes:",
         voice_status_ready: "Click microphone to speak freely",
         voice_stt_title: "Audio is for local preview; submit the written report for review:",
-        voice_stt_ready_badge: "Ready to Publish",
+        voice_stt_ready_badge: "Ready to send for review",
         voice_playback_ready: "Your voice recording is ready",
         voice_playback_duration: "Voice duration: 0:42",
         voice_playback_retry: "Record Again",
@@ -4440,7 +4440,7 @@
         payout_currency_equiv: "Equivalent to SYP at official rate",
         payout_trees_care_sub: "Based on verified field care milestones",
         payout_method_syriatel: "Syriatel Cash Wallet",
-        payout_method_syriatel_sub: "Instant transfer to your mobile wallet",
+        payout_method_syriatel_sub: "Demo only",
         payout_method_haram: "Al-Haram Exchange Transfer",
         payout_method_haram_sub: "Pickup cash from any branch across Syria",
         emergency_modal_desc: "Send instant voice distress signal to Platform Operations and Ministry field engineers",
@@ -4462,10 +4462,10 @@
         auth_phone_lbl_short: "Phone Number (WhatsApp):",
         auth_password_confirm_lbl: "Confirm Password:",
         auth_reg_role_lbl: "Select Your Role on Platform:",
-        auth_role_investor: "Agricultural Investor",
+        auth_role_investor: "Tree sponsor",
         auth_role_investor_sub: "Tree shares & EVOO",
         auth_role_farmer: "Partner Farmer",
-        auth_role_farmer_sub: "Grove care & stipends",
+        auth_role_farmer_sub: "Field updates for your trees",
         auth_role_mill: "Mill Operator",
         auth_role_mill_sub: "Cold extraction & lab testing",
         auth_reg_submit: "Create Account & Proceed to Verification",
@@ -4478,12 +4478,12 @@
         auth_otp_resend: "Resend Code",
         auth_otp_verify_btn: "Verify Code & Issue Digital Pass",
         auth_rbac_footer_title: "Multi-Tenant Enterprise Security (RBAC):",
-        auth_rbac_footer_desc: "Strict data isolation between sponsors, farmers, and mill operators. Each account accesses only authorized operational pages.",
+        auth_rbac_footer_desc: "Each account sees only its own pages: sponsors their sponsorships, farmers the trees assigned to them, mill owners their own mill's pressing batches.",
         oil_spec_banner_title: "Certified Extra Virgin Olive Oil (EVOO) Lab Test",
         toast_default_msg: "Operation completed successfully",
         mob_nav_home: "Home",
         mob_nav_marketplace: "Market",
-        mob_nav_dashboard: "Portfolio",
+        mob_nav_dashboard: "My sponsorships",
         mob_nav_farmer: "Farmer",
         mob_nav_assistant: "Assistant",
         btn_inspect_contract: "Review Official Agreement",
@@ -4508,7 +4508,7 @@
         mill_btn_contract: "Certified Mills Charter",
         nav_founder: "Control Panel",
         auth_tab_identity: "Identity & Profile",
-        auth_tab_assets: "My Linked Assets",
+        auth_tab_assets: "My activity",
         auth_tab_security: "Security Shield",
         auth_profile_email_lbl: "Authorized Email Address:",
         auth_profile_phone_lbl: "Phone number:",
@@ -4534,7 +4534,7 @@
         footer_link_mill_contract: "Mill Cold Extraction & Quality Accord",
         nav_home: "Home",
         nav_marketplace: "Tree Marketplace",
-        nav_dashboard: "My Portfolio",
+        nav_dashboard: "My sponsorships",
         nav_farmer: "Farmer Portal",
         nav_mill: "Mill Portal",
         nav_chat: "Talk with Faseela",
@@ -4545,8 +4545,8 @@
         hero_title_1: "Invest in a",
         hero_title_2: "Syrian Olive Tree",
         hero_title_3: "& Share the Land's Heritage and Bounty",
-        hero_title_full: `Invest in a <span class="text-terracotta-500 underline decoration-olive-600 underline-offset-8">Syrian Olive Tree</span><br>& Share the Land's Heritage and Bounty`,
-        hero_desc: "Own a certified fractional share of an authentic heritage olive tree in Syria. Follow its seasonal care, monitor cold pressing at modern certified mills with lab certificates, and receive your extra virgin olive oil or financial returns anywhere in the world.",
+        hero_title_full: "Sponsor a <span class=\"text-terracotta-500 underline decoration-olive-600 underline-offset-8\">Syrian olive tree</span><br>and receive a share of its harvest",
+        hero_desc: "Sponsor a share in the harvest of a listed olive tree in Syria and follow its care through the farmer's updates. After pressing, your share of the oil is allocated to you; you can request delivery, pickup or a donation, and the Faseela team reviews each request.",
         hero_btn_explore: "Explore Available Trees",
         hero_btn_chat: "Ask 'Faseela' Now",
         hero_stat_1_lbl: "trees open for sponsorship",
@@ -4561,8 +4561,8 @@
         fndr_set_featured_success: "⭐ Tree designated as the Featured Season Tree on the Home Page!",
         hero_feat_region: "Tartus • Dreikish",
         hero_feat_name: "The Century Olive - Mountain Guardian",
-        hero_feat_desc: "Authentic Khodairi olive planted in 1948. Certified at Dreikish Modern Mill producing ultra-pure EVOO with 0.32% acidity.",
-        hero_feat_lab: "Lab Quality Certified",
+        hero_feat_desc: "Olive tree listed for sponsorship",
+        hero_feat_lab: "Pressing results are published once approved",
         hero_feat_avail: "50% Shares Available",
         per_share_unit: "/ Share",
 
@@ -4576,7 +4576,7 @@
         cal_q1_badge: "Pruning Photos & Log",
         cal_q2_month: "April – May",
         cal_q2_title: "Flowering & Fruit Setting",
-        cal_q2_desc: "Dense white blossoms develop into promising olive fruitlets with soil moisture monitoring.",
+        cal_q2_desc: "White blossoms turn into small olive fruitlets while the farmer watches the trees' water needs.",
         cal_q2_badge: "Fruit-Set Assessment",
         cal_q3_month: "July – August",
         cal_q3_title: "Supplemental Irrigation & Bio-Control",
@@ -4656,7 +4656,7 @@
         cert_corners_lbl: "Parcel Boundary Corners (GPS):",
         cert_soil_lbl: "Soil Profile:",
         chat_chip_land: "🌿 Ask about the 5m² Land Plot Option",
-        calc_badge: "Interactive Harvest & Impact Calculator",
+        calc_badge: "Interactive Sponsorship & Impact Calculator",
         calc_title: "Calculate Your Real Harvest & Syrian Impact",
         calc_desc: "Slide to adjust your share fraction and see estimated extra virgin oil, carbon offset, and economics",
         calc_shares_label: "Stewardship Size (Shares):",
@@ -4664,15 +4664,15 @@
         calc_scale_4: "Whole Tree (4 Shares)",
         calc_scale_8: "Two Trees (8 Shares)",
         calc_include_title: "What does a single share include?",
-        calc_include_desc: "Comprehensive yearly orchard stewardship (irrigation, pruning, bio protection) + modern cold pressing + GPS-tagged digital ownership & lab purity certificates.",
+        calc_include_desc: "The farmer's care of the tree through the season with field updates + pressing at a partner mill + a sponsorship certificate (PDF) + a share of the oil after pressing.",
         calc_card1_title: "Extra Virgin Olive Oil",
-        calc_card1_sub: "Cold Pressed • Acidity < 0.4%",
+        calc_card1_sub: "Non-binding estimate of your oil share",
         calc_card2_title: "Annual CO2 Absorption",
         calc_card2_sub: "Environmental Impact & Green Cover",
         calc_card3_title: "Total Stewardship Cost",
         calc_card3_sub: "Local or International Checkout",
-        calc_card4_title: "Estimated Annual Oil Value",
-        calc_card4_sub: "Market Value / Financial Return",
+        calc_card4_title: "Estimated annual oil value",
+        calc_card4_sub: "Estimated oil value, not a return or cash payout",
         calc_oil_lbl: "Est. Annual Oil",
         calc_carbon_lbl: "Carbon Offset",
         calc_oil_unit: "L Pure EVOO",
@@ -4720,21 +4720,21 @@
         tree_by_farmer: "By Farmer: ",
 
         // Sponsor Dashboard
-        dash_title: "My Faseela Portfolio",
+        dash_title: "My sponsorships on Faseela",
         dash_subtitle: "Follow your trees, shares and certificates",
-        dash_btn_cert: "View Digital Certificate",
+        dash_btn_cert: "Sample sponsorship certificate",
         dash_btn_order_oil: "Order Olive Oil Delivery",
         dash_harvest_hub_title: "Harvest Readiness & Payout Hub",
         harvest_modal_tree_lbl: "Tree & Grove:",
         harvest_modal_ready_lbl: "Ready Oil Allocation:",
         harvest_modal_quality_lbl: "Laboratory Grade:",
-        dash_stat_invest: "Total Invested",
+        dash_stat_invest: "Total sponsorship amount",
         dash_stat_invest_sub: "Verified Tree Share",
-        dash_stat_oil: "Expected Oil Yield",
+        dash_stat_oil: "Expected oil share",
         dash_stat_oil_sub: "non-binding estimate",
         dash_stat_carbon: "Carbon Offset Impact",
         dash_stat_carbon_sub: "Sustainable Green Contribution",
-        dash_stat_trees: "Trees Owned",
+        dash_stat_trees: "Sponsored trees",
         dash_stat_trees_sub: "trees you sponsor",
         dash_tab_trees: "My Trees in Faseela",
         dash_tab_txs: "Transactions & Receipts Log",
@@ -4762,9 +4762,9 @@
         farmer_audio_feed_title: "Latest Field Voice Reports",
 
         // Mill Portal
-        mill_title: "Modern Olive Mills Portal",
-        mill_subtitle: "Manage pressing batches, record acidity measurements, and issue digital lab certificates",
-        mill_btn_new_batch: "Record Pressing Batch & Issue Lab Cert",
+        mill_title: "Partner mill portal",
+        mill_subtitle: "Record pressing batches and acidity and send them for quality review",
+        mill_btn_new_batch: "Record pressing batch",
         mill_stat_olives: "Total Olives Received",
         mill_stat_oil: "Extra Virgin Oil Produced",
         mill_stat_acidity: "Average Oil Acidity",
@@ -4781,8 +4781,8 @@
         // Faseela Assistant Chat
         chat_launcher_text: "Talk with Faseela",
         chat_title: "FASEELA",
-        chat_badge: "Agricultural Advisor",
-        chat_status: "Ready to answer all your questions",
+        chat_badge: "Platform help",
+        chat_status: "Answers common questions about sponsorship",
         chat_input_ph: "Ask Faseela anything about olive sponsorships...",
         voice_listening: "Listening... Speak now",
         voice_processing: "Processing your voice...",
@@ -4850,7 +4850,7 @@
         review_content_lbl: "Content that will be published",
         review_media_missing: "Some declared photos are not in storage; they will not be published.",
         oil_section_title: "My olive oil",
-        oil_section_sub: "Your share of every certified pressing of your trees. Request delivery, pick it up at the mill, or donate it.",
+        oil_section_sub: "Your share of each approved pressing of your trees. Request delivery, pickup at the mill or a donation; each request is reviewed.",
         oil_available_lbl: "Available:",
         oil_request_btn: "Request oil",
         oil_modal_title: "Request your oil",
@@ -4901,10 +4901,10 @@
         btn_confirm: "Confirm Investment",
         mill_batches_title: "Pressing Batches Log & Lab Test Certificates",
         footer_portals_title: "Portals & Services",
-        footer_payment_title: "Payment & Settlement Options",
+        footer_payment_title: "Payment method",
         footer_quality_title: "Purity & Support",
-        footer_quality_desc: "Certified lab testing for every batch ensuring acidity < 0.4%, with \'Faseela\' advisor available 24/7.",
-        role_investor: "Investor",
+        footer_quality_desc: "Pressing batches are recorded and reviewed by the Faseela team before oil is allocated; the automated assistant 'Faseela' answers general questions.",
+        role_investor: "Tree sponsor",
         role_farmer: "Partner Farmer",
         role_mill: "Mill Owner",
         role_admin: "System Admin",
@@ -4931,13 +4931,13 @@
         invest_modal_cert_val: "after the payment is approved",
         invest_modal_pay_method_lbl: "Payment & Settlement Method:",
         pay_method_card_title: "International Card (Visa / MasterCard)",
-        pay_method_local_title: "Local Syria Settlement (Syriatel Cash / BEMO / Al-Haram)",
+        pay_method_local_title: "Bank transfer",
         invest_modal_confirm_btn: "Confirm Stewardship & Buy Share Now",
-        farmer_payout_modal_title: "Request Care Earnings Disbursement",
-        farmer_payout_avail_lbl: "Balance Ready for Immediate Payout:",
+        farmer_payout_modal_title: "Payout request (demo)",
+        farmer_payout_avail_lbl: "Sample balance (demo)",
         farmer_payout_method_lbl: "Preferred Payout Channel:",
         farmer_payout_phone_lbl: "Farmer Mobile (Syriatel Cash):",
-        farmer_payout_confirm_btn: "Confirm Payout & Transfer Balance",
+        farmer_payout_confirm_btn: "Close demo",
         emergency_modal_title: "Emergency Agricultural Voice Alert",
         emergency_modal_send_btn: "Broadcast Alert to Agronomist Immediately",
         farmer_guide_title: "Harvest & Pressing Seasonal Guidelines (Sept / Oct)",
@@ -4960,21 +4960,21 @@
         share_unit: "Share (25%)",
 
         // Footer
-        footer_tagline: "Fractional platform preserving heritage Syrian olive trees and connecting global stewards to their ancestral soil.",
+        footer_tagline: "A platform for sponsoring heritage Syrian olive trees and supporting their farmers.",
         footer_regions_title: "Provinces Covered by GPS Registry:",
         footer_regions_list: "Tartus • Latakia • Idlib • Aleppo (Afrin) • Hama • Homs • Daraa • Damascus Countryside • As-Suwayda • Quneitra • Euphrates (Deir ez-Zor)",
         footer_support_title: "Support & Inquiries:",
         footer_rights: "All rights reserved to Faseela Platform © 2026 • Syrian Olive Stewardship",
         footer_link_marketplace: "Tree Marketplace",
-        footer_link_dashboard: "Investor Portfolio",
+        footer_link_dashboard: "My sponsorships",
         footer_link_mill: "Olive Mills Portal",
         footer_link_farmer: "Partner Farmers",
         footer_pay_cards: "• International Cards (Visa / MasterCard)",
         footer_pay_cash: "• Syriatel Cash / MTN Cash",
-        footer_pay_bank: "• Bank Transfers (BBSF / Al-Baraka)",
+        footer_pay_bank: "• Bank transfer to the account shown at checkout; reviewed by our finance team",
         footer_pay_exchange: "• Al-Haram / Al-Fouad Exchange",
-        footer_trust_badge: "GPS Verified • Certified Cold Pressed • 100% Syrian Organic",
-        footer_compliance: "Agriculturally Verified & Multi-Layer RLS Secured",
+        footer_trust_badge: "Field updates from the farmers • Partner farms in Syria",
+        footer_compliance: "Payments and oil requests are reviewed by the Faseela team",
 
         // Agro-Weather Telemetry
         agro_weather_badge: "Illustrative values — not live readings",
@@ -5065,9 +5065,9 @@
         denied_btn_switch: "Switch Account to Authorized Role",
         // Olive Mill Modern 5-Pillar Portal
         mill_badge_tech: "Modern Italian Olive Mill Portal (Continuous Cold-Press)",
-        mill_title: "Dreikish Modern Italian Olive Mill",
-        mill_subtitle: "Eng. Samir Dreikishi • 2-Phase Cold Press Technology (Zero Waste) • Tartous",
-        mill_btn_new_batch: "Register Pressing Batch & Issue Lab Certificate",
+        mill_title: "Partner mill portal",
+        mill_subtitle: "Record pressing batches and acidity and send them for quality review",
+        mill_btn_new_batch: "Record pressing batch",
         mill_btn_contract: "Accredited Mill Operators Charter",
         mill_kpi1_title: "Total Olives Received",
         mill_kpi1_sub: "Current Autumn 2026 Season",
@@ -5160,20 +5160,20 @@
         mill_circ_dispatch_sub: "Document delivery of eco-briquettes to local community or compost to Tartous and Idlib groves",
         mill_circ_dispatch_btn: "+ Log Distribution Run",
         qr_passport_modal_title: "Digital EVOO Lab Quality Passport (IOC Certified)",
-        qr_passport_modal_sub: "International Olive Council Standards • Cryptographically Verified Lab Passport",
+        qr_passport_modal_sub: "Illustrative example of an oil quality card",
         qr_passport_print_btn: "Print / Export Lab Passport (PDF)",
         // Sponsor Modern Dashboard 4 Pillars
         dash_badge_verified: "Your sponsorships on Faseela",
-        dash_btn_qr_pass: "EVOO Lab Passport (IOC)",
+        dash_btn_qr_pass: "Sample oil quality card",
         dash_tab_portfolio: "My trees & sponsorships",
         dash_tab_harvest: "Harvest Yields & Dispatch Hub",
-        dash_tab_certs: "Official Certs & Lab Passport",
-        dash_tab_finance: "Finance & Transaction Ledger",
+        dash_tab_certs: "Sample documents",
+        dash_tab_finance: "My payments",
         dash_trees_sub: "Your approved shares in trees of partner farms",
         dash_investments_title: "Open sponsorship requests",
-        dash_investments_sub: "Track temporary reservations, payment receipt checks and share approval",
+        dash_investments_sub: "Track your reservation, the review of your bank-transfer receipt and the approval of your share",
         dash_investments_empty_title: "No active sponsorship requests found",
-        dash_investments_empty_sub: "Explore the marketplace to reserve grove shares with verified cadastral title deeds.",
+        dash_investments_empty_sub: "Browse the listed trees and sponsor a share in the harvest of one of them.",
         dash_btn_cancel_request: "Cancel Request & Release Share",
         dash_status_awaiting_payment: "Awaiting Payment Proof Upload",
         dash_status_under_review: "Under Financial Audit Review",
@@ -5197,17 +5197,17 @@
         dash_dispatch_pkg_bottle: "Dark Marasca UV-Shield Glass Bottles (500ml)",
         dash_dispatch_dest_lbl: "Delivery Destination & Fleet Courier:",
         dash_certs_vault_title: "Official Documents Vault & Lab Quality Passport",
-        dash_certs_vault_sub: "All legally and scientifically certified deeds and lab reports for your ancient olive trees",
+        dash_certs_vault_sub: "Illustrative samples: sponsorship certificate and pressing results",
         dash_certs_card_qr_title: "EVOO Lab Quality Passport (IOC Certified)",
         dash_certs_card_qr_desc: "Certified laboratory assays proving acidity < 0.28% and polyphenols 495 mg/kg with scannable QR verification.",
         dash_btn_view_passport: "Inspect Lab Passport",
-        dash_certs_card_title_deed: "Cadastral Title Deed",
-        dash_certs_card_title_desc: "Official possession deed documenting your grove share and Syrian cadastral plot registry number.",
-        dash_certs_card_contract: "Certified Agricultural Partnership Contract",
-        dash_certs_card_contract_desc: "Enforceable legal contract governed by Syrian Civil Code and certified by Chambers of Agriculture.",
+        dash_certs_card_title_deed: "Sponsorship certificate (PDF)",
+        dash_certs_card_title_desc: "Confirms your sponsored share in the tree's harvest; issued once your payment is approved.",
+        dash_certs_card_contract: "Sponsorship service description",
+        dash_certs_card_contract_desc: "Explains what the sponsorship includes and what it does not.",
         dash_btn_view_contract: "Read Certified Contract",
         dash_tx_subtitle: "Your transfers and the status of their review",
-        dash_tx_audit_badge: "Audited Financial Record",
+        dash_tx_audit_badge: "Reviewed by finance staff",
 
         // Farmer Modern Portal 5 Pillars
         farmer_kpi1_trees: "Assigned Groves",
@@ -5289,7 +5289,7 @@
         econ_bar_packaging: "12% Inert Nitrogen Packaging",
         econ_bar_relief: "8% Mutual Relief Payment Review",
         econ_bar_platform: "25% Platform Sustainability",
-        market_tab_mature: "Mature Productive Trees (Instant 2026 Yield)",
+        market_tab_mature: "Mature productive trees",
         market_tab_virgin: "Virgin Greenfield Groves & Land (From Scratch)",
         virgin_badge: "Greenfield Projects",
         virgin_hero_title: "Invest in Virgin Olive Groves with Land (Ages 1 - 3 Years) from Scratch",
@@ -5338,7 +5338,7 @@
         farmer_adv_purpose_opt2: "Drip irrigation network maintenance and piping",
         farmer_adv_purpose_opt3: "Solar pump maintenance and battery servicing",
         farmer_adv_amount_lbl: "Requested Advance Amount:",
-        farmer_adv_terms_note: "The advance is disbursed immediately to your digital wallet and auto-repaid from next harvest with zero interest.",
+        farmer_adv_terms_note: "Demo only. Advances are not offered.",
         farmer_adv_submit_btn: "Confirm & Disburse Advance Now",
         mill_btn_log_tank_test: "Log Lab Acidity Test",
         mill_tank_test_modal_title: "Document Periodic Lab Acidity & Peroxide Test",
@@ -5366,7 +5366,7 @@
         notif_mark_all_read: "Mark All as Read",
         notif_clear_all: "Clear Read",
         notif_tab_all: "All Notifications",
-        notif_tab_financial: "Financial & Returns",
+        notif_tab_financial: "Payments & sponsorship",
         notif_tab_field: "Field & Milling",
         notif_tab_system: "Security & System",
         notif_unread_only: "Unread Only",
@@ -5376,17 +5376,17 @@
         notif_dismiss: "Dismiss",
         notif_sound_enabled: "Alert Sound Enabled",
         notif_sound_disabled: "Alert Sound Muted",
-        notif_pref_push: "Web Push Notifications",
-        notif_pref_email: "Email Digest",
+        notif_pref_push: "Push notifications",
+        notif_pref_email: "E-mail",
         notif_pref_sms: "SMS for Financials",
-        notif_channels_active: "Active Alert Channels:",
+        notif_channels_active: "Alert channels:",
         notif_time_just_now: "Just now",
         notif_time_mins_ago: "mins ago",
         notif_time_hours_ago: "hours ago",
         notif_time_yesterday: "Yesterday",
         notif_toast_marked_all_read: "All notifications marked as read",
         notif_toast_dismissed: "Notification dismissed successfully",
-        auth_modal_title: "Digital Identity Clearance & Access Permit",
+        auth_modal_title: "Your Faseela account",
         auth_modal_subtitle: "Authenticated Verification & Access Authorization (Strict RBAC)",
         auth_login_pwd_ph: "••••••••",
         auth_reg_email_ph: "name@example.com",
@@ -5447,8 +5447,8 @@
         prefs_curr_usd_sub: "For Share Values & Export Orders",
         prefs_curr_syp_title: "Syrian Pound (SYP)",
         prefs_curr_syp_sub: "For Local Operations & Care Wages",
-        auth_sec_item1_title: "Hybrid Data Encryption (AES-256 + TLS 1.3)",
-        auth_sec_item1_desc: "Your data and payment requests travel over an encrypted connection (TLS) and are stored encrypted.",
+        auth_sec_item1_title: "Encrypted connection",
+        auth_sec_item1_desc: "Your account data and transfer receipts are sent over an encrypted connection (HTTPS).",
         auth_sec_item2_title: "Strict Data Isolation (Multi-Tenant RLS)",
         auth_sec_item2_desc: "Enforced access boundaries preventing cross-tenant leakage between sponsors, farmers, and mills.",
         auth_sec_item3_title: "Email verified",
@@ -5526,7 +5526,7 @@
         fndr_users_sub: "Manage credentials, RBAC roles, and verification status across all platform users",
         fndr_user_search_ph: "Search by name, email, phone, or governorate...",
         fndr_filter_all_roles: "All Roles",
-        fndr_filter_investor: "Agricultural Investor",
+        fndr_filter_investor: "Tree sponsor",
         fndr_filter_farmer: "Partner Farmer",
         fndr_filter_mill: "Olive Mill Owner",
         fndr_filter_admin: "Founder & Admin",
@@ -5711,9 +5711,9 @@
                 // --- Mill Portal & Partner Registration Extensions ---
         mill_banner_partner_badge: "Strategic Partnership Opportunity for Syrian Mill Owners",
         mill_banner_partner_title: "Do you operate a modern olive mill? Join as an Accredited Partner Mill",
-        mill_banner_partner_desc: "We connect your facility directly with thousands of sponsors and farmers to mill sponsored trees under international standards, ensuring immediate in-kind & cash fees with documented annual contracts.",
+        mill_banner_partner_desc: "We are looking for partner mills to press the fruit of sponsored trees. Send your application; the Faseela team reviews it and contacts you to agree the details.",
         mill_btn_apply_partner: "Join as Partner Mill",
-        mill_btn_view_charter: "Accreditation Charter",
+        mill_btn_view_charter: "Contact & imprint",
         mill_btn_register_another: "Register Additional Branch",
         mill_reg_modal_title: "Partner Mill Accreditation Application",
         mill_reg_modal_badge: "2-Phase Cold Press",
@@ -5828,7 +5828,7 @@
         bundle_benefit_almond: "🌸 2.5 kg Syrian Soft-shell Almonds",
         bundle_benefit_discount: "Save 7% with Unified Ownership Deed",
               hero_title_accent: "Olive Tree",
-        hero_title_sub: "And share the land's blessing & harvest",
+        hero_title_sub: "and receive a share of its harvest",
         fndr_p2p_circuit_title: "P2P Trading Circuit Breaker",
         fndr_p2p_circuit_badge_on: "Trading Active",
         fndr_p2p_circuit_desc: "Temporary pause on secondary trading to prevent speculation and protect farmer prices.",
@@ -5878,7 +5878,7 @@
         modal_vg_add_name_ar_lbl: "Project Name (AR):",
         modal_vg_edit_name_lbl: "Project Name:",
         modal_dispute_resolve_btn: "Approve Resolution & Send Reply",
-        modal_fin_detail_approve_btn: "Instant Approval & Clearance",
+        modal_fin_detail_approve_btn: "Approve",
         modal_broadcast_schedule_now: "Now (Live Broadcast)",
         modal_notif_auto_today_count_lbl: "Notifications Verified Today:",
         modal_fndr_edit_tree_yield_lbl: "Expected Yield / Share:",
@@ -6082,12 +6082,12 @@
         role_partner_farmers: "Partner Farmers",
         modal_notif_auto_farmer_role: "Partner Farmers (Field/Irrigation Reminder)",
         modal_notif_auto_inv_role: "Investors (Investment/Financial Reminder)",
-        role_agricultural_investors: "Agricultural Investors",
+        role_agricultural_investors: "Tree sponsors",
         modal_broadcast_affected_users_lbl: "Targeted Audience:",
         modal_notif_auto_recipient_lbl: "Target Recipient:",
         modal_notif_auto_instant_dispatch_btn: "Authorize & Dispatch Automated Alert",
-        modal_fin_detail_compliance_note: "Transaction verified against Cadastral ledger and approved field agronomist telemetry.",
-        modal_track_delivery_eta_val: "Expected Delivery: Within 48 Hours with Handover SMS",
+        modal_fin_detail_compliance_note: "Check the details and the attached receipt or document before approving.",
+        modal_track_delivery_eta_val: "The delivery date is set after our team reviews your request.",
         modal_farmer_mill_est_weight_lbl: "Estimated Weight (kg):",
         modal_tank_transfer_confirm_btn: "Confirm Transfer & Pressure Check",
         modal_farmer_mill_confirm_btn: "Confirm & Dispatch Slot Booking to Mill",
@@ -6275,7 +6275,7 @@
         modal_inputs_guide: "Select the certified agricultural supplies required for your orchard today. Distributed via your nearest agricultural cooperative with cost deferred to post-milling season harvest settlement:",
         modal_specimen_user_lbl: "Test Sponsor Name:",
         modal_contracts_legal_approval_lbl: "Supreme Legal Council Accreditation:",
-        modal_dossier_assets_title: "Tree shares registered to this user",
+        modal_dossier_assets_title: "User's sponsorships",
         modal_manage_user_trees_lbl: "Linked Trees & Groves:",
         modal_manage_user_aml_lbl: "Financial Security & AML Clearance:",
         modal_specimen_coords_lbl: "Cadastral Coordinates WGS-84:",
@@ -6479,7 +6479,7 @@
         roi_opt_deir_ezzor: "Deir Ezzor (Euphrates Basin) - Euphrates Qaisi (24y) • $24/share • Land $12",
         fndr_btn_escrow_audit_now: "Run Real-Time Payment Review Solvency Audit Now",
         fndr_p2p_fee_setting_desc: "Set secondary market payment clearance fee percentage (Default: 2.5%):",
-              marketplace_count_initial: "11 Trees & 4 Groves",
+              marketplace_count_initial: "Loading trees on offer…",
         modal_compounding_fee_lbl: "Reinvestment Management Fee:",
         modal_compounding_target_lbl: "Preferred Compounding Allocation:",
         modal_compounding_opt_mature: "Acquire shares in mature olive trees (immediate harvest yields)",
@@ -6513,7 +6513,7 @@
         mill_pomace_zero_waste_badge: "Zero Waste • Pure Ecosystem",
         fndr_audit_solvency_now_btn: "Run Payment Review Solvency Audit Now",
         // --- Additional Curated DOM & Platform Keys ---
-        alert_prio_financial: "Financial (Dues & Deeds)",
+        alert_prio_financial: "Financial (payments)",
         alert_prio_normal: "Normal (Routine Update)",
         alert_prio_urgent: "Urgent & Critical (Instant Audio Alert)",
         auto_notif_body_ph: "Enter the exact notification text clearly...",
@@ -6637,7 +6637,7 @@
         mill_reg_tech_amenduni: "Amenduni Inox System",
         mill_reg_tech_moritem: "Mori-Tem Italian Cold Extraction",
         mill_reg_tech_pieralisi: "Pieralisi Italian 2-Phase System",
-        mill_reg_terms: "I hereby affirm the accuracy of the data above and my full commitment to cold-extraction quality standards, IOC conformity, and periodic field inspections by Faseela Administration.",
+        mill_reg_terms: "I confirm that the information above is correct. I understand that the Faseela team reviews the application and contacts me before any approval.",
         mill_tank_opt_1: "Tank #1 (T-101 - Coastal Khodairi)",
         mill_tank_opt_2: "Tank #2 (T-102 - Jabal Al-Zawiya Sourani)",
         modal_clause_dna_text: "The tree variety (Sourani, Qaysi, Daebli, Khodairi) is stated as reported by the partner farm. A variety test result appears on the tree page only where such a test was actually carried out.",
@@ -11587,10 +11587,10 @@
       if (orgEl) orgEl.innerText = state.currentLang === 'ar' ? 'عضوية فسيلة' : state.currentLang === 'de' ? 'Faseela-Mitgliedschaft' : 'Faseela membership';
 
       const titleEl = document.getElementById('auth-modal-title');
-      if (titleEl) titleEl.innerText = isEn ? "Verified Digital Identity & Access Permit" : "بطاقة الهوية الرقمية وتصريح النفاذ";
+      if (titleEl) titleEl.innerText = state.currentLang === 'ar' ? 'حسابي' : state.currentLang === 'de' ? 'Mein Konto' : 'My account';
       
       const subEl = document.getElementById('auth-modal-subtitle');
-      if (subEl) subEl.innerText = isEn ? "Encrypted Authentication & Role-Based Access Control (Strict RBAC)" : "نظام المصادقة المشفر وتخويل الصلاحيات (Strict RBAC)";
+      if (subEl) subEl.innerText = state.currentLang === 'ar' ? 'بيانات حسابك وصلاحياته' : state.currentLang === 'de' ? 'Ihre Kontodaten und Zugriffsrechte' : 'Your account details and access';
 
       const badgeTxt = document.getElementById('auth-profile-badge-text');
       if (badgeTxt) badgeTxt.innerText = isEn ? "Email verified" : "البريد موثّق";
@@ -11624,16 +11624,9 @@
         const phoneVal = document.getElementById('auth-profile-phone-val');
         if (phoneVal) phoneVal.innerText = u.phone || '—';
 
+        // No invented "digital identity" (DID) number: the row is hidden.
         const didEl = document.getElementById('auth-profile-did');
-        if (didEl) {
-          const didMap = {
-            'usr_founder_01': 'DID: SYR-AGR-2026-FNDR01',
-            'usr_investor_01': 'DID: SYR-AGR-2026-INV042',
-            'usr_farmer_01': 'DID: SYR-AGR-2026-FRM009',
-            'usr_mill_01': 'DID: SYR-AGR-2026-MLL003'
-          };
-          didEl.innerText = didMap[u.id] || `DID: SYR-AGR-2026-${u.id.substring(4, 10).toUpperCase()}`;
-        }
+        if (didEl && didEl.parentElement) didEl.parentElement.classList.add('hidden');
 
         // Highlight Active Persona in Sandbox Controller
         ['usr_founder_01', 'usr_investor_01', 'usr_farmer_01', 'usr_mill_01'].forEach(pId => {
@@ -11652,11 +11645,9 @@
 
         // Update Top Smart Card Region Badge & Verified Dossier Attributes
         // Update Dynamic Pass Cryptographic Signature
+        // No invented encryption seal or signature on the card: the footer row is hidden.
         const hashEl = document.getElementById('auth-pass-crypto-hash');
-        if (hashEl) {
-          const passHash = generatePassCryptoHash(u);
-          hashEl.innerHTML = `<i data-lucide="fingerprint" class="w-3 h-3 text-amber-400 inline"></i> SIG: ${passHash.substring(0, 10)}...`;
-        }
+        if (hashEl && hashEl.parentElement) hashEl.parentElement.classList.add('hidden');
 
         // Update Panel 4 Security Telemetry
         const tokenHashEl = document.getElementById('auth-sec-token-hash');
@@ -11699,35 +11690,20 @@
         // Scope Box tailored for each role
         const scopeTitleEl = document.getElementById('auth-scope-title');
         const scopeDescEl = document.getElementById('auth-scope-desc');
+        const L3 = (ar, en, de) => state.currentLang === 'ar' ? ar : (state.currentLang === 'de' ? de : en);
         if (scopeTitleEl && scopeDescEl) {
           if (u.role === 'admin') {
-            scopeTitleEl.innerText = isEn 
-              ? 'Authorized Scope: Executive Command & Full Root Governance' 
-              : 'نطاق التصريح الممنوح لك: الإدارة العليا والرقابة ال الشاملة (Root Admin)';
-            scopeDescEl.innerText = isEn
-              ? 'Fully authorized to monitor the live Operations Command Center, audit Payment Review reserve vaults, inspect all orchards and mills, and trigger emergency financial freezes across the entire platform.'
-              : 'مخوّل بالوصول الكامل لغرفة العمليات والرادار الميداني اللحظي، تدقيق سجلات الدفع (Payment Review)، مراجعة استحقاقات المزارعين ودفعات المعاصر، وتفعيل أوامر الطوارئ والتجميد الأمني عبر كامل المنظومة.';
+            scopeTitleEl.innerText = L3('صلاحياتك: فريق المنصة', 'Your access: platform team', 'Ihr Zugang: Plattform-Team');
+            scopeDescEl.innerText = L3('مراجعة طلبات الكفالة وإيصالات التحويل، وإدارة المستخدمين، واعتماد دفعات العصر وطلبات الزيت.', 'Review sponsorship requests and transfer receipts, manage users, approve pressing batches and oil requests.', 'Patenschaftsanfragen und Überweisungsbelege prüfen, Nutzer verwalten, Pressungen und Ölanfragen freigeben.');
           } else if (u.role === 'farmer') {
-            scopeTitleEl.innerText = isEn 
-              ? 'Authorized Scope: Grove Care, Field Voice Dispatch & Subsidies' 
-              : 'نطاق التصريح الممنوح لك: الرعاية الميدانية وسحب أتعاب الفلاحة';
-            scopeDescEl.innerText = isEn
-              ? 'Authorized strictly to document seasonal olive care, broadcast voice/photo field updates, and withdraw care subsidies from the payment treasury. Sponsor financials remain isolated.'
-              : 'مخوّل حصراً بتوثيق أعمال العناية بالأشجار، وتسجيل التحديثات الصوتية والمصورة وسحب أتعاب الصيانة من صندوق الدعم الزراعي. محافظ الكافلين المالية محجوبة بالكامل.';
+            scopeTitleEl.innerText = L3('صلاحياتك: رعاية الأشجار والتحديثات الميدانية', 'Your access: tree care and field updates', 'Ihr Zugang: Baumpflege und Feldberichte');
+            scopeDescEl.innerText = L3('يمكنك إرسال تحديثات ميدانية بالصور والملاحظات عن الأشجار المسندة إليك، ويراجعها فريق فسيلة قبل نشرها. لا ترى بيانات الكافلين.', 'You can send field updates with photos and notes about the trees assigned to you; the Faseela team reviews them before they are published. You do not see sponsors’ data.', 'Sie können Feldberichte mit Fotos und Notizen zu den Ihnen zugewiesenen Bäumen senden; das Faseela-Team prüft sie vor der Veröffentlichung. Daten der Paten sehen Sie nicht.');
           } else if (u.role === 'mill_owner') {
-            scopeTitleEl.innerText = isEn 
-              ? 'Authorized Scope: Cold Pressing Pipeline & Chemical Lab Seals' 
-              : 'نطاق التصريح الممنوح لك: تشغيل خطوط العصر وإصدار شهادات الجودة المخبرية';
-            scopeDescEl.innerText = isEn
-              ? 'Authorized strictly to record incoming fruit milling batches, calibrate acidity & polyphenol metrics, and issue cryptographically verifiable lab quality certificates.'
-              : 'مخوّل حصراً بتسجيل دفعات عصر ثمار الزيتون وتحديد نسب الحموضة والسيولة وإصدار شهادات التحليل المخبري الرقمية الموثقة للكافلين.';
+            scopeTitleEl.innerText = L3('صلاحياتك: تسجيل دفعات العصر', 'Your access: pressing batches', 'Ihr Zugang: Pressungen');
+            scopeDescEl.innerText = L3('يمكنك تسجيل دفعات العصر وقيمها المقاسة وإرسالها للمراجعة، ويعتمدها فريق فسيلة قبل تخصيص الزيت.', 'You can record pressing batches and their measured values and send them for review; the Faseela team approves them before oil is allocated.', 'Sie können Pressungen und ihre Messwerte erfassen und zur Prüfung senden; das Faseela-Team gibt sie frei, bevor das Öl zugeteilt wird.');
           } else {
-            scopeTitleEl.innerText = isEn 
-              ? 'Authorized Scope: Fractional Sponsorship & Land Plot Tenure' 
-              : 'نطاق التصريح الممنوح لك: محفظة الكفالة التشاركية وحيازة الأراضي (5 م² طابو)';
-            scopeDescEl.innerText = isEn 
-              ? 'Authorized strictly to acquire and track certified olive tree shares, register cadastral usufruct deeds, schedule extra virgin olive oil deliveries, and follow the harvest.' 
-              : 'مخوّل بتملك الحصص وإصدار صكوك الحيازة الكاداسترية (5 م² طابو زراعي)، وتتبع نمو الأشجار، واستلام دفعات زيت الزيتون البكر الممتاز أو محاصيل تسويقه مع عزل كامل لسجلات الآخرين.';
+            scopeTitleEl.innerText = L3('صلاحياتك: كفالة الأشجار', 'Your access: tree sponsorship', 'Ihr Zugang: Baumpatenschaft');
+            scopeDescEl.innerText = L3('يمكنك كفالة حصص من الأشجار، ورفع إيصالات التحويل، وتنزيل شهاداتك، وطلب حصتك من الزيت بعد العصر.', 'You can sponsor tree shares, upload transfer receipts, download your certificates and request your oil allocation after pressing.', 'Sie können Baumanteile in Patenschaft nehmen, Überweisungsbelege hochladen, Ihre Zertifikate herunterladen und nach der Pressung Ihre Ölzuteilung anfordern.');
           }
         }
 
@@ -11742,14 +11718,14 @@
                 <span class="text-[9px] text-stone-400 font-bold block">${isEn ? 'Live data pending' : 'بانتظار البيانات الفعلية'}</span>
               </div>
               <div class="bg-stone-50 dark:bg-stone-800/80 p-3 rounded-2xl border border-stone-200 dark:border-stone-700">
-                <span class="text-[10px] text-stone-500 block font-bold">${isEn ? 'Active Subscribed Shares' : 'الحصص وصكوك الحيازة'}</span>
+                <span class="text-[10px] text-stone-500 block font-bold">${L3('الحصص المكفولة', 'Sponsored shares', 'Anteile in Patenschaft')}</span>
                 <span class="text-base font-black text-stone-900 dark:text-white font-mono">—</span>
                 <span class="text-[9px] text-stone-400 font-bold block">${isEn ? 'Live data pending' : 'بانتظار البيانات الفعلية'}</span>
               </div>
               <div class="bg-stone-50 dark:bg-stone-800/80 p-3 rounded-2xl border border-stone-200 dark:border-stone-700">
                 <span class="text-[10px] text-stone-500 block font-bold">${isEn ? 'Documented Trees' : 'الأشجار الموثقة في المنظومة'}</span>
                 <span class="text-base font-black text-olive-900 dark:text-olive-300 font-mono">—</span>
-                <span class="text-[9px] text-emerald-700 dark:text-emerald-400 font-bold block">GPS WGS-84 Verified</span>
+                <span class="text-[9px] text-stone-400 font-bold block">${L3('بانتظار البيانات الفعلية', 'Live data pending', 'Noch keine Daten')}</span>
               </div>
               <div class="bg-stone-50 dark:bg-stone-800/80 p-3 rounded-2xl border border-stone-200 dark:border-stone-700">
                 <span class="text-[10px] text-stone-500 block font-bold">${isEn ? 'System Health' : 'سلامة وأمان النظام'}</span>
@@ -11762,72 +11738,50 @@
             assetsGrid.innerHTML = `
               <div class="bg-stone-50 dark:bg-stone-800/80 p-3 rounded-2xl border border-stone-200 dark:border-stone-700">
                 <span class="text-[10px] text-stone-500 block font-bold">${isEn ? 'Assigned Olive Trees' : 'الأشجار المكلف برعايتها'}</span>
-                <span class="text-base font-black text-emerald-900 dark:text-emerald-300 font-mono">3 ${isEn ? 'Trees' : 'أشجار معمرة'}</span>
-                <span class="text-[9px] text-stone-400 font-bold block">${isEn ? "Tartous - Al-Dreikish" : "طرطوس - الدريكيش"}</span>
-              </div>
-              <div class="bg-stone-50 dark:bg-stone-800/80 p-3 rounded-2xl border border-stone-200 dark:border-stone-700">
-                <span class="text-[10px] text-stone-500 block font-bold">${isEn ? 'Available Payout' : 'الأتعاب الجاهزة للصرف'}</span>
-                <span class="text-base font-black text-emerald-700 dark:text-emerald-400 font-mono">${(w.readySyp || 630000).toLocaleString()} ${isEn ? 'SYP' : 'ل.س'}</span>
-                <span class="text-[9px] text-emerald-700 dark:text-emerald-400 font-bold block">${isEn ? "Syriatel Cash / Al-Haram" : "سيريتل كاش / الهرم"}</span>
-              </div>
-              <div class="bg-stone-50 dark:bg-stone-800/80 p-3 rounded-2xl border border-stone-200 dark:border-stone-700">
-                <span class="text-[10px] text-stone-500 block font-bold">${isEn ? 'Disbursed Care Funds' : 'إجمالي الأتعاب المستلمة'}</span>
-                <span class="text-base font-black text-stone-900 dark:text-white font-mono">${(w.paidSyp || 1260000).toLocaleString()} ${isEn ? 'SYP' : 'ل.س'}</span>
-                <span class="text-[9px] text-stone-400 font-bold block">${isEn ? "Officially Delivered" : "تم تسليمها رسمياً"}</span>
+                <span class="text-base font-black text-emerald-900 dark:text-emerald-300 font-mono">—</span>
+                <span class="text-[9px] text-stone-400 font-bold block">${L3('بانتظار البيانات الفعلية', 'Live data pending', 'Noch keine Daten')}</span>
               </div>
               <div class="bg-stone-50 dark:bg-stone-800/80 p-3 rounded-2xl border border-stone-200 dark:border-stone-700">
                 <span class="text-[10px] text-stone-500 block font-bold">${isEn ? 'Latest Dispatch' : 'آخر تقرير ميداني'}</span>
-                <span class="text-xs font-black text-olive-900 dark:text-olive-300 block truncate">${isEn ? "Irrigation & Filter Cleaning" : "ري وتنظيف فلاتر"}</span>
-                <span class="text-[9px] text-emerald-700 dark:text-emerald-400 font-bold block">${isEn ? "Certified Voice Recording" : "تسجيل صوتي معتمد"}</span>
+                <span class="text-xs font-black text-olive-900 dark:text-olive-300 block truncate">—</span>
+                <span class="text-[9px] text-stone-400 font-bold block">${L3('بانتظار البيانات الفعلية', 'Live data pending', 'Noch keine Daten')}</span>
               </div>
             `;
           } else if (u.role === 'mill_owner') {
             assetsGrid.innerHTML = `
               <div class="bg-stone-50 dark:bg-stone-800/80 p-3 rounded-2xl border border-stone-200 dark:border-stone-700">
                 <span class="text-[10px] text-stone-500 block font-bold">${isEn ? 'Milling Batches' : 'دفعات العصر الموثقة'}</span>
-                <span class="text-base font-black text-amber-900 dark:text-amber-300 font-mono">8 ${isEn ? 'Batches' : 'دفعات'}</span>
-                <span class="text-[9px] text-stone-400 font-bold block">${isEn ? "Cold Press < 25°C" : "عصر بارد &lt; 25° م"}</span>
+                <span class="text-base font-black text-amber-900 dark:text-amber-300 font-mono">—</span>
+                <span class="text-[9px] text-stone-400 font-bold block">${L3('بانتظار البيانات الفعلية', 'Live data pending', 'Noch keine Daten')}</span>
               </div>
               <div class="bg-stone-50 dark:bg-stone-800/80 p-3 rounded-2xl border border-stone-200 dark:border-stone-700">
                 <span class="text-[10px] text-stone-500 block font-bold">${isEn ? 'Oil Output' : 'إنتاجية الزيت البكر'}</span>
-                <span class="text-base font-black text-emerald-700 dark:text-emerald-400 font-mono">1,240 ${isEn ? 'Liters' : 'لتر'}</span>
-                <span class="text-[9px] text-emerald-700 dark:text-emerald-400 font-bold block">${isEn ? "Premium Extra Virgin EVOO" : "بكر ممتاز فائق EVOO"}</span>
-              </div>
-              <div class="bg-stone-50 dark:bg-stone-800/80 p-3 rounded-2xl border border-stone-200 dark:border-stone-700">
-                <span class="text-[10px] text-stone-500 block font-bold">${isEn ? 'Average Acidity' : 'متوسط الحموضة المخبرية'}</span>
-                <span class="text-base font-black text-stone-900 dark:text-white font-mono">&lt; 0.28%</span>
-                <span class="text-[9px] text-emerald-700 dark:text-emerald-400 font-bold block">${isEn ? "Lab Certified" : "معتمد مخبرياً"}</span>
-              </div>
-              <div class="bg-stone-50 dark:bg-stone-800/80 p-3 rounded-2xl border border-stone-200 dark:border-stone-700">
-                <span class="text-[10px] text-stone-500 block font-bold">${isEn ? 'Quality Certificates' : 'شهادات التحليل الصادرة'}</span>
-                <span class="text-base font-black text-olive-900 dark:text-olive-300 font-mono">8 ${isEn ? 'Certificates' : 'شهادات'}</span>
-                <span class="text-[9px] text-stone-400 font-bold block">${isEn ? "Sealed & Digitally Signed" : "مختومة وموقعة رقمياً"}</span>
+                <span class="text-base font-black text-emerald-700 dark:text-emerald-400 font-mono">—</span>
+                <span class="text-[9px] text-stone-400 font-bold block">${L3('بانتظار البيانات الفعلية', 'Live data pending', 'Noch keine Daten')}</span>
               </div>
             `;
           } else {
             // Sponsor
             const myShares = (state.userShares || []).filter(s => s.user_id === u.id);
-            const totalInv = myShares.reduce((acc, s) => acc + s.purchase_price, 0);
+            // Real values only, as in renderDashboard: share count, amount and oil allocated after pressing.
+            const shareCount = myShares.reduce((acc, s) => acc + (s.shares_count || Math.max(1, Math.round((s.percentage || 25) / 25))), 0);
+            const totalInv = myShares.reduce((acc, s) => acc + (Number(s.purchase_price) || 0), 0);
+            const allocatedMl = (state.myOilAllocations || []).reduce((sum, a) => sum + (a.litersMl || 0), 0);
             assetsGrid.innerHTML = `
               <div class="bg-stone-50 dark:bg-stone-800/80 p-3 rounded-2xl border border-stone-200 dark:border-stone-700">
-                <span class="text-[10px] text-stone-500 block font-bold">${isEn ? 'Owned Shares' : 'الحصص المكتتبة'}</span>
-                <span class="text-base font-black text-olive-900 dark:text-olive-300 font-mono">${myShares.length || 12} ${isEn ? 'Shares' : 'حصة تشاركية'}</span>
-                <span class="text-[9px] text-stone-400 font-bold block">${isEn ? "In 3 Mature Trees" : "في 3 أشجار معمرة"}</span>
+                <span class="text-[10px] text-stone-500 block font-bold">${L3('الحصص المكفولة', 'Sponsored shares', 'Anteile in Patenschaft')}</span>
+                <span class="text-base font-black text-olive-900 dark:text-olive-300 font-mono">${myShares.length ? shareCount : '—'}</span>
+                <span class="text-[9px] text-stone-400 font-bold block">${L3('من سجل كفالاتك', 'From your sponsorships', 'Aus Ihren Patenschaften')}</span>
               </div>
               <div class="bg-stone-50 dark:bg-stone-800/80 p-3 rounded-2xl border border-stone-200 dark:border-stone-700">
-                <span class="text-[10px] text-stone-500 block font-bold">${isEn ? 'Registered Land Area' : 'مساحة الأرض الموثقة'}</span>
-                <span class="text-base font-black text-emerald-700 dark:text-emerald-400 font-mono">15.0 ${isEn ? 'm²' : 'م²'}</span>
-                <span class="text-[9px] text-emerald-700 dark:text-emerald-400 font-bold block">${isEn ? "Registered Agri. Deed" : "طابو زراعي مسجل"}</span>
+                <span class="text-[10px] text-stone-500 block font-bold">${L3('الزيت المخصص', 'Allocated oil', 'Zugeteiltes Öl')}</span>
+                <span class="text-base font-black text-stone-900 dark:text-white font-mono">${allocatedMl > 0 ? OIL_LITERS(allocatedMl) : '—'}</span>
+                <span class="text-[9px] text-stone-400 font-bold block">${L3('يُخصص بعد العصر', 'Allocated after pressing', 'Zuteilung nach der Pressung')}</span>
               </div>
               <div class="bg-stone-50 dark:bg-stone-800/80 p-3 rounded-2xl border border-stone-200 dark:border-stone-700">
-                <span class="text-[10px] text-stone-500 block font-bold">${isEn ? 'Expected Oil Yield' : 'رصيد الزيت المتوقع'}</span>
-                <span class="text-base font-black text-stone-900 dark:text-white font-mono">~ 88.8 ${isEn ? 'L' : 'لتر'}</span>
-                <span class="text-[9px] text-emerald-700 dark:text-emerald-400 font-bold block">${isEn ? "Extra Virgin Pure < 0.3%" : "بكر ممتاز نقي &lt; 0.3%"}</span>
-              </div>
-              <div class="bg-stone-50 dark:bg-stone-800/80 p-3 rounded-2xl border border-stone-200 dark:border-stone-700">
-                <span class="text-[10px] text-stone-500 block font-bold">${isEn ? 'Portfolio Valuation' : 'إجمالي قيمة الكفالة'}</span>
-                <span class="text-base font-black text-olive-900 dark:text-olive-300 font-mono">${formatMoney(totalInv || 420)}</span>
-                <span class="text-[9px] text-stone-400 font-bold block">${isEn ? "Official Ownership Deeds" : "صكوك حيازة رسمية"}</span>
+                <span class="text-[10px] text-stone-500 block font-bold">${L3('مبلغ الكفالة', 'Sponsorship amount', 'Patenschaftsbetrag')}</span>
+                <span class="text-base font-black text-olive-900 dark:text-olive-300 font-mono">${myShares.length ? formatMoney(totalInv) : '—'}</span>
+                <span class="text-[9px] text-stone-400 font-bold block">${L3('مجموع حصصك', 'Total of your shares', 'Summe Ihrer Anteile')}</span>
               </div>
             `;
           }
@@ -12905,13 +12859,10 @@
 
       const sliderVal = document.getElementById('calc-slider-val');
       if (sliderVal) {
-        if (s === 1) sliderVal.innerText = isEn ? "1 Share (25%)" : "حصة واحدة (25%)";
-        else if (s === 4) sliderVal.innerText = isEn ? "1 Whole Tree (4 Shares)" : "شجرة كاملة (4 حصص)";
-        else if (s === 12) sliderVal.innerText = isEn ? "3 Trees • Family Grove (12 Shares)" : "3 أشجار • كرم العائلة (12 حصة)";
-        else if (s === 20) sliderVal.innerText = isEn ? "5 Trees • Expat Orchard (20 Shares)" : "5 أشجار • بستان المغتربين (20 حصة)";
-        else if (s === 40) sliderVal.innerText = isEn ? "10 Trees • Homeland Legacy (40 Shares)" : "10 أشجار • سند العودة والوفاء (40 حصة)";
-        else if (s === 100) sliderVal.innerText = isEn ? "25 Trees • Corporate ESG (100 Shares)" : "25 شجرة • كبار الرعاة ESG (100 حصة)";
-        else sliderVal.innerText = isEn ? `${s} Shares (${(s * 25)}%)` : `${s} حصص (${(s * 25)}%)`;
+        const shareWord = (n) => state.currentLang === 'ar'
+          ? (n === 1 ? 'حصة واحدة' : n === 2 ? 'حصتان' : `${n} ${n <= 10 ? 'حصص' : 'حصة'}`)
+          : state.currentLang === 'de' ? `${n} ${n === 1 ? 'Anteil' : 'Anteile'}` : `${n} ${n === 1 ? 'share' : 'shares'}`;
+        sliderVal.innerText = shareWord(s);
       }
 
       // Update chips styling
@@ -12954,36 +12905,14 @@
           : `🌿 ضم سند حيازة 5 م² أرض مع كل شجرة (+${formatMoney(landAddonPerPlot)})`;
       }
 
-      // Update Tier Banner with diaspora and ESG packages
+      // Tier banner: one neutral text for every amount (no packages, land, shipping or ESG perks).
       const tierTitle = document.getElementById('roi-tier-title');
       const tierPerk = document.getElementById('roi-tier-perk');
       const tierTag = document.getElementById('roi-tier-tag');
       if (tierTitle && tierPerk && tierTag) {
-        if (s < 4) {
-          tierTitle.innerText = isEn ? "Individual Shareholder" : "المساهم الفردي";
-          tierPerk.innerText = isEn ? "GPS digital certificate + bottled EVOO quota" : "شهادة ملكية رقمية موثقة بنظام GPS وحصة زيت موثّقة بعد الحصاد";
-          tierTag.innerText = isEn ? "Standard" : "أساسي";
-        } else if (s < 12) {
-          tierTitle.innerText = isEn ? "Heritage Tree Steward" : "راعي الشجرة المباركة";
-          tierPerk.innerText = isEn ? "Full 16kg EVOO sealed tin canister + dedicated monthly voice logs" : "صفيحة زيت بكر كاملة 16 كغ مع توثيق صوتي شهري مخصص";
-          tierTag.innerText = isEn ? "Tree Steward" : "مالك شجرة";
-        } else if (s < 20) {
-          tierTitle.innerText = isEn ? "Family Heritage Grove (3 Trees)" : "كرم العائلة المباركة (3 أشجار)";
-          tierPerk.innerText = isEn ? "Personalized family name engraved on tins + GPS land deeds" : "تسمية الكرم باسم العائلة مع حفر الشعار على العبوات وسندات طابو";
-          tierTag.innerText = isEn ? "Family Tier" : "باقة العائلة";
-        } else if (s < 40) {
-          tierTitle.innerText = isEn ? "Diaspora & Expat Orchard (5 Trees)" : "بستان المغتربين (5 أشجار)";
-          tierPerk.innerText = isEn ? "Free international cold-chain air cargo shipping + 25 m² land usufruct deed" : "شحن جوي مبرد مجاني للخليج/أوروبا + حق انتفاع 25 م² أرض";
-          tierTag.innerText = isEn ? "Diaspora Tier" : "بستان المغترب";
-        } else if (s < 100) {
-          tierTitle.innerText = isEn ? "Homeland Legacy Estate (10 Trees)" : "سند العودة والوفاء (10 أشجار)";
-          tierPerk.innerText = isEn ? "Permanent bronze plaque in orchard + 50 m² land plot + private field visit" : "لوحة برونزية دائمة في البستان + مقسم 50 م² طابو + زيارة ميدانية موثقة";
-          tierTag.innerText = isEn ? "Legacy Tier" : "سند الوفاء";
-        } else {
-          tierTitle.innerText = isEn ? "Corporate ESG & Diaspora Syndicate" : "كبار الرعاة والمؤسسات (ESG)";
-          tierPerk.innerText = isEn ? "Certified ESG carbon offset report + priority mill press batch + executive field reports" : "تقرير بصمة كربونية معتمد + خط عصر خاص في المعصرة + تقارير فيديو حصرية";
-          tierTag.innerText = isEn ? "VIP Institutional" : "رعاية نخبوية";
-        }
+        tierTitle.innerText = t('tier_individual_title');
+        tierPerk.innerText = t('tier_individual_desc');
+        tierTag.innerText = state.currentLang === 'ar' ? `عدد الحصص: ${s}` : state.currentLang === 'de' ? `Anteile: ${s}` : `Shares: ${s}`;
       }
 
       const withLand = !!state.includeLandInCalc;
@@ -13000,20 +12929,7 @@
       const totalCarbon = (s * carbonPerShare).toFixed(1);
       const totalCost = (s * pricePerShare) + landAddonCost;
       
-      // International Export Parity Price for ultra-low acidity EVOO (<0.3%) = $12.50 / Liter
-      const oilExportValue = parseFloat(totalOil) * 12.50;
-      const landAppreciation = withLand ? (treesWholeOrMin * (landAddonPerPlot * 0.12)) : 0;
-      const totalReturn = oilExportValue + landAppreciation;
-      const netRoiPct = Math.min(45, Math.max(15, Math.round((totalReturn / totalCost) * 100)));
-
-      const totalLabor = (s * 4.5).toFixed(0);
-      const totalSoil = (s * 25).toFixed(0);
-
-      // Update Net Harvest badge
-      const netRoiBadge = document.getElementById('calc-roi-net-badge');
-      if (netRoiBadge) {
-        netRoiBadge.innerText = isEn ? `Est. Annual Harvest ~${netRoiPct}%` : `محصول سنوي متوقع ~${netRoiPct}%`;
-      }
+      // No return, resale value, carbon, labour or soil figures: only the sponsorship cost and the oil estimate are shown.
 
       const landBadge = document.getElementById('roi-land-sqm-badge');
       if (landBadge) {
@@ -13033,20 +12949,14 @@
       const oilEl = document.getElementById('calc-oil-liters');
       if (oilEl) oilEl.innerText = isEn ? `~ ${totalOil} L` : `~ ${totalOil} لتر`;
 
-      const carbonEl = document.getElementById('calc-carbon-val');
-      if (carbonEl) carbonEl.innerText = isEn ? `${totalCarbon} kg` : `${totalCarbon} كغ`;
+      // Cards that used invented figures (carbon, oil "market value", labour hours, soil area) are hidden.
+      ['calc-carbon-val', 'calc-market-val', 'calc-labor-hours', 'calc-soil-area'].forEach(id => {
+        const box = document.getElementById(id)?.parentElement;
+        if (box) box.classList.add('hidden');
+      });
 
       const investEl = document.getElementById('calc-invest-cost');
       if (investEl) investEl.innerText = formatMoney(totalCost);
-
-      const marketEl = document.getElementById('calc-market-val');
-      if (marketEl) marketEl.innerText = formatMoney(totalReturn);
-
-      const laborEl = document.getElementById('calc-labor-hours');
-      if (laborEl) laborEl.innerText = isEn ? `~ ${totalLabor} hrs` : `~ ${totalLabor} ساعة`;
-
-      const soilEl = document.getElementById('calc-soil-area');
-      if (soilEl) soilEl.innerText = isEn ? `~ ${totalSoil} m²` : `~ ${totalSoil} م²`;
     }
 
     function stepROICalculator(delta) {
@@ -14634,7 +14544,7 @@ function setMarketplaceViewMode(mode) {
               <span class="text-xs font-bold text-stone-500 dark:text-stone-400 font-mono">GPS: ${tree.gps_lat.toFixed(4)}, ${tree.gps_lng.toFixed(4)}</span>
             </div>
             <h1 class="text-3xl font-black text-stone-900 dark:text-white mb-2">${displayName}</h1>
-            <p class="text-stone-600 dark:text-stone-300 text-xs">${displayFarm} • ${state.currentLang !== 'ar' ? 'Verified Partner Stewardship Agreement' : 'حيازة متوارثة موثقة بعقد شراكة'}</p>
+            <p class="text-stone-600 dark:text-stone-300 text-xs">${displayFarm} • ${state.currentLang === 'ar' ? 'مزرعة شريكة' : state.currentLang === 'de' ? 'Partnerbetrieb' : 'Partner farm'}</p>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
               ${tree.images.map(img => `
@@ -14647,9 +14557,9 @@ function setMarketplaceViewMode(mode) {
 
           <!-- Certified Facility Banner (Adapts for Olive Mill, Pistachio Hulling, or Nut Facility) -->
           ${(() => {
-            let facTitle = state.currentLang !== 'ar' ? 'Certified Mill & Laboratory Quality:' : 'المعصرة المعتمدة والفحص المخبري:';
-            let facName = displayMill || (state.currentLang !== 'ar' ? 'Dreikish Modern Mill' : 'معصرة الدريكيش الحديثة');
-            let facDesc = state.currentLang !== 'ar' ? 'Cold-pressed (under 25°C) • 0.32% Acidity Extra Virgin' : 'عصر على البارد (أقل من 25° مئوية) • حموضة 0.32% بكر ممتاز';
+            let facTitle = state.currentLang === 'ar' ? 'المعصرة:' : state.currentLang === 'de' ? 'Ölmühle:' : 'Mill:';
+            let facName = displayMill || (state.currentLang === 'ar' ? 'تُحدَّد بعد الحصاد' : state.currentLang === 'de' ? 'Wird nach der Ernte festgelegt' : 'Assigned after the harvest');
+            let facDesc = state.currentLang === 'ar' ? 'تُنشر نتائج العصر بعد اعتمادها' : state.currentLang === 'de' ? 'Pressergebnisse werden nach Freigabe veröffentlicht' : 'Pressing results are published once approved';
             let facIcon = 'award';
             let facBtn = state.currentLang !== 'ar' ? 'View Certificate' : 'جواز الجودة الرقمي';
 
@@ -14813,7 +14723,7 @@ function setMarketplaceViewMode(mode) {
           <div class="bg-white rounded-3xl p-6 border border-stone-200 shadow-sm">
             <h3 class="text-base font-black text-stone-900 mb-6 flex items-center gap-2">
               <i data-lucide="history" class="w-5 h-5 text-olive-700"></i>
-              <span>${state.currentLang !== 'ar' ? 'Field Care Timeline & Farmer Voice Notes' : 'الخط الزمني للرعاية والرسائل الصوتية الميدانية'}</span>
+              <span>${state.currentLang === 'ar' ? 'سجل الرعاية الميدانية' : state.currentLang === 'de' ? 'Pflegeprotokoll' : 'Field care log'}</span>
             </h3>
             <div class="space-y-6 border-s-2 border-olive-200 ps-6 ms-2">
               ${tree.maintenance_logs.map((log, idx) => {
@@ -14837,13 +14747,12 @@ function setMarketplaceViewMode(mode) {
                               <i data-lucide="play" class="w-3.5 h-3.5"></i>
                               <span>${t('listen_audio')}</span>
                             </button>
-                            <span class="text-[11px] font-bold text-stone-700">${state.currentLang !== 'ar' ? 'Farmer Field Voice Recording' : 'رسالة صوتية من المزارع من الحقل'}</span>
+                            <span class="text-[11px] font-bold text-stone-700">${state.currentLang === 'ar' ? 'قراءة الملاحظة بصوت مسموع' : state.currentLang === 'de' ? 'Notiz vorlesen' : 'Read the note aloud'}</span>
                           </div>
                           <div id="voice-wave-${idx}" class="flex items-center">
                             <span class="audio-wave-bar"></span>
                             <span class="audio-wave-bar"></span>
                             <span class="audio-wave-bar"></span>
-                            <span class="text-[10px] font-mono text-stone-400 ms-2">${log.voice_duration}</span>
                           </div>
                         </div>
                       ` : ''}
@@ -14860,7 +14769,7 @@ function setMarketplaceViewMode(mode) {
         <!-- Right Sidebar -->
         <div class="lg:col-span-4 space-y-6">
           <div class="bg-white rounded-3xl p-6 border border-stone-200 shadow-xl sticky top-28">
-            <span class="text-xs font-bold text-olive-700 block mb-2">${state.currentLang !== 'ar' ? 'Certified Fractional Stewardship' : 'الكفالة التشاركية المعتمد'}</span>
+            <span class="text-xs font-bold text-olive-700 block mb-2">${state.currentLang === 'ar' ? 'كفالة حصة من المحصول' : state.currentLang === 'de' ? 'Patenschaft für einen Ernteanteil' : 'Harvest share sponsorship'}</span>
             
             <!-- Dual Package Selector in Sidebar -->
             <div class="mb-4 space-y-2">
@@ -14869,8 +14778,8 @@ function setMarketplaceViewMode(mode) {
                   <div class="flex items-center gap-2">
                     <i data-lucide="trees" class="w-4 h-4 text-olive-700"></i>
                     <div>
-                      <span class="font-black text-xs text-stone-900 block">${state.currentLang !== 'ar' ? 'Tree Share Only' : 'باقة الشجرة فقط'}</span>
-                      <span class="text-[10px] text-stone-500 block">${state.currentLang !== 'ar' ? 'EVOO oil share' : '25% من المحصول والزيت'}</span>
+                      <span class="font-black text-xs text-stone-900 block">${state.currentLang === 'ar' ? 'حصة كفالة' : state.currentLang === 'de' ? 'Patenschaftsanteil' : 'Sponsorship share'}</span>
+                      <span class="text-[10px] text-stone-500 block">${state.currentLang === 'ar' ? 'حصة من زيت الموسم بعد العصر' : state.currentLang === 'de' ? 'Anteil am Öl der Saison nach der Pressung' : 'Share of the season’s oil after pressing'}</span>
                     </div>
                   </div>
                   <span class="font-black text-sm text-stone-900">${formatMoney(tree.price_per_share)}</span>
@@ -14902,20 +14811,8 @@ function setMarketplaceViewMode(mode) {
                 <span class="font-bold text-stone-900">${displayType}</span>
               </div>
               <div class="flex justify-between">
-                <span class="text-stone-500">${state.currentLang !== 'ar' ? 'Est. Annual Oil:' : 'الإنتاج التقديري:'}</span>
-                <span class="font-bold text-stone-900">~ 14.5 ${t('calc_oil_unit')}</span>
-              </div>
-              <div class="flex justify-between">
-                <span class="text-stone-500">${state.currentLang !== 'ar' ? 'Carbon Offset:' : 'امتصاص الكربون:'}</span>
-                <span class="font-bold text-emerald-700">${tree.carbon_offset_kg_year} ${t('carbon_label')}</span>
-              </div>
-              <div class="flex justify-between">
                 <span class="text-stone-500">${state.currentLang !== 'ar' ? 'Available:' : 'المتاح:'}</span>
                 <span class="font-bold text-terracotta-600">${tree.total_shares_available}% ${t('avail_label')}</span>
-              </div>
-              <div class="flex justify-between">
-                <span class="text-stone-500">${state.currentLang !== 'ar' ? 'Land Plot Option:' : 'مقسم الأرض المتاح:'}</span>
-                <span class="font-bold text-emerald-700">${state.currentLang !== 'ar' ? '5.0 m² Agrarian Deed (+$15)' : '5.0 م² طابو زراعي (+$15)'}</span>
               </div>
             </div>
 
@@ -14923,7 +14820,7 @@ function setMarketplaceViewMode(mode) {
               ${(tree.total_shares_available || 0) <= 0 ? `
                 <button disabled class="w-full bg-stone-200 text-stone-500 py-3.5 rounded-2xl font-black text-sm shadow-none flex items-center justify-center gap-2 cursor-not-allowed">
                   <i data-lucide="lock" class="w-4 h-4"></i>
-                  <span>${state.currentLang !== 'ar' ? 'Fully Subscribed (Sold Out)' : 'اكتمل الاكتتاب بهذه الشجرة بالكامل'}</span>
+                  <span>${state.currentLang === 'ar' ? 'اكتملت الكفالة لهذه الشجرة' : state.currentLang === 'de' ? 'Vollständig vergeben' : 'Fully sponsored'}</span>
                 </button>
               ` : `
                 <button data-click="openInvestModalKeepLand('${tree.id}')" class="w-full bg-olive-700 hover:bg-olive-800 text-white py-3.5 rounded-2xl font-black text-sm shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer">
@@ -14931,13 +14828,13 @@ function setMarketplaceViewMode(mode) {
                   <span>${t('btn_buy_share')}</span>
                 </button>
               `}
-              <button data-click="openCertificateModal('${tree.id}')" class="w-full bg-stone-100 hover:bg-stone-200 text-stone-800 py-3 rounded-2xl font-bold text-xs transition-all flex items-center justify-center gap-2">
+              ${state.serverMode ? '' : `<button data-click="openCertificateModal('${tree.id}')" class="w-full bg-stone-100 hover:bg-stone-200 text-stone-800 py-3 rounded-2xl font-bold text-xs transition-all flex items-center justify-center gap-2">
                 <i data-lucide="award" class="w-4 h-4 text-amber-600"></i>
                 <span>${t('btn_view_cert')}</span>
-              </button>
+              </button>`}
               <button type="button" data-click="openLegalContract('investor')" class="w-full bg-stone-50 hover:bg-stone-100 text-stone-700 py-2.5 rounded-2xl font-bold text-xs border border-stone-200 transition-all flex items-center justify-center gap-2">
                 <i data-lucide="file-text" class="w-4 h-4 text-olive-700"></i>
-                <span>${state.currentLang !== 'ar' ? 'Review Legal Sponsorship Contract' : 'مراجعة نموذج عقد الكفالة الموثق'}</span>
+                <span>${t('footer_link_investor_contract')}</span>
               </button>
             </div>
           </div>
@@ -15115,8 +15012,8 @@ function setMarketplaceViewMode(mode) {
     renderPaymentChannels(state.paymentInstructions, false);
   }
 
-  /** Secondary market (P2P) stays demo-only until legal review clears share trading. */
-  function p2pEnabled() { return !state.serverMode; }
+  /** Secondary market (P2P) is not offered: shares cannot be resold between users. */
+  function p2pEnabled() { return false; }
 
   /** Gift / referral extras in the checkout: server mode only; referral field only before the first share. */
   function prepareInvestExtras() {
@@ -17606,11 +17503,7 @@ function setMarketplaceViewMode(mode) {
                     </button>
                     <button data-click="openLegalContract('investor')" class="bg-emerald-100 hover:bg-emerald-200 dark:bg-emerald-950 dark:hover:bg-emerald-900 text-emerald-900 dark:text-emerald-200 px-3 py-2 rounded-xl font-bold text-xs flex items-center gap-1 cursor-pointer">
                       <i data-lucide="file-check-2" class="w-3.5 h-3.5 text-emerald-700 dark:text-emerald-400"></i>
-                      <span>${isEn ? 'Deed Contract' : 'عقد الطابو'}</span>
-                    </button>
-                    <button data-click="openP2PListModal()" class="bg-cyan-100 hover:bg-cyan-200 dark:bg-cyan-950 dark:hover:bg-cyan-900 text-cyan-900 dark:text-cyan-200 px-3 py-2 rounded-xl font-bold text-xs flex items-center gap-1 cursor-pointer">
-                      <i data-lucide="arrow-left-right" class="w-3.5 h-3.5 text-cyan-700 dark:text-cyan-400"></i>
-                      <span data-i18n="dash_btn_resell_p2p">${isEn ? 'List on P2P' : 'سوق التداول'}</span>
+                      <span>${t('share_terms_btn')}</span>
                     </button>
                   </div>
                 </div>
@@ -17644,11 +17537,7 @@ function setMarketplaceViewMode(mode) {
                     </button>
                     <button data-click="openLegalContract('investor')" class="bg-purple-100 hover:bg-purple-200 dark:bg-purple-950 dark:hover:bg-purple-900 text-purple-900 dark:text-purple-200 px-3 py-2 rounded-xl font-bold text-xs flex items-center gap-1 cursor-pointer">
                       <i data-lucide="file-check-2" class="w-3.5 h-3.5 text-purple-700 dark:text-purple-400"></i>
-                      <span>${isEn ? 'Deed Contract' : 'عقد الطابو'}</span>
-                    </button>
-                    <button data-click="openP2PListModal()" class="bg-cyan-100 hover:bg-cyan-200 dark:bg-cyan-950 dark:hover:bg-cyan-900 text-cyan-900 dark:text-cyan-200 px-3 py-2 rounded-xl font-bold text-xs flex items-center gap-1 cursor-pointer">
-                      <i data-lucide="arrow-left-right" class="w-3.5 h-3.5 text-cyan-700 dark:text-cyan-400"></i>
-                      <span data-i18n="dash_btn_resell_p2p">${isEn ? 'List on P2P' : 'سوق التداول'}</span>
+                      <span>${t('share_terms_btn')}</span>
                     </button>
                   </div>
                 </div>
@@ -17666,7 +17555,7 @@ function setMarketplaceViewMode(mode) {
                   <div>
                     <h4 class="font-black text-stone-900 dark:text-white text-sm">${displayName}</h4>
                     <p class="text-xs text-stone-500 dark:text-stone-400">${displayRegion} • ${share.percentage}% ${t('share_unit')}</p>
-                    <span class="text-[10px] text-emerald-700 dark:text-emerald-300 font-bold bg-emerald-50 dark:bg-emerald-950 px-2 py-0.5 rounded mt-1 inline-block font-mono">${state.serverMode && share.source === 'server' ? escapeHtml(share.land_deed_serial || '') : (isEn ? 'Active Stewardship • Cadastral Parcel #412' : 'رعاية سارية • محضر عقاري 412')}</span>
+                    <span class="text-[10px] text-emerald-700 dark:text-emerald-300 font-bold bg-emerald-50 dark:bg-emerald-950 px-2 py-0.5 rounded mt-1 inline-block font-mono">${state.serverMode && share.source === 'server' ? escapeHtml(share.land_deed_serial || '') : (state.currentLang === 'ar' ? 'حصة نموذجية للعرض' : state.currentLang === 'de' ? 'Beispielanteil (Demo)' : 'Sample share (demo)')}</span>
                   </div>
                 </div>
                 <div class="flex items-center gap-2 flex-wrap sm:flex-nowrap">
@@ -17684,7 +17573,7 @@ function setMarketplaceViewMode(mode) {
                     const lab = (state.myOilAllocations || []).find(a => a.treeId === share.tree_id && a.certificateSerial);
                     return lab ? `<span class="bg-emerald-50 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 px-3 py-2 rounded-xl font-mono text-[10px] font-bold flex items-center gap-1" title="${isEn ? 'Lab certificate of the latest pressing' : 'شهادة المختبر لآخر عصرة'}"><i data-lucide="flask-conical" class="w-3.5 h-3.5"></i>${escapeHtml(lab.certificateSerial)}</span>` : '';
                   })()}
-                  <button data-click="openLegalContract('investor')" class="bg-purple-100 hover:bg-purple-200 dark:bg-purple-950 dark:hover:bg-purple-900 text-purple-900 dark:text-purple-200 px-3 py-2 rounded-xl font-bold text-xs flex items-center gap-1 cursor-pointer" title="${isEn ? 'Certified Usufruct & Sponsorship Contract' : 'عقد الكفالة الموثق'}">
+                  <button data-click="openLegalContract('investor')" class="bg-purple-100 hover:bg-purple-200 dark:bg-purple-950 dark:hover:bg-purple-900 text-purple-900 dark:text-purple-200 px-3 py-2 rounded-xl font-bold text-xs flex items-center gap-1 cursor-pointer" title="${t('footer_link_investor_contract')}">
                     <i data-lucide="file-check-2" class="w-3.5 h-3.5 text-purple-700 dark:text-purple-400"></i>
                     <span>${t('share_terms_btn')}</span>
                   </button>
@@ -18745,12 +18634,11 @@ function setMarketplaceViewMode(mode) {
                         <i data-lucide="play" class="w-3 h-3"></i>
                         <span>${t('listen_audio')}</span>
                       </button>
-                      <span class="text-[11px]">${isEn ? 'Latest Audio: ' + (latestVoiceLog.type_en || latestVoiceLog.type) : 'آخر تسجيل: ' + latestVoiceLog.type}</span>
+                      <span class="text-[11px]">${state.currentLang === 'ar' ? 'قراءة آخر ملاحظة: ' + latestVoiceLog.type : (state.currentLang === 'de' ? 'Letzte Notiz vorlesen: ' : 'Read latest note: ') + (latestVoiceLog.type_en || latestVoiceLog.type)}</span>
                       <div id="flist-wave-${tree.id}" class="flex items-center gap-0.5 ms-1">
                         <span class="audio-wave-bar"></span>
                         <span class="audio-wave-bar"></span>
                         <span class="audio-wave-bar"></span>
-                        <span class="text-[10px] font-mono text-stone-500 dark:text-stone-400 ms-1">${latestVoiceLog.voice_duration || '0:18'}</span>
                       </div>
                     </div>
                   ` : ''}
@@ -18809,7 +18697,6 @@ function setMarketplaceViewMode(mode) {
                 <p class="text-[11px] text-stone-500 dark:text-stone-400">${escapeHtml(vlog.notes)}</p>
               </div>
             </div>
-            <span class="text-[10px] font-mono text-stone-500 dark:text-stone-400">${vlog.voice_duration}</span>
           </div>
         `).join('');
       }
@@ -19696,6 +19583,11 @@ function setMarketplaceViewMode(mode) {
     }
 
     function openFounderDirectAlertModal(userId) {
+      if (state.serverMode) {
+        // No server function sends a message to a single user yet; do not pretend it was delivered.
+        showToast(state.currentLang === 'ar' ? 'إرسال رسالة مباشرة إلى مستخدم غير متاح بعد.' : state.currentLang === 'de' ? 'Direktnachrichten an einzelne Nutzer sind noch nicht verfügbar.' : 'Sending a direct message to a single user is not available yet.');
+        return;
+      }
       const u = (state.users || []).find(x => x.id === userId);
       if (!u) return;
       document.getElementById('fndr-alert-target-user-id').value = u.id;
@@ -19710,6 +19602,7 @@ function setMarketplaceViewMode(mode) {
 
     function submitFounderDirectAlert(e) {
       if (e && e.preventDefault) e.preventDefault();
+      if (state.serverMode) return;
       if (!state.currentUser || state.currentUser.role !== 'admin') {
         showToast(state.currentLang !== 'ar' ? 'Unauthorized: Founder root clearance required' : 'غير مصرح: يتطلب صلاحيات المدير العام');
         return;
@@ -21339,7 +21232,7 @@ function setMarketplaceViewMode(mode) {
 
     function chatStorageKey() {
       const uid = state.currentUser?.uid || state.currentUser?.id;
-      return uid ? `faseela_chat_history_${uid}` : null;
+      return uid ? `faseela_chat_history_v2_${uid}` : null;
     }
 
     function saveChatHistory() {
@@ -21352,6 +21245,8 @@ function setMarketplaceViewMode(mode) {
 
     function loadChatHistory() {
       const key = chatStorageKey();
+      // Drop replies saved under the old key by the earlier rule-based assistant.
+      if (key) { try { localStorage.removeItem(key.replace('_v2_', '_')); } catch(e) {} }
       if (!key) {
         faseelaChatHistory = [];
         return false;
@@ -21449,14 +21344,13 @@ function setMarketplaceViewMode(mode) {
           <div class="chat-bubble-faseela p-3.5 max-w-[88%] text-stone-800 dark:text-stone-100 space-y-2.5 shadow-xs text-start">
             <div class="flex items-center justify-between border-b border-olive-200/60 dark:border-olive-800/60 pb-1.5">
               <span class="font-black text-olive-950 dark:text-olive-300 text-xs flex items-center gap-1.5">
-                <span>${isEn ? 'Welcome! I am Faseela AI Guide 🌿' : 'مرحباً بك! أنا مساعدتك الذكية فسيلة 🌿'}</span>
+                <span>${state.currentLang === 'ar' ? 'مرحباً بك! أنا فسيلة، دليل المنصة 🌿' : state.currentLang === 'de' ? 'Willkommen! Ich bin Faseela, die Plattform-Hilfe 🌿' : 'Welcome! I am Faseela, the platform guide 🌿'}</span>
                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block animate-pulse"></span>
               </span>
               <div class="flex items-center gap-1.5">
                 <button type="button" data-click="speakFaseelaResponse(this)" data-i18n-title="chat_listen_answer" title="${isEn ? 'Listen to Faseela' : 'استمع لصوت فسيلة'}" class="faseela-tts-btn text-stone-400 hover:text-olive-700 dark:hover:text-olive-300 p-0.5 rounded transition-all cursor-pointer">
                   <i data-lucide="volume-2" class="w-3.5 h-3.5"></i>
                 </button>
-                <span class="text-[10px] text-stone-400 font-mono">${isEn ? 'Live' : 'مباشر'}</span>
               </div>
             </div>
             <p class="leading-relaxed text-stone-700 dark:text-stone-300 text-xs">
@@ -21829,7 +21723,7 @@ function setMarketplaceViewMode(mode) {
           </div>
           <div class="chat-bubble-faseela p-3 text-stone-600 dark:text-stone-300 flex items-center gap-2 text-xs text-start">
             <span class="w-2 h-2 rounded-full bg-olive-600 animate-ping"></span>
-            <span>${state.currentLang !== 'ar' ? 'Faseela is crafting your accurate answer...' : 'فسيلة تُحضر لك الإجابة الدقيقة...'}</span>
+            <span>${state.currentLang === 'ar' ? 'فسيلة تبحث عن الجواب...' : state.currentLang === 'de' ? 'Faseela sucht die Antwort...' : 'Faseela is looking up the answer...'}</span>
           </div>
         </div>
       `);
@@ -22675,37 +22569,8 @@ function setMarketplaceViewMode(mode) {
     }
     // Agro-Weather Telemetry Controller
     function refreshAgroTelemetry() {
-      playAcousticChime(620, 0.15);
-      const randDelta = (base, range) => (base + (Math.random() * range - range/2)).toFixed(1);
-      
-      const t1 = document.getElementById('tele-tartus-temp');
-      const s1 = document.getElementById('tele-tartus-soil');
-      const h1 = document.getElementById('tele-tartus-hum');
-      if (t1) t1.innerText = `${randDelta(24.2, 0.6)}°C`;
-      if (s1) s1.innerText = `${Math.round(randDelta(68, 2))}%`;
-      if (h1) h1.innerText = `${Math.round(randDelta(62, 3))}%`;
-
-      const t2 = document.getElementById('tele-idlib-temp');
-      const s2 = document.getElementById('tele-idlib-soil');
-      const h2 = document.getElementById('tele-idlib-hum');
-      if (t2) t2.innerText = `${randDelta(21.8, 0.8)}°C`;
-      if (s2) s2.innerText = `${Math.round(randDelta(56, 3))}%`;
-      if (h2) h2.innerText = `${Math.round(randDelta(49, 2))}%`;
-
-      const t3 = document.getElementById('tele-daraa-temp');
-      const s3 = document.getElementById('tele-daraa-soil');
-      const h3 = document.getElementById('tele-daraa-hum');
-      if (t3) t3.innerText = `${randDelta(26.5, 0.7)}°C`;
-      if (s3) s3.innerText = `${Math.round(randDelta(47, 2))}%`;
-      if (h3) h3.innerText = `${Math.round(randDelta(38, 3))}%`;
-
-      const syncMsg = state.currentLang !== 'ar' ? 'Updated just now' : 'محدث الآن';
-      ['tele-tartus-sync', 'tele-idlib-sync', 'tele-daraa-sync'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.innerText = syncMsg;
-      });
-
-      showToast(state.currentLang === 'ar' ? 'تم تحديث القيم التوضيحية. ليست قياسات مباشرة.' : state.currentLang === 'de' ? 'Beispielwerte aktualisiert – keine Live-Messungen.' : 'Illustrative values refreshed – not live measurements.');
+      // Illustrative values only: nothing is measured, so nothing is refreshed or randomised.
+      showToast(state.currentLang === 'ar' ? 'هذه قيم توضيحية ثابتة، وليست قياسات مباشرة.' : state.currentLang === 'de' ? 'Dies sind feste Beispielwerte, keine Live-Messungen.' : 'These are fixed illustrative values, not live measurements.');
     }
 
     // Cultivar Quick Filter & Direct Crop Routing
@@ -22861,12 +22726,6 @@ function setMarketplaceViewMode(mode) {
         btn.classList.add('border-2', 'border-blue-600', 'bg-blue-50', 'text-blue-950', 'font-bold');
         btn.classList.remove('border-stone-200', 'bg-white', 'text-stone-800');
       }
-      const notesEl = document.getElementById('log-notes');
-      if (notesEl && (!notesEl.value || notesEl.value.startsWith('تم إنجاز') || notesEl.value.startsWith('Completed'))) {
-        notesEl.value = state.currentLang !== 'ar' 
-          ? `Completed ${actName} for the selected tree in optimal field conditions.` 
-          : `تم إنجاز ${actName} للشجرة المباركة بحالة ممتازة.`;
-      }
       playAcousticChime(540, 0.1);
     }
 
@@ -22927,13 +22786,7 @@ function setMarketplaceViewMode(mode) {
 
         const durEl = document.getElementById('voice-recorded-duration');
         if (durEl) durEl.innerText = `${timerDisp ? timerDisp.innerText : '0:18'} ${state.currentLang !== 'ar' ? 'sec' : 'ثانية'}`;
-        if (badge) badge.classList.remove('hidden');
 
-        if (notesEl && !notesEl.value) {
-          notesEl.value = state.currentLang !== 'ar'
-            ? "Completed seasonal soil aeration, organic fertilizing, and supplemental spring watering for the heritage olive tree. Grove vitality is optimal."
-            : "قمنا اليوم بإنجاز أعمال السقاية والتهوية الصيفية للأغصان، التربة مروية ونسبة الحمل ممتازة والشجرة بحالة خضار يسر الخاطر.";
-        }
       } else {
         // Start recording
         mainVoiceRecording = true;
@@ -22999,9 +22852,8 @@ function setMarketplaceViewMode(mode) {
     }
 
     function fallbackSpeechPlayback() {
-      const notesEl = document.getElementById('log-notes');
-      const text = notesEl && notesEl.value ? notesEl.value : (state.currentLang !== 'ar' ? "Field care completed successfully in good weather." : "تم إنجاز أعمال الرعاية الحقلية بنجاح والأرض بخير وبركة.");
-      speakVoiceGuidance(text);
+      // No recording to play: say so instead of reading text aloud as if it were the farmer's voice.
+      showToast(state.currentLang === 'ar' ? 'لا يوجد تسجيل لتشغيله.' : state.currentLang === 'de' ? 'Es gibt keine Aufnahme zum Abspielen.' : 'There is no recording to play.');
     }
 
     function resetCurrentRecordedAudio() {
@@ -23326,9 +23178,11 @@ function setMarketplaceViewMode(mode) {
       const rainfall = isEn ? data.rainfall_en : data.rainfall;
       const soil = isEn ? data.soil_en : data.soil;
       const altitude = isEn ? data.altitude_en : data.altitude;
-      const treesCount = isEn ? data.treesCount_en : data.treesCount;
-      const acidityAvg = isEn ? data.acidityAvg_en : data.acidityAvg;
-      const activeMill = isEn ? data.activeMill_en : data.activeMill;
+      // Count of trees really listed for sponsorship in this governorate (no invented counts, acidity or mill).
+      const listedCount = state.catalogState === 'ready'
+        ? catalogTrees().filter(tr => tr.region === mapRegionCatalogName(regionKey)).length
+        : '–';
+      const L3 = (ar, en, de) => state.currentLang === 'ar' ? ar : (state.currentLang === 'de' ? de : en);
       const desc = isEn ? data.description_en : data.description;
 
       container.innerHTML = `
@@ -23342,29 +23196,22 @@ function setMarketplaceViewMode(mode) {
               <h3 class="text-xl sm:text-2xl font-black">${escapeHtml(name)}</h3>
               <p class="text-xs text-stone-200 mt-0.5 flex items-center gap-1.5">
                 <i data-lucide="map-pin" class="w-3.5 h-3.5 text-amber-400"></i>
-                <span>${escapeHtml(altitude)} • ${escapeHtml(activeMill)}</span>
+                <span>${escapeHtml(altitude)}</span>
               </p>
             </div>
           </div>
 
           <!-- Agro-Ecological Metrics Grid -->
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
             <div class="bg-stone-50 p-3.5 rounded-2xl border border-stone-200 text-start">
-              <span class="text-[10px] font-bold text-stone-500 block">${isEn ? 'Documented Trees' : 'الأشجار الموثقة'}</span>
-              <span class="text-base font-black text-olive-950 mt-0.5 block">${treesCount.split(' ')[0]}</span>
-              <span class="text-[10px] text-emerald-700 font-semibold">${isEn ? 'GPS Verified' : 'توثيق قمري حي'}</span>
+              <span class="text-[10px] font-bold text-stone-500 block">${L3('أشجار مدرجة للكفالة', 'Trees listed for sponsorship', 'Zur Patenschaft gelistete Bäume')}</span>
+              <span class="text-base font-black text-olive-950 mt-0.5 block">${listedCount}</span>
             </div>
 
             <div class="bg-stone-50 p-3.5 rounded-2xl border border-stone-200 text-start">
               <span class="text-[10px] font-bold text-stone-500 block">${isEn ? 'Rainfall' : 'الهطول السنوي'}</span>
               <span class="text-base font-black text-stone-900 mt-0.5 block">${rainfall.split('/')[0].trim()}</span>
               <span class="text-[10px] text-stone-500">${isEn ? 'Natural Irrigation' : 'ري طبيعي موسمي'}</span>
-            </div>
-
-            <div class="bg-stone-50 p-3.5 rounded-2xl border border-stone-200 text-start">
-              <span class="text-[10px] font-bold text-stone-500 block">${isEn ? 'Acidity Level' : 'متوسط الحموضة'}</span>
-              <span class="text-base font-black text-emerald-700 mt-0.5 block">${acidityAvg.split(' ')[1] || '< 0.3%'}</span>
-              <span class="text-[10px] text-emerald-700 dark:text-emerald-400 font-semibold">${isEn ? 'Extra Virgin' : 'بكر ممتاز نقي'}</span>
             </div>
 
             <div class="bg-stone-50 p-3.5 rounded-2xl border border-stone-200 text-start">
@@ -23388,7 +23235,7 @@ function setMarketplaceViewMode(mode) {
           <div class="flex flex-wrap items-center justify-between gap-3 pt-2">
             <div class="text-xs text-stone-500 flex items-center gap-1.5">
               <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-600"></i>
-              <span>${isEn ? 'Instant fractional stewardship & ownership certificate' : 'تملّك حصص تشاركية موثقة فورياً مع شهادة رقمية'}</span>
+              <span>${L3('كفالة حصة من المحصول، وتصدر الشهادة بعد تأكيد التحويل البنكي', 'Sponsor a harvest share; your certificate is issued once your bank transfer is confirmed', 'Patenschaft für einen Ernteanteil; das Zertifikat wird nach Bestätigung Ihrer Überweisung ausgestellt')}</span>
             </div>
             <button data-click="filterMarketplaceByRegion('${regionKey}')" class="bg-olive-800 hover:bg-olive-900 text-white px-5 py-2.5 rounded-xl font-black text-xs flex items-center gap-2 shadow-sm transition-all">
               <span>${isEn ? 'Browse Trees in this Region' : 'عرض أشجار هذه المحافظة في السوق'}</span>
@@ -23400,7 +23247,8 @@ function setMarketplaceViewMode(mode) {
       lucide.createIcons();
     }
 
-    function filterMarketplaceByRegion(regionKey) {
+    /** Map region key -> region name used by the marketplace catalogue (filter-region values). */
+    function mapRegionCatalogName(regionKey) {
       const regionMap = {
         'tartus': 'طرطوس',
         'latakia': 'اللاذقية',
@@ -23414,7 +23262,11 @@ function setMarketplaceViewMode(mode) {
         'quneitra': 'القنيطرة',
         'euphrates': 'حوض الفرات'
       };
-      const regName = regionMap[regionKey] || 'طرطوس';
+      return regionMap[regionKey] || 'طرطوس';
+    }
+
+    function filterMarketplaceByRegion(regionKey) {
+      const regName = mapRegionCatalogName(regionKey);
       const filterEl = document.getElementById('filter-region');
       if (filterEl) filterEl.value = regName;
       navigateTo('marketplace');
@@ -24082,14 +23934,14 @@ function setMarketplaceViewMode(mode) {
       const landPrice = (tree.land_parcel && tree.land_parcel.land_addon_price_usd) || tree.land_share_price || 18.00;
 
       // Cultivar / description
-      const cultivar = isEn ? (tree.cultivar_en || tree.tree_type_en || tree.cultivar || tree.tree_type || 'Coastal Khodairi Olive') : (tree.cultivar || tree.tree_type || 'زيتون خضيري أصيل');
-      const plantedYear = tree.planted_year || (tree.age_years ? (2026 - tree.age_years) : 1948);
-      const acidity = tree.harvest_batch_acidity || '0.32%';
-      const millName = isEn ? (tree.mill_name_en || tree.mill_name || 'Dreikish Italian Modern Mill') : (tree.mill_name || 'معصرة الدريكيش الحديثة');
-      
-      const desc = isEn 
-        ? `${cultivar} planted in ${plantedYear}. Certified at ${millName} producing ultra-pure extra virgin olive oil with ${acidity} acidity.`
-        : `${cultivar} غرس عام ${plantedYear}. معتمدة لدى ${millName} لإنتاج زيت فائق النقاء بحموضة ${acidity}.`;
+      const cultivar = state.currentLang === 'ar' ? (tree.cultivar || tree.tree_type || 'شجرة زيتون') : (tree.cultivar_en || tree.tree_type_en || tree.cultivar || tree.tree_type || (state.currentLang === 'de' ? 'Olivenbaum' : 'Olive tree'));
+      // Only data the tree really has: variety and, if known, the planting year. No invented mill or acidity.
+      const plantedYear = tree.planted_year || (tree.age_years ? (2026 - tree.age_years) : null);
+      const desc = state.currentLang === 'ar'
+        ? `${cultivar}${plantedYear ? ` • غُرست عام ${plantedYear}` : ''}`
+        : state.currentLang === 'de'
+          ? `${cultivar}${plantedYear ? ` • gepflanzt ${plantedYear}` : ''}`
+          : `${cultivar}${plantedYear ? ` • planted ${plantedYear}` : ''}`;
 
       // Update Card Elements
       const imgEl = document.getElementById('hero-feat-img');
@@ -24114,7 +23966,7 @@ function setMarketplaceViewMode(mode) {
 
       const availEl = document.getElementById('hero-feat-avail');
       if (availEl) {
-        availEl.textContent = isEn ? `${availPct}% Shares Available` : `متاح ${availPct}% من الحصص`;
+        availEl.textContent = state.currentLang === 'ar' ? `متاح ${availPct}% من الحصص` : state.currentLang === 'de' ? `${availPct}% der Anteile verfügbar` : `${availPct}% of shares available`;
       }
 
       const landTitle = document.getElementById('hero-feat-land-title');
