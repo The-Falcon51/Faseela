@@ -1,7 +1,7 @@
 {
   "name": "فسيلة | كفالة أشجار الزيتون السورية مباشرةً من المزارع",
   "short_name": "فسيلة",
-  "description": "اكفل شجرة زيتون سورية معمّرة لدى مزارع معروف بالاسم، تابع رعايتها، واستلم زيت الزيتون البكر الممتاز من محصولها.",
+  "description": "اكفل حصة من محصول شجرة زيتون مدرجة في سوريا، تابع تحديثات المزارع، واطلب حصتك من الزيت بعد العصر.",
   "id": "com.faseela.app",
   "start_url": "./index.html",
   "scope": "./",
@@ -51,7 +51,7 @@
     {
       "name": "سوق أشجار الزيتون",
       "short_name": "سوق الأشجار",
-      "description": "استكشف أشجار الزيتون المعمرة المتاحة للاكتتاب",
+      "description": "استكشف أشجار الزيتون المدرجة للكفالة",
       "url": "./index.html#marketplace",
       "icons": [
         {
@@ -62,8 +62,8 @@
     },
     {
       "name": "أشجاري",
-      "short_name": "المحفظة",
-      "description": "متابعة الأشجار المكفولة ومحاصيل الزيت المعتمدة",
+      "short_name": "كفالاتي",
+      "description": "متابعة كفالاتك وحصص الزيت المخصصة لك",
       "url": "./index.html#dashboard",
       "icons": [
         {
@@ -87,7 +87,7 @@
     {
       "name": "بوابة أصحاب المعاصر",
       "short_name": "المعصرة",
-      "description": "جدولة دفعات العصر البارد وخزانات الستانلس وفحص الجودة",
+      "description": "تسجيل دفعات العصر وقياس الحموضة وإرسالها للمراجعة",
       "url": "./index.html#mill-portal",
       "icons": [
         {
@@ -104,14 +104,14 @@
       "sizes": "960x717",
       "type": "image/webp",
       "form_factor": "wide",
-      "label": "Faseela Ancient Olive Grove Portfolio"
+      "label": "Faseela olive tree sponsorship"
     },
     {
       "src": "images/syrian_olive_oil_bottle.webp",
       "sizes": "960x717",
       "type": "image/webp",
       "form_factor": "narrow",
-      "label": "Syrian Extra Virgin Olive Oil Bottling & Lab Certification"
+      "label": "Syrian extra virgin olive oil"
     }
   ]
 }
