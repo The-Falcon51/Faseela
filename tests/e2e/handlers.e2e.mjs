@@ -406,10 +406,35 @@ try {
     assert.equal(parity.skip, 'Zum Hauptinhalt springen');
     assert.equal(parity.stored, 'de'); assert.equal(parity.locale, 'de-DE');
     assert.equal(parity.drawerPressed, 'true'); assert.equal(parity.cardPressed, 'true');
-    assert.equal(parity.nextLabel, 'عربي', 'quick toggle announces the next language');
+    assert.equal(parity.nextLabel, 'DE', 'the language button names the current language');
     assert.deepEqual(parity.arabicNodes, [], 'no Arabic leakage in data-i18n nodes');
     assert.equal(parity.fallbackToEnglish, 'english-probe', 'missing German key falls back to English');
     assert.equal(parity.unknownKey, '__no_such_key__');
+
+    // Language menu: opens, marks the current language, picks any language directly, closes on Escape and outside click.
+    const menu = await d.evaluate(async () => {
+      const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+      const out = {};
+      const btn = document.getElementById('btn-navbar-lang');
+      const box = document.getElementById('navbar-lang-menu');
+      const checked = () => ['ar', 'en', 'de'].filter((c) => document.getElementById('navbar-lang-opt-' + c).getAttribute('aria-checked') === 'true');
+      setLanguage('en'); await wait(50);
+      out.labelEn = [document.getElementById('active-lang-label').textContent, document.getElementById('quick-lang-label').textContent];
+      toggleLangMenu(); out.open = [!box.classList.contains('hidden'), btn.getAttribute('aria-expanded'), checked()];
+      document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' })); out.escClosed = [box.classList.contains('hidden'), btn.getAttribute('aria-expanded')];
+      toggleLangMenu(); document.body.click(); out.outsideClosed = box.classList.contains('hidden');
+      toggleLangMenu(); chooseLanguage('ar'); await wait(50);
+      out.direct = [state.currentLang, document.documentElement.dir, document.getElementById('active-lang-label').textContent, checked(), box.classList.contains('hidden')];
+      toggleLanguageQuick(); await wait(50); out.afterCycle = [state.currentLang, document.getElementById('quick-lang-label').textContent];
+      setLanguage('de'); // the following steps expect German to be the stored choice
+      return out;
+    });
+    assert.deepEqual(menu.labelEn, ['EN', 'EN'], 'both language controls show the current language');
+    assert.deepEqual(menu.open, [true, 'true', ['en']], 'menu opens and marks the current language');
+    assert.deepEqual(menu.escClosed, [true, 'false'], 'Escape closes the menu');
+    assert.equal(menu.outsideClosed, true, 'a click outside closes the menu');
+    assert.deepEqual(menu.direct, ['ar', 'rtl', 'عربي', ['ar'], true], 'English to Arabic in one step');
+    assert.deepEqual(menu.afterCycle, ['en', 'EN'], 'the quick button still cycles and shows the current language');
     assert.equal(dRequests.length, 1, 'dictionary fetched exactly once');
     // Persisted choice survives a reload and unknown stored values fall back to Arabic.
     await d.reload({ waitUntil: 'load' });

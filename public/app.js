@@ -18,6 +18,62 @@
       const index = SUPPORTED_LANGS.indexOf(state.currentLang);
       setLanguage(SUPPORTED_LANGS[(index + 1) % SUPPORTED_LANGS.length]);
     }
+    // ---- language menu in the navbar: names the current language, offers all three ----
+    function langMenuParts() {
+      return { button: document.getElementById('btn-navbar-lang'), menu: document.getElementById('navbar-lang-menu') };
+    }
+    function closeLangMenu(returnFocus) {
+      const { button, menu } = langMenuParts();
+      if (!menu || menu.classList.contains('hidden')) return;
+      menu.classList.add('hidden');
+      if (button) { button.setAttribute('aria-expanded', 'false'); if (returnFocus) button.focus(); }
+    }
+    function toggleLangMenu() {
+      const { button, menu } = langMenuParts();
+      if (!menu) return;
+      if (!menu.classList.contains('hidden')) { closeLangMenu(true); return; }
+      menu.classList.remove('hidden');
+      if (button) button.setAttribute('aria-expanded', 'true');
+      const current = document.getElementById('navbar-lang-opt-' + state.currentLang);
+      if (current) current.focus();
+    }
+    function chooseLanguage(code) {
+      closeLangMenu(true);
+      if (normalizeLang(code) !== state.currentLang) setLanguage(code);
+    }
+    function langMenuKeydown(event) {
+      const { menu } = langMenuParts();
+      if (!menu || !event) return;
+      const items = Array.from(menu.querySelectorAll('[role="menuitemradio"]'));
+      const at = items.indexOf(document.activeElement);
+      if (event.key === 'Escape') { event.preventDefault(); closeLangMenu(true); }
+      else if (event.key === 'ArrowDown') { event.preventDefault(); items[(at + 1) % items.length].focus(); }
+      else if (event.key === 'ArrowUp') { event.preventDefault(); items[(at - 1 + items.length) % items.length].focus(); }
+      else if (event.key === 'Home') { event.preventDefault(); items[0].focus(); }
+      else if (event.key === 'End') { event.preventDefault(); items[items.length - 1].focus(); }
+      else if (event.key === 'Tab') { closeLangMenu(false); }
+    }
+    /** Every language control shows the language that is active now. */
+    function syncLanguageControls(lang) {
+      ['active-lang-label', 'quick-lang-label'].forEach((id) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = LANG_SHORT_LABELS[lang];
+      });
+      SUPPORTED_LANGS.forEach((code) => {
+        const option = document.getElementById('navbar-lang-opt-' + code);
+        if (!option) return;
+        option.setAttribute('aria-checked', code === lang ? 'true' : 'false');
+        const check = option.querySelector('.lang-check');
+        if (check) check.classList.toggle('invisible', code !== lang);
+      });
+    }
+    if (typeof document !== 'undefined') {
+      document.addEventListener('click', (event) => {
+        const wrap = document.getElementById('navbar-lang-wrap');
+        if (wrap && !wrap.contains(event.target)) closeLangMenu(false);
+      });
+      document.addEventListener('keydown', (event) => { if (event.key === 'Escape') closeLangMenu(true); });
+    }
     function submitBoutiqueOrder(event) {
       if (event && event.preventDefault) event.preventDefault();
       confirmBoutiqueOrder();
@@ -7487,10 +7543,7 @@
         button.setAttribute('aria-pressed', code === lang ? 'true' : 'false');
       });
 
-      const activeLangLabel = document.getElementById('active-lang-label');
-      if (activeLangLabel) {
-        activeLangLabel.innerText = LANG_SHORT_LABELS[SUPPORTED_LANGS[(SUPPORTED_LANGS.indexOf(lang) + 1) % SUPPORTED_LANGS.length]];
-      }
+      syncLanguageControls(lang);
 
       // 3. Apply translations to all static data-i18n attributes across the DOM
       applyI18n();
@@ -11073,10 +11126,7 @@
         }
       }
       // Update Language switcher buttons & navbar toggle label
-      const activeLangLabel = document.getElementById('active-lang-label');
-      if (activeLangLabel) {
-        activeLangLabel.innerText = LANG_SHORT_LABELS[SUPPORTED_LANGS[(SUPPORTED_LANGS.indexOf(normalizeLang(state.currentLang)) + 1) % SUPPORTED_LANGS.length]];
-      }
+      syncLanguageControls(normalizeLang(state.currentLang));
 
       const btnAr = document.getElementById('btn-lang-ar');
       const btnEn = document.getElementById('btn-lang-en');
