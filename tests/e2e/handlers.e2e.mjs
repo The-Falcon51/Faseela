@@ -5,6 +5,7 @@
 //   4. axe (WCAG 2.x A/AA) reports no violations on the main pages in light and dark mode.
 // Run: node tests/e2e/handlers.e2e.mjs   (CHR=/path/to/chrome to use a preinstalled Chromium)
 import { chromium } from 'playwright';
+import { hermetic } from './hermetic.mjs';
 import AxeBuilder from '@axe-core/playwright';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -95,7 +96,7 @@ setTimeout(() => window.dispatchEvent(new CustomEvent('faseela-auth-state', { de
   auth_provider: 'email', permittedPages: ['home', 'marketplace', 'dashboard'] } })), 200);
 `;
 
-const browser = await chromium.launch({ executablePath: process.env.CHR || undefined });
+const browser = hermetic(await chromium.launch({ executablePath: process.env.CHR || undefined }));
 const failures = [];
 try {
   // ---- 1. handler inventory ------------------------------------------------------------
