@@ -84,8 +84,15 @@ window.FaseelaBackend = window.FaseelaFirebase = {
   adminReadiness: async () => ({ data: { auto: ['payment_accounts', 'mail_delivered', 'two_admins', 'finance_admin', 'trees_listed', 'trees_have_farmer', 'trees_have_mill', 'jobs_healthy', 'no_client_errors'].map((key, i) => ({ key, ok: i > 3 })),
     manual: ['legal_opinion', 'legal_texts', 'sanctions_process', 'mail_domain', 'test_purchase', 'restore_test', 'store_accounts', 'support_contact'].map((key) => ({ key, done: key === 'test_purchase' && !!window.__ready, note: key === 'test_purchase' && window.__ready ? window.__ready : null, updatedAt: null })) } }),
   adminSetReadiness: async (p) => { calls.push(['adminSetReadiness', p]); window.__ready = p.done ? (p.note || 'x') : null; return { data: p }; },
+  adminGetTreeClass: async () => ({ data: { treeId: 'tree_01', cropCategory: 'olive', country: 'SY' } }),
+  adminSetTreeClass: async (p) => { calls.push(['adminSetTreeClass', p]); return { data: p }; },
   adminGetTreeMill: async () => ({ data: { treeId: 'tree_01', millId: '' } }),
   adminSetTreeMill: async (p) => { calls.push(['adminSetTreeMill', p]); return { data: p }; },
+  mfaState: async () => { const has = !!q.get('mfa') || !!window.__factor; return { level: window.__mfaOk ? 'aal2' : 'aal1', required: !!q.get('mfa') && !window.__mfaOk, factors: has ? [{ id: 'f1', name: 'x' }] : [] }; },
+  mfaEnroll: async () => { calls.push(['mfaEnroll']); return { factorId: 'f2', secret: 'JBSWY3DPEHPK3PXP', qr: '' }; },
+  mfaVerify: async (p) => { calls.push(['mfaVerify', p]); if (p.code !== '123456') throw fail('auth/mfa-code-invalid'); window.__mfaOk = true; window.__factor = true; },
+  mfaUnenroll: async (p) => { calls.push(['mfaUnenroll', p]); window.__factor = false; },
+  submitHarvestBatch: async (p) => { calls.push(['submitHarvestBatch', p]); if (p.treeId === 'tree_01') throw fail('not-found'); return { data: { status: 'pending_review' } }; },
   adminListAuditLogs: async () => [{ id: 1, actorUid: 'a6380508-cca1', action: 'role.granted', target: 'user_roles/x', details: { note: ${JSON.stringify(XSS)} }, createdAt: Date.now() }]
 };
 function emit(r) { window.dispatchEvent(new CustomEvent('faseela-auth-state', { detail: r === 'none' ? null : { uid: 'u1', email: 'me@example.test', name: 'Me', role: r } })); }
@@ -139,6 +146,24 @@ try {
     assert.equal((await calls(page, 'signOut')).length, 1);
     assert.equal(await page.isHidden('#screen-panel'), true);
     await ctx.close();
+  }
+  // ---- 2b. an account with a second factor must present the code before the panel opens
+  {
+    const { ctx, page } = await open('?mockRole=admin&mfa=1');
+    await page.waitForFunction(() => document.getElementById('dialog').open && /Zweiter Faktor/.test(document.getElementById('dialog-title').textContent));
+    assert.equal(await page.isHidden('#screen-panel'), true, 'no panel before the code');
+    await page.locator('#dialog-body input').fill('111111'); await page.click('#dialog-ok');
+    await page.waitForFunction(() => /Code stimmt nicht/.test(document.getElementById('dialog-error').textContent));
+    assert.equal(await page.isHidden('#screen-panel'), true);
+    await page.locator('#dialog-body input').fill('123456'); await page.click('#dialog-ok');
+    await page.waitForSelector('#screen-panel:not([hidden])');
+    await ctx.close();
+    const cancelled = await open('?mockRole=admin&mfa=1');
+    await cancelled.page.waitForFunction(() => document.getElementById('dialog').open);
+    await cancelled.page.click('#dialog-cancel');
+    await cancelled.page.waitForFunction(() => window.FaseelaBackend.calls.some((c) => c[0] === 'signOut'));
+    assert.equal(await cancelled.page.isHidden('#screen-panel'), true, 'cancelling the code signs out');
+    await cancelled.ctx.close();
   }
   // ---- 3. finance admin sees only the finance areas
   {
@@ -269,13 +294,27 @@ try {
     await page.locator('#dialog-body').getByLabel(/^Kennung/).fill('tree_01'); await page.click('#dialog-ok');
     await page.waitForFunction(() => /existiert bereits/.test(document.getElementById('dialog-error').textContent));
     await page.locator('#dialog-body').getByLabel(/^Kennung/).fill('tree_04');
+    await dlg('Kultur').selectOption('date'); await dlg('Land (zweistelliger Code, z. B. SY, TN, ES)').fill('1x');
+    await page.click('#dialog-ok');
+    assert.match(await page.textContent('#dialog-error'), /Land: bitte den zweistelligen/);
+    await dlg('Land (zweistelliger Code, z. B. SY, TN, ES)').fill('tn');
     await page.locator('#dialog-body').getByLabel('Mit Parzellen-Option').check();
     await page.click('#dialog-ok');
     assert.match(await page.textContent('#dialog-error'), /Preis der Parzelle fehlt/);
     await dlg('Preis der Parzelle (USD)').fill('15'); await dlg('Fläche der Parzelle (m²)').fill('25'); await page.click('#dialog-ok');
     await page.waitForFunction(() => !document.getElementById('dialog').open);
+    assert.deepEqual(await calls(page, 'adminSetTreeClass'), [{ treeId: 'tree_04', cropCategory: 'date', country: 'TN' }], 'crop and country are set for the new tree; the unchanged olive tree was not touched');
     assert.deepEqual((await calls(page, 'adminCreateTree')).slice(-1)[0], { name: 'شجرة', nameEn: 'New tree', region: 'إدلب', regionEn: 'Idlib', treeType: 'صوراني', treeTypeEn: 'Sorani', totalShares: 10, pricePerShareMinor: 3500, images: ['images/olive_branches_macro.webp'], landPriceMinor: 1500, landAreaSqm: 25, treeId: 'tree_04', hasLandOption: true });
     await page.waitForFunction(() => document.getElementById('view').getAttribute('aria-busy') === 'false');
+    // harvest of a non-olive tree: weights are checked before sending, an olive tree is refused by the server
+    await page.getByRole('button', { name: 'Ernte erfassen' }).click();
+    await dlg('Baum-Kennung').fill('tree_14'); await dlg('Erntegewicht brutto (kg)').fill('20'); await dlg('Nettogewicht nach Sortierung (kg)').fill('24'); await page.click('#dialog-ok');
+    assert.match(await page.textContent('#dialog-error'), /Nettogewicht darf nicht über/);
+    await dlg('Baum-Kennung').fill('tree_01'); await dlg('Erntegewicht brutto (kg)').fill('30'); await dlg('Nettogewicht nach Sortierung (kg)').fill('24,5'); await page.click('#dialog-ok');
+    await page.waitForFunction(() => /nicht gefunden/.test(document.getElementById('dialog-error').textContent));
+    await dlg('Baum-Kennung').fill('tree_14'); await page.click('#dialog-ok');
+    await page.waitForFunction(() => !document.getElementById('dialog').open);
+    assert.deepEqual((await calls(page, 'submitHarvestBatch')).slice(-1)[0], { treeId: 'tree_14', harvestKg: 30, netKg: 24.5 });
     // ownership register: paging, tree filter, text-only
     await tab(page, 'Besitzregister');
     assert.match(await page.textContent('#view'), /1–50 von 60/);
@@ -351,6 +390,16 @@ try {
     assert.match(await page.textContent('#view tbody'), /TypeError: <img src=x/);
     await tab(page, 'Einstellungen');
     assert.match(await page.textContent('#view'), /ausgeschaltet · 3 aktive Geräte/);
+    assert.match(await page.textContent('#view'), /nicht eingerichtet · Ein gestohlenes Passwort reicht/);
+    await page.getByRole('button', { name: 'Zweiten Faktor einrichten' }).click();
+    await page.waitForFunction(() => document.getElementById('dialog').open);
+    assert.match(await page.textContent('#dialog-body'), /JBSWY3DPEHPK3PXP/);
+    await axe(page, 'dark/mfa-dialog');
+    await page.locator('#dialog-body input').fill('000000'); await page.click('#dialog-ok');
+    await page.waitForFunction(() => /Code stimmt nicht/.test(document.getElementById('dialog-error').textContent));
+    await page.locator('#dialog-body input').fill('123456'); await page.click('#dialog-ok');
+    await page.waitForFunction(() => /eingerichtet · Anmeldung nur mit Passwort und Code/.test(document.getElementById('view').textContent));
+    assert.deepEqual((await calls(page, 'mfaVerify')).slice(-1)[0], { factorId: 'f2', code: '123456' });
     await page.getByRole('button', { name: 'Push einschalten' }).click();
     assert.match(await page.textContent('#dialog-body'), /FCM_SERVICE_ACCOUNT/);
     await page.click('#dialog-ok');

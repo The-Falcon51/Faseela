@@ -793,6 +793,37 @@ const adminSearch = callable('admin_search');
 const adminSetAutomationRule = callable('admin_set_automation_rule');
 const adminSetJobActive = callable('admin_set_job_active');
 const adminSetReadiness = callable('admin_set_readiness');
+/**
+ * Second factor (authenticator app). `required` is true when the account has a verified factor that this session has
+ * not presented yet; the database refuses every role-checked function in that state.
+ */
+async function mfaState() {
+  const [level, factors] = await Promise.all([supabase.auth.mfa.getAuthenticatorAssuranceLevel(), supabase.auth.mfa.listFactors()]);
+  if (level.error) throw toBackendError(level.error);
+  if (factors.error) throw toBackendError(factors.error);
+  const verified = ((factors.data && factors.data.totp) || []).filter((factor) => factor.status === 'verified').map((factor) => ({ id: factor.id, name: factor.friendly_name || '' }));
+  const current = (level.data && level.data.currentLevel) || 'aal1';
+  return { level: current, required: verified.length > 0 && current !== 'aal2', factors: verified };
+}
+async function mfaEnroll() {
+  const { data, error } = await supabase.auth.mfa.enroll({ factorType: 'totp', friendlyName: `Faseela ${new Date().toISOString().slice(0, 19)}` });
+  if (error) throw toBackendError(error);
+  const totp = (data && data.totp) || {};
+  return { factorId: data.id, secret: String(totp.secret || ''), qr: String(totp.qr_code || '') };
+}
+async function mfaVerify({ factorId, code }) {
+  if (!/^[0-9]{6}$/.test(String(code || ''))) throw new BackendError('auth/mfa-code-invalid', 'The code has 6 digits.');
+  const { error } = await supabase.auth.mfa.challengeAndVerify({ factorId, code: String(code) });
+  if (error) throw new BackendError('auth/mfa-code-invalid', error.message, error);
+}
+async function mfaUnenroll({ factorId }) {
+  const { error } = await supabase.auth.mfa.unenroll({ factorId });
+  if (error) throw toBackendError(error);
+  await supabase.auth.refreshSession();
+}
+const submitHarvestBatch = callable('submit_harvest_batch');
+const adminSetTreeClass = callable('admin_set_tree_class');
+const adminGetTreeClass = callable('admin_get_tree_class');
 const adminSetTreeMill = callable('admin_set_tree_mill');
 const adminGetTreeMill = callable('admin_get_tree_mill');
 
@@ -893,6 +924,13 @@ const api = Object.freeze({
   adminSetJobActive,
   adminSetReadiness,
   adminSetTreeMill,
+  adminSetTreeClass,
+  adminGetTreeClass,
+  submitHarvestBatch,
+  mfaState,
+  mfaEnroll,
+  mfaVerify,
+  mfaUnenroll,
   adminGetTreeMill,
   signIn,
   register,

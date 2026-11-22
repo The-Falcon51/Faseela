@@ -2629,5 +2629,21 @@
  "prefs_push_busy": "Wird ausgeführt …",
  "prefs_push_denied": "Benachrichtigungen sind in den Systemeinstellungen blockiert. Erlauben Sie sie für Faseela und versuchen Sie es erneut.",
  "prefs_push_failed": "Die Einstellung konnte nicht geändert werden. Bitte versuchen Sie es erneut.",
- "prefs_push_login_first": "Melden Sie sich zuerst an, um Benachrichtigungen einzuschalten."
+ "prefs_push_login_first": "Melden Sie sich zuerst an, um Benachrichtigungen einzuschalten.",
+ "gift_print_cert": "Geschenk-Urkunde drucken",
+ "season_tracker_title": "Landwirtschaftlicher Saisonzyklus 2026/2027",
+ "season_tracker_active": "Phase: Schnitt, Bewässerung und Pflege im Feld",
+ "season_p1": "Dez.–Feb.: Schnitt und Düngung",
+ "season_p2": "Apr.–Aug.: Blüte und Fruchtansatz",
+ "season_p3": "Okt.–Nov.: Ernte und Kaltpressung",
+ "gift_welcome_title": "Glückwunsch! Geschenk eingelöst 🌿",
+ "gift_welcome_desc": "Sie betreuen jetzt offiziell einen syrischen Olivenbaum. Sie erhalten Feldberichte, kaltgepresstes natives Olivenöl extra und die Katasterunterlagen.",
+ "gift_welcome_status": "Status der Patenschaft:",
+ "gift_welcome_active": "Aktiv und eingetragen",
+ "gift_welcome_harvest": "Ölzuteilung:",
+ "gift_welcome_btn_dash": "Im Dashboard ansehen",
+ "crop_tab_date": "Dattelpalmen",
+ "crop_name_date": "Dattelpalme",
+ "filter_country_lbl": "Land",
+ "filter_country_all": "Alle Länder"
 }

@@ -21,6 +21,11 @@ function liters(ml: unknown): string {
   return Number.isFinite(n) ? `${(n / 1000).toFixed(2).replace(/\.?0+$/, "")} L` : "";
 }
 
+/** Allocation amount: litres of oil, or kilograms for the weighed crops (the field then carries grams). */
+function amountOf(value: unknown, unit: unknown): string {
+  return unit === "kg" ? liters(value).replace(/ L$/, " kg") : liters(value);
+}
+
 function kindAr(kind: unknown): string {
   return ({ delivery: "تسليم إلى العنوان", pickup: "استلام من المعصرة", donate: "تبرع" } as Record<string, string>)[String(kind)] ?? escapeHtml(kind);
 }
@@ -137,8 +142,8 @@ export function render(template: string, p: Record<string, unknown>): Rendered {
     case "onboarding_three":
       return {
         subject: "ماذا يحدث بعد الحجز · What happens after you reserve",
-        ar: `الحجز يحتفظ بالحصة لمدة 30 دقيقة حتى ترفع إشعار التحويل، ثم تبقى قيد المراجعة حتى يعتمدها فريق المالية. كل خطوة تصلك برسالة. لا رسوم خفية، والسعر الذي تراه في السوق هو السعر النهائي.`,
-        en: `A reservation holds the share for 30 minutes until you upload the transfer receipt; it then stays under review until Finance confirms it. You get an e-mail at every step. No hidden fees — the marketplace price is the final price.`,
+        ar: `الحجز يحتفظ بالحصة لمدة 48 ساعة حتى ترفع إشعار التحويل، ثم تبقى قيد المراجعة حتى يعتمدها فريق المالية. كل خطوة تصلك برسالة. لا رسوم خفية، والسعر الذي تراه في السوق هو السعر النهائي.`,
+        en: `A reservation holds the share for 48 hours until you upload the transfer receipt; it then stays under review until Finance confirms it. You get an e-mail at every step. No hidden fees — the marketplace price is the final price.`,
         cta: { label_ar: "تصفّح الأشجار", label_en: "Browse trees", href: `${APP_URL}/#marketplace` },
       };
     case "onboarding_seven":
@@ -150,37 +155,37 @@ export function render(template: string, p: Record<string, unknown>): Rendered {
       };
     case "oil_allocated":
       return {
-        subject: "زيتك جاهز · Your olive oil has been allocated",
-        ar: `اعتُمدت دفعة العصر للشجرة ${tree} (موسم ${escapeHtml(p.seasonYear)}، شهادة ${escapeHtml(p.certificateSerial)}). نصيبك: <strong>${liters(p.litersMl)}</strong>. يمكنك الآن طلب التسليم أو الاستلام من المعصرة أو التبرع من لوحة التحكم.`,
-        en: `The pressing batch for tree ${tree} was certified (season ${escapeHtml(p.seasonYear)}, certificate ${escapeHtml(p.certificateSerial)}). Your share: <strong>${liters(p.litersMl)}</strong>. You can now request delivery, pickup at the mill or a donation from your dashboard.`,
+        subject: p.unit === "kg" ? "حصتك من المحصول جاهزة · Your harvest share has been allocated" : "زيتك جاهز · Your olive oil has been allocated",
+        ar: `اعتُمدت ${p.unit === "kg" ? "وزنة المحصول" : "دفعة العصر"} للشجرة ${tree} (موسم ${escapeHtml(p.seasonYear)}، شهادة ${escapeHtml(p.certificateSerial)}). نصيبك: <strong>${amountOf(p.litersMl, p.unit)}</strong>. يمكنك الآن طلب التسليم أو الاستلام من المعصرة أو التبرع من لوحة التحكم.`,
+        en: `The ${p.unit === "kg" ? "weighed harvest" : "pressing batch"} for tree ${tree} was certified (season ${escapeHtml(p.seasonYear)}, certificate ${escapeHtml(p.certificateSerial)}). Your share: <strong>${amountOf(p.litersMl, p.unit)}</strong>. You can now request delivery, pickup at the mill or a donation from your dashboard.`,
         cta: dash,
       };
     case "oil_request_received":
       return {
         subject: "استلمنا طلب الزيت · We received your oil request",
-        ar: `استلمنا طلبك ${shortId(p.requestId)}: ${kindAr(p.kind)} · ${liters(p.litersMl)}. سيراجعه فريق المالية وتصلك رسالة عند كل خطوة.`,
-        en: `We received your request ${shortId(p.requestId)}: ${kindEn(p.kind)} · ${liters(p.litersMl)}. Finance will review it and you get an e-mail at every step.`,
+        ar: `استلمنا طلبك ${shortId(p.requestId)}: ${kindAr(p.kind)} · ${amountOf(p.litersMl, p.unit)}. سيراجعه فريق المالية وتصلك رسالة عند كل خطوة.`,
+        en: `We received your request ${shortId(p.requestId)}: ${kindEn(p.kind)} · ${amountOf(p.litersMl, p.unit)}. Finance will review it and you get an e-mail at every step.`,
         cta: dash,
       };
     case "oil_request_approved":
       return {
         subject: "تم اعتماد طلب الزيت · Your oil request was approved",
-        ar: `اعتُمد طلبك ${shortId(p.requestId)} (${kindAr(p.kind)} · ${liters(p.litersMl)}) وهو الآن قيد التنفيذ.${note}`,
-        en: `Your request ${shortId(p.requestId)} (${kindEn(p.kind)} · ${liters(p.litersMl)}) was approved and is being fulfilled.${note}`,
+        ar: `اعتُمد طلبك ${shortId(p.requestId)} (${kindAr(p.kind)} · ${amountOf(p.litersMl, p.unit)}) وهو الآن قيد التنفيذ.${note}`,
+        en: `Your request ${shortId(p.requestId)} (${kindEn(p.kind)} · ${amountOf(p.litersMl, p.unit)}) was approved and is being fulfilled.${note}`,
         cta: dash,
       };
     case "oil_request_fulfilled":
       return {
         subject: "تم تنفيذ طلب الزيت · Your oil request is complete",
-        ar: `نُفّذ طلبك ${shortId(p.requestId)} (${kindAr(p.kind)} · ${liters(p.litersMl)}). بالصحة والعافية.${note}`,
-        en: `Your request ${shortId(p.requestId)} (${kindEn(p.kind)} · ${liters(p.litersMl)}) has been fulfilled. Enjoy.${note}`,
+        ar: `نُفّذ طلبك ${shortId(p.requestId)} (${kindAr(p.kind)} · ${amountOf(p.litersMl, p.unit)}). بالصحة والعافية.${note}`,
+        en: `Your request ${shortId(p.requestId)} (${kindEn(p.kind)} · ${amountOf(p.litersMl, p.unit)}) has been fulfilled. Enjoy.${note}`,
         cta: dash,
       };
     case "oil_request_rejected":
       return {
         subject: "طلب الزيت · Your oil request",
-        ar: `لم نتمكن من تنفيذ طلبك ${shortId(p.requestId)} (${liters(p.litersMl)}). أُعيد الزيت إلى رصيدك ويمكنك إرسال طلب جديد.${note}`,
-        en: `We could not fulfil your request ${shortId(p.requestId)} (${liters(p.litersMl)}). The oil is back in your balance and you can send a new request.${note}`,
+        ar: `لم نتمكن من تنفيذ طلبك ${shortId(p.requestId)} (${amountOf(p.litersMl, p.unit)}). أُعيد الزيت إلى رصيدك ويمكنك إرسال طلب جديد.${note}`,
+        en: `We could not fulfil your request ${shortId(p.requestId)} (${amountOf(p.litersMl, p.unit)}). The oil is back in your balance and you can send a new request.${note}`,
         cta: dash,
       };
     case "gift_created": {
@@ -239,6 +244,13 @@ export function render(template: string, p: Record<string, unknown>): Rendered {
         subject: "تنبيه تشغيلي · Faseela ops alert",
         ar: `رسائل فاشلة خلال 24 ساعة: ${escapeHtml(p.failedEmails)} · أخطاء العميل خلال ساعة: ${escapeHtml(p.clientErrorsLastHour)}. افتح حالة النظام في لوحة الإدارة.`,
         en: `Failed e-mails in 24 h: ${escapeHtml(p.failedEmails)} · client errors in the last hour: ${escapeHtml(p.clientErrorsLastHour)}. Open the system status in the admin panel.`,
+        cta: dash,
+      };
+    case "admin_digest":
+      return {
+        subject: "ملخص الأسبوع · Faseela weekly summary",
+        ar: `الحسابات: ${escapeHtml(p.users)} (+${escapeHtml(p.newUsers)} هذا الأسبوع) · المالكون: ${escapeHtml(p.owners)} · مبالغ معتمدة هذا الأسبوع: <strong>${money(p.approvedMinor, p.currency)}</strong> · دفعات بانتظار المراجعة: ${escapeHtml(p.openReviews)} · رسائل فاشلة: ${escapeHtml(p.failedMails)}.`,
+        en: `Accounts: ${escapeHtml(p.users)} (+${escapeHtml(p.newUsers)} this week) · owners: ${escapeHtml(p.owners)} · approved this week: <strong>${money(p.approvedMinor, p.currency)}</strong> · payments waiting for review: ${escapeHtml(p.openReviews)} · failed e-mails: ${escapeHtml(p.failedMails)}.`,
         cta: dash,
       };
     default:

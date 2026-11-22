@@ -1016,6 +1016,22 @@
                   <div class="text-[11px] text-stone-400 mt-1" data-i18n="hero_stat_4_lbl">عائلة مزارعة شريكة</div>
                 </div>
               </div>
+
+              <!-- Interactive Season & Harvest Lifecycle Bar -->
+              <div class="mt-4 p-4 rounded-2xl bg-olive-950/70 border border-olive-700/50 backdrop-blur-md">
+                <div class="flex items-center justify-between text-xs font-bold text-olive-200 mb-2">
+                  <span class="flex items-center gap-1.5"><i data-lucide="calendar" class="w-4 h-4 text-amber-400"></i><span data-i18n="season_tracker_title">دورة الموسم الزراعي 2026/2027</span></span>
+                  <span id="season-tracker-phase" class="text-amber-300 bg-amber-950/60 border border-amber-600/40 px-2 py-0.5 rounded-full text-[10px]" data-i18n="season_tracker_active">مرحلة العناية والري والتقليم الميداني</span>
+                </div>
+                <div class="w-full bg-olive-900/80 rounded-full h-2.5 overflow-hidden flex">
+                  <div class="bg-amber-400 h-2.5 rounded-full transition-all duration-1000" style="width: 68%;"></div>
+                </div>
+                <div class="flex justify-between text-[10px] text-stone-400 mt-2 font-mono">
+                  <span data-i18n="season_p1">كانون - شباط: التقليم والتغذية</span>
+                  <span class="text-amber-200 font-bold" data-i18n="season_p2">نيسان - آب: الإزهار وعقد الثمار</span>
+                  <span data-i18n="season_p3">تشرين: القطاف والعصر البارد</span>
+                </div>
+              </div>
             </div>
 
             <!-- Hero Feature Card (Dynamically rendered by renderHeroFeaturedTree) -->
@@ -1228,6 +1244,9 @@
             </button>
             <button type="button" data-click="switchCalendarCrop('walnut')" id="cal-btn-walnut" class="cal-crop-btn px-4 py-2.5 rounded-2xl text-xs font-bold transition-all flex items-center gap-1.5 bg-white dark:bg-stone-800 text-stone-700 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-700 border border-stone-200 dark:border-stone-700 cursor-pointer">
               <i data-lucide="tree-deciduous" class="w-4 h-4" aria-hidden="true"></i> <span data-i18n="crop_name_walnut">جوز بردى البلدي المعمر</span>
+            </button>
+            <button type="button" data-click="switchCalendarCrop('date')" id="cal-btn-date" class="cal-crop-btn px-4 py-2.5 rounded-2xl text-xs font-bold transition-all flex items-center gap-1.5 bg-white dark:bg-stone-800 text-stone-700 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-700 border border-stone-200 dark:border-stone-700 cursor-pointer">
+              <i data-lucide="palmtree" class="w-4 h-4" aria-hidden="true"></i> <span data-i18n="crop_name_date">نخيل التمر</span>
             </button>
           </div>
 
@@ -2019,6 +2038,10 @@
           <span data-i18n="crop_tab_pomegranate">رمان حوران العصيري</span>
           <span class="bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300 text-[10px] font-black px-1.5 py-0.5 rounded-full">1</span>
         </button>
+        <button type="button" data-click="setCropCategoryFilter('date')" id="btn-crop-date" class="crop-cat-btn bg-white dark:bg-stone-800 text-stone-700 dark:text-stone-300 hover:bg-red-50 border border-stone-200 dark:border-stone-700 px-4 py-2.5 rounded-2xl text-xs font-bold flex items-center gap-2 shrink-0 transition-all cursor-pointer">
+          <span class="text-base">🌴</span>
+          <span data-i18n="crop_tab_date">نخيل التمر</span>
+        </button>
       </div>
 
       <!-- Smart Search Bar -->
@@ -2049,6 +2072,10 @@
               <option value="all" data-i18n="filter_land_all">كافة الخيارات</option>
               <option value="with_land" data-i18n="filter_land_with">شجرة + 5 م² أرض طابو</option>
             </select>
+          </div>
+          <div id="filter-country-wrap" class="hidden">
+            <label for="filter-country" class="block text-xs font-bold text-stone-700 mb-1.5" data-i18n="filter_country_lbl">البلد</label>
+            <select id="filter-country" data-change="applyFilters()" class="w-full bg-stone-50 border border-stone-200 rounded-xl px-3 py-2.5 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-olive-600"></select>
           </div>
           <div>
             <label for="filter-region" class="block text-xs font-bold text-stone-700 mb-1.5" data-i18n="filter_region_lbl">المحافظة / المنطقة</label>
@@ -4825,6 +4852,32 @@
     </div>
   </div>
 
+  
+  <!-- Gift Welcome & Celebration Modal -->
+  <div id="modal-gift-welcome" role="dialog" aria-modal="true" aria-labelledby="gift-welcome-title" class="fixed inset-0 z-50 bg-black/75 backdrop-blur-xs hidden flex items-center justify-center p-3 sm:p-4 mobile-sheet-overlay">
+    <div class="bg-white dark:bg-stone-900 border border-emerald-500/40 rounded-3xl max-w-md w-full p-6 text-center shadow-2xl animate-scale-up">
+      <div class="w-16 h-16 rounded-2xl bg-emerald-100 dark:bg-emerald-950/60 border border-emerald-300 dark:border-emerald-700 mx-auto flex items-center justify-center text-emerald-700 dark:text-emerald-300 mb-4 shadow-sm">
+        <i data-lucide="sparkles" class="w-8 h-8"></i>
+      </div>
+      <h3 id="gift-welcome-title" class="text-xl font-black text-stone-900 dark:text-white mb-2" data-i18n="gift_welcome_title">مبارك! تم تفعيل هديتك بنجاح 🌿</h3>
+      <p class="text-xs text-stone-600 dark:text-stone-300 leading-relaxed mb-4" data-i18n="gift_welcome_desc">
+        أصبحت الآن راعياً رسمياً لشجرة زيتون سورية مباركة. ستصلك تقارير المزارع الميدانية، ومحصولك من زيت الزيتون البكر الممتاز، مع وثيقة الحيازة الرسمية.
+      </p>
+      <div class="rounded-xl bg-stone-50 dark:bg-stone-800/60 p-3 mb-5 border border-stone-200 dark:border-stone-700 text-start text-xs space-y-1">
+        <div class="flex justify-between"><span class="text-stone-500" data-i18n="gift_welcome_status">حالة الرعاية:</span><span class="font-bold text-emerald-600 dark:text-emerald-400" data-i18n="gift_welcome_active">نشطة وموثقة</span></div>
+        <div class="flex justify-between"><span class="text-stone-500" data-i18n="gift_welcome_harvest">مخصص الزيت:</span><span class="font-bold font-mono">EVOO &lt; 0.4% Acidity</span></div>
+      </div>
+      <div class="flex gap-2">
+        <button type="button" data-click="closeModal('modal-gift-welcome'); navigateTo('dashboard');" class="flex-1 bg-olive-800 hover:bg-olive-900 text-white py-3 rounded-xl font-black text-xs shadow-md transition-all flex items-center justify-center gap-1.5 cursor-pointer">
+          <i data-lucide="layout-dashboard" class="w-4 h-4"></i><span data-i18n="gift_welcome_btn_dash">عرض في لوحة التحكم</span>
+        </button>
+        <button type="button" data-click="closeModal('modal-gift-welcome');" class="px-4 bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300 py-3 rounded-xl font-bold text-xs hover:bg-stone-200 dark:hover:bg-stone-700 transition-all cursor-pointer" data-i18n="btn_close">
+          إغلاق
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- Oil request modal -->
   <div id="modal-oil-request" role="dialog" aria-modal="true" aria-labelledby="oil-modal-title" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs hidden flex items-center justify-center p-3 sm:p-4 mobile-sheet-overlay">
     <div class="bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-3xl max-w-lg w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden animate-scale-up text-start">
@@ -5425,6 +5478,7 @@
             <i data-lucide="send" class="w-4 h-4" aria-hidden="true"></i><span data-i18n="fqr_submit">إرسال التقرير</span>
           </button>
         </section>
+        <section id="farmer-harvest" class="hidden bg-white dark:bg-stone-900 rounded-3xl border border-stone-200 dark:border-stone-800 p-5 space-y-4" aria-label="Harvest"></section>
 
         <section id="farmer-profile-card" class="bg-white dark:bg-stone-900 rounded-3xl border border-stone-200 dark:border-stone-800 p-5 space-y-4" aria-labelledby="fp-title">
           <div>

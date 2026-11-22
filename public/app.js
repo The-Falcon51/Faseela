@@ -115,6 +115,17 @@
         gift_expires_lbl: "صالح حتى",
         gift_share_wa: "مشاركة عبر واتساب",
         gift_print_cert: "طباعة وثيقة الإهداء",
+        season_tracker_title: "دورة الموسم الزراعي 2026/2027",
+        season_tracker_active: "مرحلة العناية والري والتقليم الميداني",
+        season_p1: "كانون - شباط: التقليم والتغذية",
+        season_p2: "نيسان - آب: الإزهار وعقد الثمار",
+        season_p3: "تشرين: القطاف والعصر البارد",
+        gift_welcome_title: "مبارك! تم تفعيل هديتك بنجاح 🌿",
+        gift_welcome_desc: "أصبحت الآن راعياً رسمياً لشجرة زيتون سورية مباركة. ستصلك تقارير المزارع الميدانية، ومحصولك من زيت الزيتون البكر الممتاز، مع وثيقة الحيازة الرسمية.",
+        gift_welcome_status: "حالة الرعاية:",
+        gift_welcome_active: "نشطة وموثقة",
+        gift_welcome_harvest: "مخصص الزيت:",
+        gift_welcome_btn_dash: "عرض في لوحة التحكم",
         gift_result_note: "احتفظ بالرمز سرّاً: من يملكه يستطيع استلام الهدية. يمكنك إلغاؤه من قائمة «هداياي» ما دام غير مستعمَل.",
         gift_err_exists: "يوجد رمز هدية مفتوح لهذه الحصة بالفعل.",
         gift_err_precondition: "لا يمكن إهداء هذه الحصة الآن: تأكد من بريدك، ومن أن الحصة فعّالة ولا يوجد طلب زيت مفتوح لها.",
@@ -2808,6 +2819,9 @@
         crop_tab_pistachio: "الفستق الحلبي (الذهب الأخضر)",
         crop_tab_nuts: "اللوزيات والجوز السوري",
         crop_tab_pomegranate: "رمان حوران العصيري",
+        crop_tab_date: "نخيل التمر",
+        filter_country_lbl: "البلد",
+        filter_country_all: "كل البلدان",
         filter_crop_lbl: "نوع المحصول الشجري",
         filter_crop_all: "كافة المحاصيل الزراعية",
         filter_crop_olive: "🫒 بساتين الزيتون المبارك",
@@ -2827,6 +2841,7 @@
         crop_name_almond: "اللوز السوري الفرك",
         crop_name_pomegranate: "رمان حوران العصيري",
         crop_name_walnut: "جوز بردى البلدي المعمر",
+        crop_name_date: "نخيل التمر",
         cal_financial_payout: "موعد جني وتسييل العوائد:",
         market_tab_boutique: "متجر المؤن والمنتجات السورية",
         boutique_badge: "سوق خيرات الأرض السورية الفاخرة",
@@ -3906,6 +3921,17 @@
         gift_expires_lbl: "Valid until",
         gift_share_wa: "Share via WhatsApp",
         gift_print_cert: "Print Gift Certificate",
+        season_tracker_title: "Agricultural Season Cycle 2026/2027",
+        season_tracker_active: "Field Pruning, Irrigation & Care Phase",
+        season_p1: "Dec - Feb: Pruning & Nutrition",
+        season_p2: "Apr - Aug: Flowering & Fruit Set",
+        season_p3: "Oct - Nov: Harvest & Cold Press",
+        gift_welcome_title: "Congratulations! Gift Redeemed 🌿",
+        gift_welcome_desc: "You are now an official steward of a blessed Syrian olive tree. You will receive field reports, extra virgin cold-pressed olive oil, and cadastral documentation.",
+        gift_welcome_status: "Stewardship Status:",
+        gift_welcome_active: "Active & Recorded",
+        gift_welcome_harvest: "Oil Allocation:",
+        gift_welcome_btn_dash: "View in Dashboard",
         gift_result_note: "Keep the code private: whoever holds it can claim the gift. You can cancel it from “My gifts” while it is unused.",
         gift_err_exists: "This share already has an open gift code.",
         gift_err_precondition: "This share cannot be gifted right now: verify your e-mail and make sure the share is active with no open oil request.",
@@ -5601,6 +5627,9 @@
         crop_tab_pistachio: "Aleppo Pistachio (Green Gold)",
         crop_tab_nuts: "Syrian Almonds & Walnuts",
         crop_tab_pomegranate: "Houran Sweet Pomegranate",
+        crop_tab_date: "Date Palms",
+        filter_country_lbl: "Country",
+        filter_country_all: "All countries",
         filter_crop_lbl: "Tree Crop Category",
         filter_crop_all: "All Agrarian Crops",
         filter_crop_olive: "🫒 Olive Groves",
@@ -5620,6 +5649,7 @@
         crop_name_almond: "Syrian Soft-Shell Almond",
         crop_name_pomegranate: "Yarmouk Sweet Pomegranate",
         crop_name_walnut: "Barada Mountain Walnut",
+        crop_name_date: "Date Palm",
         cal_financial_payout: "Harvest Payout & Liquidity Window:",
         market_tab_boutique: "Syrian Gourmet Store",
         boutique_badge: "Authentic Syrian Terroir Gourmet Store",
@@ -8181,6 +8211,38 @@
             }
           ]
         },
+        date: {
+          badge: "أصناف التمور",
+          badge_en: "Date Cultivars",
+          title: "أصناف نخيل التمر ومذاقها",
+          title_en: "Date Palm Cultivars and How They Taste",
+          sub: "أمثلة على أصناف معروفة عالمياً. الأشجار المتاحة فعلياً تظهر في السوق عند إضافتها.",
+          sub_en: "Examples of cultivars known worldwide. Trees that can actually be reserved appear in the marketplace once they are added.",
+          items: [
+            {
+              id: "date_medjool", name: "المجهول", name_en: "Medjool", region: "أصله من المغرب", region_en: "Originally from Morocco",
+              badge_top: "حبة كبيرة طرية", badge_top_en: "Large, soft fruit", highlight_badge: "الأكثر طلباً", highlight_badge_en: "Most sought after",
+              desc: "تمر كبير الحجم طري القوام، حلاوته تشبه الكراميل. يؤكل طازجاً ويُحفظ مبرداً.", desc_en: "A large, soft date with a caramel-like sweetness. Eaten fresh and kept chilled.",
+              image: "images/olive_harvest_festival.webp", filter_keyword: "تمر", btn_text: "تصفح أشجار النخيل", btn_text_en: "Browse date palms",
+              metrics: [
+                { label: "القوام", label_en: "Texture", val: "طري", val_en: "Soft", pct: 90, color: "amber" },
+                { label: "الحلاوة", label_en: "Sweetness", val: "عالية جداً", val_en: "Very high", pct: 95, color: "emerald" },
+                { label: "البصمة الذوقية", label_en: "Sensory Notes", val: "كراميل • عسل", val_en: "Caramel • Honey", pct: 85, color: "olive" }
+              ]
+            },
+            {
+              id: "date_deglet_nour", name: "دقلة نور", name_en: "Deglet Nour", region: "الجزائر وتونس", region_en: "Algeria and Tunisia",
+              badge_top: "نصف جاف شفاف اللون", badge_top_en: "Semi-dry, translucent", highlight_badge: "يتحمل النقل والتخزين", highlight_badge_en: "Travels and stores well",
+              desc: "تمر نصف جاف بلون عسلي شفاف وحلاوة معتدلة، مناسب للشحن والتخزين الطويل.", desc_en: "A semi-dry date with a translucent honey colour and moderate sweetness, well suited to shipping and long storage.",
+              image: "images/olive_harvest_festival.webp", filter_keyword: "تمر", btn_text: "تصفح أشجار النخيل", btn_text_en: "Browse date palms",
+              metrics: [
+                { label: "القوام", label_en: "Texture", val: "نصف جاف", val_en: "Semi-dry", pct: 60, color: "amber" },
+                { label: "الحلاوة", label_en: "Sweetness", val: "معتدلة", val_en: "Moderate", pct: 70, color: "emerald" },
+                { label: "البصمة الذوقية", label_en: "Sensory Notes", val: "عسل خفيف • جوزي", val_en: "Light honey • Nutty", pct: 75, color: "olive" }
+              ]
+            }
+          ]
+        },
         pomegranate: {
           badge: "موسوعة الأصناف والمذاق السوري: ياقوت الشام",
           badge_en: "Syrian Cultivars Index: Levant Rubies",
@@ -8356,6 +8418,12 @@
           { q: "Q2", month: "أيار – حزيران", month_en: "May – Jun", title: "الإزهار القرمزي وتكوين الياقوت", title_en: "Scarlet Bloom & Fruit Setting", desc: "تألق أزهار الجلنار القرمزية في حوران وبدء تشكل كرات الرمان الغنية بمضادات الأكسدة.", desc_en: "Brilliant scarlet Gulnar blossoms and setting of nascent antioxidant-rich pomegranate globes.", badge: "رصد كثافة التزهير", badge_en: "Bloom Density Monitor", icon: "flame", color: "red" },
           { q: "Q3", month: "تموز – آب", month_en: "Jul – Aug", title: "ري التكثيف وحماية القشور", title_en: "Precision Drip & Sunburn Defense", desc: "انتظام دورات الري بالتنقيط في وادي اليرموك لحماية قشور الرمان من التشقق بسبب الحرارة.", desc_en: "Strictly scheduled drip cycles in Yarmouk to prevent skin cracking under summer heat.", badge: "فحص سلامة القشرة", badge_en: "Skin Integrity Index", icon: "shield-check", color: "cyan" },
           { q: "Q4", month: "تشرين الأول – تشرين الثاني", month_en: "Oct – Nov", title: "موسم قطاف الياقوت وعصر الدبس", title_en: "Ruby Harvest & Molasses Press", desc: "قطاف الثمار الياقوتية المتشققة طبيعياً وعصر جزء منها كدبس رمان نقي وتوزيع الأرباح.", desc_en: "Harvesting heavy ruby pomegranates, cold-pressing artisanal molasses, and dividend payout.", badge: "عائد عيني ونقدي معتمد", badge_en: "Molasses & Cash Yield", icon: "sparkles", color: "rose" }
+        ],
+        date: [
+          { q: "Q1", month: "كانون الثاني – شباط", month_en: "Jan – Feb", title: "تقليم السعف وتنظيف الجذع", title_en: "Frond Pruning & Trunk Cleaning", desc: "إزالة السعف اليابس والأشواك وبقايا العذوق القديمة لتهيئة النخلة لموسم التلقيح.", desc_en: "Dry fronds, thorns and old bunch stalks are removed so the palm is ready for pollination.", icon: "scissors", badge: "تجهيز النخلة للموسم", badge_en: "Palm prepared for the season" },
+          { q: "Q2", month: "آذار – نيسان", month_en: "Mar – Apr", title: "التلقيح اليدوي", title_en: "Hand Pollination", desc: "تُلقَّح الطلعات المؤنثة يدوياً بحبوب لقاح الفحول خلال أيام قليلة من انشقاقها.", desc_en: "Female flower clusters are pollinated by hand with pollen from male palms within days of opening.", icon: "flower-2", badge: "تقرير مصوّر من الحقل", badge_en: "Photo report from the grove" },
+          { q: "Q3", month: "حزيران – آب", month_en: "Jun – Aug", title: "خف العذوق وتدليتها والري", title_en: "Bunch Thinning, Support & Irrigation", desc: "تُخفّ الثمار لتكبر الحبات، وتُسند العذوق الثقيلة وتُغطى، وينتظم الري في أشهر الحر.", desc_en: "Fruit is thinned so the dates grow larger, heavy bunches are tied down and covered, and irrigation stays regular through the heat.", icon: "droplets", badge: "متابعة العذوق", badge_en: "Bunch monitoring" },
+          { q: "Q4", month: "أيلول – تشرين الأول", month_en: "Sep – Oct", title: "الجني والفرز والوزن", title_en: "Harvest, Sorting & Weighing", desc: "تُجنى التمور على مراحل حسب نضجها، ثم تُفرز وتوزن ويوزَّع الوزن الصافي على أصحاب الحصص.", desc_en: "Dates are picked in several passes as they ripen, then sorted and weighed; the net weight is allocated to the share owners.", icon: "scale", badge: "توزيع المحصول بالكيلوغرام", badge_en: "Harvest allocated in kilograms" }
         ],
         walnut: [
           { q: "Q1", month: "كانون الثاني – شباط", month_en: "Jan – Feb", title: "السكون الشتوي والرش الوقائي", title_en: "Winter Dormancy & Protective Spray", desc: "سكون شتوي عميق لأشجار بردى الباسقة ورش الزيوت النحاسية العضوية لوقاية اللحاء.", desc_en: "Deep winter dormancy in Barada mountain heights with organic copper bark protection.", badge: "توثيق مقاومة الصقيع", badge_en: "Frost Resistance Log", icon: "snowflake", color: "sky" },
@@ -10292,6 +10360,7 @@
         if (catalog[key]) local[key] = catalog[key];
       });
       if (catalog.crop_category) local.crop_category = catalog.crop_category;
+      if (catalog.country) local.country = catalog.country;
       if (catalog.planted_year) {
         local.planted_year = catalog.planted_year;
         local.age_years = Math.max(0, new Date().getFullYear() - catalog.planted_year);
@@ -13730,6 +13799,15 @@ function setMarketplaceViewMode(mode) {
       renderMarketplace();
     }
 
+    /** Country name in the page language from an ISO 3166-1 alpha-2 code; the code itself when the browser cannot name it. */
+    function countryName(code) {
+      try {
+        return new Intl.DisplayNames([state.currentLang || 'en'], { type: 'region' }).of(String(code || '').toUpperCase()) || code;
+      } catch (e) {
+        return code;
+      }
+    }
+
     function renderMarketplace() {
     const container = document.getElementById('trees-grid');
     const searchInput = document.getElementById('marketplace-search-input');
@@ -13741,6 +13819,20 @@ function setMarketplaceViewMode(mode) {
     const filterLand = document.getElementById('filter-land')?.value || 'all';
     const filterSort = document.getElementById('filter-sort')?.value || 'recommended';
     const filterCrop = state.filterCropCategory || document.getElementById('filter-crop-category')?.value || 'all';
+    // Country filter: built from the catalogue itself and shown only once trees from more than one country exist.
+    const countrySelect = document.getElementById('filter-country');
+    const countryCodes = [...new Set((state.trees || []).map(tr => tr.country || 'SY'))].sort();
+    if (countrySelect) {
+      const wanted = ['all'].concat(countryCodes).join(',');
+      if (countrySelect.dataset.codes !== wanted + '|' + state.currentLang) {
+        const keep = countrySelect.value;
+        countrySelect.innerHTML = `<option value="all">${escapeHtml(t('filter_country_all'))}</option>` + countryCodes.map(code => `<option value="${escapeHtml(code)}">${escapeHtml(countryName(code))}</option>`).join('');
+        countrySelect.dataset.codes = wanted + '|' + state.currentLang;
+        if (countryCodes.includes(keep)) countrySelect.value = keep;
+      }
+      document.getElementById('filter-country-wrap')?.classList.toggle('hidden', countryCodes.length < 2);
+    }
+    const filterCountry = (countrySelect && countryCodes.length > 1 && countrySelect.value) || 'all';
 
     // Show or hide search clear button
     const clearBtn = document.getElementById('btn-clear-search');
@@ -13780,7 +13872,8 @@ function setMarketplaceViewMode(mode) {
                         filterCrop === 'almond_walnut' ? (state.currentLang !== 'ar' ? 'Almonds & Walnuts' : 'اللوزيات والجوز') :
                         filterCrop === 'almond' ? (state.currentLang !== 'ar' ? 'Syrian Almonds' : 'اللوزيات السورية') :
                         filterCrop === 'walnut' ? (state.currentLang !== 'ar' ? 'Mountain Walnuts' : 'الجوز البلدي') :
-                        filterCrop === 'pomegranate' ? (state.currentLang !== 'ar' ? 'Sweet Pomegranate' : 'رمان حوران') : filterCrop;
+                        filterCrop === 'pomegranate' ? (state.currentLang !== 'ar' ? 'Sweet Pomegranate' : 'رمان حوران') :
+                        filterCrop === 'date' ? (state.currentLang !== 'ar' ? 'Date Palms' : 'نخيل التمر') : filterCrop;
       activeTags.push({ label: `${state.currentLang !== 'ar' ? 'Crop:' : 'المحصول:'} ${cropLabel}`, clear: () => { setCropCategoryFilter('all'); } });
     }
 
@@ -13847,6 +13940,8 @@ function setMarketplaceViewMode(mode) {
       if (filterPrice === 'low' && t.price_per_share >= 30) return false;
       if (filterPrice === 'mid' && (t.price_per_share < 30 || t.price_per_share > 35)) return false;
       if (filterPrice === 'high' && t.price_per_share <= 35) return false;
+
+      if (filterCountry !== 'all' && (t.country || 'SY') !== filterCountry) return false;
 
       // Crop Category Filter (Agroforestry & Core Olives)
       if (filterCrop !== 'all') {
@@ -15540,7 +15635,7 @@ function setMarketplaceViewMode(mode) {
       if (typeof playAcousticChime === 'function') playAcousticChime(660, 0.08);
       if (typeof triggerHaptic === 'function') triggerHaptic('light');
 
-      const crops = ['olive', 'pistachio', 'almond', 'pomegranate', 'walnut'];
+      const crops = ['olive', 'pistachio', 'almond', 'pomegranate', 'walnut', 'date'];
       crops.forEach(c => {
         const btn = document.getElementById(`cal-btn-${c}`);
         if (btn) {
@@ -16558,6 +16653,12 @@ function setMarketplaceViewMode(mode) {
 
     const OIL_LITERS = (ml) => `${(Number(ml || 0) / 1000).toFixed(2).replace(/\.?0+$/, '')} L`;
 
+    // Weighed harvest of the non-olive crops: the same allocation field carries grams instead of millilitres.
+
+    const HARVEST_KG = (grams) => `${(Number(grams || 0) / 1000).toFixed(2).replace(/\.?0+$/, '')} kg`;
+
+    const isWeighedCrop = (treeId) => { const tr = (state.trees || []).find(x => x.id === treeId); return !!(tr && tr.crop_category && tr.crop_category !== 'olive'); };
+
     function renderMyOil() {
       const section = document.getElementById('my-oil-section');
       if (!section) return;
@@ -16569,8 +16670,11 @@ function setMarketplaceViewMode(mode) {
       const requests = state.myOilRequests || [];
       const available = allocations.filter(a => a.status === 'available');
       const availableMl = available.reduce((sum, a) => sum + (a.litersMl || 0), 0);
+      const availableGrams = available.filter(a => isWeighedCrop(a.treeId)).reduce((sum, a) => sum + (a.litersMl || 0), 0);
       const totalEl = document.getElementById('oil-available-liters');
-      if (totalEl) totalEl.textContent = OIL_LITERS(availableMl);
+      if (totalEl) totalEl.textContent = availableGrams > 0
+        ? (availableMl - availableGrams > 0 ? `${OIL_LITERS(availableMl - availableGrams)} + ${HARVEST_KG(availableGrams)}` : HARVEST_KG(availableGrams))
+        : OIL_LITERS(availableMl);
       const btn = document.getElementById('oil-request-btn');
       if (btn) btn.disabled = availableMl <= 0;
 
@@ -16581,7 +16685,7 @@ function setMarketplaceViewMode(mode) {
         } else {
           list.innerHTML = allocations.map(a => {
             const tree = state.trees.find(tr => tr.id === a.treeId);
-            const name = tree ? escapeHtml(isEn ? (tree.name_en || tree.name) : tree.name) : escapeHtml(a.treeId || '');
+            const name = tree ? escapeHtml((isEn ? (tree.tree_name_en || tree.name_en) : (tree.tree_name || tree.name)) || a.treeId || '') : escapeHtml(a.treeId || '');
             const tone = a.status === 'available' ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300'
               : a.status === 'requested' ? 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300'
               : 'bg-stone-100 text-stone-700 dark:bg-stone-800 dark:text-stone-300';
@@ -16591,7 +16695,7 @@ function setMarketplaceViewMode(mode) {
                 <div class="text-[10px] text-stone-500 dark:text-stone-400 font-mono truncate">${escapeHtml(a.certificateSerial || '')}</div>
               </div>
               <div class="flex items-center gap-2 whitespace-nowrap">
-                <span class="font-mono font-black text-sm text-stone-900 dark:text-white">${OIL_LITERS(a.litersMl)}</span>
+                <span class="font-mono font-black text-sm text-stone-900 dark:text-white">${isWeighedCrop(a.treeId) ? HARVEST_KG(a.litersMl) : OIL_LITERS(a.litersMl)}</span>
                 <span class="text-[10px] font-bold px-2 py-0.5 rounded-full ${tone}">${t('oil_status_' + a.status)}</span>
               </div>
             </div>`;
@@ -16608,7 +16712,7 @@ function setMarketplaceViewMode(mode) {
             const cancel = r.status === 'pending'
               ? `<button type="button" data-click="cancelOilRequest('${escapeHtml(r.id)}')" class="text-[10px] font-bold text-red-700 dark:text-red-300 underline cursor-pointer">${t('oil_cancel_btn')}</button>` : '';
             return `<div class="flex items-center justify-between gap-3 p-3 rounded-2xl bg-stone-50 dark:bg-stone-800/60">
-              <div class="text-xs text-stone-700 dark:text-stone-200 min-w-0 truncate">${t('oil_kind_' + r.kind)} · <span class="font-mono font-bold">${OIL_LITERS(r.litersMl)}</span> · ${escapeHtml(when)}${r.reviewNote ? `<br><span class="text-[10px] text-stone-500">${escapeHtml(r.reviewNote)}</span>` : ''}</div>
+              <div class="text-xs text-stone-700 dark:text-stone-200 min-w-0 truncate">${t('oil_kind_' + r.kind)} · <span class="font-mono font-bold">${r.unit === 'kg' ? HARVEST_KG(r.litersMl) : OIL_LITERS(r.litersMl)}</span> · ${escapeHtml(when)}${r.reviewNote ? `<br><span class="text-[10px] text-stone-500">${escapeHtml(r.reviewNote)}</span>` : ''}</div>
               <div class="flex items-center gap-2 whitespace-nowrap"><span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-stone-200 dark:bg-stone-700 text-stone-800 dark:text-stone-200">${t('oil_status_' + r.status)}</span>${cancel}</div>
             </div>`;
           }).join('');
@@ -16635,12 +16739,19 @@ function setMarketplaceViewMode(mode) {
       document.getElementById('oil-address-fields')?.classList.toggle('hidden', kind !== 'delivery');
     }
 
-    function openOilRequestModal() {
+    // One request carries either olive oil or weighed harvest (different units): the oil first, then the harvest.
+    function oilRequestBatch() {
       const available = (state.myOilAllocations || []).filter(a => a.status === 'available');
+      const oil = available.filter(a => !isWeighedCrop(a.treeId));
+      return oil.length ? oil : available;
+    }
+
+    function openOilRequestModal() {
+      const available = oilRequestBatch();
       if (available.length === 0) return;
       const ml = available.reduce((sum, a) => sum + (a.litersMl || 0), 0);
       const el = document.getElementById('oil-modal-liters');
-      if (el) el.textContent = OIL_LITERS(ml);
+      if (el) el.textContent = isWeighedCrop(available[0].treeId) ? HARVEST_KG(ml) : OIL_LITERS(ml);
       const err = document.getElementById('oil-modal-error');
       if (err) { err.classList.add('hidden'); err.textContent = ''; }
       const u = state.currentUser || {};
@@ -16654,7 +16765,7 @@ function setMarketplaceViewMode(mode) {
       const isEn = state.currentLang !== 'ar';
       const err = document.getElementById('oil-modal-error');
       const fail = (msg) => { if (err) { err.textContent = msg; err.classList.remove('hidden'); } };
-      const available = (state.myOilAllocations || []).filter(a => a.status === 'available');
+      const available = oilRequestBatch();
       if (available.length === 0 || !window.FaseelaFirebase?.requestOil) return;
       const kind = document.querySelector('input[name="oil-kind"]:checked')?.value || 'delivery';
       const v = (id) => (document.getElementById(id)?.value || '').trim();
@@ -16873,7 +16984,7 @@ function setMarketplaceViewMode(mode) {
             const message = (document.getElementById('gift-message')?.value || '').trim() || (isEn ? 'May this olive tree grow as a symbol of life, peace, and abundance.' : 'لتكن هذه الشجرة المباركة رمزاً للحياة والخير والبركة الدائمة.');
             const w = window.open('', '_blank');
             if (!w) return;
-            w.document.write('<!doctype html><html lang="' + (isEn ? 'en' : 'ar') + '" dir="' + (isEn ? 'ltr' : 'rtl') + '"><head><meta charset="utf-8"><title>' + (isEn ? 'Gift Certificate · Faseela' : 'وثيقة إهداء · فسيلة') + '</title><style>body{margin:0;padding:2rem;font-family:sans-serif;background:#fafaf9;color:#1c1917;display:flex;justify-content:center;align-items:center;min-height:90vh}.card{background:#fff;border:3px double #424830;padding:3rem;border-radius:1.5rem;max-width:540px;text-align:center;box-shadow:0 10px 25px rgba(0,0,0,0.05)}h1{color:#2c3e2d;margin:0 0 .5rem;font-size:1.8rem}.gold{color:#b45309;font-weight:bold;margin-bottom:1.5rem}.to{font-size:1.2rem;font-weight:bold;margin:1rem 0}.msg{font-style:italic;color:#57534e;margin:1.5rem 0;line-height:1.6}.code-box{background:#f5f0e8;border:2px dashed #424830;padding:1rem;border-radius:1rem;margin:1.5rem 0}.code{font-family:monospace;font-size:1.6rem;font-weight:bold;letter-spacing:.15em;color:#2c3e2d}.link{font-size:.85rem;color:#78716c;margin-top:.5rem}@media print{body{background:none;padding:0}.card{box-shadow:none;border-width:2px}}</style></head><body><div class="card"><h1>🌿 ' + (isEn ? 'Olive Tree Gift Certificate' : 'وثيقة إهداء رعاية شجرة زيتون') + '</h1><div class="gold">' + (isEn ? 'Faseela Agritech · Syrian Olive Stewardship' : 'منصة فسيلة · برنامج رعاية أشجار الزيتون السورية') + '</div><div class="to">' + (isEn ? 'Gifted to:' : 'مُهداة إلى:') + ' ' + recipient + '</div><div class="msg">"' + message + '"</div><div class="code-box"><div style="font-size:.85rem;margin-bottom:.4rem;color:#57534e">' + (isEn ? 'Gift Activation Code' : 'رمز تفعيل الهدية') + '</div><div class="code">' + data.code + '</div><div class="link">' + link + '</div></div><p style="font-size:.8rem;color:#a8a29e;margin-top:2rem">' + (isEn ? 'Scan or enter code on faseela.sy to claim tree stewardship and extra virgin olive oil.' : 'يُدخل الرمز في منصة فسيلة لاستلام حصة الرعاية وشهادة الشجرة ومحصول الزيت.') + '</p></div><script>window.onload=()=>{setTimeout(()=>{window.print();},400);};</script></body></html>');
+            w.document.write('<!doctype html><html lang="' + (isEn ? 'en' : 'ar') + '" dir="' + (isEn ? 'ltr' : 'rtl') + '"><head><meta charset="utf-8"><title>' + (isEn ? 'Gift Certificate · Faseela' : 'وثيقة إهداء · فسيلة') + '</title><style>body{margin:0;padding:2rem;font-family:sans-serif;background:#fafaf9;color:#1c1917;display:flex;justify-content:center;align-items:center;min-height:90vh}.card{background:#fff;border:3px double #424830;padding:3rem;border-radius:1.5rem;max-width:540px;text-align:center;box-shadow:0 10px 25px rgba(0,0,0,0.05)}h1{color:#2c3e2d;margin:0 0 .5rem;font-size:1.8rem}.gold{color:#b45309;font-weight:bold;margin-bottom:1.5rem}.to{font-size:1.2rem;font-weight:bold;margin:1rem 0}.msg{font-style:italic;color:#57534e;margin:1.5rem 0;line-height:1.6}.code-box{background:#f5f0e8;border:2px dashed #424830;padding:1rem;border-radius:1rem;margin:1.5rem 0}.code{font-family:monospace;font-size:1.6rem;font-weight:bold;letter-spacing:.15em;color:#2c3e2d}.link{font-size:.85rem;color:#78716c;margin-top:.5rem}@media print{body{background:none;padding:0}.card{box-shadow:none;border-width:2px}}</style></head><body><div class="card"><h1>🌿 ' + (isEn ? 'Olive Tree Gift Certificate' : 'وثيقة إهداء رعاية شجرة زيتون') + '</h1><div class="gold">' + (isEn ? 'Faseela Agritech · Syrian Olive Stewardship' : 'منصة فسيلة · برنامج رعاية أشجار الزيتون السورية') + '</div><div class="to">' + (isEn ? 'Gifted to:' : 'مُهداة إلى:') + ' ' + escapeHtml(recipient) + '</div><div class="msg">"' + escapeHtml(message) + '"</div><div class="code-box"><div style="font-size:.85rem;margin-bottom:.4rem;color:#57534e">' + (isEn ? 'Gift Activation Code' : 'رمز تفعيل الهدية') + '</div><div class="code">' + escapeHtml(data.code) + '</div><div class="link">' + escapeHtml(link) + '</div></div><p style="font-size:.8rem;color:#a8a29e;margin-top:2rem">' + (isEn ? 'Scan or enter code on faseela.sy to claim tree stewardship and extra virgin olive oil.' : 'يُدخل الرمز في منصة فسيلة لاستلام حصة الرعاية وشهادة الشجرة ومحصول الزيت.') + '</p></div><script>window.onload=()=>{setTimeout(()=>{window.print();},400);};</script></body></html>');
             w.document.close();
           };
         }
@@ -16937,6 +17048,10 @@ function setMarketplaceViewMode(mode) {
           showToast(t('gift_redeem_ok'));
           playAcousticChime(880, 0.25);
           loadRewards(true);
+          setTimeout(() => {
+            openModal('modal-gift-welcome');
+            lucide.createIcons();
+          }, 350);
         } else {
           say(t('gift_redeem_invalid'), false);
         }
@@ -17900,6 +18015,63 @@ function setMarketplaceViewMode(mode) {
       if (none) none.classList.toggle('hidden', trees.length > 0 || farmerQuick.assignments === null);
       const submit = document.getElementById('fqr-submit');
       if (submit) submit.disabled = trees.length === 0;
+      renderFarmerHarvest();
+    }
+
+    // Weighed harvest (pistachio, almond, pomegranate, walnut): shown only when such a tree is assigned to this farmer.
+    function renderFarmerHarvest() {
+      const box = document.getElementById('farmer-harvest');
+      if (!box) return;
+      const isEn = state.currentLang !== 'ar';
+      const trees = ((farmerQuick.assignments && farmerQuick.assignments.trees) || []).filter(tr => isWeighedCrop(tr.treeId));
+      box.classList.toggle('hidden', trees.length === 0);
+      if (trees.length === 0) { box.innerHTML = ''; return; }
+      const field = 'w-full bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-xl p-2.5 text-sm text-stone-900 dark:text-white';
+      const label = 'block text-xs font-bold text-stone-700 dark:text-stone-200 mb-1';
+      box.innerHTML = `
+        <h3 class="font-black text-base text-stone-900 dark:text-white">${isEn ? 'Record the harvest' : 'تسجيل وزن المحصول'}</h3>
+        <p class="text-xs text-stone-600 dark:text-stone-300">${isEn ? 'Once per tree and season. After the quality review the net weight is allocated to the share owners.' : 'مرة واحدة لكل شجرة وموسم. بعد مراجعة الجودة يوزَّع الوزن الصافي على أصحاب الحصص.'}</p>
+        <div><label class="${label}" for="fh-tree">${isEn ? 'Tree' : 'الشجرة'}</label>
+          <select id="fh-tree" class="${field}">${trees.map(tr => `<option value="${escapeHtml(tr.treeId)}">${escapeHtml((isEn ? (tr.nameEn || tr.name) : (tr.name || tr.nameEn)) || tr.treeId)}</option>`).join('')}</select></div>
+        <div class="grid grid-cols-2 gap-3">
+          <div><label class="${label}" for="fh-gross">${isEn ? 'Gross weight (kg)' : 'الوزن الإجمالي (كغ)'}</label><input id="fh-gross" type="text" inputmode="decimal" autocomplete="off" class="${field}"></div>
+          <div><label class="${label}" for="fh-net">${isEn ? 'Net weight after sorting (kg)' : 'الوزن الصافي بعد الفرز (كغ)'}</label><input id="fh-net" type="text" inputmode="decimal" autocomplete="off" class="${field}"></div>
+        </div>
+        <p id="fh-msg" class="hidden text-xs font-bold" role="status" aria-live="polite"></p>
+        <button type="button" id="fh-submit" data-click="submitFarmerHarvest()" class="w-full bg-olive-800 hover:bg-olive-900 text-white font-bold text-sm rounded-xl py-3 min-h-[44px]">${isEn ? 'Send for review' : 'إرسال للمراجعة'}</button>`;
+    }
+
+    async function submitFarmerHarvest() {
+      const isEn = state.currentLang !== 'ar';
+      const msg = document.getElementById('fh-msg');
+      const say = (text, ok) => {
+        if (!msg) return;
+        msg.textContent = text;
+        msg.className = `text-xs font-bold ${ok ? 'text-emerald-800 dark:text-emerald-300' : 'text-red-800 dark:text-red-300'}`;
+      };
+      const num = (id) => { const raw = (document.getElementById(id)?.value || '').trim().replace(',', '.'); return raw === '' ? NaN : Number(raw); };
+      const treeId = document.getElementById('fh-tree')?.value || '';
+      const harvestKg = num('fh-gross');
+      const netKg = num('fh-net');
+      if (!treeId || !Number.isFinite(harvestKg) || !Number.isFinite(netKg) || harvestKg <= 0 || netKg < 0 || netKg > harvestKg) {
+        say(isEn ? 'Enter both weights. The net weight cannot exceed the gross weight.' : 'أدخل الوزنين. لا يمكن أن يتجاوز الوزن الصافي الوزن الإجمالي.', false);
+        return;
+      }
+      if (!window.FaseelaFirebase?.submitHarvestBatch) return;
+      const btn = document.getElementById('fh-submit');
+      if (btn) btn.disabled = true;
+      try {
+        await window.FaseelaFirebase.submitHarvestBatch({ treeId, harvestKg, netKg });
+        say(isEn ? 'Harvest sent. It is now waiting for the quality review.' : 'تم إرسال المحصول وهو الآن بانتظار مراجعة الجودة.', true);
+        ['fh-gross', 'fh-net'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+      } catch (error) {
+        const code = error && error.code;
+        say(code === 'already-exists' ? (isEn ? 'A harvest for this tree and season is already recorded.' : 'سُجّل محصول هذه الشجرة لهذا الموسم مسبقاً.')
+          : code === 'permission-denied' ? (isEn ? 'This tree is not assigned to you.' : 'هذه الشجرة غير مسندة إليك.')
+          : (isEn ? 'The harvest could not be sent. Please try again.' : 'تعذر إرسال المحصول. حاول مجدداً.'), false);
+      } finally {
+        if (btn) btn.disabled = false;
+      }
     }
 
     function fqrSelectType(type) {
@@ -19359,6 +19531,26 @@ function setMarketplaceViewMode(mode) {
     }
 
     function renderFounderFleet(track = 'mature') {
+      // In live mode this view edits the copy in this browser only. Trees for all visitors are managed in the admin panel.
+      if (state.serverMode && !document.getElementById('fndr-fleet-server-notice')) {
+        const anchor = document.getElementById('fndr-fleet-btn-mature')?.parentElement?.parentElement;
+        if (anchor && anchor.parentElement) {
+          const isEnNotice = state.currentLang !== 'ar';
+          const notice = document.createElement('div');
+          notice.id = 'fndr-fleet-server-notice';
+          notice.className = 'mb-4 p-4 rounded-2xl border border-amber-300 bg-amber-50 dark:bg-amber-950/40 dark:border-amber-800 text-xs text-amber-950 dark:text-amber-100 flex flex-wrap items-center justify-between gap-3';
+          const text = document.createElement('span');
+          text.textContent = isEnNotice
+            ? 'Changes made here stay in this browser. To add, edit or publish trees of any crop and country for all visitors, use the admin panel.'
+            : 'التعديلات هنا تبقى في هذا المتصفح فقط. لإضافة الأشجار من أي محصول وبلد أو تعديلها أو نشرها لجميع الزوار استخدم لوحة الإدارة.';
+          const link = document.createElement('a');
+          link.href = 'admin/';
+          link.className = 'font-black underline whitespace-nowrap';
+          link.textContent = isEnNotice ? 'Open admin panel → Trees' : 'فتح لوحة الإدارة ← الأشجار';
+          notice.append(text, link);
+          anchor.parentElement.insertBefore(notice, anchor);
+        }
+      }
       currentFleetTrack = track;
       const btnMature = document.getElementById('fndr-fleet-btn-mature');
       const btnVirgin = document.getElementById('fndr-fleet-btn-virgin');

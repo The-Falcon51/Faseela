@@ -459,9 +459,48 @@ Das Admin-Panel hat jetzt 18 Bereiche. Neu sind vier Werkzeuge, mit denen sich d
 
 **Beispielwerte:** Der Abschnitt „Klima und Boden" auf der Startseite zeigt feste Zahlen. Er ist jetzt in allen drei Sprachen als Beispiel gekennzeichnet statt als Live-Messung.
 
-**Vorbereitet, nicht angewendet (Migration 43 `launch_hardening`):** Reservierungsfrist 48 Stunden, zweiter Faktor für Konten mit eingerichtetem Authenticator, Regeln „unbestätigte Konten löschen" und „Wochenbericht". Die Datenbank verlangt dafür eine Bestätigung des Kontoinhabers, die zweimal ausblieb. Die Datei liegt deshalb nicht im Migrationsordner.
+**Migration 43 `launch_hardening` (angewendet):** Reservierungsfrist 48 Stunden statt 30 Minuten. Zweiter Faktor: Hat ein Konto einen bestätigten TOTP-Faktor, lehnt `require_role` jede Funktion ab, solange die Sitzung nicht `aal2` hat (`mfa-required`); Konten ohne Faktor sind unverändert. Im Panel: Einrichten und Entfernen unter Einstellungen, Code-Abfrage nach der Anmeldung (`passSecondFactor`). Wer einen Faktor eingerichtet hat, kann Admin-Funktionen nur noch über das Panel nutzen, nicht über die alte Gründeransicht der App.
+
+**Offen:** Die Edge Function `send-emails` ist nicht neu ausgerollt: Live nennt `onboarding_three` noch 30 Minuten, `admin_digest` und die kg-Angabe fehlen. Im Repository sind die Vorlagen korrekt; Ausrollen über `inbetriebnahme.command`, Schritt 2b.
+
+**Tests:** Datenbank-Stichprobe mit Rollback (6 Ergebnisse: Faktor/aal-Kombinationen, 48 Stunden, Mindestfrist der Löschregel), `tests/e2e/admin.e2e.mjs` (Code-Abfrage, Abbruch meldet ab, Einrichtung).
 
 **Tests:** `npm run test:catalog` (`tests/e2e/catalog.e2e.mjs`), `tests/data-mappers.test.mjs` (11).
+
+## 2aa. Ernte in Kilogramm, Wochenbericht (2026-11-13)
+
+**Gewogene Ernte (Migration 45):** Pistazie, Mandel, Granatapfel und Walnuss laufen über denselben Weg wie das Öl: erfassen → prüfen → nach Anteilen zuteilen → Lieferung, Abholung oder Spende.
+
+- Erfassen: `submit_harvest_batch({treeId, harvestKg, netKg})` durch den zugewiesenen Landwirt oder einen Admin (Panel: Bäume → „Ernte erfassen"). Eine Ernte je Baum und Saison. Olivenbäume werden abgelehnt; umgekehrt lehnt `submit_pressing_batch` Nicht-Oliven ab.
+- Speicherung: Zeile in `pressing_batches` mit `mill_id = 'farm'`; `olives_weight_kg` = Bruttogewicht, `oil_yield_liters` = Nettogewicht in kg. Prüfung und Zuteilung nutzen unverändert `certify_pressing_batch` und `allocate_oil`.
+- **Einheit:** Für diese Bäume enthält `oil_allocations.liters_ml` **Gramm**. Die Einheit ergibt sich aus `trees_public.crop_category` des Baums. App (`HARVEST_KG`, `isWeighedCrop`), Prüfkarte im Panel und die Mail `oil_allocated` (Parameter `unit`) zeigen kg.
+- Grenzen: (1) Landwirte erfassen die Ernte in ihrem Bereich der App (`renderFarmerHarvest`, `submitFarmerHarvest`); das Formular erscheint nur, wenn ihnen ein Baum einer gewogenen Kultur zugewiesen ist. Admins können weiter im Panel erfassen. (2) Behoben mit Migration 46: Eine Abrufanfrage enthält entweder Öl oder Erntegut. Die App fordert zuerst das Öl an, danach das Erntegut (`oilRequestBatch`); der Server lehnt gemischte Anfragen ab. Seit Migration 47 trägt jede Anfrage ihre Einheit (`oil_requests.unit`); Anfrage-Mails, Prüfkarte und die Liste des Besitzers zeigen kg für Erntegut.
+
+**Wochenbericht:** `run_housekeeping()` versendet montags ab 6 Uhr UTC die Vorlage `admin_digest`, wenn die Regel `weekly_digest` eingeschaltet ist. Das Panel blendet die Regel aus, bis die Edge Function `send-emails` mit dieser Vorlage ausgerollt ist (`inbetriebnahme.command`, Schritt 2b). Die Regel „unbestätigte Konten löschen" ist nicht umgesetzt.
+
+**Tests:** `supabase/tests/harvest_kg.test.sql` (10 Ergebnisse, u. a. 24 kg netto × 1 von 4 Anteilen = 6000 g), `tests/e2e/admin.e2e.mjs` (Ernte erfassen).
+
+## 2ab. Parallele Änderungen am Projektordner (2026-11-13)
+
+Am 13.11. wurden `public/app.js` und `public/index.html` im Projektordner auf dem Mac außerhalb dieser Sitzungen geändert (Druck einer Geschenk-Urkunde, Saison-Leiste auf der Startseite) und ausgerollt. Das Paket `faseela-ernte-kg` hat `app.js` danach überschrieben; die Fassung davor lag im Backup `backup-2026-11-13/ernte-kg`. Beide Stände sind jetzt zusammengeführt. Im Druckfenster der Geschenk-Urkunde werden Name, Nachricht, Code und Link jetzt maskiert (`escapeHtml`), vorher wurden sie ungefiltert in die Seite geschrieben.
+
+Regel für die Zukunft: Vor jedem Paket wird der Stand des Mac mit dem Arbeitsstand verglichen (Prüfsummen); abweichende Dateien werden erst zusammengeführt.
+
+Beide Hosting-Adressen (`faseela.web.app`, `gen-lang-client-0319369264.web.app`) gehören zum selben Firebase-Projekt, liefern denselben Stand aus und nutzen dieselbe Supabase-Datenbank.
+
+## 2ac. Mehr Kulturen, mehr Länder (2026-11-14)
+
+**Kulturen:** `olive` (Abrechnung in Litern Öl) sowie `pistachio`, `almond`, `pomegranate`, `walnut`, `date` (Abrechnung in kg). Die Dattelpalme hat einen eigenen Saisonkalender und Sortenkarten; Fotos von Dattelpalmen fehlen noch im Projekt (`public/images/`), die Sortenkarten zeigen bis dahin ein allgemeines Erntebild.
+
+**Länder (Migration 48):** Jeder Baum trägt ein Land (`trees_public.country`, zweistelliger Code). Bestehende Bäume stehen auf `SY`. Im Marktplatz erscheint ein Länderfilter, sobald Bäume aus mehr als einem Land sichtbar sind; die Ländernamen kommen aus dem Browser (`Intl.DisplayNames`) in der Seitensprache.
+
+**Verwaltung:** Kultur und Land werden im Admin-Panel unter Bäume → Neuer Baum / Bearbeiten gesetzt (`admin_set_tree_class`). Die Kultur lässt sich nicht mehr ändern, sobald für den Baum eine Ernte oder Zuteilung existiert, weil die Einheit der Mengen an der Kultur hängt.
+
+**Gründeransicht in der App („Groves Fleet & Cadastre"):** Sie ändert im Live-Betrieb nur die Kopie im eigenen Browser, nicht die Datenbank. Dort steht jetzt ein Hinweis mit Link zum Admin-Panel.
+
+**Für einen echten internationalen Betrieb noch offen:** Währung je Land (heute überall USD), Empfangskonten und Zahlwege je Land, Rechtstexte und Sanktions-/Verbraucherrecht je Land, Sprachen über AR/EN/DE hinaus, und die vielen Texte der Website, die ausdrücklich von Syrien sprechen.
+
+**Tests:** Datenbank-Stichprobe mit Rollback (9 Ergebnisse), `tests/e2e/catalog.e2e.mjs` (Länderfilter, Kulturfilter, Dattel-Kalender), `tests/e2e/admin.e2e.mjs` (Kultur und Land im Baumformular).
 
 ## 3. Server-Modus im Frontend
 

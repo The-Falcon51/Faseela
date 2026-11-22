@@ -22,6 +22,14 @@ CURRENT="2 Build-Prüfungen"; step "$CURRENT"
 npm run sync
 npm run build
 
+CURRENT="2b E-Mail-Funktion (optional)"; step "$CURRENT"
+# Rolls out the e-mail templates (48-hour wording, harvest in kg, weekly digest). Needs a one-time "npx supabase login".
+read -r -p "E-Mail-Funktion send-emails jetzt ausrollen? (j/n) " MAILFN
+if [ "$MAILFN" = "j" ]; then
+  npx --yes supabase projects list >/dev/null 2>&1 || npx --yes supabase login
+  npx --yes supabase functions deploy send-emails --project-ref riyvlhlhzxxerlwqoxsy --no-verify-jwt || echo "Hinweis: Ausrollen fehlgeschlagen (vorher einmal: npx supabase login). Der Rest läuft weiter."
+fi
+
 CURRENT="3 Web-Deployment"; step "$CURRENT"
 if command -v firebase >/dev/null; then FB=(firebase); else FB=(npx --yes firebase-tools); fi
 echo "Ziel: Firebase Hosting (faseela.web.app und gen-lang-client-0319369264.web.app)"

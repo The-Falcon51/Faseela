@@ -65,7 +65,7 @@ export function statusLabel(status, lang = 'ar') {
   return lang === 'ar' ? entry.ar : entry.en;
 }
 
-const CROP_CATEGORIES = ['olive', 'pistachio', 'almond', 'pomegranate', 'walnut'];
+const CROP_CATEGORIES = ['olive', 'pistachio', 'almond', 'pomegranate', 'walnut', 'date'];
 const CATALOG_IMAGE = /^images\/[A-Za-z0-9_-]{1,80}\.(webp|png|jpg|jpeg)$/;
 /** Catalogue text from the server: markup characters and control characters never reach the page. */
 function cleanText(value) {
@@ -89,6 +89,7 @@ export function mapPublicTree(doc) {
       region: cleanText(d.region), region_en: cleanText(d.regionEn),
       tree_type: cleanText(d.treeType), tree_type_en: cleanText(d.treeTypeEn),
       crop_category: CROP_CATEGORIES.includes(d.cropCategory) ? d.cropCategory : 'olive',
+      country: /^[A-Z]{2}$/.test(String(d.country || '')) ? d.country : 'SY',
       planted_year: Number.isSafeInteger(d.plantedYear) && d.plantedYear >= 1000 && d.plantedYear <= 2200 ? d.plantedYear : null,
       estimated_annual_yield_kg: Number.isFinite(Number(d.estimatedAnnualYieldKg)) && Number(d.estimatedAnnualYieldKg) > 0 ? Number(d.estimatedAnnualYieldKg) : null,
       images: (Array.isArray(d.images) ? d.images : []).filter((path) => typeof path === 'string' && CATALOG_IMAGE.test(path)).slice(0, 6)
@@ -254,12 +255,14 @@ export function mapReviewItem(queue, item) {
       type_label: 'دفعة عصر',
       type_label_en: 'Pressing batch',
       channel: d.millId || '',
-      notes: `${d.treeId || ''} • ${d.olivesWeightKg ?? '?'} kg → ${d.oilYieldLiters ?? '?'} L • ${d.acidityPct ?? '?'}%`
+      notes: d.millId === 'farm'
+        ? `${d.treeId || ''} • Harvest ${d.olivesWeightKg ?? '?'} kg gross → ${d.oilYieldLiters ?? '?'} kg net`
+        : `${d.treeId || ''} • ${d.olivesWeightKg ?? '?'} kg → ${d.oilYieldLiters ?? '?'} L • ${d.acidityPct ?? '?'}%`
     };
   }
   if (queue === 'oil_requests' || queue === 'oil_fulfilment') {
     const c = d.contact || {};
-    const liters = `${(Number(d.litersMl || 0) / 1000).toFixed(2).replace(/\.?0+$/, '')} L`;
+    const liters = `${(Number(d.litersMl || 0) / 1000).toFixed(2).replace(/\.?0+$/, '')} ${d.unit === 'kg' ? 'kg' : 'L'}`;
     const where = d.kind === 'delivery' ? [c.addressLine1, c.addressLine2, c.city, c.country].filter(Boolean).join(', ') : '';
     return {
       ...base,

@@ -19,6 +19,8 @@ const ERROR_TEXT = {
   'failed-precondition': 'Der Vorgang ist in diesem Zustand nicht möglich (bereits entschieden oder Voraussetzung fehlt).',
   'invalid-argument': 'Die Eingabe ist ungültig. Bitte Felder prüfen.',
   'not-found': 'Der Eintrag wurde nicht gefunden.',
+  'mfa-required': 'Für dieses Konto ist der zweite Faktor Pflicht. Bitte neu anmelden und den Code eingeben.',
+  'auth/mfa-code-invalid': 'Der Code stimmt nicht oder ist abgelaufen. Bitte den aktuellen 6-stelligen Code eingeben.',
   'already-exists': 'Der Eintrag existiert bereits.',
   'auth/invalid-credential': 'E-Mail oder Passwort stimmt nicht.',
   'auth/invalid-credentials': 'E-Mail oder Passwort stimmt nicht.',
@@ -323,6 +325,7 @@ function searchBlock() {
 
 const RULE_TEXT = {
   review_reminder: ['Erinnerung an liegengebliebene Prüfungen', 'Liegt ein Rollenantrag, Feldbericht, eine Pressung oder Ölanfrage länger als die eingestellten Tage, bekommen die zuständigen Konten einmal täglich eine E-Mail.', 'Tage bis zur Erinnerung'],
+  weekly_digest: ['Wochenbericht an die Admins', 'Jeden Montag ab 6 Uhr (UTC) geht eine E-Mail mit Konten, Besitzern, freigegebenem Volumen der Woche, offenen Zahlungsprüfungen und fehlgeschlagenen E-Mails an alle Admins.', null],
   sold_out_unlist: ['Ausverkaufte Bäume ausblenden', 'Ein Baum, der vollständig verkauft ist, verschwindet nach den eingestellten Tagen aus dem Katalog. Besitzer behalten alles und sehen ihren Baum weiter.', 'Tage nach dem Ausverkauf']
 };
 const JOB_TEXT = {
@@ -334,7 +337,8 @@ const JOB_CRITICAL = { 'faseela-expire-reservations': 'Ohne diesen Job bleiben u
 
 async function viewAutomation(view) {
   const { data } = await api().adminAutomationState();
-  const rules = (data && data.rules) || []; const jobs = (data && data.jobs) || []; const log = (data && data.log) || [];
+  // The weekly digest stays hidden until the e-mail function with its template is rolled out; switching it on before would only produce failing e-mails.
+  const rules = ((data && data.rules) || []).filter((rule) => RULE_TEXT[rule.key] && rule.key !== 'weekly_digest'); const jobs = (data && data.jobs) || []; const log = (data && data.log) || [];
   view.append(el('h2', { text: 'Automationen' }),
     el('p', { class: 'muted', text: 'Regeln arbeiten nach festen Bedingungen und laufen stündlich. Es entscheidet kein KI-Modell. Jede Änderung steht im Audit-Log.' }),
     el('h3', { text: 'Regeln' }));
@@ -343,11 +347,11 @@ async function viewAutomation(view) {
     const days = el('input', { type: 'text', inputmode: 'numeric', maxlength: 2, value: String(rule.days) });
     const result = rule.lastResult;
     const save = (enabled) => {
-      const value = Number(days.value.trim());
-      if (!Number.isInteger(value) || value < 1 || value > 90) { toast('Tage: eine ganze Zahl von 1 bis 90.', true); return; }
+      const value = daysLabel ? Number(days.value.trim()) : undefined;
+      if (daysLabel && (!Number.isInteger(value) || value < 1 || value > 90)) { toast('Tage: eine ganze Zahl von 1 bis 90.', true); return; }
       openDialog({
         title: enabled ? (rule.enabled ? 'Regel speichern' : 'Regel einschalten') : 'Regel ausschalten',
-        text: `${title}: ${enabled ? `aktiv mit ${value} Tag(en).` : 'wird ausgeschaltet.'}${enabled && rule.key === 'review_reminder' ? ' Solange kein E-Mail-Anbieter verbunden ist, schlagen die Erinnerungen fehl.' : ''}`,
+        text: `${title}: ${enabled ? (daysLabel ? `aktiv mit ${value} Tag(en).` : 'wird eingeschaltet.') : 'wird ausgeschaltet.'}${enabled && rule.key !== 'sold_out_unlist' ? ' Solange kein E-Mail-Anbieter verbunden ist, schlagen diese E-Mails fehl.' : ''}`,
         confirmLabel: enabled ? 'Speichern' : 'Ausschalten', danger: !enabled,
         onConfirm: () => api().adminSetAutomationRule({ key: rule.key, enabled, days: value })
       }).then((ok) => { if (ok) { toast('Regel gespeichert.'); show('automation'); } });
@@ -355,7 +359,7 @@ async function viewAutomation(view) {
     return el('section', { class: 'item' }, [
       el('div', { class: 'row row-between' }, [el('h4', { text: title }), el('span', { class: `badge ${rule.enabled ? 'badge-ok' : ''}`, text: rule.enabled ? 'aktiv' : 'aus' })]),
       el('p', { class: 'muted', text }),
-      el('div', { class: 'row' }, [field(daysLabel, days),
+      el('div', { class: 'row' }, [daysLabel ? field(daysLabel, days) : null,
         el('button', { type: 'button', class: 'btn btn-sm btn-primary', text: rule.enabled ? 'Speichern' : 'Einschalten', 'aria-label': `${title}: ${rule.enabled ? 'speichern' : 'einschalten'}`, on: { click: () => save(true) } }),
         rule.enabled ? el('button', { type: 'button', class: 'btn btn-sm btn-danger', text: 'Ausschalten', 'aria-label': `${title}: ausschalten`, on: { click: () => save(false) } }) : null]),
       el('p', { class: 'item-meta', text: rule.lastRunAt ? `Letzter Lauf: ${fmtDate(rule.lastRunAt)} · ${result && result.ok === false ? `Fehler: ${result.error || 'unbekannt'}` : `${fmtInt(((result && result.done) || []).length)} Aktion(en)`}` : 'Noch nicht gelaufen.' })
@@ -941,7 +945,9 @@ async function viewTrees(view) {
   const isAdmin = session.user.role === 'admin';
   view.append(el('div', { class: 'row row-between' }, [
     el('h2', { text: 'Bäume und Bestand' }),
-    isAdmin ? el('button', { type: 'button', class: 'btn btn-primary', text: 'Neuer Baum', on: { click: () => editTree(null) } }) : null
+    isAdmin ? el('div', { class: 'row' }, [
+      el('button', { type: 'button', class: 'btn btn-ghost', text: 'Ernte erfassen', on: { click: recordHarvest } }),
+      el('button', { type: 'button', class: 'btn btn-primary', text: 'Neuer Baum', on: { click: () => editTree(null) } })]) : null
   ]));
   if (!trees.length) { view.append(stateBlock('empty', 'Noch keine Bäume angelegt.')); return; }
   view.append(el('div', { class: 'table-wrap' }, [el('table', {}, [
@@ -970,6 +976,32 @@ async function viewTrees(view) {
   view.append(el('p', { class: 'muted', text: 'Ein neuer Baum startet ausgeblendet und wird erst nach Kontrolle eingeblendet. Ein neuer Preis gilt nur für künftige Anfragen; offene Anfragen behalten ihren Betrag. Die Anteilszahl kann nie unter „verkauft + reserviert" sinken.' }));
 }
 
+/** Weighed harvest of a non-olive tree. It then waits under "Weitere Prüfungen" and is allocated by shares once certified. */
+function recordHarvest() {
+  const tree = el('input', { type: 'text', maxlength: 80, placeholder: 'tree_14', autocomplete: 'off' });
+  const gross = el('input', { type: 'text', inputmode: 'decimal', autocomplete: 'off' });
+  const net = el('input', { type: 'text', inputmode: 'decimal', autocomplete: 'off' });
+  const read = (control, label) => {
+    const value = Number(control.value.trim().replace(',', '.'));
+    if (!control.value.trim() || !Number.isFinite(value) || value < 0) throw userError(`${label} ist keine gültige Zahl.`);
+    return value;
+  };
+  openDialog({
+    title: 'Ernte erfassen', confirmLabel: 'Zur Prüfung einreichen',
+    text: 'Für Pistazie, Mandel, Granatapfel, Walnuss und Dattelpalme. Nach der Freigabe unter „Weitere Prüfungen" wird das Nettogewicht nach Anteilen zugeteilt. Je Baum und Saison ist eine Ernte möglich. Olivenbäume laufen weiter über die Pressung der Ölmühle.',
+    build: (body) => body.append(field('Baum-Kennung', tree), el('div', { class: 'form-grid' }, [field('Erntegewicht brutto (kg)', gross), field('Nettogewicht nach Sortierung (kg)', net)])),
+    onConfirm: async () => {
+      const treeId = tree.value.trim();
+      if (!/^[A-Za-z0-9_-]{1,80}$/.test(treeId)) throw userError('Bitte eine gültige Baum-Kennung eingeben.');
+      const harvestKg = read(gross, 'Erntegewicht');
+      const netKg = read(net, 'Nettogewicht');
+      if (harvestKg <= 0 || netKg > harvestKg) throw userError('Das Nettogewicht darf nicht über dem Erntegewicht liegen.');
+      await api().submitHarvestBatch({ treeId, harvestKg, netKg });
+    }
+  }).then((ok) => { if (ok) toast('Ernte eingereicht. Sie wartet jetzt auf die Prüfung.'); });
+}
+
+const CROP_LABEL = { olive: 'Olive (Abrechnung in Litern Öl)', pistachio: 'Pistazie (kg)', almond: 'Mandel (kg)', pomegranate: 'Granatapfel (kg)', walnut: 'Walnuss (kg)', date: 'Dattelpalme (kg)' };
 const TREE_IMAGE = /^images\/[A-Za-z0-9_-]{1,80}\.(webp|png|jpg|jpeg)$/;
 /** Create (treeId = null) or edit a tree. The server validates again; this form only catches obvious slips early. */
 async function editTree(treeId) {
@@ -979,6 +1011,9 @@ async function editTree(treeId) {
       ({ data: tree } = await api().adminGetTree({ treeId }));
       const mill = await api().adminGetTreeMill({ treeId });
       tree.millId = (mill.data && mill.data.millId) || '';
+      const cls = await api().adminGetTreeClass({ treeId });
+      tree.cropCategory = (cls.data && cls.data.cropCategory) || 'olive';
+      tree.country = (cls.data && cls.data.country) || 'SY';
     } catch (error) {
       logError('tree load', error);
       toast(errorText(error), true);
@@ -1000,6 +1035,8 @@ async function editTree(treeId) {
     landPrice: number(tree && tree.hasLandOption ? (Number(tree.landPriceMinor) / 100).toFixed(2) : ''),
     landArea: number(tree && tree.hasLandOption ? tree.landAreaSqm : ''),
     millId: text(tree && tree.millId, { maxlength: 80, placeholder: 'mill_01' }),
+    crop: el('select', {}, Object.keys(CROP_LABEL).map((key) => el('option', { value: key, text: CROP_LABEL[key], selected: key === ((tree && tree.cropCategory) || 'olive') }))),
+    country: text((tree && tree.country) || 'SY', { maxlength: 2, placeholder: 'SY' }),
     images: el('textarea', { rows: 3, class: 'mono', text: ((tree && tree.images) || ['images/olive_branches_macro.webp']).join('\n') })
   };
   const landFields = el('div', { class: 'form-grid', hidden: !(tree && tree.hasLandOption) }, [field('Preis der Parzelle (USD)', f.landPrice), field('Fläche der Parzelle (m²)', f.landArea)]);
@@ -1049,6 +1086,7 @@ async function editTree(treeId) {
           field('Anzahl Anteile', f.totalShares), field('Preis je Anteil (USD)', f.price),
           field('Pflanzjahr (optional)', f.plantedYear), field('Ertrag pro Jahr in kg (optional)', f.yieldKg)
         ]),
+        el('div', { class: 'form-grid' }, [field('Kultur', f.crop), field('Land (zweistelliger Code, z. B. SY, TN, ES)', f.country)]),
         field('Bilder (ein Pfad je Zeile)', f.images),
         tree ? field('Ölmühle (Kennung, leer = keine)', f.millId) : null,
         el('label', { class: 'row' }, [hasLand, el('span', { text: tree ? 'Mit Parzellen-Option (nach dem Anlegen nicht änderbar)' : 'Mit Parzellen-Option' })]),
@@ -1057,10 +1095,14 @@ async function editTree(treeId) {
     },
     onConfirm: async () => {
       const payload = collect();
+      const cropCategory = f.crop.value;
+      const country = f.country.value.trim().toUpperCase();
+      if (!/^[A-Z]{2}$/.test(country)) throw userError('Land: bitte den zweistelligen Ländercode eingeben, z. B. SY, TN oder ES.');
       if (!tree) {
         const id = f.treeId.value.trim();
         if (!/^[a-z0-9_]{3,40}$/.test(id)) throw userError('Kennung: 3 bis 40 Zeichen, nur Kleinbuchstaben, Ziffern und _.');
         await api().adminCreateTree({ ...payload, treeId: id, hasLandOption: hasLand.checked });
+        if (cropCategory !== 'olive' || country !== 'SY') await api().adminSetTreeClass({ treeId: id, cropCategory, country });
         return;
       }
       // Send only what changed, so the audit log names the real change.
@@ -1071,9 +1113,11 @@ async function editTree(treeId) {
       const millId = f.millId.value.trim();
       if (millId && !/^[A-Za-z0-9_-]{1,80}$/.test(millId)) throw userError('Ölmühle: Die Kennung darf nur Buchstaben, Ziffern, _ und - enthalten.');
       const millChanged = millId !== (tree.millId || '');
-      if (!Object.keys(changed).length && !millChanged) throw userError('Es wurde nichts geändert.');
+      const classChanged = cropCategory !== tree.cropCategory || country !== tree.country;
+      if (!Object.keys(changed).length && !millChanged && !classChanged) throw userError('Es wurde nichts geändert.');
       if (Object.keys(changed).length) await api().adminUpdateTree({ ...changed, treeId: tree.treeId });
       if (millChanged) await api().adminSetTreeMill({ treeId: tree.treeId, millId: millId || null });
+      if (classChanged) await api().adminSetTreeClass({ treeId: tree.treeId, cropCategory, country });
     }
   });
   if (ok) { toast(tree ? 'Baum gespeichert.' : 'Baum angelegt (noch ausgeblendet).'); show('trees'); }
@@ -1169,7 +1213,33 @@ async function viewSettings(view) {
     confirmLabel: push.enabled ? 'Ausschalten' : 'Einschalten', danger: true,
     onConfirm: () => api().adminSetPushEnabled({ enabled: !push.enabled })
   }).then((ok) => { if (ok) { toast('Einstellung gespeichert.'); show('settings'); } }) } });
+  const mfa = await api().mfaState().catch((error) => { logError('mfa state', error); return null; });
+  const hasFactor = Boolean(mfa && mfa.factors.length);
+  const enroll = async () => {
+    let started;
+    try { started = await api().mfaEnroll(); } catch (error) { logError('mfa enroll', error); toast(errorText(error), true); return; }
+    const code = el('input', { type: 'text', inputmode: 'numeric', maxlength: 6, autocomplete: 'one-time-code' });
+    const ok = await openDialog({
+      title: 'Zweiten Faktor einrichten', confirmLabel: 'Aktivieren',
+      text: 'Öffne eine Authenticator-App (z. B. Aegis, 2FAS, Google Authenticator), füge ein Konto hinzu und gib danach den angezeigten Code ein. Ab dann fragt das Panel bei jeder Anmeldung danach.',
+      build: (body) => body.append(
+        started.qr.startsWith('data:image/svg+xml') ? el('img', { src: started.qr, alt: 'QR-Code für die Authenticator-App', width: 180, height: 180, class: 'qr' }) : null,
+        el('p', {}, ['Schlüssel für die manuelle Eingabe: ', el('span', { class: 'mono', text: started.secret || '–' })]),
+        field('Code aus der App', code)),
+      onConfirm: () => api().mfaVerify({ factorId: started.factorId, code: code.value.trim() })
+    });
+    if (ok) { toast('Zweiter Faktor ist aktiv.'); show('settings'); }
+  };
+  const remove = () => openDialog({
+    title: 'Zweiten Faktor entfernen', text: 'Danach reicht wieder das Passwort allein. Nur entfernen, wenn du das Gerät wechselst – und gleich neu einrichten.', confirmLabel: 'Entfernen', danger: true,
+    onConfirm: () => api().mfaUnenroll({ factorId: mfa.factors[0].id })
+  }).then((ok) => { if (ok) { toast('Zweiter Faktor entfernt.'); show('settings'); } });
   view.append(el('h2', { text: 'Einstellungen' }),
+    el('section', { class: 'item stack' }, [el('h3', { text: 'Zweiter Faktor für dieses Konto' }),
+      el('p', {}, [el('span', { class: `badge ${hasFactor ? 'badge-ok' : 'badge-warn'}`, text: hasFactor ? 'eingerichtet' : 'nicht eingerichtet' }),
+        hasFactor ? ' · Anmeldung nur mit Passwort und Code aus der App.' : ' · Ein gestohlenes Passwort reicht derzeit für den Zugriff auf dieses Konto.']),
+      mfa ? el('button', { type: 'button', class: `btn ${hasFactor ? 'btn-danger' : 'btn-primary'}`, text: hasFactor ? 'Zweiten Faktor entfernen' : 'Zweiten Faktor einrichten', on: { click: hasFactor ? remove : enroll } })
+        : el('p', { class: 'muted', text: 'Der Zustand konnte nicht geladen werden.' })]),
     el('section', { class: 'item stack' }, [el('h3', { text: 'Push-Benachrichtigungen' }),
       el('p', {}, [el('span', { class: `badge ${push.enabled ? 'badge-ok' : 'badge-warn'}`, text: push.enabled ? 'eingeschaltet' : 'ausgeschaltet' }), ` · ${fmtInt(push.activeDevices)} aktive Geräte`]), toggle]),
     el('section', { class: 'item' }, [el('h3', { text: 'Betrieb' }), el('ul', {}, [
@@ -1227,7 +1297,25 @@ async function signOut() {
   }
 }
 
-function onAuth(user) {
+/** Asks for the authenticator code when the account has a second factor. The database enforces the same rule. */
+async function passSecondFactor() {
+  let mfa;
+  try {
+    mfa = await api().mfaState();
+  } catch (error) {
+    logError('mfa state', error);
+    return true; // the panel cannot tell; the database still refuses every call without the factor
+  }
+  if (!mfa.required) return true;
+  const code = el('input', { type: 'text', inputmode: 'numeric', maxlength: 6, autocomplete: 'one-time-code' });
+  return openDialog({
+    title: 'Zweiter Faktor', text: 'Bitte den 6-stelligen Code aus deiner Authenticator-App eingeben.', confirmLabel: 'Bestätigen',
+    build: (body) => body.append(field('Code', code)),
+    onConfirm: () => api().mfaVerify({ factorId: mfa.factors[0].id, code: code.value.trim() })
+  });
+}
+
+async function onAuth(user) {
   if (!user) {
     session.user = null;
     $('view').replaceChildren();
@@ -1244,6 +1332,7 @@ function onAuth(user) {
     signOut();
     return;
   }
+  if (!(await passSecondFactor())) { signOut(); return; }
   session.user = { uid: user.uid, email: user.email, role: user.role };
   $('who').textContent = `${user.email} · ${ROLE_LABEL[user.role]}`;
   const tablist = $('tablist');
