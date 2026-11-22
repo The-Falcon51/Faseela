@@ -10489,7 +10489,16 @@
       ['tree_name', 'tree_name_en', 'region', 'region_en', 'tree_type', 'tree_type_en'].forEach(key => {
         if (catalog[key]) local[key] = catalog[key];
       });
-      if (catalog.crop_category) local.crop_category = catalog.crop_category;
+      if (catalog.crop_category) {
+        // An entry built from (or originally listed as) another crop must not keep that crop's pictures and
+        // variety text: a date palm created from an olive template would otherwise show an olive.
+        if (local.crop_category && local.crop_category !== catalog.crop_category) {
+          local.images = [getCropDefaultImage(catalog.crop_category)];
+          if (!catalog.tree_type) local.tree_type = '';
+          if (!catalog.tree_type_en) local.tree_type_en = '';
+        }
+        local.crop_category = catalog.crop_category;
+      }
       if (catalog.planted_year) {
         local.planted_year = catalog.planted_year;
         local.age_years = Math.max(0, new Date().getFullYear() - catalog.planted_year);
@@ -24023,7 +24032,7 @@ function setMarketplaceViewMode(mode) {
       } else if (mode === 'edit') {
         const treeId = document.getElementById('fndr-edit-tree-id').value;
         const tree = (state.trees || []).find(t => t.id === treeId);
-        defaultImg = (tree && tree.images && tree.images[0]) || 'images/tree_ancient_khodairi.webp';
+        defaultImg = (tree && tree.images && tree.images[0]) || getCropDefaultImage(tree && tree.crop_category);
       }
       setTreeActiveImage(defaultImg, mode);
       const fileInput = document.getElementById(`fndr-${mode}-tree-file-input`);
@@ -24075,7 +24084,7 @@ function setMarketplaceViewMode(mode) {
       const totalShares = tree.total_shares || tree.total_shares_available || 20;
       const availShares = tree.shares_available !== undefined ? tree.shares_available : (tree.total_shares_available !== undefined ? Math.round(tree.total_shares_available * 0.5) : 10);
       const availPct = Math.max(0, Math.min(100, Math.round((availShares / totalShares) * 100)));
-      const img = (tree.images && tree.images[0]) || 'images/tree_ancient_khodairi.webp';
+      const img = (tree.images && tree.images[0]) || getCropDefaultImage(tree.crop_category);
       
       // Land Addon
       const landSqm = (tree.land_parcel && (tree.land_parcel.land_area_sqm || tree.land_parcel.land_sqm)) || 5;
@@ -24197,7 +24206,7 @@ function setMarketplaceViewMode(mode) {
       }
 
       // Load active tree image & initialize presets
-      const currentImg = (tree.images && tree.images[0]) || 'images/tree_ancient_khodairi.webp';
+      const currentImg = (tree.images && tree.images[0]) || getCropDefaultImage(tree.crop_category);
       setTreeActiveImage(currentImg, 'edit');
       renderTreeImagePresets('edit');
 
