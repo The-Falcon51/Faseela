@@ -9,7 +9,7 @@ const T = {
     cta: 'احجز حصة الآن', copy: 'نسخ الرابط', copied: 'تم نسخ الرابط', footer: 'البيانات من تقارير ميدانية معتمدة وشهادات عصر مختبرية. لا وعد بعائد.',
     timeline_empty: 'لا توجد تقارير منشورة بعد. تظهر هنا بعد اعتماد أول تقرير ميداني من المدقق.',
     type: 'الصنف', planted: 'سنة الغرس', yieldKg: 'الإنتاج المقدّر', region: 'المنطقة', events: 'تقارير منشورة', pressings: 'عصرات معتمدة',
-    available: 'متاح', of: 'من', sold_out: 'جميع الحصص محجوزة', per_share: 'للحصة', land: 'خيار الأرض',
+    available: 'متاح', of: 'من', sold_out: 'جميع الحصص محجوزة', per_share: 'للحصة',
     no_pressing: 'لم تُعتمد عصرة بعد لهذا الموسم.', evoo: 'زيت بكر ممتاز', acidity: 'الحموضة', peroxide: 'البيروكسيد', yieldL: 'الكمية', cert: 'شهادة المختبر',
     years: 'سنة في زراعة الزيتون', not_found: 'لم نجد هذه الشجرة.', unavailable: 'تعذّر تحميل بيانات الشجرة. حاول مجدداً.',
     ev: { watering: 'سقاية', pruning: 'تقليم', fertilizing: 'تسميد', pest_control: 'مكافحة آفات', harvest: 'قطاف', other: 'عناية', pressing_certified: 'عصرة معتمدة' }
@@ -19,7 +19,7 @@ const T = {
     cta: 'Reserve a share', copy: 'Copy link', copied: 'Link copied', footer: 'Data from audited field reports and lab-certified pressings. No return is promised.',
     timeline_empty: 'No published reports yet. They appear here once the auditor approves the first field report.',
     type: 'Cultivar', planted: 'Planted', yieldKg: 'Est. yield', region: 'Region', events: 'published reports', pressings: 'certified pressings',
-    available: 'available', of: 'of', sold_out: 'All shares reserved', per_share: 'per share', land: 'land option',
+    available: 'available', of: 'of', sold_out: 'All shares reserved', per_share: 'per share',
     no_pressing: 'No certified pressing for this season yet.', evoo: 'Extra virgin', acidity: 'Acidity', peroxide: 'Peroxide', yieldL: 'Yield', cert: 'Lab certificate',
     years: 'years growing olives', not_found: 'We could not find this tree.', unavailable: 'The tree data could not be loaded. Please try again.',
     ev: { watering: 'Watering', pruning: 'Pruning', fertilizing: 'Fertilising', pest_control: 'Pest control', harvest: 'Harvest', other: 'Care', pressing_certified: 'Certified pressing' }
@@ -98,8 +98,7 @@ function render() {
     ? `<strong>${avail}</strong> ${esc(t('of'))} ${total} ${esc(t('available'))}`
     : `<strong>${esc(t('sold_out'))}</strong>`;
   $('shares-bar').style.width = `${Math.round(((total - avail) / total) * 100)}%`;
-  $('price').innerHTML = `<div>${money(tr.pricePerShareMinor, tr.currency)} <span style="color:var(--muted)">${esc(t('per_share'))}</span></div>` +
-    (tr.hasLandOption ? `<div style="font-size:.85rem;color:var(--muted)">${esc(t('land'))}: +${money(tr.landPriceMinor, tr.currency)} · ${esc(tr.landAreaSqm)} m²</div>` : '');
+  $('price').innerHTML = `<div>${money(tr.pricePerShareMinor, tr.currency)} <span style="color:var(--muted)">${esc(t('per_share'))}</span></div>`;
   $('cta').href = `./?tree=${encodeURIComponent(tr.treeId)}#marketplace`;
   $('cta').setAttribute('aria-disabled', String(avail <= 0 || tr.status !== 'listed'));
 

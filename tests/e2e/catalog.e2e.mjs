@@ -15,6 +15,8 @@ import * as mappers from './data-mappers.mjs';
 const rows = [
   { treeId: 'tree_01', status: 'listed', name: 'اسم جديد', nameEn: '<b>Renamed</b> by admin', region: 'طرطوس', regionEn: 'Tartus', treeType: '', treeTypeEn: '', cropCategory: 'olive', totalShares: 4, availableShares: 2, pricePerShareMinor: 3500, landPriceMinor: 1500, hasLandOption: true, currency: 'USD', images: ['images/olive_branches_macro.webp'] },
   { treeId: 'tree_99', status: 'listed', name: 'شجرة الخادم', nameEn: 'Server Only Tree', region: 'إدلب', regionEn: 'Idlib', treeType: 'صوراني', treeTypeEn: 'Sorani', cropCategory: 'olive', plantedYear: 1990, estimatedAnnualYieldKg: 40, totalShares: 10, availableShares: 10, pricePerShareMinor: 4100, landPriceMinor: 0, hasLandOption: false, currency: 'USD', images: ['images/olive_branches_macro.webp'] },
+  { treeId: 'tree_97', status: 'listed', name: 'نخلة الخادم', nameEn: 'Server Date Palm', region: 'دير الزور', regionEn: 'Deir ez-Zor', treeType: 'خستاوي', treeTypeEn: 'Khastawi', cropCategory: 'date', totalShares: 10, availableShares: 10, pricePerShareMinor: 3000, landPriceMinor: 0, hasLandOption: false, currency: 'USD', images: [] },
+  { treeId: 'tree_02', status: 'listed', name: 'نخلة معدلة', nameEn: 'Olive Turned Date', region: 'دير الزور', regionEn: 'Deir ez-Zor', treeType: '', treeTypeEn: '', cropCategory: 'date', totalShares: 10, availableShares: 10, pricePerShareMinor: 3000, landPriceMinor: 0, hasLandOption: false, currency: 'USD', images: [] },
   { treeId: 'tree_98', status: 'unlisted', name: 'مخفية', nameEn: 'Hidden Tree', cropCategory: 'olive', totalShares: 4, availableShares: 4, pricePerShareMinor: 1000, currency: 'USD' }
 ];
 window.FaseelaFirebase = window.FaseelaBackend = { backend: 'supabase', listPublicTrees: async () => rows.map((row) => mappers.mapPublicTree(row)), pendingGiftCode: () => '', pendingReferralCode: () => '' };
@@ -32,6 +34,13 @@ try {
   await page.waitForFunction(() => typeof state !== 'undefined' && state.serverCatalogLoaded === true, null, { timeout: 15000 });
   const trees = await page.evaluate(() => Object.fromEntries(state.trees.filter((t) => ['tree_01', 'tree_99', 'tree_98'].includes(t.id)).map((t) => [t.id, { name: t.tree_name_en, ar: t.tree_name, region: t.region_en, price: t.price_per_share, total: t.total_shares, only: t.server_only === true, farm: t.farm_name_en, logs: (t.maintenance_logs || []).length, land: !!(t.land_parcel && t.land_parcel.has_land_option), listed: t.server_listed, images: t.images }])));
   assert.equal(trees.tree_98, undefined, 'an unlisted server tree never appears');
+  const dates = await page.evaluate(() => state.trees.filter((t) => ['tree_97', 'tree_02'].includes(t.id)).map((t) => ({ id: t.id, crop: t.crop_category, images: t.images, type: t.tree_type_en || '' })));
+  assert.equal(dates.length, 2, 'both date palms are listed');
+  for (const d of dates) {
+    assert.equal(d.crop, 'date', `${d.id} keeps its crop`);
+    assert.deepEqual(d.images, ['images/tree_date_palm.webp'], `${d.id} shows the date palm picture, not an olive`);
+    assert.doesNotMatch(d.type, /olive/i, `${d.id} carries no olive variety text`);
+  }
   assert.deepEqual(trees.tree_99, { name: 'Server Only Tree', ar: 'شجرة الخادم', region: 'Idlib', price: 41, total: 10, only: true, farm: '', logs: 0, land: false, listed: true, images: ['images/olive_branches_macro.webp'] });
   assert.equal(trees.tree_01.name, 'bRenamed/b by admin', 'server text replaces the built-in one, markup characters removed');
   assert.equal(trees.tree_01.ar, 'اسم جديد'); assert.equal(trees.tree_01.only, false); assert.equal(trees.tree_01.price, 35);

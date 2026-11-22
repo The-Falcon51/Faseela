@@ -1,0 +1,232 @@
+<title>Faseela Ernte-Vorverkauf</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  /* Layout: one reading column with wide tables in their own scroll boxes; a season strip shows the farm year. */
+  :root {
+    --bg: #f6f7f2; --surface: #ffffff; --fg: #1d2318; --muted: #586150; --line: #d9ddd0;
+    --accent: #6b4a1f; --accent-soft: #f1e7d6; --olive: #3f4d2a; --olive-soft: #e6ebdc;
+    --warn: #8a5a00; --warn-soft: #fbf0d9; --crit: #9b2c2c; --crit-soft: #f8e2e2; --ok: #2f6b3a; --ok-soft: #e1f0e3;
+    --f-display: 'IBM Plex Sans Condensed', 'Arial Narrow', system-ui, sans-serif;
+    --f-body: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --f-mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+    --bg: #151912; --surface: #1d2219; --fg: #e8ebe1; --muted: #a9b19d; --line: #343b2d;
+    --accent: #d9a85f; --accent-soft: #3a2e1b; --olive: #b9c79a; --olive-soft: #283120;
+    --warn: #e7b85a; --warn-soft: #3a2f16; --crit: #ef9a9a; --crit-soft: #3d2222; --ok: #8fd39b; --ok-soft: #1f3423; color-scheme: dark; } }
+  :root[data-theme="dark"] {
+    --bg: #151912; --surface: #1d2219; --fg: #e8ebe1; --muted: #a9b19d; --line: #343b2d;
+    --accent: #d9a85f; --accent-soft: #3a2e1b; --olive: #b9c79a; --olive-soft: #283120;
+    --warn: #e7b85a; --warn-soft: #3a2f16; --crit: #ef9a9a; --crit-soft: #3d2222; --ok: #8fd39b; --ok-soft: #1f3423; color-scheme: dark; }
+  body { background: var(--bg); color: var(--fg); font: 16px/1.6 var(--f-body); }
+  .wrap { max-width: 50rem; margin: 0 auto; padding-block: 2.5rem 4rem;
+    padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+  header { display: grid; gap: .75rem; border-bottom: 2px solid var(--olive); padding-bottom: 1.5rem; margin-bottom: 2rem; }
+  .eyebrow { font: 500 .75rem/1 var(--f-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+  h1 { font: 700 clamp(2rem, 5vw, 2.75rem)/1.1 var(--f-display); margin: 0; color: var(--olive); text-wrap: balance; }
+  h2 { font: 700 1.5rem/1.2 var(--f-display); margin: 2.75rem 0 .75rem; color: var(--olive); text-wrap: balance; }
+  h3 { font: 600 1.05rem/1.3 var(--f-body); margin: 1.5rem 0 .5rem; }
+  p, li { max-width: 65ch; }
+  .lead { font-size: 1.15rem; color: var(--fg); margin: 0; }
+  .meta { font: .85rem/1.4 var(--f-mono); color: var(--muted); }
+  a { color: var(--accent); }
+  .verdict { background: var(--olive-soft); border-left: 4px solid var(--olive); padding: 1rem 1.25rem; border-radius: 0 8px 8px 0; }
+  .verdict p { margin: .25rem 0; }
+  .note { background: var(--warn-soft); color: var(--fg); border-left: 4px solid var(--warn); padding: .75rem 1rem; border-radius: 0 8px 8px 0; font-size: .95rem; }
+  .tbl { overflow-x: auto; margin: 1rem 0; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+  table { border-collapse: collapse; width: 100%; min-width: 34rem; font-size: .92rem; }
+  th, td { text-align: left; vertical-align: top; padding: .6rem .75rem; border-bottom: 1px solid var(--line); }
+  th { font: 600 .78rem/1.3 var(--f-body); text-transform: uppercase; letter-spacing: .05em; color: var(--muted); background: var(--bg); }
+  tr:last-child td { border-bottom: 0; }
+  td.num, .mono { font-family: var(--f-mono); font-variant-numeric: tabular-nums; }
+  .pill { display: inline-block; font: 600 .72rem/1 var(--f-body); padding: .3rem .5rem; border-radius: 999px; white-space: nowrap; }
+  .pill.ok { background: var(--ok-soft); color: var(--ok); } .pill.warn { background: var(--warn-soft); color: var(--warn); }
+  .pill.crit { background: var(--crit-soft); color: var(--crit); } .pill.rec { background: var(--accent-soft); color: var(--accent); }
+  ol.flow { counter-reset: s; list-style: none; padding: 0; display: grid; gap: .5rem; }
+  ol.flow li { counter-increment: s; display: grid; grid-template-columns: 2.25rem 1fr; gap: .75rem; align-items: start; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: .75rem; max-width: none; }
+  ol.flow li::before { content: counter(s); font: 600 .95rem/2rem var(--f-mono); text-align: center; color: var(--accent); background: var(--accent-soft); border-radius: 6px; height: 2rem; }
+  ol.flow li > div { min-width: 0; } ol.flow b { display: block; }
+  .season { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 2px; margin: 1rem 0 .25rem; font: .7rem/1 var(--f-mono); }
+  .season span { padding: .45rem 0; text-align: center; background: var(--surface); border: 1px solid var(--line); color: var(--muted); }
+  .season span.sale { background: var(--accent-soft); color: var(--accent); border-color: transparent; }
+  .season span.harv { background: var(--olive-soft); color: var(--olive); border-color: transparent; font-weight: 600; }
+  .legend { display: flex; flex-wrap: wrap; gap: 1rem; font-size: .8rem; color: var(--muted); }
+  .legend i { display: inline-block; width: .8rem; height: .8rem; border-radius: 2px; vertical-align: -1px; margin-right: .35rem; }
+  code { font-family: var(--f-mono); font-size: .88em; background: var(--olive-soft); padding: .05rem .3rem; border-radius: 4px; overflow-wrap: anywhere; }
+  pre.mermaid { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 1rem; overflow-x: auto; }
+  ul.tight li { margin: .25rem 0; }
+  footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid var(--line); font-size: .85rem; color: var(--muted); }
+  @media (max-width: 30rem) { .season { font-size: .55rem; } }
+</style>
+
+<div class="wrap">
+<header>
+  <span class="eyebrow">Produktplan · Stand 22.11.2026 · Entwurf zur Entscheidung</span>
+  <h1>Ernte-Vorverkauf für Partnerhöfe</h1>
+  <p class="lead">Höfe verkaufen einen Teil ihrer kommenden Ernte im Voraus: Olivenöl, Datteln, Pistazien. Kundinnen und Kunden zahlen jetzt und erhalten die Ware nach der Ernte. Der Hof bekommt einen Vorschuss für Ernte und Pressung.</p>
+  <p class="meta">Baut auf dem vorhandenen Marktplatz auf (Migration 50: Höfe, Produkte, Bestellungen, Hof-Konto, Sanktionsprüfung, Erstattung, Auszahlung).</p>
+</header>
+
+<section class="verdict">
+  <p><strong>Empfehlung:</strong> Den Vorverkauf als <em>Warenkauf mit Lieferung nach der Ernte</em> umsetzen, nicht als Beteiligung an Erträgen. Faseela (bzw. eine EU-Handelsgesellschaft) kauft dem Hof die Ernte mit Vorschuss ab und verkauft sie selbst an die Kundschaft weiter.</p>
+  <p>So bleibt das Angebot ein normaler Kaufvertrag. Es entsteht kein Finanzprodukt, und Faseela verwaltet keine fremden Kundengelder. Der Preis dafür: Faseela trägt die Verkäuferpflichten (Lebensmittelrecht, Gewährleistung, Umsatzsteuer, Import).</p>
+</section>
+
+<h2>Drei Angebote, klar getrennt</h2>
+<div class="tbl"><table>
+  <thead><tr><th>Angebot</th><th>Was die Kundschaft bekommt</th><th>Status</th></tr></thead>
+  <tbody>
+    <tr><td>Baum-Patenschaft</td><td>Patenschaft für einen Baum, Anteil am Öl nach Pressung, Baumseite mit Feldberichten</td><td><span class="pill ok">live (Testphase)</span></td></tr>
+    <tr><td>Baum + Grundstück</td><td>Patenschaft plus Fläche um den Baum</td><td><span class="pill crit">abgeschaltet</span> rechtlich nicht tragfähig ohne Grundbuch/Notar</td></tr>
+    <tr><td><strong>Ernte-Vorverkauf</strong></td><td>Eine feste Warenmenge (z. B. 3 l Öl, 2 kg Datteln) aus der Ernte eines benannten Hofs, Lieferung in einem genannten Zeitfenster</td><td><span class="pill rec">neu, dieser Plan</span></td></tr>
+  </tbody>
+</table></div>
+<p>Wichtig für die Abgrenzung: Der Vorverkauf verspricht <strong>Ware, keine Rendite</strong>. Es gibt keinen Weiterverkauf oder Handel mit Ansprüchen, keine Ausschüttung in Geld und keine Wertsteigerung. Fällt die Ernte aus, wird das Geld anteilig erstattet.</p>
+
+<h2>So sieht ein Angebot aus</h2>
+<div class="tbl"><table>
+  <thead><tr><th>Feld</th><th>Beispiel</th><th>Regel</th></tr></thead>
+  <tbody>
+    <tr><td>Hof, Kultur, Sorte</td><td>Hof Al-Kurdi, Olive, Khodairi</td><td>nur freigegebene Höfe</td></tr>
+    <tr><td>Einheit</td><td class="mono">3 l natives Olivenöl extra, Kanister</td><td>Lebensmittelkennzeichnung vorab festgelegt</td></tr>
+    <tr><td>Geschätzte Hofernte</td><td class="mono">4 800 l</td><td>Beleg: Vorjahresmengen, Mühlenbelege, Feldfotos</td></tr>
+    <tr><td>Kontingent</td><td class="mono">600 Einheiten = 1 800 l</td><td>höchstens 50 % der geschätzten Ernte abzüglich Patenschafts-Öl</td></tr>
+    <tr><td>Preis</td><td class="mono">39,00 € inkl. Gebühr</td><td>Festpreis in EUR, kein Nachschuss</td></tr>
+    <tr><td>Mindestmenge</td><td class="mono">200 Einheiten</td><td>wird sie nicht erreicht: volle Erstattung, Kampagne endet</td></tr>
+    <tr><td>Verkaufszeitraum</td><td class="mono">01.04.–31.07.2027</td><td>endet spätestens 6 Wochen vor Erntebeginn</td></tr>
+    <tr><td>Lieferfenster</td><td class="mono">Jan–Mär 2028</td><td>Pflichtangabe vor Kauf (Art. 246a EGBGB)</td></tr>
+  </tbody>
+</table></div>
+
+<h3>Erntekalender und Verkaufsfenster</h3>
+<div class="season" aria-label="Jahresverlauf Olive und Dattel">
+  <span class="sale">Jan</span><span class="sale">Feb</span><span class="sale">Mär</span><span class="sale">Apr</span><span class="sale">Mai</span><span class="sale">Jun</span><span class="sale">Jul</span><span class="harv">Aug</span><span class="harv">Sep</span><span class="harv">Okt</span><span class="harv">Nov</span><span class="harv">Dez</span>
+</div>
+<div class="legend"><span><i style="background:var(--accent-soft)"></i>Vorverkauf möglich</span><span><i style="background:var(--olive-soft)"></i>Ernte (Datteln Aug–Okt, Oliven Okt–Dez)</span></div>
+<p class="meta">Die Ernte 2026 ist abgeschlossen. Ein realistischer Pilot verkauft im Frühjahr 2027 für die Ernte 2027.</p>
+
+<h2>Ablauf vom Angebot bis zur Lieferung</h2>
+<ol class="flow">
+  <li><div><b>Hof stellt das Angebot ein</b>Im Hof-Portal mit Schätzung und Belegen (Fotos mit Datum und GPS, Mühlenbelege des Vorjahres).</div></li>
+  <li><div><b>Vier-Augen-Prüfung</b>Zwei Teammitglieder geben frei, unabhängig vom Hof. Kontingentgrenze und Sanktionsprüfung des Hofs werden automatisch kontrolliert.</div></li>
+  <li><div><b>Verkauf</b>Kundschaft bestellt und zahlt über den Zahlungsdienstleister. Jede Bestellung reserviert Einheiten aus dem Kontingent.</div></li>
+  <li><div><b>Kampagnenende</b>Mindestmenge erreicht: Kampagne gilt. Nicht erreicht: alle Zahlungen werden automatisch erstattet.</div></li>
+  <li><div><b>Vorschuss an den Hof</b>30 % des Hofanteils für Pflege, Ernte und Pressung. Erfasst im Hof-Konto mit Bankreferenz.</div></li>
+  <li><div><b>Ernte- und Pressungsberichte</b>Feldberichte und Pressungsprotokoll laufen über die vorhandenen Funktionen (Feld-Updates, Pressungs-Zertifikat der Partnermühle).</div></li>
+  <li><div><b>Import und Versand</b>Ware geht an das EU-Lager, wird gekennzeichnet und verschickt. Kundschaft sieht den Status.</div></li>
+  <li><div><b>Restzahlung an den Hof</b>70 % nach Zustellung. Bei Teilausfall wird aus diesem Rückbehalt anteilig erstattet.</div></li>
+</ol>
+
+<pre class="mermaid">
+sequenceDiagram
+  participant H as Hof
+  participant F as Faseela
+  participant P as Zahlungsdienst
+  participant K as Kundschaft
+  H->>F: Angebot + Belege
+  F->>F: Vier-Augen-Freigabe, Screening
+  K->>P: Bestellung und Zahlung
+  P-->>F: Zahlung bestätigt
+  alt Mindestmenge erreicht
+    F->>H: Vorschuss 30 %
+    H->>F: Ernte- und Pressungsbericht
+    F->>K: Lieferung
+    F->>H: Rest 70 %
+  else nicht erreicht
+    F->>K: volle Erstattung
+  end
+</pre>
+
+<h2>Geldfluss: die wichtigste Entscheidung</h2>
+<p>Wer Geld von Kundschaft annimmt und an Höfe weiterleitet, erbringt schnell einen erlaubnispflichtigen Zahlungsdienst (Finanztransfergeschäft nach ZAG). Die BaFin lässt Online-Marktplätze nach ihrer Verwaltungspraxis nicht unter die Handelsvertreter-Ausnahme fallen.</p>
+<div class="tbl"><table>
+  <thead><tr><th>Modell</th><th>Vorteil</th><th>Nachteil</th><th>Bewertung</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Eigenhandel:</strong> Faseela kauft vom Hof, verkauft selbst</td><td>Kein fremdes Kundengeld, kein ZAG-Thema. Ein deutscher Vertragspartner schafft Vertrauen. Import aus einer Hand.</td><td>Verkäuferpflichten, Umsatzsteuer, Warenrisiko bei Faseela</td><td><span class="pill rec">empfohlen</span></td></tr>
+    <tr><td>Vermittlung mit Marktplatz-Zahlungsdienst (z. B. Stripe Connect, Mangopay)</td><td>Geld bleibt beim lizenzierten Dienst, gestaffelte Auszahlung möglich</td><td>Auszahlung an Konten in Syrien wird von solchen Diensten wahrscheinlich nicht unterstützt; Hof bräuchte Verkäuferrolle samt EU-Pflichten</td><td><span class="pill warn">nur mit EU-Partner der Höfe</span></td></tr>
+    <tr><td>Überweisung auf Faseela-Konto, Weiterleitung an Hof</td><td>wie heute bei Patenschaften, schnell</td><td>Hohes Risiko eines unerlaubten Zahlungsdienstes</td><td><span class="pill crit">nicht verwenden</span></td></tr>
+  </tbody>
+</table></div>
+<p class="note">Das ist eine Einschätzung, keine Rechtsberatung. Vor dem Start müssen ein Anwalt für Bank- und Aufsichtsrecht und eine Steuerberatung das gewählte Modell bestätigen. Gleiches gilt für die Frage, ob die bestehende Patenschaft mit Überweisung an das Faseela-Konto denselben Maßstab erfüllt.</p>
+
+<h2>Recht und Compliance</h2>
+<div class="tbl"><table>
+  <thead><tr><th>Thema</th><th>Was gilt</th><th>Umsetzung</th></tr></thead>
+  <tbody>
+    <tr><td>Sanktionen Syrien</td><td>Die EU hat die Wirtschaftssanktionen im Mai 2025 weitgehend aufgehoben (VO (EU) 2025/1098). Waffenembargo und Listungen von Personen und Einrichtungen bleiben.</td><td>Screening jedes Hofs, jeder Mühle und jedes Zahlers gegen die EU-Listen. Das ist für Zahler vorhanden, für Höfe neu. Den aktuellen Stand der VO 36/2012 vor dem Start in EUR-Lex prüfen.</td></tr>
+    <tr><td>Fernabsatz</td><td>Widerrufsrecht 14 Tage ab Lieferung. Öl und Datteln sind nicht schnell verderblich, die Ausnahme greift kaum. Lieferzeitraum vor Vertragsschluss angeben.</td><td>Widerruf bis Lieferung jederzeit erlauben, danach 14 Tage. Erstattung über den Zahlungsdienst.</td></tr>
+    <tr><td>Lebensmittel</td><td>Kennzeichnung (VO 1169/2011), Rückverfolgbarkeit (VO 178/2002), Vermarktungsnormen für Olivenöl, Einfuhrkontrollen</td><td>EU-Lager oder Importeur als verantwortlicher Lebensmittelunternehmer. Chargennummer der Pressung auf jedem Kanister.</td></tr>
+    <tr><td>Vermögensanlage</td><td>Kein Anlageprodukt, solange Ware statt Geldertrag versprochen wird und Ansprüche nicht handelbar sind</td><td>Wortwahl ohne Rendite und Investition (Wording-Prüfung im Build erweitern). Weitergabe nur als Geschenk zum Nennwert.</td></tr>
+    <tr><td>Umsatzsteuer, AGB, Impressum</td><td>Vorauszahlung löst Umsatzsteuer schon bei Zahlung aus (Anzahlungsbesteuerung)</td><td>Steuerberatung vor dem Start. AGB für den Warenverkauf; die Hofadresse im Impressum vervollständigen.</td></tr>
+  </tbody>
+</table></div>
+
+<h2>Technik: Erweiterung des Marktplatzes</h2>
+<p>Kein zweites System. Der Vorverkauf ist eine Bestellart des vorhandenen Marktplatzes, mit eigener Kampagnen-Tabelle und Meilensteinen. Alle Regeln gelten weiter: RLS auf jeder Tabelle, Schreibzugriffe nur über <code>SECURITY DEFINER</code>-Funktionen im Schema <code>private</code> mit <code>search_path = ''</code>, Vier-Augen-Prüfung, Audit-Log, Idempotenz.</p>
+<div class="tbl"><table>
+  <thead><tr><th>Baustein</th><th>Inhalt</th></tr></thead>
+  <tbody>
+    <tr><td class="mono">public.harvest_offers</td><td>Hof, Kultur, Saison, Einheit, Schätzung, Kontingent, Mindestmenge, Preis (Minor Units), Verkaufs- und Lieferfenster, Status <span class="mono">draft → review → listed → funded | failed → harvesting → shipping → settled</span></td></tr>
+    <tr><td class="mono">public.orders.kind</td><td>neue Spalte <span class="mono">'shop' | 'presale'</span> plus <span class="mono">offer_id</span>; Preise, Gebühr und Lieferfenster werden wie heute in die Bestellung kopiert</td></tr>
+    <tr><td class="mono">private.harvest_milestones</td><td>Vorschuss, Erntebericht, Pressung, Versand, Abrechnung; jeweils mit Beleg und Prüfer</td></tr>
+    <tr><td class="mono">private.farm_ledger</td><td>neue Buchungsarten <span class="mono">presale_hold</span>, <span class="mono">presale_advance</span>, <span class="mono">presale_release</span>, <span class="mono">presale_refund</span>; Saldo pro Kampagne nie negativ (Constraint)</td></tr>
+    <tr><td class="mono">Kontingent-Sperre</td><td>Advisory-Lock pro Angebot wie bei Reservierungen; Summe aus Vorverkauf und Patenschafts-Öl ≤ Anteil der Schätzung</td></tr>
+    <tr><td class="mono">Cron-Jobs</td><td>Kampagnen schließen, Mindestmenge prüfen, Erstattungen auslösen, säumige Meilensteine melden</td></tr>
+    <tr><td class="mono">Oberflächen</td><td>Hof-Portal (Angebot, Belege, Berichte), Admin-Panel (Freigabe, Meilensteine, Auszahlung), Kundenseite (Kampagne, Fortschritt, Lieferstatus); AR/EN/DE</td></tr>
+    <tr><td class="mono">Tests</td><td>SQL-Suite je Regel (Kontingent, Mindestmenge, Erstattung, Vier-Augen, Isolation zwischen Höfen), Unit-Tests der Mapper, Browser-Suite für die drei Oberflächen</td></tr>
+  </tbody>
+</table></div>
+
+<h2>Risiken und Gegenmaßnahmen</h2>
+<div class="tbl"><table>
+  <thead><tr><th>Risiko</th><th>Gegenmaßnahme</th></tr></thead>
+  <tbody>
+    <tr><td>Ernteausfall durch Dürre, Frost oder Schädlinge</td><td>Kontingent höchstens 50 % der Schätzung; 70 % Rückbehalt bis Lieferung; anteilige Erstattung automatisiert</td></tr>
+    <tr><td>Hof überschätzt oder verkauft doppelt</td><td>Belege mit Datum und Ort, Mühlenbelege des Vorjahres, eine gemeinsame Kontingentgrenze für Vorverkauf und Patenschaft, Prüfung durch zwei Personen</td></tr>
+    <tr><td>Import verzögert sich (Zoll, Transport, Lage vor Ort)</td><td>großzügiges Lieferfenster, Statusseite, Erstattung auf Wunsch nach Ablauf des Fensters</td></tr>
+    <tr><td>Wechselkurs EUR/USD/SYP</td><td>Kundenpreis fest in EUR; Hofpreis bei Kampagnenstart in USD festschreiben; Kursrisiko trägt Faseela und kalkuliert es in die Gebühr ein</td></tr>
+    <tr><td>Werbung klingt nach Geldanlage</td><td>Wording-Prüfung im Build um Vorverkaufs-Texte erweitern (keine Rendite, Wertsteigerung, Investition)</td></tr>
+  </tbody>
+</table></div>
+
+<h2>Fahrplan</h2>
+<div class="tbl"><table>
+  <thead><tr><th>Phase</th><th>Dauer</th><th>Ergebnis</th></tr></thead>
+  <tbody>
+    <tr><td>0 · Rechtsrahmen</td><td class="num">3–4 Wo.</td><td>Modell gewählt und anwaltlich bestätigt, Zahlungsdienst und EU-Lager/Importeur vertraglich gesichert, AGB, Steuerklärung</td></tr>
+    <tr><td>1 · Datenbank und Admin</td><td class="num">3 Wo.</td><td>Migration, Funktionen, SQL-Tests, Freigabe und Meilensteine im Admin-Panel</td></tr>
+    <tr><td>2 · Hof-Portal und Kundenseite</td><td class="num">3 Wo.</td><td>Angebot einstellen, Kampagnenseite, Bestellung, Statusverfolgung; Browser-Tests</td></tr>
+    <tr><td>3 · Pilot</td><td class="num">Apr–Dez 2027</td><td>1–2 Höfe, ein Produkt (Olivenöl), Kontingent klein (≤ 200 Einheiten), Lieferung Anfang 2028</td></tr>
+    <tr><td>4 · Ausbau</td><td class="num">ab 2028</td><td>Datteln, Pistazien, weitere Länder; Auswertung des Piloten entscheidet</td></tr>
+  </tbody>
+</table></div>
+
+<h3>Woran der Pilot gemessen wird</h3>
+<ul class="tight">
+  <li>Anteil der Kampagnen, die die Mindestmenge erreichen</li>
+  <li>pünktliche Lieferung innerhalb des Fensters (Ziel: mindestens 90 %)</li>
+  <li>Erstattungsquote und deren Gründe</li>
+  <li>Zeit von der Zustellung bis zur Restzahlung an den Hof</li>
+  <li>Abweichung zwischen geschätzter und tatsächlicher Ernte je Hof</li>
+</ul>
+
+<h2>Ihre Entscheidungen</h2>
+<div class="tbl"><table>
+  <thead><tr><th>Frage</th><th>Vorschlag</th></tr></thead>
+  <tbody>
+    <tr><td>Wer ist Verkäufer?</td><td>Faseela bzw. eine EU-Handelsgesellschaft (Eigenhandel)</td></tr>
+    <tr><td>Zahlungsdienst</td><td>ein EU-Anbieter mit Kartenzahlung, SEPA und Erstattung über API; Angebote einholen</td></tr>
+    <tr><td>Vorschussquote an Höfe</td><td>30 % bei Kampagnenerfolg, 70 % nach Lieferung</td></tr>
+    <tr><td>Pilotprodukt</td><td>Olivenöl, weil Pressung und Mühlenzertifikat schon in der Plattform abgebildet sind</td></tr>
+  </tbody>
+</table></div>
+
+<footer>
+  Quellen: <a href="https://eur-lex.europa.eu/eli/reg/2025/1098/oj/eng" target="_blank" rel="noopener">VO (EU) 2025/1098</a> ·
+  <a href="https://www.consilium.europa.eu/en/policies/syria/" target="_blank" rel="noopener">Rat der EU, Syrien</a> ·
+  <a href="https://bafin.de/EN/Aufsicht/ZahlungsdienstePSD2/ZulassungspflichtigeZahlungsdienste/ZulassungspflichtigeZahlungsdienste_node_en.html" target="_blank" rel="noopener">BaFin, erlaubnispflichtige Zahlungsdienste</a> ·
+  <a href="https://www.twobirds.com/en/insights/2023/germany/amendment-to-bafins-zag-guidance-notes" target="_blank" rel="noopener">Bird &amp; Bird zum ZAG-Merkblatt 2023</a>.
+  Rechtliche Einordnungen sind Einschätzungen und ersetzen keine Rechtsberatung.
+</footer>
+</div>

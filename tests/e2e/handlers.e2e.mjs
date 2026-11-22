@@ -1074,7 +1074,7 @@ try {
     await p.goto(base + pg, { waitUntil: 'load' });
     if (pg.startsWith('verify')) {
       await p.waitForFunction(() => document.getElementById('result').dataset.state === 'ok', null, { timeout: 10000 });
-      assert.match(await p.textContent('#result'), /Genuine certificate[\s\S]*M\.H\./);
+      assert.match(await p.textContent('#result'), /Genuine sponsorship certificate[\s\S]*M\.H\./);
     } else if (pg.startsWith('tree')) {
       await p.waitForFunction(() => document.getElementById('main').getAttribute('aria-busy') === 'false', null, { timeout: 10000 });
       const tree = await p.evaluate(() => ({
