@@ -6863,6 +6863,14 @@
       return SUPPORTED_LANGS.includes(lang) ? lang : 'ar';
     }
 
+    /**
+     * Text in the active language, for strings built in code. Arabic, English, German - in that order.
+     * Use this instead of an "Arabic or not" check, which shows English to German readers.
+     */
+    function tr3(ar, en, de) {
+      return state.currentLang === 'ar' ? ar : (state.currentLang === 'de' ? de : en);
+    }
+
     /** BCP 47 locale for dates in the active UI language. */
     function uiLocale() {
       return LANG_LOCALES[normalizeLang(state.currentLang)];
