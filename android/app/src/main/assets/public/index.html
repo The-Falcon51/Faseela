@@ -42,13 +42,13 @@
   <title>فسيلة | المنصة التشاركية لأشجار الزيتون في سوريا</title>
   <!-- Fonts: self-hosted (scripts/build-web.cjs), no Google Fonts requests -->
   <link rel="preload" href="fonts/cairo-arabic-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
-  <meta name="faseela-build" content="8fedd7da442b">
+  <meta name="faseela-build" content="078a04ebae22">
   <link rel="stylesheet" href="fonts/fonts.css">
   <!-- Styles: Tailwind is prebuilt by scripts/build-web.cjs (no runtime CDN) -->
-  <link rel="stylesheet" href="assets/tailwind.css?v=8fedd7da442b">
+  <link rel="stylesheet" href="assets/tailwind.css?v=078a04ebae22">
   <!-- Lucide Icons (self-hosted, version pinned in package.json) -->
   <script src="vendor/lucide.min.js"></script>
-  <script src="events.js?v=8fedd7da442b"></script>
+  <script src="events.js?v=078a04ebae22"></script>
   <style>
     :root {
       --sat: env(safe-area-inset-top, 0px);
@@ -2281,7 +2281,7 @@
 
         <div class="bg-white dark:bg-stone-900 p-4 rounded-2xl border border-stone-200 dark:border-stone-800 shadow-2xs">
           <div class="flex items-center justify-between text-stone-500 dark:text-stone-400 mb-1">
-            <span class="font-bold text-[11px]" data-i18n="dash_stat_oil">حصة الزيت المتوقعة</span>
+            <span class="font-bold text-[11px]" id="dash-expected-oil-label" data-i18n="dash_stat_oil">حصة الزيت المتوقعة</span>
             <div class="w-7 h-7 rounded-lg bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-400 flex items-center justify-center">
               <i data-lucide="droplets" class="w-3.5 h-3.5"></i>
             </div>
@@ -2375,9 +2375,9 @@
             <div>
               <h2 class="text-lg font-black text-stone-900 dark:text-white flex items-center gap-2">
                 <i data-lucide="droplets" class="w-5 h-5 text-amber-600 dark:text-amber-400" aria-hidden="true"></i>
-                <span data-i18n="oil_section_title">زيتي</span>
+                <span data-i18n="oil_section_title">زيتي ومحصولي</span>
               </h2>
-              <p class="text-xs text-stone-500 dark:text-stone-400 mt-0.5" data-i18n="oil_section_sub">نصيبك من كل دفعة عصر معتمدة لأشجارك. اطلب توصيله أو استلامه من المعصرة أو التبرع به، ويُراجَع كل طلب.</p>
+              <p class="text-xs text-stone-500 dark:text-stone-400 mt-0.5" data-i18n="oil_section_sub">نصيبك من كل دفعة عصر أو محصول موزون معتمد لأشجارك. اطلب توصيله أو استلامه أو التبرع به، ويُراجَع كل طلب.</p>
             </div>
             <div class="flex items-center gap-2 self-start sm:self-auto">
               <span class="text-xs font-bold text-stone-600 dark:text-stone-300"><span data-i18n="oil_available_lbl">متاح:</span> <span id="oil-available-liters" class="font-mono text-amber-700 dark:text-amber-300">0 L</span></span>
@@ -4864,11 +4864,16 @@
         </button>
       </div>
       <div class="p-5 overflow-y-auto space-y-4 text-xs">
+        <fieldset id="oil-group-fields" class="hidden space-y-2">
+          <legend class="font-bold text-stone-700 dark:text-stone-300 mb-1" data-i18n="oil_group_lbl">ماذا تريد أن تطلب؟</legend>
+          <div id="oil-group-options" class="space-y-2"></div>
+          <p class="text-[10px] text-stone-500 dark:text-stone-400" data-i18n="oil_group_hint">يُطلب زيت الزيتون والمحصول الموزون كلٌّ على حدة.</p>
+        </fieldset>
         <fieldset class="space-y-2">
           <legend class="font-bold text-stone-700 dark:text-stone-300 mb-1" data-i18n="oil_kind_lbl">طريقة الاستلام</legend>
           <label class="flex items-center gap-2 p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 cursor-pointer"><input type="radio" name="oil-kind" value="delivery" checked data-change="oilKindChanged()" class="text-amber-600 focus:ring-amber-600"><span data-i18n="oil_kind_delivery">تسليم إلى عنواني</span></label>
-          <label class="flex items-center gap-2 p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 cursor-pointer"><input type="radio" name="oil-kind" value="pickup" data-change="oilKindChanged()" class="text-amber-600 focus:ring-amber-600"><span data-i18n="oil_kind_pickup">استلام من المعصرة</span></label>
-          <label class="flex items-center gap-2 p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 cursor-pointer"><input type="radio" name="oil-kind" value="donate" data-change="oilKindChanged()" class="text-amber-600 focus:ring-amber-600"><span data-i18n="oil_kind_donate">تبرّع بالزيت لعائلة محتاجة</span></label>
+          <label class="flex items-center gap-2 p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 cursor-pointer"><input type="radio" name="oil-kind" value="pickup" data-change="oilKindChanged()" class="text-amber-600 focus:ring-amber-600"><span id="oil-kind-pickup-lbl" data-i18n="oil_kind_pickup">استلام من المعصرة</span></label>
+          <label class="flex items-center gap-2 p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 cursor-pointer"><input type="radio" name="oil-kind" value="donate" data-change="oilKindChanged()" class="text-amber-600 focus:ring-amber-600"><span id="oil-kind-donate-lbl" data-i18n="oil_kind_donate">تبرّع بالزيت لعائلة محتاجة</span></label>
         </fieldset>
         <div id="oil-contact-fields" class="space-y-2">
           <div class="grid grid-cols-2 gap-2">
@@ -5450,6 +5455,34 @@
           <button type="button" id="fqr-submit" data-click="submitQuickReport()" class="w-full bg-olive-800 hover:bg-olive-900 disabled:opacity-60 disabled:cursor-not-allowed text-white py-3 rounded-2xl font-bold text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer">
             <i data-lucide="send" class="w-4 h-4" aria-hidden="true"></i><span data-i18n="fqr_submit">إرسال التقرير</span>
           </button>
+        </section>
+
+        <!-- Weighed harvest (every crop except olive): shown only when such a tree is assigned to this farmer -->
+        <section id="farmer-harvest" class="hidden bg-white dark:bg-stone-900 rounded-3xl border border-stone-200 dark:border-stone-800 p-5 space-y-4" aria-labelledby="fh-title">
+          <div>
+            <h3 id="fh-title" class="font-black text-base text-stone-900 dark:text-white flex items-center gap-2"><i data-lucide="scale" class="w-4 h-4 text-olive-700 dark:text-olive-300" aria-hidden="true"></i><span data-i18n="fh_title">تسجيل وزن المحصول</span></h3>
+            <p class="text-xs text-stone-600 dark:text-stone-400 mt-1" data-i18n="fh_sub">للمحاصيل التي تُوزن بالكيلوغرام (كل المحاصيل عدا الزيتون). مرة واحدة لكل شجرة وموسم. بعد مراجعة الجودة يوزَّع الوزن الصافي على كافلي الشجرة بحسب حصصهم.</p>
+          </div>
+          <div>
+            <label for="fh-tree" class="block text-xs font-bold text-stone-800 dark:text-stone-200 mb-1" data-i18n="fqr_tree_lbl">الشجرة</label>
+            <select id="fh-tree" class="w-full bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-xl p-2.5 text-sm text-stone-900 dark:text-white"></select>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label for="fh-gross" class="block text-xs font-bold text-stone-800 dark:text-stone-200 mb-1" data-i18n="fh_gross_lbl">الوزن الإجمالي (كغ)</label>
+              <input id="fh-gross" type="text" inputmode="decimal" autocomplete="off" maxlength="9" aria-describedby="fh-hint" class="w-full bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-xl p-2.5 text-sm text-stone-900 dark:text-white font-mono">
+            </div>
+            <div>
+              <label for="fh-net" class="block text-xs font-bold text-stone-800 dark:text-stone-200 mb-1" data-i18n="fh_net_lbl">الوزن الصافي بعد الفرز (كغ)</label>
+              <input id="fh-net" type="text" inputmode="decimal" autocomplete="off" maxlength="9" aria-describedby="fh-hint" class="w-full bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-xl p-2.5 text-sm text-stone-900 dark:text-white font-mono">
+            </div>
+          </div>
+          <p id="fh-hint" class="text-[11px] text-stone-600 dark:text-stone-400" data-i18n="fh_hint">بالكيلوغرام مع ثلاث خانات عشرية على الأكثر، مثال: 24,5. لا يمكن أن يتجاوز الوزن الصافي الوزن الإجمالي.</p>
+          <p id="fh-msg" class="hidden text-xs font-bold" role="status" aria-live="polite"></p>
+          <button type="button" id="fh-submit" data-click="submitFarmerHarvest()" class="w-full bg-olive-800 hover:bg-olive-900 disabled:opacity-60 disabled:cursor-not-allowed text-white py-3 rounded-2xl font-bold text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer">
+            <i data-lucide="send" class="w-4 h-4" aria-hidden="true"></i><span data-i18n="fh_submit">إرسال للمراجعة</span>
+          </button>
+          <div id="fh-history" class="hidden"></div>
         </section>
 
         <section id="farmer-profile-card" class="bg-white dark:bg-stone-900 rounded-3xl border border-stone-200 dark:border-stone-800 p-5 space-y-4" aria-labelledby="fp-title">
@@ -9235,9 +9268,9 @@
   </nav>
 
   <!-- ================= JAVASCRIPT LOGIC & STATE ================= -->
-  <script src="app.js?v=8fedd7da442b"></script>
-  <script src="assistant-knowledge.js?v=8fedd7da442b"></script>
-  <script src="shop.js?v=8fedd7da442b"></script>
+  <script src="app.js?v=078a04ebae22"></script>
+  <script src="assistant-knowledge.js?v=078a04ebae22"></script>
+  <script src="shop.js?v=078a04ebae22"></script>
 
   <!-- ================= 1. MODAL: FOUNDER EDIT TREE & PRICING ================= -->
   <div id="modal-fndr-edit-tree" role="dialog" aria-modal="true" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 mobile-sheet-overlay">
@@ -10651,6 +10684,6 @@
     </div>
   </div>
 
-  <script type="module" src="./supabase-client.mjs?v=8fedd7da442b"></script>
+  <script type="module" src="./supabase-client.mjs?v=078a04ebae22"></script>
 </body>
 </html>

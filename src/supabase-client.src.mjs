@@ -563,9 +563,43 @@ const watchMyInvestments = (callback, onError) => watchOwnRows('investment_reque
 const watchMyShares = (callback, onError) => watchOwnRows('shares', 'user_id', mappers.mapShare, callback, onError);
 const watchMyTransactions = (callback, onError) => watchOwnRows('transactions', 'user_id', mappers.mapTransaction, callback, onError);
 const watchMyFarmerUpdates = (callback, onError) => watchOwnRows('farmer_updates', 'farmer_uid', mappers.normalizeDoc, callback, onError);
-const watchMyPressingBatches = (callback, onError) => watchOwnRows('pressing_batches', 'submitted_by_uid', mappers.normalizeDoc, callback, onError);
-const watchMyOilAllocations = (callback, onError) => watchOwnRows('oil_allocations', 'user_id', mappers.normalizeDoc, callback, onError);
-const watchMyOilRequests = (callback, onError) => watchOwnRows('oil_requests', 'user_id', mappers.normalizeDoc, callback, onError);
+// Mill pressings and weighed harvests share the table; a harvest row arrives with isHarvest, harvestKg and netKg.
+const watchMyPressingBatches = (callback, onError) => watchOwnRows('pressing_batches', 'submitted_by_uid', mappers.mapPressingBatch, callback, onError);
+
+/**
+ * An allocation has no unit of its own: its amount is millilitres for an olive tree and grams for every other crop.
+ * The crop is read from the public catalogue, which lists listed trees only, so an allocation of an unlisted tree
+ * keeps `unit: null` and the page must not print it as litres.
+ */
+const allocationCropByTree = new Map();
+async function withAllocationUnits(rows) {
+  const missing = [...new Set(rows.map((row) => row.treeId).filter((id) => typeof id === 'string' && id && !allocationCropByTree.has(id)))];
+  if (missing.length > 0) {
+    const { data, error } = await supabase.from('trees_public').select('tree_id,crop_category').in('tree_id', missing);
+    if (error) console.warn('[faseela] crop lookup for allocations failed:', error.code || error.message);
+    for (const tree of data || []) allocationCropByTree.set(tree.tree_id, tree.crop_category);
+  }
+  return rows.map((row) => mappers.mapOilAllocation(row, allocationCropByTree));
+}
+function watchMyOilAllocations(callback, onError) {
+  let active = true;
+  let latest = 0;
+  const stop = watchOwnRows('oil_allocations', 'user_id', mappers.normalizeDoc, (rows) => {
+    const mine = ++latest;
+    // Only the newest load may publish; a slow crop lookup must not overwrite fresher rows.
+    withAllocationUnits(rows)
+      .catch((error) => {
+        console.warn('[faseela] allocation units unavailable:', (error && (error.code || error.message)) || error);
+        return rows.map((row) => mappers.mapOilAllocation(row, allocationCropByTree));
+      })
+      .then((mapped) => { if (active && mine === latest) callback(mapped); });
+  }, onError);
+  return () => {
+    active = false;
+    stop();
+  };
+}
+const watchMyOilRequests = (callback, onError) => watchOwnRows('oil_requests', 'user_id', mappers.mapOilRequest, callback, onError);
 
 function watchMyRoleApplication(callback, onError) {
   if (!currentUser) return () => {};
@@ -1143,6 +1177,8 @@ const api = Object.freeze({
   updateFarmerProfile: callable('update_farmer_profile'),
   reviewFarmerUpdate: callable('review_farmer_update'),
   submitPressingBatch: callable('submit_pressing_batch'),
+  // Weighed harvest of a non-olive tree: { treeId, harvestKg, netKg } -> { batchId, status: 'pending_review' }.
+  submitHarvestBatch: callable('submit_harvest_batch'),
   certifyPressingBatch: callable('certify_pressing_batch')
 });
 

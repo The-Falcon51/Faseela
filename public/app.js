@@ -1948,6 +1948,8 @@
         dash_stat_invest_sub: "حصة موثقة في شجرة معمرة",
         dash_stat_oil: "حصة الزيت المتوقعة",
         dash_stat_oil_sub: "تقدير غير ملزم",
+        dash_stat_oil_kg: "حصة المحصول",
+        dash_stat_oil_any: "حصة الزيت والمحصول",
         dash_stat_carbon: "أثر امتصاص الكربون",
         dash_stat_carbon_sub: "مساهمة بيئية مستدامة",
         dash_stat_trees: "الأشجار المكفولة",
@@ -2093,8 +2095,8 @@
       fp_view_tree: "عرض الصفحة العامة",
       review_content_lbl: "المحتوى الذي سيُنشر للعامة",
       review_media_missing: "بعض الصور المُعلنة غير موجودة في المخزن؛ لن تُنشر.",
-      oil_section_title: "زيتي",
-      oil_section_sub: "نصيبك من كل دفعة عصر معتمدة لأشجارك. اطلب توصيله أو استلامه من المعصرة أو التبرع به، ويُراجَع كل طلب.",
+      oil_section_title: "زيتي ومحصولي",
+      oil_section_sub: "نصيبك من كل دفعة عصر أو محصول موزون معتمد لأشجارك. اطلب توصيله أو استلامه أو التبرع به، ويُراجَع كل طلب.",
       oil_available_lbl: "متاح:",
       oil_request_btn: "طلب الزيت",
       oil_modal_title: "طلب الزيت",
@@ -2112,7 +2114,7 @@
       oil_f_note: "ملاحظة (اختياري)",
       oil_privacy_hint: "تُحفظ بيانات الاتصال مشفّرة ولا يراها إلا فريق المالية لتنفيذ هذا الطلب.",
       oil_submit_btn: "إرسال الطلب",
-      oil_empty: "لا يوجد زيت مخصّص بعد. بعد اعتماد أول دفعة عصر لأشجارك يظهر نصيبك هنا وتصلك رسالة.",
+      oil_empty: "لا توجد حصة مخصّصة بعد. بعد اعتماد أول دفعة عصر أو محصول لأشجارك يظهر نصيبك هنا وتصلك رسالة.",
       oil_requests_title: "طلباتي",
       oil_cancel_btn: "إلغاء الطلب",
       oil_status_available: "متاح",
@@ -2122,6 +2124,43 @@
       oil_status_approved: "قيد التنفيذ",
       oil_status_rejected: "مرفوض",
       oil_status_cancelled: "ملغى",
+      oil_request_btn_kg: "طلب المحصول",
+      oil_request_btn_any: "طلب حصتي",
+      oil_modal_title_kg: "طلب المحصول",
+      oil_modal_title_any: "طلب حصتي",
+      oil_group_lbl: "ماذا تريد أن تطلب؟",
+      oil_group_l: "زيت الزيتون",
+      oil_group_kg: "المحصول الموزون",
+      oil_group_other: "مخصصات أخرى",
+      oil_group_hint: "يُطلب زيت الزيتون والمحصول الموزون كلٌّ على حدة.",
+      oil_kind_pickup_kg: "استلام شخصي",
+      oil_kind_pickup_any: "استلام شخصي",
+      oil_kind_donate_kg: "تبرّع بالمحصول لعائلة محتاجة",
+      oil_kind_donate_any: "تبرّع به لعائلة محتاجة",
+      fh_title: "تسجيل وزن المحصول",
+      fh_sub: "للمحاصيل التي تُوزن بالكيلوغرام (كل المحاصيل عدا الزيتون). مرة واحدة لكل شجرة وموسم. بعد مراجعة الجودة يوزَّع الوزن الصافي على كافلي الشجرة بحسب حصصهم.",
+      fh_gross_lbl: "الوزن الإجمالي (كغ)",
+      fh_net_lbl: "الوزن الصافي بعد الفرز (كغ)",
+      fh_hint: "بالكيلوغرام مع ثلاث خانات عشرية على الأكثر، مثال: 24,5. لا يمكن أن يتجاوز الوزن الصافي الوزن الإجمالي.",
+      fh_submit: "إرسال للمراجعة",
+      fh_sending: "جارٍ الإرسال…",
+      fh_ok: "تم إرسال المحصول وهو الآن بانتظار مراجعة الجودة.",
+      fh_err_tree: "اختر إحدى أشجارك التي يُوزن محصولها.",
+      fh_err_gross: "أدخل الوزن الإجمالي بالكيلوغرام (من {min} إلى {max}).",
+      fh_err_net: "أدخل الوزن الصافي بالكيلوغرام (من 0 إلى {max}).",
+      fh_err_net_exceeds_gross: "لا يمكن أن يتجاوز الوزن الصافي الوزن الإجمالي.",
+      fh_err_weights: "تحقق من الوزنين. لا يمكن أن يتجاوز الوزن الصافي الوزن الإجمالي.",
+      fh_err_exists: "سُجّل محصول هذه الشجرة لهذا الموسم مسبقاً.",
+      fh_err_denied: "هذه الشجرة غير مسندة إليك.",
+      fh_err_not_found: "لا يُسجَّل لهذه الشجرة محصول موزون. محصول الزيتون تسجّله المعصرة كدفعة عصر.",
+      fh_err_rate: "إرسالات كثيرة. حاول مجدداً لاحقاً.",
+      fh_fail: "تعذر إرسال المحصول. تحقق من الاتصال وحاول مجدداً.",
+      fh_history_title: "محاصيلي المسجّلة",
+      fh_gross_short: "الإجمالي",
+      fh_net_short: "الصافي",
+      fh_status_pending_review: "بانتظار مراجعة الجودة",
+      fh_status_certified: "معتمد",
+      fh_status_rejected: "مرفوض",
       auth_btn_cancel_edits: "إلغاء",
       auth_sec_revoke_sessions: "إنهاء كافة الجلسات الأخرى",
       auth_sec_session_hash: "رمز الجلسة المشفر",
@@ -4788,6 +4827,8 @@
         dash_stat_invest_sub: "Verified Tree Share",
         dash_stat_oil: "Expected oil share",
         dash_stat_oil_sub: "non-binding estimate",
+        dash_stat_oil_kg: "Harvest share",
+        dash_stat_oil_any: "Oil and harvest share",
         dash_stat_carbon: "Carbon Offset Impact",
         dash_stat_carbon_sub: "Sustainable Green Contribution",
         dash_stat_trees: "Sponsored trees",
@@ -4905,8 +4946,8 @@
         fp_view_tree: "View public page",
         review_content_lbl: "Content that will be published",
         review_media_missing: "Some declared photos are not in storage; they will not be published.",
-        oil_section_title: "My olive oil",
-        oil_section_sub: "Your share of each approved pressing of your trees. Request delivery, pickup at the mill or a donation; each request is reviewed.",
+        oil_section_title: "My oil and harvest",
+        oil_section_sub: "Your share of each approved pressing or weighed harvest of your trees. Request delivery, pickup or a donation; each request is reviewed.",
         oil_available_lbl: "Available:",
         oil_request_btn: "Request oil",
         oil_modal_title: "Request your oil",
@@ -4924,7 +4965,7 @@
         oil_f_note: "Note (optional)",
         oil_privacy_hint: "Contact details are stored encrypted and visible only to the finance team for this request.",
         oil_submit_btn: "Send request",
-        oil_empty: "No oil allocated yet. Once the first pressing of your trees is certified, your share appears here and you get an e-mail.",
+        oil_empty: "Nothing allocated yet. Once the first pressing or harvest of your trees is approved, your share appears here and you get an e-mail.",
         oil_requests_title: "My requests",
         oil_cancel_btn: "Cancel request",
         oil_status_available: "Available",
@@ -4934,6 +4975,43 @@
         oil_status_approved: "Being fulfilled",
         oil_status_rejected: "Rejected",
         oil_status_cancelled: "Cancelled",
+        oil_request_btn_kg: "Request harvest",
+        oil_request_btn_any: "Request my share",
+        oil_modal_title_kg: "Request your harvest",
+        oil_modal_title_any: "Request your share",
+        oil_group_lbl: "What would you like to request?",
+        oil_group_l: "Olive oil",
+        oil_group_kg: "Weighed harvest",
+        oil_group_other: "Other allocations",
+        oil_group_hint: "Olive oil and weighed harvest are requested separately.",
+        oil_kind_pickup_kg: "I will pick it up",
+        oil_kind_pickup_any: "I will pick it up",
+        oil_kind_donate_kg: "Donate the harvest to a family in need",
+        oil_kind_donate_any: "Donate it to a family in need",
+        fh_title: "Record the weighed harvest",
+        fh_sub: "For crops weighed in kilograms (every crop except olive). Once per tree and season. After the quality review the net weight is allocated to the tree's sponsors by their shares.",
+        fh_gross_lbl: "Gross weight (kg)",
+        fh_net_lbl: "Net weight after sorting (kg)",
+        fh_hint: "In kilograms with up to three decimals, e.g. 24.5 or 24,5. The net weight cannot exceed the gross weight.",
+        fh_submit: "Send for review",
+        fh_sending: "Sending…",
+        fh_ok: "Harvest sent. It is now waiting for the quality review.",
+        fh_err_tree: "Choose one of your trees with a weighed harvest.",
+        fh_err_gross: "Enter the gross weight in kilograms ({min} to {max}).",
+        fh_err_net: "Enter the net weight in kilograms (0 to {max}).",
+        fh_err_net_exceeds_gross: "The net weight cannot exceed the gross weight.",
+        fh_err_weights: "Please check both weights. The net weight cannot exceed the gross weight.",
+        fh_err_exists: "A harvest for this tree and season is already recorded.",
+        fh_err_denied: "This tree is not assigned to you.",
+        fh_err_not_found: "No weighed harvest is recorded for this tree. The olive harvest is recorded by the mill as a pressing.",
+        fh_err_rate: "Too many submissions. Please try again later.",
+        fh_fail: "The harvest could not be sent. Check your connection and try again.",
+        fh_history_title: "My recorded harvests",
+        fh_gross_short: "Gross",
+        fh_net_short: "Net",
+        fh_status_pending_review: "Waiting for quality review",
+        fh_status_certified: "Approved",
+        fh_status_rejected: "Rejected",
         auth_btn_cancel_edits: "Cancel",
         auth_sec_revoke_sessions: "Revoke Other Sessions",
         auth_sec_session_hash: "Session Token Hash",
@@ -10449,7 +10527,7 @@
     state.catalogState = 'loading'; // 'loading' | 'ready' | 'error' — see catalogTrees()
     // Versions of the documents users agree to. They must equal private.app_settings('consent_versions') on the server
     // and the data-version of the document page (public/legal/patenschaft.html); the server refuses any other version.
-    const CONSENT_VERSIONS = Object.freeze({ privacy: '2026-11-17', sponsorship: '2026-11-17' });
+    const CONSENT_VERSIONS = Object.freeze({ privacy: '2026-11-17', sponsorship: '2026-11-22' });
 
     const LAND_OFFER_ENABLED = false;
     // The shop has sample products and prices and no order backend: an "order" would go nowhere. Off until it has one.
@@ -10807,6 +10885,7 @@
       if (page === 'dashboard' && typeof renderDashboard === 'function') renderDashboard();
       if (page === 'dashboard' && typeof renderMyOil === 'function') renderMyOil();
       if (page === 'farmer-portal' && typeof renderServerSubmissions === 'function') renderServerSubmissions('farmer');
+      if (page === 'farmer-portal' && typeof renderFarmerHarvestHistory === 'function') renderFarmerHarvestHistory();
       if (page === 'mill-portal' && typeof renderServerSubmissions === 'function') renderServerSubmissions('mill');
     }
 
@@ -10898,6 +10977,11 @@
             state.myFarmerUpdates = items;
             rerenderServerViews();
           }, 'field reports');
+          // A weighed harvest is a row of the pressing-batch table submitted by the farmer.
+          subscribeServer('watchMyPressingBatches', (items) => {
+            state.myPressingBatches = items;
+            rerenderServerViews();
+          }, 'harvest records');
         }
         if (role === 'mill_owner') {
           subscribeServer('watchMyPressingBatches', (items) => {
@@ -11826,7 +11910,8 @@
             // Real values only, as in renderDashboard: share count, amount and oil allocated after pressing.
             const shareCount = myShares.reduce((acc, s) => acc + (s.shares_count || Math.max(1, Math.round((s.percentage || 25) / 25))), 0);
             const totalInv = myShares.reduce((acc, s) => acc + (Number(s.purchase_price) || 0), 0);
-            const allocatedMl = (state.myOilAllocations || []).reduce((sum, a) => sum + (a.litersMl || 0), 0);
+            const allocatedTotals = allocationTotals(state.myOilAllocations);
+            const allocatedKind = allocationKindSuffix(allocatedTotals);
             assetsGrid.innerHTML = `
               <div class="bg-stone-50 dark:bg-stone-800/80 p-3 rounded-2xl border border-stone-200 dark:border-stone-700">
                 <span class="text-[10px] text-stone-500 block font-bold">${L3('الحصص المكفولة', 'Sponsored shares', 'Anteile in Patenschaft')}</span>
@@ -11834,9 +11919,9 @@
                 <span class="text-[9px] text-stone-400 font-bold block">${L3('من سجل كفالاتك', 'From your sponsorships', 'Aus Ihren Patenschaften')}</span>
               </div>
               <div class="bg-stone-50 dark:bg-stone-800/80 p-3 rounded-2xl border border-stone-200 dark:border-stone-700">
-                <span class="text-[10px] text-stone-500 block font-bold">${L3('الزيت المخصص', 'Allocated oil', 'Zugeteiltes Öl')}</span>
-                <span class="text-base font-black text-stone-900 dark:text-white font-mono">${allocatedMl > 0 ? OIL_LITERS(allocatedMl) : '—'}</span>
-                <span class="text-[9px] text-stone-400 font-bold block">${L3('يُخصص بعد العصر', 'Allocated after pressing', 'Zuteilung nach der Pressung')}</span>
+                <span class="text-[10px] text-stone-500 block font-bold">${allocatedKind === '_kg' ? L3('المحصول المخصص', 'Allocated harvest', 'Zugeteilte Ernte') : allocatedKind === '_any' ? L3('الزيت والمحصول المخصصان', 'Allocated oil and harvest', 'Zugeteiltes Öl und Ernte') : L3('الزيت المخصص', 'Allocated oil', 'Zugeteiltes Öl')}</span>
+                <span class="text-base font-black text-stone-900 dark:text-white font-mono">${allocationTotalsText(allocatedTotals) || '—'}</span>
+                <span class="text-[9px] text-stone-400 font-bold block">${allocatedKind === '_kg' ? L3('يُخصص بعد الوزن والمراجعة', 'Allocated after weighing and review', 'Zuteilung nach Wiegen und Prüfung') : allocatedKind === '_any' ? L3('يُخصص بعد العصر أو الوزن', 'Allocated after pressing or weighing', 'Zuteilung nach Pressung oder Wiegen') : L3('يُخصص بعد العصر', 'Allocated after pressing', 'Zuteilung nach der Pressung')}</span>
               </div>
               <div class="bg-stone-50 dark:bg-stone-800/80 p-3 rounded-2xl border border-stone-200 dark:border-stone-700">
                 <span class="text-[10px] text-stone-500 block font-bold">${L3('مبلغ الكفالة', 'Sponsorship amount', 'Patenschaftsbetrag')}</span>
@@ -16976,7 +17061,54 @@ function setMarketplaceViewMode(mode) {
       renderMillPortal();
     }
 
-    const OIL_LITERS = (ml) => `${(Number(ml || 0) / 1000).toFixed(2).replace(/\.?0+$/, '')} L`;
+    // Amounts are stored in thousandths: millilitres of olive oil, grams of a weighed harvest (every other crop).
+    const AMOUNT_TEXT = (milli) => (Number(milli || 0) / 1000).toFixed(2).replace(/\.?0+$/, '');
+    const OIL_LITERS = (ml) => `${AMOUNT_TEXT(ml)} L`;
+    const HARVEST_KG = (grams) => `${AMOUNT_TEXT(grams)} kg`;
+    /** Amount with its unit. Without a known unit only the number is shown, so grams never read as litres. */
+    const QUANTITY_TEXT = (amount, unit) => unit === 'kg' ? HARVEST_KG(amount) : unit === 'l' ? OIL_LITERS(amount) : AMOUNT_TEXT(amount);
+
+    /** Crop of a tree as this browser knows it; '' for a tree that is not in its catalogue. */
+    function treeCropCategory(treeId) {
+      const tree = (state.trees || []).find(tr => tr.id === treeId);
+      return (tree && tree.crop_category) || '';
+    }
+
+    /** 'l' (olive oil), 'kg' (weighed harvest) or '' when the crop of the tree is unknown. */
+    function allocationUnit(allocation) {
+      if (!allocation) return '';
+      if (allocation.unit === 'l' || allocation.unit === 'kg') return allocation.unit;
+      // null = the client looked the crop up and found none (tree not listed): never guess a unit then.
+      if (allocation.unit === null) return '';
+      const crop = treeCropCategory(allocation.treeId);
+      return crop ? (crop === 'olive' ? 'l' : 'kg') : '';
+    }
+
+    /** Sums per unit; millilitres and grams are never added together. */
+    function allocationTotals(allocations) {
+      const totals = { l: 0, kg: 0, other: 0 };
+      (allocations || []).forEach(a => { totals[allocationUnit(a) || 'other'] += Number(a.litersMl) || 0; });
+      return totals;
+    }
+
+    /** "7.4 L", "12 kg" or "7.4 L + 12 kg"; '' when nothing is allocated. */
+    function allocationTotalsText(totals) {
+      return [totals.l > 0 ? OIL_LITERS(totals.l) : '', totals.kg > 0 ? HARVEST_KG(totals.kg) : '', totals.other > 0 ? AMOUNT_TEXT(totals.other) : '']
+        .filter(Boolean).join(' + ');
+    }
+
+    /** Dictionary key suffix: '' = olive oil only, '_kg' = weighed harvest only, '_any' = both or unknown. */
+    function allocationKindSuffix(totals) {
+      if (totals.other > 0 || (totals.l > 0 && totals.kg > 0)) return '_any';
+      return totals.kg > 0 ? '_kg' : '';
+    }
+
+    /** Sets a translated text and keeps the key on the node, so a language switch translates it again. */
+    function setI18nText(el, key) {
+      if (!el) return;
+      el.setAttribute('data-i18n', key);
+      el.textContent = t(key);
+    }
 
     function renderMyOil() {
       const section = document.getElementById('my-oil-section');
@@ -16988,11 +17120,16 @@ function setMarketplaceViewMode(mode) {
       const allocations = state.myOilAllocations || [];
       const requests = state.myOilRequests || [];
       const available = allocations.filter(a => a.status === 'available');
-      const availableMl = available.reduce((sum, a) => sum + (a.litersMl || 0), 0);
+      const availableTotals = allocationTotals(available);
+      const allTotals = allocationTotals(allocations);
       const totalEl = document.getElementById('oil-available-liters');
-      if (totalEl) totalEl.textContent = OIL_LITERS(availableMl);
+      if (totalEl) totalEl.textContent = allocationTotalsText(availableTotals) || QUANTITY_TEXT(0, allocationKindSuffix(allTotals) === '_kg' ? 'kg' : 'l');
       const btn = document.getElementById('oil-request-btn');
-      if (btn) btn.disabled = availableMl <= 0;
+      if (btn) {
+        btn.disabled = availableTotals.l + availableTotals.kg + availableTotals.other <= 0;
+        // The button names what can be requested: olive oil, weighed harvest, or "my share" when both are waiting.
+        setI18nText(btn.querySelector('span'), 'oil_request_btn' + allocationKindSuffix(btn.disabled ? allTotals : availableTotals));
+      }
 
       const list = document.getElementById('my-oil-allocations');
       if (list) {
@@ -17011,7 +17148,7 @@ function setMarketplaceViewMode(mode) {
                 <div class="text-[10px] text-stone-500 dark:text-stone-400 font-mono truncate">${escapeHtml(a.certificateSerial || '')}</div>
               </div>
               <div class="flex items-center gap-2 whitespace-nowrap">
-                <span class="font-mono font-black text-sm text-stone-900 dark:text-white">${OIL_LITERS(a.litersMl)}</span>
+                <span class="font-mono font-black text-sm text-stone-900 dark:text-white">${QUANTITY_TEXT(a.litersMl, allocationUnit(a))}</span>
                 <span class="text-[10px] font-bold px-2 py-0.5 rounded-full ${tone}">${t('oil_status_' + a.status)}</span>
               </div>
             </div>`;
@@ -17028,7 +17165,7 @@ function setMarketplaceViewMode(mode) {
             const cancel = r.status === 'pending'
               ? `<button type="button" data-click="cancelOilRequest('${escapeHtml(r.id)}')" class="text-[10px] font-bold text-red-700 dark:text-red-300 underline cursor-pointer">${t('oil_cancel_btn')}</button>` : '';
             return `<div class="flex items-center justify-between gap-3 p-3 rounded-2xl bg-stone-50 dark:bg-stone-800/60">
-              <div class="text-xs text-stone-700 dark:text-stone-200 min-w-0 truncate">${t('oil_kind_' + r.kind)} · <span class="font-mono font-bold">${OIL_LITERS(r.litersMl)}</span> · ${escapeHtml(when)}${r.reviewNote ? `<br><span class="text-[10px] text-stone-500">${escapeHtml(r.reviewNote)}</span>` : ''}</div>
+              <div class="text-xs text-stone-700 dark:text-stone-200 min-w-0 truncate">${t('oil_kind_' + r.kind + (r.unit === 'kg' && r.kind !== 'delivery' ? '_kg' : ''))} · <span class="font-mono font-bold">${QUANTITY_TEXT(r.litersMl, r.unit === 'kg' ? 'kg' : 'l')}</span> · ${escapeHtml(when)}${r.reviewNote ? `<br><span class="text-[10px] text-stone-500">${escapeHtml(r.reviewNote)}</span>` : ''}</div>
               <div class="flex items-center gap-2 whitespace-nowrap"><span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-stone-200 dark:bg-stone-700 text-stone-800 dark:text-stone-200">${t('oil_status_' + r.status)}</span>${cancel}</div>
             </div>`;
           }).join('');
@@ -17055,12 +17192,61 @@ function setMarketplaceViewMode(mode) {
       document.getElementById('oil-address-fields')?.classList.toggle('hidden', kind !== 'delivery');
     }
 
-    function openOilRequestModal() {
+    // One request carries either olive oil or weighed harvest: the units differ and the server refuses a mix.
+    // Allocations of a tree with an unknown crop are offered tree by tree, because one tree is always one crop.
+    const oilRequest = { key: 'l' };
+
+    function oilRequestGroups() {
       const available = (state.myOilAllocations || []).filter(a => a.status === 'available');
-      if (available.length === 0) return;
-      const ml = available.reduce((sum, a) => sum + (a.litersMl || 0), 0);
+      const groups = [];
+      ['l', 'kg'].forEach(unit => {
+        const items = available.filter(a => allocationUnit(a) === unit);
+        if (items.length > 0) groups.push({ key: unit, unit, treeId: '', items });
+      });
+      available.filter(a => !allocationUnit(a)).forEach(a => {
+        const key = `tree:${a.treeId || ''}`;
+        const group = groups.find(g => g.key === key);
+        if (group) group.items.push(a);
+        else groups.push({ key, unit: '', treeId: a.treeId || '', items: [a] });
+      });
+      groups.forEach(g => { g.amount = g.items.reduce((sum, a) => sum + (Number(a.litersMl) || 0), 0); });
+      return groups;
+    }
+
+    function oilRequestGroup() {
+      return oilRequestGroups().find(g => g.key === oilRequest.key) || null;
+    }
+
+    /** Title, amount and the pickup / donation wording follow the selected product. */
+    function applyOilRequestGroup() {
+      const group = oilRequestGroup();
+      if (!group) return;
+      const suffix = group.unit === 'kg' ? '_kg' : group.unit === 'l' ? '' : '_any';
       const el = document.getElementById('oil-modal-liters');
-      if (el) el.textContent = OIL_LITERS(ml);
+      if (el) el.textContent = QUANTITY_TEXT(group.amount, group.unit);
+      setI18nText(document.getElementById('oil-modal-title'), 'oil_modal_title' + suffix);
+      setI18nText(document.getElementById('oil-kind-pickup-lbl'), 'oil_kind_pickup' + suffix);
+      setI18nText(document.getElementById('oil-kind-donate-lbl'), 'oil_kind_donate' + suffix);
+    }
+
+    function oilGroupChanged(key) {
+      oilRequest.key = String(key || '');
+      applyOilRequestGroup();
+      const err = document.getElementById('oil-modal-error');
+      if (err) { err.classList.add('hidden'); err.textContent = ''; }
+    }
+
+    function openOilRequestModal() {
+      const groups = oilRequestGroups();
+      if (groups.length === 0) return;
+      oilRequest.key = groups[0].key;
+      const choice = document.getElementById('oil-group-fields');
+      if (choice) choice.classList.toggle('hidden', groups.length < 2);
+      const options = document.getElementById('oil-group-options');
+      if (options) {
+        options.innerHTML = groups.length < 2 ? '' : groups.map((g, i) => `<label class="flex items-center gap-2 p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 cursor-pointer"><input type="radio" name="oil-group" value="${escapeHtml(g.key)}"${i === 0 ? ' checked' : ''} data-change="oilGroupChanged(this.value)" class="text-amber-600 focus:ring-amber-600"><span class="flex-1 min-w-0 truncate">${g.unit ? t('oil_group_' + g.unit) : `${t('oil_group_other')} · ${escapeHtml(g.treeId)}`}</span><span class="font-mono font-bold whitespace-nowrap">${QUANTITY_TEXT(g.amount, g.unit)}</span></label>`).join('');
+      }
+      applyOilRequestGroup();
       const err = document.getElementById('oil-modal-error');
       if (err) { err.classList.add('hidden'); err.textContent = ''; }
       const u = state.currentUser || {};
@@ -17074,8 +17260,10 @@ function setMarketplaceViewMode(mode) {
       const isEn = state.currentLang !== 'ar';
       const err = document.getElementById('oil-modal-error');
       const fail = (msg) => { if (err) { err.textContent = msg; err.classList.remove('hidden'); } };
-      const available = (state.myOilAllocations || []).filter(a => a.status === 'available');
-      if (available.length === 0 || !window.FaseelaFirebase?.requestOil) return;
+      const L3 = (ar, en, de) => state.currentLang === 'ar' ? ar : (state.currentLang === 'de' ? de : en);
+      const group = oilRequestGroup();
+      if (!group || !window.FaseelaFirebase?.requestOil) return;
+      const available = group.items;
       const kind = document.querySelector('input[name="oil-kind"]:checked')?.value || 'delivery';
       const v = (id) => (document.getElementById(id)?.value || '').trim();
       const contact = { name: v('oil-name'), phone: v('oil-phone'), addressLine1: v('oil-line1'), addressLine2: v('oil-line2'), city: v('oil-city'), country: v('oil-country').toUpperCase(), note: v('oil-note') };
@@ -17091,11 +17279,15 @@ function setMarketplaceViewMode(mode) {
         await window.FaseelaFirebase.requestOil({ kind, allocationIds: available.map(a => a.id), contact: kind === 'donate' ? undefined : contact });
         closeModal('modal-oil-request');
         ['oil-line1', 'oil-line2', 'oil-city', 'oil-country', 'oil-note'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
-        showToast(isEn ? '✅ Oil request sent. We will e-mail you at every step.' : '✅ أُرسل طلب الزيت. ستصلك رسالة عند كل خطوة.');
+        showToast(group.unit === 'l' ? (isEn ? '✅ Oil request sent. We will e-mail you at every step.' : '✅ أُرسل طلب الزيت. ستصلك رسالة عند كل خطوة.')
+          : group.unit === 'kg' ? L3('✅ أُرسل طلب المحصول. ستصلك رسالة عند كل خطوة.', '✅ Harvest request sent. We will e-mail you at every step.', '✅ Ernteanfrage gesendet. Sie erhalten bei jedem Schritt eine E-Mail.')
+          : L3('✅ أُرسل طلبك. ستصلك رسالة عند كل خطوة.', '✅ Request sent. We will e-mail you at every step.', '✅ Anfrage gesendet. Sie erhalten bei jedem Schritt eine E-Mail.'));
         playAcousticChime(660, 0.2);
       } catch (error) {
         const code = error?.code || '';
-        fail(code === 'failed-precondition' ? (isEn ? 'Please verify your e-mail and make sure the oil is still available.' : 'يرجى تأكيد بريدك والتحقق من أن الزيت ما زال متاحاً.')
+        fail(code === 'failed-precondition' ? (group.unit === 'l'
+            ? (isEn ? 'Please verify your e-mail and make sure the oil is still available.' : 'يرجى تأكيد بريدك والتحقق من أن الزيت ما زال متاحاً.')
+            : L3('يرجى تأكيد بريدك والتحقق من أن حصتك ما زالت متاحة.', 'Please verify your e-mail and make sure your share is still available.', 'Bitte bestätigen Sie Ihre E-Mail-Adresse und prüfen Sie, ob Ihr Anteil noch verfügbar ist.'))
           : code === 'resource-exhausted' ? (isEn ? 'Too many open requests. Wait for the current ones first.' : 'طلبات مفتوحة كثيرة. انتظر معالجة الطلبات الحالية أولاً.')
           : (isEn ? 'Request failed. Please check the fields and try again.' : 'فشل الإرسال. يرجى التحقق من الحقول والمحاولة مجدداً.'));
       } finally {
@@ -17107,8 +17299,11 @@ function setMarketplaceViewMode(mode) {
       const isEn = state.currentLang !== 'ar';
       if (!window.FaseelaFirebase?.cancelOilRequest || !/^[0-9a-f-]{36}$/i.test(String(requestId))) return;
       try {
+        const cancelled = (state.myOilRequests || []).find(r => r.id === requestId);
         await window.FaseelaFirebase.cancelOilRequest({ requestId });
-        showToast(isEn ? 'Request cancelled. The oil is back in your balance.' : 'أُلغي الطلب وأُعيد الزيت إلى رصيدك.');
+        showToast(cancelled && cancelled.unit === 'kg'
+          ? (state.currentLang === 'ar' ? 'أُلغي الطلب وأُعيد المحصول إلى رصيدك.' : state.currentLang === 'de' ? 'Anfrage storniert. Die Ernte ist wieder in Ihrem Guthaben.' : 'Request cancelled. The harvest is back in your balance.')
+          : (isEn ? 'Request cancelled. The oil is back in your balance.' : 'أُلغي الطلب وأُعيد الزيت إلى رصيدك.'));
       } catch (error) {
         showToast(isEn ? 'Only pending requests can be cancelled.' : 'يمكن إلغاء الطلبات قيد المراجعة فقط.');
       }
@@ -17482,8 +17677,9 @@ function setMarketplaceViewMode(mode) {
       if (invEl) invEl.innerText = formatMoney(totals.invested);
 
       const oilEl = document.getElementById('dash-expected-oil');
-      const allocatedMl = (state.myOilAllocations || []).reduce((sum, a) => sum + (a.litersMl || 0), 0);
-      if (oilEl) oilEl.innerText = allocatedMl > 0 ? OIL_LITERS(allocatedMl) : '—';
+      const allocatedTotals = allocationTotals(state.myOilAllocations);
+      if (oilEl) oilEl.innerText = allocationTotalsText(allocatedTotals) || '—';
+      setI18nText(document.getElementById('dash-expected-oil-label'), 'dash_stat_oil' + allocationKindSuffix(allocatedTotals));
       if (typeof renderMyOil === 'function') renderMyOil();
       if (state.myGifts === undefined && rewardsVisible()) loadRewards(); else renderMyRewards();
       document.getElementById('btn-investor-tab-trade')?.classList.toggle('hidden', !p2pEnabled());
@@ -18277,7 +18473,9 @@ function setMarketplaceViewMode(mode) {
         const when = Number.isFinite(item.createdAt) ? new Date(item.createdAt).toLocaleDateString(uiLocale()) : '';
         const detail = kind === 'farmer'
           ? `${escapeHtml(item.eventType || '')} • ${escapeHtml((item.notes || '').slice(0, 80))}`
-          : `${escapeHtml(item.treeId || '')} • ${escapeHtml(String(item.oilYieldLiters ?? '?'))} L • ${escapeHtml(String(item.acidityPct ?? '?'))}%`;
+          : item.isHarvest
+            ? `${escapeHtml(item.treeId || '')} • ${t('fh_gross_short')} ${escapeHtml(String(item.harvestKg ?? '?'))} kg • ${t('fh_net_short')} ${escapeHtml(String(item.netKg ?? '?'))} kg`
+            : `${escapeHtml(item.treeId || '')} • ${escapeHtml(String(item.oilYieldLiters ?? '?'))} L • ${escapeHtml(String(item.acidityPct ?? '?'))}%`;
         return `<li class="flex items-center justify-between gap-3 py-2 border-b border-stone-100 dark:border-stone-800 last:border-0">
           <span class="text-xs text-stone-700 dark:text-stone-200 min-w-0 truncate">${detail}</span>
           <span class="text-[11px] font-bold text-stone-600 dark:text-stone-300 whitespace-nowrap">${escapeHtml(label(item.status))} • ${escapeHtml(when)}</span>
@@ -18341,6 +18539,111 @@ function setMarketplaceViewMode(mode) {
       if (none) none.classList.toggle('hidden', trees.length > 0 || farmerQuick.assignments === null);
       const submit = document.getElementById('fqr-submit');
       if (submit) submit.disabled = trees.length === 0;
+      renderFarmerHarvest();
+    }
+
+    // ---- Weighed harvest (every crop except olive): recorded by the assigned farmer, once per tree and season ----
+    /** Assigned trees with a weighed harvest. A tree whose crop this browser does not know stays: the server decides. */
+    function farmerHarvestTrees() {
+      const trees = (farmerQuick.assignments && farmerQuick.assignments.trees) || [];
+      return trees.filter(tr => (tr.cropCategory || treeCropCategory(tr.treeId)) !== 'olive');
+    }
+
+    function farmerTreeLabel(tr) {
+      const isEn = state.currentLang !== 'ar';
+      const name = isEn ? (tr.nameEn || tr.name) : (tr.name || tr.nameEn);
+      const region = isEn ? (tr.regionEn || tr.region) : (tr.region || tr.regionEn);
+      return `${name || tr.treeId}${region ? ' • ' + region : ''}`;
+    }
+
+    function renderFarmerHarvest() {
+      const box = document.getElementById('farmer-harvest');
+      const sel = document.getElementById('fh-tree');
+      if (!box || !sel) return;
+      const trees = farmerHarvestTrees();
+      box.classList.toggle('hidden', trees.length === 0);
+      const current = sel.value;
+      sel.innerHTML = trees.map(tr => `<option value="${escapeHtml(tr.treeId)}">${escapeHtml(farmerTreeLabel(tr))}</option>`).join('');
+      if (current && trees.some(tr => tr.treeId === current)) sel.value = current;
+      renderFarmerHarvestHistory();
+    }
+
+    /** Harvests this farmer recorded, newest first as the server delivers them, with their review status. */
+    function renderFarmerHarvestHistory() {
+      const box = document.getElementById('fh-history');
+      if (!box) return;
+      const items = (state.myPressingBatches || []).filter(item => item && item.isHarvest);
+      box.classList.toggle('hidden', items.length === 0);
+      if (items.length === 0) { box.innerHTML = ''; return; }
+      const trees = (farmerQuick.assignments && farmerQuick.assignments.trees) || [];
+      const kg = (value) => (value === null || value === undefined || !Number.isFinite(Number(value)) ? '?' : String(Number(value)));
+      const statusText = (status) => { const key = 'fh_status_' + status; const text = t(key); return text === key ? String(status || '') : text; };
+      box.innerHTML = `<h4 class="font-black text-xs text-stone-900 dark:text-white mb-1">${t('fh_history_title')}</h4><ul>${items.map(item => {
+        const tr = trees.find(x => x.treeId === item.treeId);
+        const when = Number.isFinite(item.createdAt) ? new Date(item.createdAt).toLocaleDateString(uiLocale()) : '';
+        return `<li class="flex items-center justify-between gap-3 py-2 border-b border-stone-100 dark:border-stone-800 last:border-0">
+          <span class="text-xs text-stone-700 dark:text-stone-200 min-w-0">${escapeHtml(tr ? farmerTreeLabel(tr) : (item.treeId || ''))} • ${t('fh_gross_short')} ${escapeHtml(kg(item.harvestKg))} kg • ${t('fh_net_short')} ${escapeHtml(kg(item.netKg))} kg${item.reviewNote ? `<br><span class="text-[10px] text-stone-500 dark:text-stone-400">${escapeHtml(item.reviewNote)}</span>` : ''}</span>
+          <span class="text-[11px] font-bold text-stone-600 dark:text-stone-300 whitespace-nowrap">${escapeHtml(statusText(item.status))}${when ? ' • ' + escapeHtml(when) : ''}</span>
+        </li>`;
+      }).join('')}</ul>`;
+    }
+
+    function fhShowMessage(text, ok) {
+      const msg = document.getElementById('fh-msg');
+      if (!msg) return;
+      msg.textContent = text || '';
+      msg.className = text
+        ? `text-xs font-bold ${ok ? 'text-emerald-800 dark:text-emerald-300' : 'text-red-800 dark:text-red-300'}`
+        : 'hidden text-xs font-bold';
+    }
+
+    async function submitFarmerHarvest() {
+      if (farmerQuick.harvestSending) return;
+      const mappers = window.FaseelaMappers;
+      const backend = window.FaseelaFirebase;
+      if (!mappers || typeof mappers.validateHarvestInput !== 'function' || !backend || typeof backend.submitHarvestBatch !== 'function') {
+        fhShowMessage(t('fh_fail'), false);
+        return;
+      }
+      const treeId = document.getElementById('fh-tree')?.value || '';
+      // Checked here for a quick answer; the server repeats every check and stays the authority.
+      const checked = farmerHarvestTrees().some(tr => tr.treeId === treeId)
+        ? mappers.validateHarvestInput({ treeId, harvestKg: document.getElementById('fh-gross')?.value || '', netKg: document.getElementById('fh-net')?.value || '' })
+        : { ok: false, error: 'tree' };
+      if (!checked.ok) {
+        const limits = mappers.HARVEST_LIMITS || {};
+        fhShowMessage(t('fh_err_' + checked.error).replace('{min}', String(limits.minGrossKg ?? '')).replace('{max}', String(limits.maxKg ?? '')), false);
+        const field = document.getElementById(checked.error === 'tree' ? 'fh-tree' : checked.error === 'gross' ? 'fh-gross' : 'fh-net');
+        if (field) field.focus();
+        return;
+      }
+      const btn = document.getElementById('fh-submit');
+      const label = btn ? btn.querySelector('span') : null;
+      farmerQuick.harvestSending = true;
+      if (btn) btn.disabled = true;
+      if (label) label.textContent = t('fh_sending');
+      fhShowMessage('', true);
+      let sent = false;
+      try {
+        await backend.submitHarvestBatch(checked.payload);
+        sent = true;
+        ['fh-gross', 'fh-net'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+        fhShowMessage(t('fh_ok'), true);
+      } catch (error) {
+        const code = (error && error.code) || '';
+        console.error('Harvest submission failed:', code || error);
+        fhShowMessage(t(code === 'already-exists' ? 'fh_err_exists'
+          : code === 'permission-denied' ? 'fh_err_denied'
+          : code === 'not-found' ? 'fh_err_not_found'
+          : code === 'invalid-argument' ? 'fh_err_weights'
+          : code === 'resource-exhausted' ? 'fh_err_rate'
+          : 'fh_fail'), false);
+      } finally {
+        farmerQuick.harvestSending = false;
+        if (btn) btn.disabled = false;
+        if (label) label.textContent = t('fh_submit');
+      }
+      if (sent && typeof playAcousticChime === 'function') playAcousticChime(740, 0.2);
     }
 
     function fqrSelectType(type) {
@@ -24373,7 +24676,7 @@ function setMarketplaceViewMode(mode) {
         const isPending = item.status === 'pending';
         const isApproved = item.status === 'approved';
         const uName = isEn ? (item.user_name_en || item.user_name) : item.user_name;
-        const typeLbl = isEn ? (item.type_label_en || item.type_label) : item.type_label;
+        const typeLbl = state.currentLang === 'de' ? (item.type_label_de || item.type_label_en || item.type_label) : isEn ? (item.type_label_en || item.type_label) : item.type_label;
 
         return `
           <tr class="hover:bg-stone-50 dark:hover:bg-stone-850/50 transition-all border-b border-stone-100 dark:border-stone-800 text-stone-800 dark:text-stone-200">
@@ -24635,7 +24938,9 @@ function setMarketplaceViewMode(mode) {
       } else if (item.serverQueue === 'pressing_batches') {
         let certificateSerial;
         if (approve) {
-          certificateSerial = (prompt(isEn ? 'Lab certificate serial (A-Z, 0-9, - _):' : 'رقم شهادة المختبر (حروف لاتينية وأرقام):') || '').trim();
+          certificateSerial = (prompt(item.isHarvest
+            ? (state.currentLang === 'ar' ? 'الرقم المرجعي لمحضر الوزن (حروف لاتينية وأرقام):' : state.currentLang === 'de' ? 'Referenznummer des Wiegeprotokolls (A-Z, 0-9, - _):' : 'Reference number of the weighing record (A-Z, 0-9, - _):')
+            : isEn ? 'Lab certificate serial (A-Z, 0-9, - _):' : 'رقم شهادة المختبر (حروف لاتينية وأرقام):') || '').trim();
           if (!/^[A-Za-z0-9_-]{1,120}$/.test(certificateSerial)) {
             showToast(isEn ? 'A valid certificate serial is required.' : 'رقم شهادة صالح مطلوب.');
             return false;
@@ -24805,7 +25110,7 @@ function setMarketplaceViewMode(mode) {
       const metaEl = document.getElementById('fndr-fin-modal-content-meta');
       const noteEl = document.getElementById('fndr-fin-modal-media-note');
       const paths = Array.isArray(item.mediaPaths) ? item.mediaPaths : [];
-      if (notesEl) notesEl.textContent = item.notes || (isEn ? '(no text)' : '(بدون نص)');
+      if (notesEl) notesEl.textContent = (state.currentLang === 'ar' ? item.notes_ar : state.currentLang === 'de' ? item.notes_de : '') || item.notes || (isEn ? '(no text)' : '(بدون نص)');
       if (metaEl) {
         const gps = Number.isFinite(item.gpsLat) && Number.isFinite(item.gpsLng) ? ` • GPS ${item.gpsLat}, ${item.gpsLng}` : '';
         metaEl.textContent = `${item.treeId || ''} • ${item.channel || ''} • ${paths.length} ${isEn ? 'photo(s)' : 'صورة'}${gps}`;

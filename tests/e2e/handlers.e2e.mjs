@@ -1002,7 +1002,7 @@ try {
       assert.equal(result.consentBoxRequired, true, 'no call without the consent box');
       assert.deepEqual(result.consentLinks, ['legal/patenschaft.html', 'legal/datenschutz.html'], 'the consent links real documents');
       assert.equal(result.outdatedStops, true, 'an outdated document stops before any reservation');
-      assert.deepEqual(result.consentOrder.slice(0, 3), ['recordConsent:sponsorship:2026-11-17', 'recordConsent:privacy:2026-11-17', 'createInvestmentRequest'], 'consent is recorded before the reservation');
+      assert.deepEqual(result.consentOrder.slice(0, 3), ['recordConsent:sponsorship:2026-11-22', 'recordConsent:privacy:2026-11-17', 'createInvestmentRequest'], 'consent is recorded before the reservation');
       assert.equal(result.payRendered, true, 'server-managed accounts rendered with note');
       assert.equal(result.payCopyBtn, true, 'copy button carries the account');
       assert.equal(result.payReadyAfter, true);

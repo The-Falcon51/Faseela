@@ -76,14 +76,64 @@ Begründung: Postgres mit RLS erzwingt Mandanten- und Rollentrennung in der Date
 40. `20261115000120_public_status_mail_unverified.sql` (angewendet): `public_status().email` meldet `unverified`, solange noch nie eine E-Mail zugestellt wurde (vorher fälschlich `ok`)
 41. `20261116000100_admin_control_center.sql` (angewendet): Leitstand — Tabellen `automation_rules`, `automation_log`, `kpi_daily`, `readiness_manual`; `admin_tasks`, `admin_automation_state`, `admin_set_automation_rule`, `admin_set_job_active`, `admin_readiness`, `admin_set_readiness`, `admin_search`, `admin_kpi_history`; Jobs `faseela-automations` (stündlich) und `faseela-kpi-snapshot` (täglich 23:50 UTC)
 42. `20261116000110_admin_tree_mill.sql` (angewendet): `admin_set_tree_mill`, `admin_get_tree_mill`
-44. `20261116000130_sister_crops.sql` (angewendet): vier Schwesterkulturen als Katalogeinträge `tree_12` (Pistazie), `tree_14` (Mandel), `tree_15` (Granatapfel), `tree_16` (Walnuss), alle `unlisted`, je 4 Anteile; Check auf `crop_category`. Nummer 43 (`launch_hardening`) ist vorbereitet, aber **nicht angewendet** und liegt deshalb noch nicht im Migrationsordner.
+43. `20261116000120_launch_hardening.sql` (live angewendet, aus dem Live-Projekt übernommen): Reservierungsfrist 48 Stunden statt 30 Minuten (`create_investment_request` wird an Ort und Stelle umgeschrieben; bereits laufende Reservierungen behalten ihre Frist); `require_role` verlangt `aal2`, sobald das Konto einen bestätigten TOTP-Faktor hat (`mfa-required`; Nr. 56 definiert `require_role` neu); Regel-Einträge `purge_unconfirmed` und `weekly_digest` (beide aus)
+44. `20261116000130_sister_crops.sql` (angewendet): vier Schwesterkulturen als Katalogeinträge `tree_12` (Pistazie), `tree_14` (Mandel), `tree_15` (Granatapfel), `tree_16` (Walnuss), alle `unlisted`, je 4 Anteile; Check auf `crop_category`.
+45. `20261116000140_harvest_kg_and_digest.sql` (live angewendet, übernommen): gewogene Ernte für Nicht-Oliven (`submit_harvest_batch`; Zeile in `pressing_batches` mit `mill_id = 'farm'`, `olives_weight_kg` = Bruttogewicht, `oil_yield_liters` = Nettogewicht in kg; Zuteilung in **Gramm** im Feld `oil_allocations.liters_ml`); Pressung und Mühlen-Pflicht nur noch für Olivenbäume; `tree_13` (ausgeblendet); `run_housekeeping()` versendet den Wochenbericht (Vorlage `admin_digest`), Job `faseela-automations` ruft es stündlich mit auf. Die Regel `purge_unconfirmed` hat keinen Ausführer und bewirkt nichts.
+46. `20261116000150_oil_request_by_crop.sql` (live angewendet, übernommen): `request_oil` lehnt Anfragen ab, die Olivenöl und gewogene Ernte mischen; Empfehlungs-Gutschriften (Öl) hängen nur an Ölanfragen
+47. `20261116000160_oil_request_unit.sql` (live angewendet, übernommen): Spalte `oil_requests.unit` (`l`/`kg`), `private.oil_request_unit()`; `request_oil` und `review_oil_request` geben die Einheit an Antwort und Mails (`params.unit`) weiter
+48. `20261116000165_crops_and_countries.sql` (live angewendet, übernommen): Kultur `date` (Dattelpalme); Spalte `trees_public.country` (Standard `SY`); `admin_set_tree_class`, `admin_get_tree_class`. Spalte und Funktionen werden durch Nr. 51 abgelöst.
+49. `20261116000170_country_registry.sql` (live angewendet als `20261114173919`, aus der Live-Migrationstabelle übernommen): `private.countries` (`open`/`closed`), Trigger `trees_public_country_gate`, `admin_list_countries`, `admin_set_country`. Abgelöst durch Nr. 51 und Nr. 59.
+50. `20261116000180_payment_channels_by_country.sql` (live angewendet als `20261114174814`, übernommen): `private.payment_channels_for(code)`; Empfangskonten können je Kanal `countries: ["SY", …]` tragen (ohne Angabe gilt der Kanal für alle Länder)
+51. `20261117000050_country_column_bridge.sql` (**live offen**): Brücke zwischen dem Live-Stand (Nr. 48–50) und den Stammdaten (Nr. 55). `trees_public.country` wird zu `country_code` (Werte bleiben); `admin_set_tree_class`/`admin_get_tree_class`, `admin_list_countries`/`admin_set_country` und der alte Trigger entfallen. Jeder Schritt prüft vorher, die Datei läuft auch auf einer Datenbank ohne Nr. 48–50.
+52. `20261117000100_date_crop.sql` (**live offen**): Kultur `date` im Check (auf live bereits durch Nr. 48 vorhanden), `admin_set_tree_crop`, `admin_get_tree_crop`
+53. `20261117000200_land_offer_gate.sql` (**live offen**): Schalter `land_offer_enabled` (aus); `create_investment_request` und `admin_create_tree` lehnen die Parzellen-Option ab, solange er aus ist
+54. `20261117000300_reviewer_independence.sql` (**live offen**): `assert_not_self_review` – Prüfer und Einreicher gelten 7 Tage lang nicht als unabhängig, nachdem einer dem anderen eine prüfende Rolle gegeben hat
+55. `20261118000100_master_data.sql` (**live offen**): `public.currencies`, `public.countries` (`active`/`planned`; `SY` aktiv, `ES`, `IT`, `GR`, `TN`, `TR`, `MA` geplant), `public.farms`, `public.mills`, `trees_public.country_code` (Fremdschlüssel) und `farm_id`, `profiles.locale`; `admin_list_master_data`, `admin_set_country_status`, `admin_upsert_farm`, `admin_upsert_mill`, `admin_set_tree_origin`, `admin_get_tree_origin`, `set_my_locale`
+56. `20261118000200_staff_mfa_mill_fk.sql` (**live offen**): Schalter `staff_mfa_required` (aus), `require_role` neu definiert, `staff_security_state`, `admin_set_staff_mfa`; `mill_assignments.mill_id` verweist auf `public.mills`
+57. `20261119000100_marketplace_core.sql` (**live offen**): Hofladen (Produkte, Bestellungen, Versandtarife, Hof-Konto, Screening). Der Laden ist geschlossen, bis ein Admin `shop_open` setzt.
+58. `20261120000100_consent_records.sql` (**live offen**): `private.consent_records`, `consent_versions` in `private.app_settings`, `record_consent`, `my_consents`, `consent_versions()`; eine Patenschaft wird ohne Zustimmung zur aktuellen Fassung mit `consent-required` abgelehnt
+59. `20261121000100_country_model_unified.sql` (**live offen**): ein Ländermodell. `public.countries` ist das einzige Register; ein Baum lässt sich nur in einem aktiven Land einblenden (Trigger `trees_public_country_gate`, `failed-precondition`); `admin_set_country_status` aktiviert ein Land nur, wenn mindestens ein Empfangskonto es abdeckt („Add a receiving account for this country before activating it.“); Ländercodes der Empfangskonten werden gegen `public.countries` geprüft, gespeicherte Kanäle werden repariert (leeres Objekt vor jedem Kanal); `private.countries` entfällt
+60. `20261121000200_consent_version_reservation.sql` (**live offen**): Zustimmungsfassung `sponsorship` = `2026-11-22`, weil die Leistungsbeschreibung jetzt 48 Stunden Reservierungsfrist nennt
+
+Hinweise zur Liste: „angewendet“ heißt: im Live-Projekt angewendet. Die Nummern sind die Reihenfolge der Dateinamen; maßgeblich ist der Dateiname. Die Kopfzeilen der Dateien ab `20261117…` zählen selbst noch einmal ab „migration 45“, weil sie ohne Kenntnis der sieben Live-Migrationen geschrieben wurden. Nr. 21 ist keine Datei; der Ordner enthält mit Nr. 60 also 59 Dateien. Sie laufen in Dateinamen-Reihenfolge auf einer leeren Datenbank durch (`npm run test:db:local`, 18 Suiten).
+
+## Live-Rollout (Live rollout): offene Migrationen, Stand 22.11.2026
+
+**Ausgangslage im Live-Projekt**
+
+- Die sieben übernommenen Migrationen (Nr. 43 und 45–50: `launch_hardening`, `harvest_kg_and_digest`, `oil_request_by_crop`, `oil_request_unit`, `crops_and_countries`, `country_registry`, `payment_channels_by_country`) sind live bereits angewendet, dort aber unter **eigenen Versionsnummern** eingetragen (zum Beispiel `20261114173919` und `20261114174814`). Sie dürfen **nicht noch einmal angewendet** werden. In der Migrationshistorie werden die Repository-Versionen stattdessen als angewendet markiert: `supabase migration repair --status applied 20261116000120 20261116000140 20261116000150 20261116000160 20261116000165 20261116000170 20261116000180`. Vorher mit `supabase migration list` (oder `select version, name from supabase_migrations.schema_migrations order by version;`) prüfen, welche Versionen live eingetragen sind; ohne diesen Abgleich kein `supabase db push`, sondern die offenen Dateien einzeln anwenden.
+- `pg_net` liegt live noch im Schema `public`: `20261026000240_pg_net_schema.sql` ist nicht angewendet (enthält `drop extension`, nur im SQL-Editor). Das ist ein eigener offener Punkt und nicht Teil der Liste unten.
+
+**Zuerst ein Probelauf auf einem Supabase-Branch.** Branch vom Live-Projekt anlegen, die Liste unten in genau dieser Reihenfolge anwenden, `SUPABASE_DB_URL=<Branch> npm run test:db` ausführen, Checkout und Admin-Panel gegen den Branch prüfen. Erst danach live. [UNVERIFIZIERT: Branching setzt je nach Tarif den Pro-Plan voraus.]
+
+**Reihenfolge (genau so, in einem Wartungsfenster):**
+
+| # | Datei | Hinweis |
+|---|---|---|
+| 1 | `20261110000210_delete_account_storage_queue.sql` | **SQL-Editor**, enthält DELETE |
+| 2 | `20261117000050_country_column_bridge.sql` | enthält `drop function`, `drop trigger`, `drop index`; blockiert der MCP-Weg das, im SQL-Editor ausführen. Ab hier bis Schritt 10 gibt es keine Ländersperre beim Einblenden: in dieser Zeit keine Bäume einblenden |
+| 3 | `20261117000100_date_crop.sql` | |
+| 4 | `20261117000200_land_offer_gate.sql` | |
+| 5 | `20261117000300_reviewer_independence.sql` | |
+| 6 | `20261118000100_master_data.sql` | |
+| 7 | `20261118000200_staff_mfa_mill_fk.sql` | definiert `require_role` neu |
+| 8 | `20261119000100_marketplace_core.sql` | enthält DELETE-Anweisungen; blockiert der MCP-Weg das, im SQL-Editor ausführen. Laden bleibt geschlossen |
+| 9 | `20261120000100_consent_records.sql` | ab hier verlangt jede Patenschaft eine gespeicherte Zustimmung |
+| 10 | `20261121000100_country_model_unified.sql` | enthält `drop table private.countries`; blockiert der MCP-Weg das, im SQL-Editor ausführen |
+| 11 | `20261121000200_consent_version_reservation.sql` | Fassung `sponsorship` = `2026-11-22` |
+
+**Direkt danach, im selben Fenster**
+
+1. Web-App veröffentlichen (`npm run build:web && npm run build && firebase deploy --only hosting --project gen-lang-client-0319369264`). Sie muss `CONSENT_VERSIONS.sponsorship = '2026-11-22'` und `public/legal/patenschaft.html` mit `data-version="2026-11-22"` enthalten; passt die Fassung nicht zur Datenbank, endet der Checkout mit `consent-outdated`. Das Admin-Panel der alten Fassung ruft Funktionen auf, die Schritt 2 entfernt.
+2. Edge Function `send-emails` neu ausrollen (`supabase functions deploy send-emails --no-verify-jwt`): Die Vorlagen kennen jetzt `admin_digest`, die Einheit kg (`params.unit`) und die 48 Stunden. Ohne die neue Fassung scheitert der Wochenbericht in der Outbox an der unbekannten Vorlage; die Regel `weekly_digest` deshalb erst danach einschalten.
+3. Kontrolle: `select public.consent_versions();` liefert `sponsorship` = `2026-11-22`; `select code, status from public.countries order by code;` zeigt `SY` als `active`; `select to_regclass('private.countries');` liefert `null`; ein eingeblendeter Baum lässt sich weiter reservieren.
 Edge Functions (alle deployt): `supabase/functions/purge-storage/index.ts` (v1, `verify_jwt=false`, `x-outbox-token`, löscht Präfixe per Storage-API), `supabase/functions/send-emails/index.ts` + `templates.ts` (v5, Outbox-Versand inkl. Templates `gift_*`, `referral_rewarded`, `payment_change_pending`, `payment_accounts_changed`, Outbox-Versand, `verify_jwt=false`, eigene Token-Prüfung), `supabase/functions/certificate/index.ts` (v1, PDF, `verify_jwt=true`), `supabase/functions/tree-media/index.ts` (v1, `verify_jwt=false`, signiert nur die Pfade, die `tree_media_paths` als öffentlich liefert; 1 h gültig, max. 30 Bilder, 5 min cacheable; Secret `APP_ORIGINS` optional).
 
 Rückweg: `supabase/rollback/20261020_all_down.sql`. Das Skript löscht alle Faseela-Daten; nur für Dev/Staging oder einen fehlgeschlagenen Erst-Deploy verwenden.
 
 ## Go-Live-Checkliste
 
-1. **Migrationen:** 16 von 18 angewendet (Stand 01.11.2026). Offen, beide im SQL-Editor ausführen: `20261026000210_monitoring_retention.sql` und `20261026000240_pg_net_schema.sql`.
+1. **Migrationen:** 16 von 18 angewendet (Stand 01.11.2026). Den Stand vom 22.11.2026 und die Reihenfolge der offenen Migrationen nennt der Abschnitt „Live-Rollout“ oben. Offen, beide im SQL-Editor ausführen: `20261026000210_monitoring_retention.sql` und `20261026000240_pg_net_schema.sql`.
 1a. **E-Mail-Versand:** Dashboard → Edge Functions → `send-emails` → Secrets: `EMAIL_PROVIDER=brevo`, `EMAIL_API_KEY=<Brevo-Key>`, `EMAIL_FROM=Faseela <no-reply@<domain>>`, `APP_URL=https://<domain>`. Absenderdomain bei Brevo verifizieren (SPF/DKIM). Ohne Secrets bleiben Mails `pending` und der Systemstatus zeigt es an. [PLATZHALTER: AVV mit Brevo]
 2. **Auth konfigurieren** (Dashboard → Authentication):
    - URL Configuration: Site-URL = Hosting-Domain. Redirect-URLs = `https://<domain>/**`, für lokale Tests `http://localhost:8099/**`, für die nativen Apps `faseela://app/**`.
