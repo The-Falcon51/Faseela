@@ -1,7 +1,7 @@
 // Faseela service worker (review F-14): small app-shell precache, bounded image cache.
 // CACHE_VERSION and the ?v= of the code files below are written by scripts/version-assets.cjs on every build:
 // a cached file only ever answers for the build it belongs to, so page and code cannot drift apart.
-const CACHE_VERSION = 'b1b4602e28d77';
+const CACHE_VERSION = 'bdbcf2d8840da';
 const SHELL_CACHE = `faseela-shell-${CACHE_VERSION}`;
 const IMAGE_CACHE = `faseela-images-${CACHE_VERSION}`;
 const IMAGE_CACHE_LIMIT = 40;
@@ -9,17 +9,17 @@ const IMAGE_CACHE_LIMIT = 40;
 const SHELL_ASSETS = [
   './',
   './index.html',
-  './app.js?v=1b4602e28d77',
-  './events.js?v=1b4602e28d77',
-  './assistant-knowledge.js?v=1b4602e28d77',
-  './shop.js?v=1b4602e28d77',
+  './app.js?v=dbcf2d8840da',
+  './events.js?v=dbcf2d8840da',
+  './assistant-knowledge.js?v=dbcf2d8840da',
+  './shop.js?v=dbcf2d8840da',
   './manifest.json',
-  './assets/tailwind.css?v=1b4602e28d77',
+  './assets/tailwind.css?v=dbcf2d8840da',
   './fonts/fonts.css',
   './fonts/cairo-arabic-wght-normal.woff2',
   './fonts/cairo-latin-wght-normal.woff2',
   './vendor/lucide.min.js',
-  './supabase-client.mjs?v=1b4602e28d77',
+  './supabase-client.mjs?v=dbcf2d8840da',
   './images/faseela-olive-tree-logo.svg',
   './images/icon-192.png'
 ];

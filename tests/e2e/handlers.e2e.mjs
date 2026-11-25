@@ -435,6 +435,34 @@ try {
     assert.equal(menu.outsideClosed, true, 'a click outside closes the menu');
     assert.deepEqual(menu.direct, ['ar', 'rtl', 'عربي', ['ar'], true], 'English to Arabic in one step');
     assert.deepEqual(menu.afterCycle, ['en', 'EN'], 'the quick button still cycles and shows the current language');
+
+    // German pages show German: no visible sentence on the visitor pages is identical to its English version.
+    // Names that come from the database (only Arabic and English exist there) are the expected exception.
+    const englishInGerman = await d.evaluate(async () => {
+      const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+      const grab = () => {
+        const res = {};
+        [...document.querySelectorAll('body *')].filter((el) => el.childElementCount === 0 && el.getClientRects().length > 0 && !el.closest('script,style,svg'))
+          .forEach((el, n) => { const tx = el.textContent.trim(); if (tx.length > 2) res[(el.getAttribute('data-i18n') || '') + '|' + (el.id || '') + '|' + n] = tx; });
+        return res;
+      };
+      const dbNames = new Set((state.trees || []).flatMap((tr) => [tr.name_en, tr.region_en, tr.tree_type_en, tr.farm_name_en]).filter(Boolean));
+      const found = [];
+      for (const pg of ['home', 'marketplace']) {
+        navigateTo(pg); await wait(300);
+        for (const region of pg === 'home' ? ['tartus', 'idlib', 'daraa'] : [null]) {
+          if (region && typeof renderMapRegionDetails === 'function') renderMapRegionDetails(region);
+          setLanguage('en'); await wait(400); const en = grab();
+          setLanguage('de'); await wait(400); const de = grab();
+          for (const [k, v] of Object.entries(de)) {
+            if (en[k] === v && /[A-Za-z]{3,}\s+[A-Za-z]{3,}/.test(v) && ![...dbNames].some((n) => v.includes(n))) found.push(pg + ': ' + v.slice(0, 70));
+          }
+        }
+      }
+      navigateTo('home');
+      return [...new Set(found)];
+    });
+    assert.deepEqual(englishInGerman, [], 'no English sentence left on the German visitor pages');
     assert.equal(dRequests.length, 1, 'dictionary fetched exactly once');
     // Persisted choice survives a reload and unknown stored values fall back to Arabic.
     await d.reload({ waitUntil: 'load' });
