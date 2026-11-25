@@ -183,6 +183,10 @@ test('quantities: millilitres and grams are converted, labelled and never mixed'
   assert.equal(mapOilAllocation({ id: 'a4', treeId: 'tree_12', litersMl: 1000 }, { tree_12: 'almond' }).unit, 'kg');
   assert.equal(mapOilAllocation({ id: 'a5', treeId: 'tree_12', litersMl: 1000 }).unit, null);
   assert.equal(mapOilAllocation({ id: 'a6', treeId: 'toString', litersMl: 1000 }, {}).unit, null);
+  // The server unit wins and needs no catalogue entry (sold-out / unlisted tree).
+  assert.deepEqual((({ unit, quantity }) => [unit, quantity])(mapOilAllocation({ id: 'a7', treeId: 'tree_77', litersMl: 6000, unit: 'kg' })), ['kg', 6]);
+  assert.equal(mapOilAllocation({ id: 'a8', treeId: 'tree_12', litersMl: 1000, unit: 'l' }, crops).unit, 'l');
+  assert.equal(mapOilAllocation({ id: 'a9', treeId: 'tree_12', litersMl: 1000, unit: 'gallon' }, crops).unit, 'kg');
   assert.deepEqual(allocationTotals([olive, nuts, unknown, null]), { l: 3700, kg: 4200, unknown: 900 });
   assert.deepEqual(allocationTotals(undefined), { l: 0, kg: 0, unknown: 0 });
 });

@@ -462,6 +462,8 @@ begin
   select id into v_alloc from public.oil_allocations where user_id = c_i2 and tree_id = 'tree_oil';
   v_tests := jsonb_build_array(
     jsonb_build_array('postgres', 'oil: 1 share gets 2500 ml of 10 L', 'select liters_ml::text from public.oil_allocations where id = ''' || v_alloc || '''', 'eq:2500'),
+    jsonb_build_array('postgres', 'oil: allocation of an olive tree carries unit l', 'select unit from public.oil_allocations where id = ''' || v_alloc || '''', 'eq:l'),
+    jsonb_build_array('postgres', 'oil: pressing certified mail carries unit l', 'select string_agg(distinct params->>''unit'', '','') from private.email_outbox where template = ''batch_certified''', 'eq:l'),
     jsonb_build_array('postgres', 'oil: 2 shares get 5000 ml', 'select liters_ml::text from public.oil_allocations where user_id = ''' || c_o2 || ''' and tree_id = ''tree_oil''', 'eq:5000'),
     jsonb_build_array('postgres', 'oil: holders notified', 'select count(*)::text from private.email_outbox where template = ''oil_allocated'' and recipient in (''i2@test.faseela.invalid'', ''oi2@test.faseela.invalid'')', 'eq:2'),
     jsonb_build_array(c_o2, 'oil: cannot request foreign allocation', 'select public.request_oil(''{"kind":"donate","allocationIds":["' || v_alloc || '"]}'')::text', 'err:failed-precondition'),

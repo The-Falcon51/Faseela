@@ -7,18 +7,18 @@ const OIL_LITERS_PER_SHARE = 7.4; // non-binding estimate shown in the UI (see r
 const LAND_SQM_PER_TREE = 5;
 
 export const STATUS_LABELS = Object.freeze({
-  awaiting_payment: { ar: 'بانتظار الدفع', en: 'Awaiting payment' },
-  under_review: { ar: 'قيد المراجعة المالية', en: 'Under finance review' },
-  approved: { ar: 'معتمد', en: 'Approved' },
-  rejected: { ar: 'مرفوض', en: 'Rejected' },
-  cancelled: { ar: 'ملغى', en: 'Cancelled' },
-  expired: { ar: 'منتهي الصلاحية', en: 'Expired' },
-  pending: { ar: 'قيد الانتظار', en: 'Pending' },
-  settled: { ar: 'مُسوّى', en: 'Settled' },
-  active: { ar: 'فعّال', en: 'Active' },
-  pending_review: { ar: 'بانتظار التدقيق', en: 'Pending review' },
-  published: { ar: 'منشور', en: 'Published' },
-  certified: { ar: 'معتمد مخبرياً', en: 'Certified' }
+  awaiting_payment: { ar: 'بانتظار الدفع', en: 'Awaiting payment', de: 'Zahlung ausstehend' },
+  under_review: { ar: 'قيد المراجعة المالية', en: 'Under finance review', de: 'In Zahlungsprüfung' },
+  approved: { ar: 'معتمد', en: 'Approved', de: 'Genehmigt' },
+  rejected: { ar: 'مرفوض', en: 'Rejected', de: 'Abgelehnt' },
+  cancelled: { ar: 'ملغى', en: 'Cancelled', de: 'Storniert' },
+  expired: { ar: 'منتهي الصلاحية', en: 'Expired', de: 'Abgelaufen' },
+  pending: { ar: 'قيد الانتظار', en: 'Pending', de: 'Ausstehend' },
+  settled: { ar: 'مُسوّى', en: 'Settled', de: 'Abgerechnet' },
+  active: { ar: 'فعّال', en: 'Active', de: 'Aktiv' },
+  pending_review: { ar: 'بانتظار التدقيق', en: 'Pending review', de: 'Prüfung ausstehend' },
+  published: { ar: 'منشور', en: 'Published', de: 'Veröffentlicht' },
+  certified: { ar: 'معتمد مخبرياً', en: 'Certified', de: 'Laborzertifiziert' }
 });
 
 /** Firestore Timestamp | {seconds,nanoseconds} | Date | number | ISO string -> epoch ms (or null). */
@@ -62,7 +62,7 @@ function isoDay(ms) {
 export function statusLabel(status, lang = 'ar') {
   const entry = STATUS_LABELS[status];
   if (!entry) return String(status || '');
-  return lang === 'ar' ? entry.ar : entry.en;
+  return lang === 'ar' ? entry.ar : (entry[lang] || entry.en);
 }
 
 const CROP_CATEGORIES = ['olive', 'pistachio', 'almond', 'pomegranate', 'date', 'walnut'];
@@ -310,15 +310,20 @@ export function mapOilRequest(doc) {
 }
 
 /**
- * oil_allocations row -> the same row plus `unit` and `quantity`. The row has no unit of its own: it follows the
- * crop of its tree. `cropByTreeId` (Map or plain object: treeId -> crop category) decides; a tree that is not in it
- * yields `unit: null` and `quantity: null`, because guessing would label grams as litres.
+ * oil_allocations row -> the same row plus `unit` and `quantity`. The server stores the unit on the row
+ * ('l' = millilitres of olive oil, 'kg' = grams of weighed harvest; migration 20261121000500), whether or not the
+ * tree is still listed. Only a row from an older server without that column falls back to the crop of its tree:
+ * `cropByTreeId` (Map or plain object: treeId -> crop category) decides; a tree that is not in it yields
+ * `unit: null` and `quantity: null`, because guessing would label grams as litres.
  */
 export function mapOilAllocation(doc, cropByTreeId) {
   const d = normalizeDoc(doc || {});
-  const lookup = cropByTreeId || {};
-  const crop = typeof lookup.get === 'function' ? lookup.get(d.treeId) : lookup[d.treeId];
-  const unit = CROP_CATEGORIES.includes(crop) ? (crop === 'olive' ? 'l' : 'kg') : null;
+  let unit = d.unit === 'l' || d.unit === 'kg' ? d.unit : null;
+  if (!unit) {
+    const lookup = cropByTreeId || {};
+    const crop = typeof lookup.get === 'function' ? lookup.get(d.treeId) : lookup[d.treeId];
+    unit = CROP_CATEGORIES.includes(crop) ? (crop === 'olive' ? 'l' : 'kg') : null;
+  }
   return { ...d, unit, quantity: unit ? milliToMajor(d.litersMl) : null };
 }
 

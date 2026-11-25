@@ -88,6 +88,19 @@ function renderHarvest(template: string, p: Record<string, unknown>, tree: strin
         en: `We could not fulfil your request ${id} (${qty} of weighed harvest). The amount is back in your balance and you can send a new request.${note}`,
         cta: dash,
       };
+    // Sent to whoever recorded the harvest (mill_id 'farm'); the serial is the weighing record, not a lab certificate.
+    case "batch_certified":
+      return {
+        subject: "اعتُمد المحصول الموزون · Weighed harvest approved",
+        ar: `اعتُمد المحصول الموزون للشجرة ${tree}. رقم سجل الحصاد (محضر الوزن): <strong>${escapeHtml(p.certificateSerial)}</strong>.${note}`,
+        en: `The weighed harvest of tree ${tree} was approved. Harvest record (weighing record): <strong>${escapeHtml(p.certificateSerial)}</strong>.${note}`,
+      };
+    case "batch_rejected":
+      return {
+        subject: "المحصول الموزون لم يُعتمد · Weighed harvest not approved",
+        ar: `لم يُعتمد المحصول الموزون للشجرة ${tree}.${note}`,
+        en: `The weighed harvest of tree ${tree} was not approved.${note}`,
+      };
     default:
       return null;
   }

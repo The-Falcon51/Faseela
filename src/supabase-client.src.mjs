@@ -567,13 +567,17 @@ const watchMyFarmerUpdates = (callback, onError) => watchOwnRows('farmer_updates
 const watchMyPressingBatches = (callback, onError) => watchOwnRows('pressing_batches', 'submitted_by_uid', mappers.mapPressingBatch, callback, onError);
 
 /**
- * An allocation has no unit of its own: its amount is millilitres for an olive tree and grams for every other crop.
- * The crop is read from the public catalogue, which lists listed trees only, so an allocation of an unlisted tree
- * keeps `unit: null` and the page must not print it as litres.
+ * An allocation's amount is millilitres for an olive tree and grams for every other crop. The server stores the
+ * unit on each row ('l' | 'kg', migration 20261121000500), also for sold-out and unlisted trees. Only rows from an
+ * older server without that column fall back to the public catalogue, which lists listed trees only; such a row of
+ * an unlisted tree keeps `unit: null` and the page must not print it as litres.
  */
 const allocationCropByTree = new Map();
 async function withAllocationUnits(rows) {
-  const missing = [...new Set(rows.map((row) => row.treeId).filter((id) => typeof id === 'string' && id && !allocationCropByTree.has(id)))];
+  const missing = [...new Set(rows
+    .filter((row) => row.unit !== 'l' && row.unit !== 'kg')
+    .map((row) => row.treeId)
+    .filter((id) => typeof id === 'string' && id && !allocationCropByTree.has(id)))];
   if (missing.length > 0) {
     const { data, error } = await supabase.from('trees_public').select('tree_id,crop_category').in('tree_id', missing);
     if (error) console.warn('[faseela] crop lookup for allocations failed:', error.code || error.message);
@@ -834,6 +838,13 @@ async function redeemGift(code) {
 
 /** Receiving accounts for bank/cash transfer, maintained by admins (migration 29). Resolves `{ data: null }` while unconfigured. */
 const paymentInstructions = callableNoArg('payment_instructions');
+/** Receiving accounts that cover one country (migration 20261121000400); accounts limited to other countries are left out. */
+async function paymentInstructionsFor(country) {
+  const code = String(country || '').trim().toUpperCase();
+  const { data, error } = await supabase.rpc('payment_instructions_for', { p_country: /^[A-Z]{2}$/.test(code) ? code : 'SY' });
+  if (error) throw toBackendError(error);
+  return { data: camelize(data) };
+}
 const adminSetPaymentInstructions = callable('admin_set_payment_instructions');
 /** Admin view of the receiving accounts: `{ live, pending, fourEyes, adminCount }` (migration 31). */
 const adminPaymentState = callableNoArg('admin_payment_state');
@@ -1146,6 +1157,7 @@ const api = Object.freeze({
   downloadShareCertificate,
   attachRequestExtras,
   paymentInstructions,
+  paymentInstructionsFor,
   adminSetPaymentInstructions,
   adminPaymentState,
   recordPaymentScreening,

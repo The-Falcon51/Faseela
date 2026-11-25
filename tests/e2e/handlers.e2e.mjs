@@ -71,6 +71,14 @@ window.FaseelaFirebase = window.FaseelaBackend = {
   // Payment instructions (server-managed): starts unconfigured; admin save fills it.
   payment: null,
   paymentInstructions: async () => ({ data: window.FaseelaBackend.payment }),
+  // Like public.payment_instructions_for: only accounts without a country list or with this country. payForMissing
+  // simulates a database that does not have the function yet (PostgREST PGRST202).
+  paymentInstructionsFor: async (c) => {
+    window.FaseelaBackend.calls.push(['paymentInstructionsFor', c]);
+    if (window.FaseelaBackend.payForMissing) throw Object.assign(new Error('Could not find the function'), { code: 'PGRST202' });
+    const p = window.FaseelaBackend.payment;
+    return { data: p && { ...p, country: c, channels: (p.channels || []).filter((ch) => !Array.isArray(ch.countries) || ch.countries.includes(c)) } };
+  },
   recordPaymentScreening: async (p) => { window.FaseelaBackend.calls.push(['recordPaymentScreening', p]); return { data: { requestId: p.requestId, result: p.result } }; },
   paymentScreeningState: async () => ({ data: null }),
   reviewInvestmentRequest: async (p) => { window.FaseelaBackend.calls.push(['reviewInvestmentRequest', p]); return { data: { requestId: p.requestId, status: 'approved' } }; },
@@ -792,6 +800,26 @@ try {
         out.payRendered = document.getElementById('local-pay-accounts').textContent.includes('SY00 TEST 1234') && document.getElementById('local-pay-accounts').textContent.includes('Keep the receipt');
         out.payCopyBtn = !!document.querySelector('#local-pay-accounts button[data-account="SY00 TEST 1234"]');
         out.payReadyAfter = state.paymentReady;
+        // Receiving accounts by country: only accounts that cover the tree's country are shown and counted.
+        out.payForCalls = window.FaseelaBackend.calls.filter((c) => c[0] === 'paymentInstructionsFor').map((c) => c[1]);
+        const payBefore = window.FaseelaBackend.payment;
+        const payText = () => document.getElementById('local-pay-accounts').textContent;
+        window.FaseelaBackend.payment = { channels: [
+          { id: 'bank_iban', titleAr: 'بنك', titleEn: 'Bank', account: 'SY00 ONLY 0001', countries: ['SY'] },
+          { id: 'bank_iban', titleAr: 'بنك', titleEn: 'Bank Spain', account: 'ES00 ONLY 0002', countries: ['ES'] }], updatedAt: Date.now() };
+        await preparePaymentInstructions(true); await wait(50);
+        out.payCountrySy = { sy: payText().includes('SY00 ONLY 0001'), es: payText().includes('ES00 ONLY 0002'), ready: state.paymentReady };
+        window.FaseelaBackend.payForMissing = true; // fallback: unfiltered list, filtered in the app
+        state.paymentCountry = 'ES';
+        await preparePaymentInstructions(true); await wait(50);
+        out.payCountryEsFallback = { sy: payText().includes('SY00 ONLY 0001'), es: payText().includes('ES00 ONLY 0002'), ready: state.paymentReady };
+        window.FaseelaBackend.payment = { channels: [{ id: 'bank_iban', titleAr: 'بنك', titleEn: 'Bank', account: 'SY00 ONLY 0001', countries: ['SY'] }], updatedAt: Date.now() };
+        await preparePaymentInstructions(true); await wait(50);
+        out.payCountryEsNone = { alert: !!document.querySelector('#local-pay-accounts [role="alert"]'), sy: payText().includes('SY00 ONLY 0001'), ready: state.paymentReady };
+        window.FaseelaBackend.payForMissing = false;
+        window.FaseelaBackend.payment = payBefore;
+        state.paymentCountry = 'SY';
+        await preparePaymentInstructions(true); await wait(50);
         out.noDemoIban = !document.body.innerHTML.includes('SY98BBSF') && !document.body.innerHTML.includes('0944112233');
         // Consent: without the box nothing is sent; an outdated document stops before the reservation; then the
         // two documents are recorded (current versions) before the reservation is made.
@@ -1034,6 +1062,10 @@ try {
       assert.equal(result.payRendered, true, 'server-managed accounts rendered with note');
       assert.equal(result.payCopyBtn, true, 'copy button carries the account');
       assert.equal(result.payReadyAfter, true);
+      assert.ok(result.payForCalls.length > 0 && result.payForCalls.every((c) => c === 'SY'), `accounts are requested for the tree's country: ${result.payForCalls}`);
+      assert.deepEqual(result.payCountrySy, { sy: true, es: false, ready: true }, 'an account limited to ES is not shown for a tree in SY');
+      assert.deepEqual(result.payCountryEsFallback, { sy: false, es: true, ready: true }, 'without the server function the app filters the accounts itself');
+      assert.deepEqual(result.payCountryEsNone, { alert: true, sy: false, ready: false }, 'no account for the country: blocking notice, purchase gate closed');
       assert.equal(result.noDemoIban, true, 'no hard-coded demo account numbers in the DOM');
       assert.equal(result.tradeTabHidden, true, 'P2P tab hidden in server mode');
       assert.deepEqual(result.samplesHidden, [], 'no sample harvest, documents, carbon, land or certificate buttons in a real session');

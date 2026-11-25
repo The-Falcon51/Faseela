@@ -4,11 +4,21 @@
 --  a) Listing gate: a tree can be listed only in an active country (trigger, so it holds on every write path).
 --  b) A country is activated only when at least one receiving account covers it (the rule of the old registry
 --     that could be kept without a second switch; the legal review stays a decision of the admin who activates).
---  c) Receiving accounts: country codes are checked against public.countries. This also repairs the stored shape:
---     the applied version appended an empty object before every channel.
+--  c) Receiving accounts: country codes are checked against public.countries. This also repairs the stored shape
+--     (current setting and pending proposal): the applied version wrote a separate element in front of every
+--     channel, {} or {"countries":[...]}; the country limit goes back onto its channel.
 --  d) private.countries goes. It held defaults only.
--- Down: re-run 20261116000170_country_registry.sql and 20261116000180_payment_channels_by_country.sql after
---       renaming trees_public.country_code back (see 20261117000050_country_column_bridge.sql).
+-- Down (the data repair and the drop of private.countries are forward-only; run the steps in this order):
+--   1. drop trigger if exists trees_public_country_gate on public.trees_public;
+--      drop function if exists private.enforce_country_active();
+--   2. restore private.admin_set_country_status from 20261118000100_master_data.sql (activation without the
+--      receiving-account check);
+--   3. drop function if exists private.repair_stored_payment_channels();
+--      drop function if exists private.repair_payment_channels(jsonb);
+--   4. keep private.clean_payment_instructions as defined here and keep the repaired channels.
+--   Do not re-run 20261116000170 / 20261116000180: they read trees_public.country and private.countries, and 180
+--   writes the broken channel shape again. Undoing 20261118000100_master_data.sql or 20261117000050 after this is
+--   not supported (see their Down notes).
 
 create or replace function private.enforce_country_active()
 returns trigger
@@ -91,13 +101,86 @@ end;
 $$;
 revoke all on function private.clean_payment_instructions(jsonb) from public, anon, authenticated;
 
--- Stored receiving accounts: drop the empty objects the applied version wrote in front of every channel.
-update private.app_settings s
-   set value = jsonb_set(s.value, '{channels}',
-         coalesce((select jsonb_agg(ch) from jsonb_array_elements(s.value -> 'channels') ch where ch <> '{}'::jsonb), '[]'::jsonb))
- where s.key in ('payment_instructions', 'payment_instructions_pending')
-   and jsonb_typeof(s.value -> 'channels') = 'array'
-   and exists (select 1 from jsonb_array_elements(s.value -> 'channels') ch where ch = '{}'::jsonb);
+-- Stored receiving accounts. The applied version wrote a separate element in front of every channel: {} for a
+-- channel without a country limit, {"countries":[...]} for a limited one (the channel itself then had no limit).
+-- The limit is moved back onto the next channel that has an id; every element without an id goes.
+create or replace function private.repair_payment_channels(p_channels jsonb)
+returns jsonb
+language plpgsql
+immutable
+set search_path = ''
+as $$
+declare
+  v_ch jsonb;
+  v_countries jsonb := null;
+  v_out jsonb := '[]'::jsonb;
+begin
+  if coalesce(jsonb_typeof(p_channels), 'null') <> 'array' then
+    return p_channels;
+  end if;
+  for v_ch in select t.e from jsonb_array_elements(p_channels) with ordinality t(e, i) order by t.i loop
+    if jsonb_typeof(v_ch) <> 'object' then
+      continue;
+    elsif v_ch ? 'id' then
+      if v_countries is not null and not (v_ch ? 'countries') then
+        v_ch := v_ch || jsonb_build_object('countries', v_countries);
+      end if;
+      v_out := v_out || jsonb_build_array(v_ch);
+      v_countries := null;
+    elsif jsonb_typeof(v_ch -> 'countries') = 'array' and jsonb_array_length(v_ch -> 'countries') > 0 then
+      v_countries := v_ch -> 'countries';
+    end if;
+  end loop;
+  return v_out;
+end;
+$$;
+
+-- Repairs the current setting (value.channels) and the pending four-eyes proposal (value.value.channels, see
+-- 20261111000200_payment_four_eyes.sql). Country codes of a limit that public.countries does not know yet become
+-- planned countries (code as neutral name, USD), so the limit is kept and the setting can be saved again.
+create or replace function private.repair_stored_payment_channels()
+returns integer
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  v_n integer := 0;
+  v_k integer;
+begin
+  update private.app_settings s
+     set value = jsonb_set(s.value, '{channels}', private.repair_payment_channels(s.value -> 'channels'))
+   where s.key = 'payment_instructions'
+     and jsonb_typeof(s.value -> 'channels') = 'array'
+     and exists (select 1 from jsonb_array_elements(s.value -> 'channels') ch
+                  where jsonb_typeof(ch) <> 'object' or not (ch ? 'id'));
+  get diagnostics v_k = row_count;
+  v_n := v_n + v_k;
+  update private.app_settings s
+     set value = jsonb_set(s.value, '{value,channels}', private.repair_payment_channels(s.value #> '{value,channels}'))
+   where s.key = 'payment_instructions_pending'
+     and jsonb_typeof(s.value #> '{value,channels}') = 'array'
+     and exists (select 1 from jsonb_array_elements(s.value #> '{value,channels}') ch
+                  where jsonb_typeof(ch) <> 'object' or not (ch ? 'id'));
+  get diagnostics v_k = row_count;
+  v_n := v_n + v_k;
+  insert into public.countries (code, name, name_en, name_de, currency, status)
+    select distinct c.code, c.code, c.code, c.code, 'USD', 'planned'
+      from private.app_settings s
+      cross join lateral jsonb_array_elements(case s.key when 'payment_instructions' then s.value -> 'channels'
+                                                          else s.value #> '{value,channels}' end) ch
+      cross join lateral jsonb_array_elements_text(ch -> 'countries') c(code)
+     where s.key in ('payment_instructions', 'payment_instructions_pending')
+       and jsonb_typeof(case s.key when 'payment_instructions' then s.value -> 'channels' else s.value #> '{value,channels}' end) = 'array'
+       and jsonb_typeof(ch) = 'object' and jsonb_typeof(ch -> 'countries') = 'array'
+       and c.code ~ '^[A-Z]{2}$'
+       and not exists (select 1 from public.countries x where x.code = c.code)
+    on conflict (code) do nothing;
+  return v_n;
+end;
+$$;
+revoke all on function private.repair_payment_channels(jsonb), private.repair_stored_payment_channels() from public, anon, authenticated;
+select private.repair_stored_payment_channels();
 
 -- Activation needs a receiving account for the country. Changed in place so the rest of the function is kept.
 do $$

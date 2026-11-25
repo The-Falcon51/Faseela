@@ -372,7 +372,6 @@
       filter_region_afrin: "عفرين والشمال",
       voice_textarea_ph: "اكتب تقريرك هنا؛ التسجيل الصوتي للاستماع على جهازك فقط.",
       local_pay_ref_ph: "رقم العملية أو مرجع الحوالة",
-      oil_cash_account_ph: "IBAN: SY... أو رقم الهاتف لحساب سيريتل كاش",
       voice_instructions_title: "استمع للتعليمات بصوت ناطق",
       session_btn_title: "إدارة جلسة المستخدم والتفضيلات",
       reg_name_ph: "مثال: يوسف الشامي",
@@ -457,12 +456,12 @@
         theme_dark: "الوضع الليلي",
         theme_toggle_title: "التبديل بين الوضع الليلي والنهاري",
         brand_subtitle: "المنصة التشاركية لزيتون سوريا",
-        legal_modal_title: "الميثاق القانوني والسيادي والعقود الرسمية المعتمدة",
-        legal_modal_sub: "توثيق حقوق الانتفاع الزراعي وحماية مراجعة الدفعات (Payment Review)",
-        legal_tab_charter: "الميثاق ومراجعة الدفعات",
-        legal_tab_investor: "عقد الكافل (5 م²)",
-        legal_tab_farmer: "عقد الرعاية الفلاحية",
-        legal_tab_mill: "ميثاق جودة المعاصر",
+        legal_modal_title: "الشروط والوثائق القانونية",
+        legal_modal_sub: "كفالة أشجار تُدفع بتحويل بنكي: لا ملكية ولا عائد ولا دفعات نقدية",
+        legal_tab_charter: "الدفع والمراجعة",
+        legal_tab_investor: "وصف الخدمة: كفالة شجرة",
+        legal_tab_farmer: "اتفاقية رعاية المزارع",
+        legal_tab_mill: "معيار جودة المعصرة",
         legal_btn_print: "طباعة العقد الرسمي والوثيقة المعتمدة (Print / PDF)",
         footer_legal_title: "معلومات قانونية",
         footer_link_charter: "الميثاق ومراجعة الدفعات (Payment Review)",
@@ -2305,10 +2304,9 @@
         cultivar_btn_browse_qaysi: "تصفح أشجار القيسي المتاحة",
 
         // Oil Delivery & Payout Modal
-        oil_payout_modal_title: "خيارات استلام المحصول والمحاصيل",
-        oil_payout_modal_sub: "اختر بين استلام عبوات الزيت البكر الفاخر المشحونة دولياً أو بيع حصتك بسعر التصدير واستلام المحصول نقداً",
+        oil_payout_modal_title: "خيارات استلام حصة الزيت",
+        oil_payout_modal_sub: "استلام عبوات حصتك من الزيت البكر الممتاز بالشحن إلى عنوانك. لا يوجد بيع للحصة ولا أي دفعة مالية للكافل.",
         oil_tab_delivery: "شحن عبوات الزيت",
-        oil_tab_cash: "تسييل كاش بالدولار / ل.س",
         oil_deliv_spec_title: "مواصفات التعبئة والشحن الدولي المعتمد:",
         oil_deliv_spec_desc: "تعبئة في عبوات تنك غذائية مطلية 16 كغ أو زجاج معتم بنيتروجين خامل لحماية الزيت من الأكسدة أثناء الشحن، مع شهادة التحليل المخبري وبوليصة تتبع دولية.",
         oil_input_dest_lbl: "وجهة التوصيل والشحن:",
@@ -2323,14 +2321,6 @@
         oil_step2: "فحص مخبري",
         oil_step3: "تعبئة نيتروجينية",
         oil_step4: "شحن دولي",
-        oil_cash_spec_title: "تسييل المحصول بسعر الجملة التصديري الدولي:",
-        oil_cash_spec_desc: "يمكن للمنصة، بناءً على طلبك، عرض كامل حصتك المقدرة (7.4 لتر) لشركات التصدير بسعر $9.50 للتر الواحد بإجمالي صافي $70.30 (ما يعادل ~ 1,020,000 ليرة سورية) مع إيداع مباشر.",
-        oil_cash_method_lbl: "وسيلة استلام المحصول المالي:",
-        oil_channel_bank: "حساب مصرفي (بنك بيمو السعودي الفرنسي / بنك البركة)",
-        oil_channel_intl: "حوالة خارجية (Western Union / MoneyGram)",
-        oil_channel_haram: "شركة الهرم / الفؤاد للصرافة (استلام نقدي فوري)",
-        oil_channel_cash: "سيريتل كاش / MTN كاش",
-        oil_cash_account_lbl: "رقم الحساب / الآيبان أو بيانات المستلم:",
         btn_submit_oil_choice: "تأكيد اختيار الاستلام والتسليم",
 
         // Access Denied Modal
@@ -2461,12 +2451,9 @@
         dash_harvest_select_mode_sub: "اختر كيف ترغب في الاستفادة من حصتك من الزيت البكر الممتاز لهذا الموسم",
         dash_mode_dispatch_title: "شحن الزيت الفاخر لمنزلك",
         dash_mode_dispatch_desc: "تعبئة الزيت في تنك معدني غذائي سوري (16L) أو زجاج داكن فاخر (500ml) وشحنه مبرداً لعنوانك في سوريا أو الخارج.",
-        dash_mode_liquidate_title: "التسييل المالي الفوري (Cash)",
-        dash_mode_liquidate_desc: "بيع حصتك للمنصة بسعر التصدير الدولي الممتاز ($13/L أو ما يعادلها 195,000 ل.س) وتحويل القيمة فورياً لمحفظتك.",
         dash_mode_donate_title: "إهداء وتبرع لعائلات في سوريا",
         dash_mode_donate_desc: "تقديم زيت شجرتك المباركة كصدقة جارية أو مؤونة غذائية لأسر ريفية متعففة في سوريا مع إصدار وثيقة إهداء موثقة.",
         dash_btn_confirm_dispatch: "تأكيد أمر شحن الزيت الفاخر",
-        dash_btn_confirm_liquidate: "تأكيد تسييل الحصة وتحويل القيمة لمحفظتي",
         dash_btn_confirm_donate: "تأكيد إهداء الحصة وتوثيق التبرع",
         dash_dispatch_pkg_lbl: "نوع التعبئة المختارة:",
         dash_dispatch_pkg_tin: "تنك معدني سوري غذائي (16 لتر)",
@@ -2568,18 +2555,16 @@
         market_tab_mature: "الأشجار المعمرة المنتجة",
         market_tab_virgin: "بساتين الغراس البكر مع الأرض (من الصفر)",
         virgin_badge: "فرصة التأسيس ال (Greenfield Projects)",
-        virgin_hero_title: "اكفل غراس الزيتون البكر مع الأرض (عمر 1 - 3 سنوات) من الصفر",
-        virgin_hero_desc: "ابدأ مشروعك الزراعي بأصل عقاري حقيقي: تملك مقاسم أراضٍ كاداسترية مفرزة (25 م² إلى دونم كامل 1,000 م²) مع غراس مؤصلة، شبكة ري بالتنقيط بالطاقة الشمسية، ونمو متسارع للقيمة الرأسمالية للأرض مع حصص محصول تجارية مستدامة.",
-        virgin_kpi_growth_lbl: "معدل نمو قيمة الأرض",
-        virgin_kpi_growth_sub: "خلال أول عامين من الاستصلاح",
+        virgin_hero_title: "اكفل غراس الزيتون البكر (عمر 1 - 3 سنوات) من الصفر",
+        virgin_hero_desc: "اكفل غراساً مؤصلة في بساتين جديدة لدى مزارعين شركاء (25 م² إلى 1,000 م² لكل باقة) مع شبكة ري بالتنقيط بالطاقة الشمسية. الكفالة لا تمنح ملكية أرض ولا عائداً مالياً؛ يحصل الكافل على حصته من الزيت عند الإثمار.",
         vstage1_title: "التأسيس وتعميق الجذور",
-        vstage1_desc: "حيازة كاداسترية، مد شبكات الري بالطاقة الشمسية، وقفزة 45% في سعر الأرض.",
+        vstage1_desc: "تجهيز الأرض، مد شبكات الري بالطاقة الشمسية، وتعميق جذور الغراس.",
         vstage2_title: "بشائر الإثمار التجاري",
         vstage2_desc: "بدء إنتاج 2.5 - 3.5 لتر زيت بكر ممتاز صافٍ لكل غرسة.",
         vstage3_title: "النضج والعطاء الكامل",
-        vstage3_desc: "إنتاج كامل 8 - 12 لتر سنوياً لكل شجرة لمئات السنين وتضاعف رأس المال.",
-        vstage4_title: "المرونة والتخارج",
-        vstage4_desc: "إعادة بيع البستان في سوق فسيلة بربح رأسمالي أو توريث سند الطابو الأخضر.",
+        vstage3_desc: "إنتاج كامل تقديري 8 - 12 لتر سنوياً لكل شجرة لعقود طويلة.",
+        vstage4_title: "حصة الزيت فقط",
+        vstage4_desc: "تستمر الكفالة طوال مدتها، ويحصل الكافل على حصته من الزيت فقط دون أي عائد مالي.",
         vtiers_badge: "باقات تملك الأراضي والغراس البكر",
         vtiers_title: "اختر حجم مشروعك الزراعي التأسيسي:",
         vtier1_title: "1 غرسة + 25 م² أرض",
@@ -2604,7 +2589,7 @@
         dash_trade_filter_virgin: "غراس بكر ومقاسم أرض",
         dash_trade_btn_instant_buy: "شراء فوري عبر مراجعة الدفعات",
         dash_virgin_holdings_title: "بساتيني وغراسي البكر مع الأرض الزراعية",
-        dash_virgin_holdings_sub: "غراس زيتون تأسيسية (1-3 سنوات) مشمولة بطابو مساحي وري ذكي ونمو رأسمالي",
+        dash_virgin_holdings_sub: "غراس زيتون تأسيسية (1-3 سنوات) مع ري ذكي وحصة زيت عند الإثمار",
         dash_btn_resell_p2p: "عرض في سوق التداول",
         farmer_btn_advance: "طلب سلفة تشغيلية عاجلة",
         farmer_adv_modal_title: "طلب سلفة زراعية تشغيلية طارئة",
@@ -3092,7 +3077,7 @@
         roi_stage_1_lbl: "1. السنة 1 - 3",
         roi_stage_2_lbl: "2. السنة 4 - 5",
         roi_stage_3_lbl: "3. السنة 6 - 8+",
-        roi_stage_4_lbl: "4. سيولة وتخارج",
+        roi_stage_4_lbl: "4. استمرار الكفالة",
         bundle_benefit_oil: "🫒 8 لتر زيت بكر ممتاز",
         bundle_benefit_pistachio: "🌰 3 كغ فستق حلبي نخب أول",
         bundle_benefit_almond: "🌸 2.5 كغ لوز سوري فرك",
@@ -3721,7 +3706,7 @@
         modal_contracts_govt_justice: "وزارة العدل والتحكيم التجاري",
         modal_payout_channel_lbl: "وسيلة التحويل المعتمدة:",
         modal_clause_anti_spec_text: "يمنع منعاً باتاً تداول حصص الأشجار بغرض المضاربة المالية المجردة؛ ويشترط في أي مشترٍ جديد الإقرار بكون الأصل شجرة زراعية حية خاضعة لدورات الطبيعة والري الحقيقي.",
-              dash_roi_stage_1_desc: "إنتاج 16 لتر زيت + ارتفاع قيمة حرم الأرض 15%",
+              dash_roi_stage_1_desc: "إنتاج تقديري 16 لتر زيت",
         dash_roi_stage_2_desc: "نضوج الغراس البكر + تضاعف إنتاجية الزيت + صك طابو",
         dash_roi_stage_3_desc: "ذروة إنتاج الزيت فائق البوليفينول + أرض طابو كاملة التجهيز",
         dash_compounding_engine_title: "محرك إعادة الكفالة التلقائية للمحاصيل (Auto-Compounding)",
@@ -4228,7 +4213,6 @@
       filter_region_afrin: "Afrin & Northern Terroir",
       voice_textarea_ph: "Write your report here; the audio recording is only for listening on your device.",
       local_pay_ref_ph: "Transaction number or transfer reference",
-      oil_cash_account_ph: "IBAN: SY... or mobile number for Syriatel Cash account",
       voice_instructions_title: "Listen to spoken instructions",
       session_btn_title: "Manage User Session & Preferences",
       reg_name_ph: "e.g. Tariq The Syrian",
@@ -4615,12 +4599,12 @@
         // Navigation & Brand
         brand_title: "FASEELA",
         brand_subtitle: "Syrian Olive Tree Fractional Stewardship",
-        legal_modal_title: "Legal Charters & Certified Official Contracts",
-        legal_modal_sub: "Verified Agrarian Usufruct Deeds & Receipt-Reviewed Payments",
-        legal_tab_charter: "Charter & Payment Review",
-        legal_tab_investor: "Investor Deed (5m²)",
-        legal_tab_farmer: "Farmer Grove Accord",
-        legal_tab_mill: "Cold Mill Quality Standard",
+        legal_modal_title: "Terms and legal documents",
+        legal_modal_sub: "Tree sponsorship paid by bank transfer: no ownership, no investment, no return",
+        legal_tab_charter: "Payment & review",
+        legal_tab_investor: "Service description: tree sponsorship",
+        legal_tab_farmer: "Farmer care agreement",
+        legal_tab_mill: "Mill quality standard",
         legal_btn_print: "Print Official Contract & Certified Deed (Print / PDF)",
         footer_legal_title: "Legal",
         footer_link_charter: "Charter & Payment Review Protection",
@@ -5163,10 +5147,9 @@
         cultivar_btn_browse_qaysi: "Explore Available Qaysi Trees",
 
         // Oil Delivery & Payout Modal
-        oil_payout_modal_title: "Harvest Distribution & Payout Options",
-        oil_payout_modal_sub: "Choose between worldwide physical EVOO delivery or wholesale export cash liquidation",
+        oil_payout_modal_title: "Oil Share Delivery Options",
+        oil_payout_modal_sub: "Receive your extra virgin olive oil share by delivery to your address. Shares are not sold and sponsors receive no money.",
         oil_tab_delivery: "Ship EVOO Canisters",
-        oil_tab_cash: "Cash Liquidation (USD / SYP)",
         oil_deliv_spec_title: "Packaging & International Delivery Standards:",
         oil_deliv_spec_desc: "Sealed in food-grade tin canisters (16 kg) or dark UV glass bottles with inert argon gas protection against oxidation, accompanied by lab quality certificates and international waybill tracking.",
         oil_input_dest_lbl: "Delivery & Shipping Destination:",
@@ -5181,14 +5164,6 @@
         oil_step2: "Lab Tested",
         oil_step3: "Nitrogen Sealed",
         oil_step4: "Carrier Dispatched",
-        oil_cash_spec_title: "Export Wholesale Cash Liquidation:",
-        oil_cash_spec_desc: "On request, Faseela can offer your full estimated share (7.4 L) at the export price current at harvest (indicative: $9.50 per liter, about $70.30 or ~1,020,000 SYP). The final price depends on market conditions and lab-tested oil quality.",
-        oil_cash_method_lbl: "Payout Channel:",
-        oil_channel_bank: "Bank Account (BBSF / Al-Baraka Bank)",
-        oil_channel_intl: "International Remittance (Western Union / MoneyGram)",
-        oil_channel_haram: "Al-Haram / Al-Fouad Exchange (Instant Cash Pickup)",
-        oil_channel_cash: "Syriatel Cash / MTN Cash",
-        oil_cash_account_lbl: "Account # / IBAN or Recipient Details:",
         btn_submit_oil_choice: "Confirm Harvest Distribution Choice",
 
         // Access Denied Modal
@@ -5319,12 +5294,9 @@
         dash_harvest_select_mode_sub: "Select your preferred delivery pathway for your Extra Virgin Olive Oil harvest",
         dash_mode_dispatch_title: "Ship Premium EVOO to Doorstep",
         dash_mode_dispatch_desc: "Packaged in food-grade Syrian tins (16L) or dark UV glass bottles (500ml), cold-courier delivered in Syria or worldwide.",
-        dash_mode_liquidate_title: "Instant Cash Liquidation",
-        dash_mode_liquidate_desc: "Sell your harvest yield to platform at international parity price ($13/L or 195,000 SYP) credited instantly to your wallet.",
         dash_mode_donate_title: "Philanthropic Gift to Syrian Families",
         dash_mode_donate_desc: "Dedicate your olive oil yield as enduring charity (Sadaqah) for needy rural families in Syria with official certificate.",
         dash_btn_confirm_dispatch: "Confirm EVOO Dispatch Order",
-        dash_btn_confirm_liquidate: "Confirm Liquidation & Credit Wallet",
         dash_btn_confirm_donate: "Confirm Philanthropic Donation Deed",
         dash_dispatch_pkg_lbl: "Selected Packaging Option:",
         dash_dispatch_pkg_tin: "Syrian Food-Grade Tin (16 Liters)",
@@ -5426,18 +5398,16 @@
         market_tab_mature: "Mature productive trees",
         market_tab_virgin: "Virgin Greenfield Groves & Land (From Scratch)",
         virgin_badge: "Greenfield Projects",
-        virgin_hero_title: "Invest in Virgin Olive Groves with Land (Ages 1 - 3 Years) from Scratch",
-        virgin_hero_desc: "Build your agricultural wealth with real land ownership: acquire partitioned cadastral land parcels (25 m² to 1,000 m² Dunum) bundled with certified saplings, solar-powered drip irrigation, and rapid capital growth.",
-        virgin_kpi_growth_lbl: "Land Capital Growth",
-        virgin_kpi_growth_sub: "In first 2 years of reclamation",
+        virgin_hero_title: "Sponsor Young Olive Saplings (Ages 1 - 3 Years) from the Start",
+        virgin_hero_desc: "Sponsor certified saplings in newly planted groves of partner farms (25 m² to 1,000 m² per package) with solar-powered drip irrigation. Sponsorship gives no land ownership and no financial return; sponsors receive their oil share once the trees bear fruit.",
         vstage1_title: "Establishment & Rooting",
-        vstage1_desc: "Cadastral tenure, solar drip network deployment, and 45% land valuation surge.",
+        vstage1_desc: "Land preparation, solar drip network deployment and root establishment.",
         vstage2_title: "Pre-Harvest Commercial Yield",
         vstage2_desc: "Initial output of 2.5 - 3.5 Liters of ultra-pure EVOO per sapling.",
         vstage3_title: "Full Maturity & Prime Output",
-        vstage3_desc: "Full production of 8 - 12 Liters/year per tree for centuries with compounded equity.",
-        vstage4_title: "Liquidity & Succession",
-        vstage4_desc: "Resell grove on Faseela secondary market at capital gain or bequeath deed.",
+        vstage3_desc: "Estimated full production of 8 - 12 Liters/year per tree for decades.",
+        vstage4_title: "Oil Share Only",
+        vstage4_desc: "The sponsorship continues for its term; the sponsor receives an oil share only, with no financial return.",
         vtiers_badge: "Greenfield Land & Virgin Sapling Packages",
         vtiers_title: "Choose Your Foundational Agricultural Scale:",
         vtier1_title: "1 Sapling + 25 m² Land",
@@ -5462,7 +5432,7 @@
         dash_trade_filter_virgin: "Virgin Groves & Land",
         dash_trade_btn_instant_buy: "Instant Payment Review Buy",
         dash_virgin_holdings_title: "My Greenfield Virgin Groves & Land Parcels",
-        dash_virgin_holdings_sub: "Greenfield olive groves (1-3 yrs) with cadastral land deeds, smart irrigation & capital growth",
+        dash_virgin_holdings_sub: "Greenfield olive saplings (1-3 yrs) with smart irrigation and an oil share once they bear fruit",
         dash_btn_resell_p2p: "List on P2P Market",
         farmer_btn_advance: "Request Emergency Micro-Advance",
         farmer_adv_modal_title: "Emergency Agricultural Micro-Advance Request",
@@ -5956,7 +5926,7 @@
         roi_stage_1_lbl: "1. Years 1 - 3",
         roi_stage_2_lbl: "2. Years 4 - 5",
         roi_stage_3_lbl: "3. Years 6 - 8+",
-        roi_stage_4_lbl: "4. Liquidity & Exit",
+        roi_stage_4_lbl: "4. Ongoing Sponsorship",
         bundle_benefit_oil: "🫒 8 Liters Extra Virgin Olive Oil",
         bundle_benefit_pistachio: "🌰 3 kg Premium Aleppo Pistachios",
         bundle_benefit_almond: "🌸 2.5 kg Syrian Soft-shell Almonds",
@@ -6585,7 +6555,7 @@
         modal_contracts_govt_justice: "Ministry of Justice & Commercial Arbitration",
         modal_payout_channel_lbl: "Approved Payout Channel:",
         modal_clause_anti_spec_text: "Trading shares for mere financial speculation is strictly prohibited; all participants acknowledge holdings represent living olive trees subject to agronomic care and nature cycles.",
-              dash_roi_stage_1_desc: "16L EVOO production + 15% land perimeter appreciation",
+              dash_roi_stage_1_desc: "Estimated 16L EVOO production",
         dash_roi_stage_2_desc: "Greenfield sapling maturity + 2x yield + cadastral deed",
         dash_roi_stage_3_desc: "Peak high-polyphenol EVOO yield + fully developed title deed land",
         dash_compounding_engine_title: "Automatic Yield Reinvestment Engine (Auto-Compounding)",
@@ -10460,8 +10430,6 @@
         shippingAddress_en: "Tartous - Sea Corniche",
         courier: "الأسطول المبرد لمنصة فسيلة",
         courier_en: "Faseela Climate Fleet",
-        liquidationCashRateSYP: 195000,
-        liquidationCashRateUSD: 13.0,
         donationCharity: "جمعية رعاية الأسر الريفية في طرطوس وإدلب",
         donationCharity_en: "Rural Families Support Association (Tartous & Idlib)"
       },
@@ -13511,339 +13479,185 @@ function togglePasswordVisibility(inputId, iconId) {
     function renderLegalContractsContent() {
       const isEn = state.currentLang !== 'ar';
 
-      // 1. Update Title & Subtitle of Modal
+      // 1. Title & subtitle: the dictionary keys carry Arabic, English and German.
       const titleEl = document.querySelector('[data-i18n="legal_modal_title"]');
-      if (titleEl) titleEl.innerText = isEn 
-        ? "Official Legal Charters, Deeds & Executed Contracts"
-        : "الميثاق القانوني والسيادي والعقود الرسمية المعتمدة";
+      if (titleEl) titleEl.innerText = t('legal_modal_title');
 
       const subEl = document.querySelector('[data-i18n="legal_modal_sub"]');
-      if (subEl) subEl.innerText = isEn
-        ? "Agricultural Usufruct Tenure Protection & Receipt-Reviewed Payments"
-        : "توثيق حقوق الانتفاع الزراعي وحماية مراجعة الدفعات (Payment Review)";
+      if (subEl) subEl.innerText = t('legal_modal_sub');
 
-      // 2. Tab 1: Charter & Payment Review
+      // Literal class names per panel colour, so the Tailwind build keeps them.
+      const LEGAL_TONES = {
+        purple: { box: 'bg-purple-50 dark:bg-purple-950/40 border border-purple-200 dark:border-purple-800/60 p-4 rounded-2xl space-y-2 text-start', meta: 'flex items-center justify-between gap-2 text-[11px] font-mono text-purple-900 dark:text-purple-300 border-b border-purple-200 dark:border-purple-800/60 pb-1.5', title: 'font-black text-sm text-purple-950 dark:text-purple-200' },
+        olive: { box: 'bg-olive-50 dark:bg-olive-950/40 border border-olive-200 dark:border-olive-800/60 p-4 rounded-2xl space-y-2 text-start', meta: 'flex items-center justify-between gap-2 text-[11px] font-mono text-olive-900 dark:text-olive-300 border-b border-olive-200 dark:border-olive-800/60 pb-1.5', title: 'font-black text-sm text-olive-950 dark:text-olive-200' },
+        emerald: { box: 'bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 p-4 rounded-2xl space-y-2 text-start', meta: 'flex items-center justify-between gap-2 text-[11px] font-mono text-emerald-900 dark:text-emerald-300 border-b border-emerald-200 dark:border-emerald-800/60 pb-1.5', title: 'font-black text-sm text-emerald-950 dark:text-emerald-200' },
+        amber: { box: 'bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 p-4 rounded-2xl space-y-2 text-start', meta: 'flex items-center justify-between gap-2 text-[11px] font-mono text-amber-900 dark:text-amber-300 border-b border-amber-200 dark:border-amber-800/60 pb-1.5', title: 'font-black text-sm text-amber-950 dark:text-amber-200' }
+      };
+      // One panel: header card plus numbered clauses. Every text comes from tr3(ar, en, de) and is escaped.
+      const legalPanel = (tone, metaLeft, metaRight, title, intro, clauses, footer = '') => {
+        const c = LEGAL_TONES[tone];
+        const clauseHtml = clauses.map(cl => `
+            <div class="p-3 bg-stone-50 dark:bg-stone-800/60 rounded-xl border border-stone-200 dark:border-stone-700 space-y-1">
+              <strong class="font-black text-stone-900 dark:text-white block">${escapeHtml(cl.head)}</strong>
+              ${cl.items
+                ? `<ul class="list-disc ps-4 space-y-1 text-stone-600 dark:text-stone-300">${cl.items.map(item => `<li>${escapeHtml(item)}</li>`).join('')}</ul>`
+                : `<p class="text-stone-600 dark:text-stone-300">${escapeHtml(cl.body)}</p>`}
+            </div>`).join('');
+        return `
+          <div class="${c.box}">
+            <div class="${c.meta}">
+              <span>${escapeHtml(metaLeft)}</span>
+              <span>${escapeHtml(metaRight)}</span>
+            </div>
+            <h4 class="${c.title}">${escapeHtml(title)}</h4>
+            <p class="text-[11px] text-stone-700 dark:text-stone-300 leading-relaxed">${escapeHtml(intro)}</p>
+          </div>
+          <div class="space-y-2.5 text-[11px] text-start">${clauseHtml}${footer}
+          </div>`;
+      };
+
+      // 2. Tab 1: Payment & review terms
       const panelCharter = document.getElementById('legal-panel-charter');
       if (panelCharter) {
-        panelCharter.innerHTML = isEn ? `
-          <div class="bg-purple-50 dark:bg-purple-950/40 border border-purple-200 dark:border-purple-800/60 p-4 rounded-2xl space-y-2 text-start">
-            <div class="flex items-center justify-between text-[11px] font-mono text-purple-900 dark:text-purple-300 border-b border-purple-200 dark:border-purple-800/60 pb-1.5">
-              <span>Doc No: SYR-AGR-CHARTER-2026</span>
-              <span>Version: 3.2 Standard</span>
-            </div>
-            <h4 class="font-black text-sm text-purple-950 dark:text-purple-200">Founding Charter & Payment Review Governance Protocol</h4>
-            <p class="text-[11px] text-stone-700 dark:text-stone-300 leading-relaxed">
-              The "Faseela" ecosystem was established as the premier sovereign participatory agritech platform in the Syrian Arab Republic, founded on preserving ancestral olive tree heritage, directly linking investors and the Syrian diaspora with local land, farmers, and mills under supreme transparency and solidarity.
-            </p>
-          </div>
-
-          <div class="space-y-2.5 text-[11px] text-start">
-            <div class="p-3 bg-stone-50 dark:bg-stone-800/60 rounded-xl border border-stone-200 dark:border-stone-700 space-y-1">
-              <strong class="font-black text-stone-900 dark:text-white block">1. Payment Review:</strong>
-              <p class="text-stone-600 dark:text-stone-300">
-                All capital subscription funds and fractional share values are securely deposited in the platform'Subscription payments are confirmed after an independent review of the bank transfer receipt. Disbursements to partner farmers are released in milestones against reviewed field documentation.
-              </p>
-            </div>
-
-            <div class="p-3 bg-stone-50 dark:bg-stone-800/60 rounded-xl border border-stone-200 dark:border-stone-700 space-y-1">
-              <strong class="font-black text-stone-900 dark:text-white block">2. Emergency Security Freeze Protocol:</strong>
-              <p class="text-stone-600 dark:text-stone-300">
-                Executive Oversight and fiduciary account trustees hold cryptographic authorization to activate instantaneous financial freezes in case of technical disputes or verified field negligence, safeguarding investor and farmer capital with zero leakage.
-              </p>
-            </div>
-
-            <div class="p-3 bg-stone-50 dark:bg-stone-800/60 rounded-xl border border-stone-200 dark:border-stone-700 space-y-1">
-              <strong class="font-black text-stone-900 dark:text-white block">3. Statutory Jurisdiction & Agricultural Arbitration:</strong>
-              <p class="text-stone-600 dark:text-stone-300">
-                All agreements are governed by Syrian Civil Code (Article 985 et seq.), Electronic Transactions Legislation, and Agricultural Usufruct Laws. Binding amicable agricultural arbitration is mandated prior to statutory judicial filings.
-              </p>
-            </div>
-          </div>
-        ` : `
-          <div class="bg-purple-50 dark:bg-purple-950/40 border border-purple-200 dark:border-purple-800/60 p-4 rounded-2xl space-y-2 text-start">
-            <div class="flex items-center justify-between text-[11px] font-mono text-purple-900 dark:text-purple-300 border-b border-purple-200 dark:border-purple-800/60 pb-1.5">
-              <span>وثيقة رقم: SYR-AGR-CHARTER-2026</span>
-              <span>الإصدار: 3.2 السيادي المعياري</span>
-            </div>
-            <h4 class="font-black text-sm text-purple-950 dark:text-purple-200">الميثاق التأسيسي وحوكمة مراجعة الدفعات البنكية (Payment Review)</h4>
-            <p class="text-[11px] text-stone-700 dark:text-stone-300 leading-relaxed">
-              تأسست منظومة "فسيلة" كأول منصة زراعية تشاركية رقمية  في الجمهورية العربية السورية، تقوم على مبدأ حماية الأصول الزراعية المعمرة، وربط الكافلين والمغتربين السوريين مباشرة بالأرض والفلاح والمعصرة، وفق أعلى معايير الشفافية والمسؤولية التكافلية.
-            </p>
-          </div>
-
-          <div class="space-y-2.5 text-[11px] text-start">
-            <div class="p-3 bg-stone-50 dark:bg-stone-800/60 rounded-xl border border-stone-200 dark:border-stone-700 space-y-1">
-              <strong class="font-black text-stone-900 dark:text-white block">1. مراجعة الدفعات البنكية (Payment Review):</strong>
-              <p class="text-stone-600 dark:text-stone-300">
-                تُسدَّد قيم الحصص عبر تحويل بنكي موثّق وتُعتمد بعد مراجعة الإيصال، وتُصرف مستحقات المزارعين على مراحل مقابل تقارير ميدانية مُراجَعة.
-              </p>
-            </div>
-
-            <div class="p-3 bg-stone-50 dark:bg-stone-800/60 rounded-xl border border-stone-200 dark:border-stone-700 space-y-1">
-              <strong class="font-black text-stone-900 dark:text-white block">2. بروتوكول التجميد الأمني الطارئ (Emergency Freeze):</strong>
-              <p class="text-stone-600 dark:text-stone-300">
-                يحق لإدارة الرقابة العليا ومفوضي الحسابات تفعيل التجميد المالي الفوري في حال نشوء أي نزاع فني أو إهمال ميداني مثبت، لضمان استرداد أو تعويض حقوق الكافلين والفلاحين دون أي تسريب مالي.
-              </p>
-            </div>
-
-            <div class="p-3 bg-stone-50 dark:bg-stone-800/60 rounded-xl border border-stone-200 dark:border-stone-700 space-y-1">
-              <strong class="font-black text-stone-900 dark:text-white block">3. المرجعية القانونية والتحكيم:</strong>
-              <p class="text-stone-600 dark:text-stone-300">
-                تخضع عقود المنظومة لأحكام القانون المدني السوري (المادة 985 وما بعدها) وقوانين المعاملات الإلكترونية والزراعية المعمول بها، ويعد التحكيم الودي الزراعي ملزماً لجميع الأطراف قبل اللجوء لأي قضاء رسمي.
-              </p>
-            </div>
-          </div>
-        `;
+        panelCharter.innerHTML = legalPanel('purple',
+          tr3('مرجع: SYR-AGR-CHARTER-2026', 'Ref: SYR-AGR-CHARTER-2026', 'Ref.: SYR-AGR-CHARTER-2026'),
+          tr3('الإصدار 2026-11-22', 'Version 2026-11-22', 'Version 2026-11-22'),
+          tr3('شروط الدفع والمراجعة', 'Payment and review terms', 'Zahlungs- und Prüfbedingungen'),
+          tr3('تربط فسيلة الكافلين، ومنهم السوريون في المغترب، بالمزارع والمعاصر الشريكة. تُدفع الكفالة بتحويل بنكي ولا تصبح فعالة إلا بعد أن يراجع فريقنا الدفعة.',
+            'Faseela connects sponsors, including the Syrian diaspora, with partner farms and mills. A sponsorship is paid by bank transfer and becomes active only after our team has reviewed the payment.',
+            'Faseela verbindet Patinnen und Paten, auch in der syrischen Diaspora, mit Partnerhöfen und Ölmühlen. Eine Patenschaft wird per Banküberweisung bezahlt und wird erst aktiv, wenn unser Team die Zahlung geprüft hat.'),
+          [
+            { head: tr3('1. الحجز والتحويل البنكي:', '1. Reservation and bank transfer:', '1. Reservierung und Überweisung:'),
+              body: tr3('تبقى الحصص المحجوزة 48 ساعة. تحوّل المبلغ إلى الحساب المعروض في التطبيق وترفع إشعار التحويل.',
+                'Reserved shares are held for 48 hours. You transfer the amount to the account shown in the app and upload the transfer receipt.',
+                'Reservierte Anteile werden 48 Stunden gehalten. Sie überweisen den Betrag auf das in der App angezeigte Konto und laden den Überweisungsbeleg hoch.') },
+            { head: tr3('2. مراجعة الدفعة:', '2. Payment review:', '2. Zahlungsprüfung:'),
+              body: tr3('يتحقق أحد أعضاء فريقنا من وصول الدفعة، ويشمل ذلك المطابقة مع قوائم العقوبات. لا يمكن لأحد اعتماد دفعته بنفسه.',
+                'A member of our team checks that the payment arrived, including a check against sanctions lists. Nobody can approve their own payment.',
+                'Ein Mitglied unseres Teams prüft den Zahlungseingang, einschließlich eines Abgleichs mit Sanktionslisten. Niemand kann seine eigene Zahlung freigeben.') },
+            { head: tr3('3. عدم اعتماد الدفعة:', '3. Payment not approved:', '3. Keine Freigabe:'),
+              body: tr3('إذا لم تُعتمد الدفعة تصلك رسالة بالسبب، ونتفق معك على إعادة المبلغ الذي حوّلته.',
+                'If a payment is not approved, you receive an e-mail with the reason, and we arrange with you the return of an amount already transferred.',
+                'Wird eine Zahlung nicht freigegeben, erhalten Sie eine E-Mail mit dem Grund; die Rückzahlung eines bereits überwiesenen Betrags klären wir mit Ihnen.') },
+            { head: tr3('4. الدفعات للمزارع الشريكة:', '4. Payments to partner farms:', '4. Zahlungen an Partnerhöfe:'),
+              body: tr3('تُدفع تكاليف الرعاية للمزارع الشريكة على مراحل، مقابل تقارير ميدانية راجعها فريقنا.',
+                'Care costs are paid to partner farms in stages, against field reports that our team has reviewed.',
+                'Pflegekosten werden in Etappen an die Partnerhöfe gezahlt, gegen Feldberichte, die unser Team geprüft hat.') }
+          ]);
       }
 
-      // 3. Tab 2: Sponsor & Land Usufruct Deed
+      // 3. Tab 2: Service description for a tree sponsorship (short form of legal/patenschaft.html)
       const panelInvestor = document.getElementById('legal-panel-investor');
       if (panelInvestor) {
-        panelInvestor.innerHTML = isEn ? `
-          <div class="bg-olive-50 dark:bg-olive-950/40 border border-olive-200 dark:border-olive-800/60 p-4 rounded-2xl space-y-2 text-start">
-            <div class="flex items-center justify-between text-[11px] font-mono text-olive-900 dark:text-olive-300 border-b border-olive-200 dark:border-olive-800/60 pb-1.5">
-              <span>Deed No: SYR-INV-DEED-2026</span>
-              <span>Official Agricultural Cadastral Usufruct</span>
-            </div>
-            <h4 class="font-black text-sm text-olive-950 dark:text-olive-200">Sponsorship & Land Plot Usufruct Agreement (5 m² Cadastral Parcel & Tree Shares)</h4>
-            <p class="text-[11px] text-stone-700 dark:text-stone-300 leading-relaxed">
-              Under this legally binding agreement, the investor subscribes to verified fractional shares in ancestral Syrian olive trees, with the option of an allocated 5 m² cadastral surveyed perimeter surrounding the trunk, granting an official agricultural usufruct deed verified by WGS-84 GPS coordinates.
-            </p>
-          </div>
-
-          <div class="space-y-2.5 text-[11px] text-start">
-            <div class="p-3 bg-stone-50 dark:bg-stone-800/60 rounded-xl border border-stone-200 dark:border-stone-700 space-y-1">
-              <strong class="font-black text-stone-900 dark:text-white block">Article 1 — Approved Sponsorship Packages:</strong>
-              <ul class="list-disc ps-4 space-y-1 text-stone-600 dark:text-stone-300">
-                <li><strong>Tree Only Package:</strong> Ownership of annual tree yield and extra virgin olive oil throughout the tree's productive lifespan.</li>
-                <li><strong>Tree + 5 m² Cadastral Land Plot:</strong> Physical boundary demarcation with four surveyed WGS-84 boundary pins, registered cadastral parcel number, verified site visit rights, and an engraved personalized bronze plaque.</li>
-              </ul>
-            </div>
-
-            <div class="p-3 bg-stone-50 dark:bg-stone-800/60 rounded-xl border border-stone-200 dark:border-stone-700 space-y-1">
-              <strong class="font-black text-stone-900 dark:text-white block">Article 2 — Annual Yield Settlement Options:</strong>
-              <ul class="list-disc ps-4 space-y-1 text-stone-600 dark:text-stone-300">
-                <li><strong>Physical Olive Oil Delivery:</strong> Bottled and sealed extra virgin olive oil (acidity &lt; 0.4%) delivered directly to doorsteps across Syria or shipped internationally to the diaspora.</li>
-                <li><strong>Marketing & Cash Liquidation:</strong> Full authorization granted to the platform to export and sell oil at premium export prices, depositing net profits directly into the investor's wallet in USD or Syrian Pounds (SYP).</li>
-              </ul>
-            </div>
-
-            <div class="p-3 bg-stone-50 dark:bg-stone-800/60 rounded-xl border border-stone-200 dark:border-stone-700 space-y-1">
-              <strong class="font-black text-stone-900 dark:text-white block">Article 3 — Inheritance & Assignment:</strong>
-              <p class="text-stone-600 dark:text-stone-300">
-                All usufruct and tree tenure rights are fully inheritable under statutory law. Sponsors may freely transfer, gift, or bequeath their shares and land deeds through cryptographically signed platform transfers.
-              </p>
-            </div>
-          </div>
-        ` : `
-          <div class="bg-olive-50 dark:bg-olive-950/40 border border-olive-200 dark:border-olive-800/60 p-4 rounded-2xl space-y-2 text-start">
-            <div class="flex items-center justify-between text-[11px] font-mono text-olive-900 dark:text-olive-300 border-b border-olive-200 dark:border-olive-800/60 pb-1.5">
-              <span>عقد كفالة رقم: SYR-INV-DEED-2026</span>
-              <span>سند حيازة زراعية رسمي</span>
-            </div>
-            <h4 class="font-black text-sm text-olive-950 dark:text-olive-200">عقد كفالة وحيازة مقسم الأرض الزراعية (5 م² طابو زراعي) وحصص الأشجار</h4>
-            <p class="text-[11px] text-stone-700 dark:text-stone-300 leading-relaxed">
-              بموجب هذا العقد، يكتتب الكافل في حصص موثقة من شجرة الزيتون المباركة، مع خيار إلحاق مقسم أرض كاداستري مفرز بمساحة 5 أمتار مربعة محيطة بجذع الشجرة، يمنحه صك حيازة زراعية وحق انتفاع رسمي مثبت بإحداثيات الـ GPS.
-            </p>
-          </div>
-
-          <div class="space-y-2.5 text-[11px] text-start">
-            <div class="p-3 bg-stone-50 dark:bg-stone-800/60 rounded-xl border border-stone-200 dark:border-stone-700 space-y-1">
-              <strong class="font-black text-stone-900 dark:text-white block">البند الأول — الحزم التشاركية المعتمدة:</strong>
-              <ul class="list-disc pr-4 space-y-1 text-stone-600 dark:text-stone-300">
-                <li><strong>حزمة الشجرة فقط:</strong> تملك نسبة مشاعة من إنتاجية الشجرة السنوية ومحاصيل زيت الزيتون الصافي طوال عمر الشجرة المثمر.</li>
-                <li><strong>حزمة الشجرة + 5 م² أرض طابو كاداستري:</strong> تثبيت حرم أرض محيط بالشجرة محدد بأربعة أوتاد كاداسترية بنظام WGS-84 مع تسجيل رقم العقار والحوض، وحق الزيارة وتثبيت صفيحة معدنية باسم الكافل.</li>
-              </ul>
-            </div>
-
-            <div class="p-3 bg-stone-50 dark:bg-stone-800/60 rounded-xl border border-stone-200 dark:border-stone-700 space-y-1">
-              <strong class="font-black text-stone-900 dark:text-white block">البند الثاني — خيارات تسليم المحصول السنوي:</strong>
-              <ul class="list-disc pr-4 space-y-1 text-stone-600 dark:text-stone-300">
-                <li><strong>خيار استلام صفائح الزيت:</strong> تعبئة زيت الزيتون البكر الممتاز (حموضة &lt; 0.4%) وتوصيله لباب المنزل في سوريا أو شحنه للمغتربين.</li>
-                <li><strong>خيار التسويق والتسييل النقدي:</strong> تفويض المنصة بتسويق حصة الزيت بأسعار التصدير الممتازة، وإيداع المحصول الصافي فورياً في محفظة الكافل بالدولار الأمريكي أو الليرة السورية.</li>
-              </ul>
-            </div>
-
-            <div class="p-3 bg-stone-50 dark:bg-stone-800/60 rounded-xl border border-stone-200 dark:border-stone-700 space-y-1">
-              <strong class="font-black text-stone-900 dark:text-white block">البند الثالث — التوريث والتنازل:</strong>
-              <p class="text-stone-600 dark:text-stone-300">
-                حقوق الحيازة وصكوك الانتفاع قابلة للتوريث الشرعي والنظامي، وللكافل كامل الحق في نقل ملكية حصصه أو إهدائها لأي شخص آخر عبر المنظومة بموجب تحويل رسمي مشفر.
-              </p>
-            </div>
-          </div>
-        `;
+        const fullTextHref = `legal/patenschaft.html#${normalizeLang(state.currentLang)}`;
+        panelInvestor.innerHTML = legalPanel('olive',
+          tr3('وصف الخدمة', 'Service description', 'Leistungsbeschreibung'),
+          tr3('الإصدار 2026-11-22', 'Version 2026-11-22', 'Version 2026-11-22'),
+          tr3('وصف الخدمة: كفالة شجرة', 'Service description: tree sponsorship', 'Leistungsbeschreibung: Baumpatenschaft'),
+          tr3('بالكفالة تدعم شجرة محددة لدى مزرعة شريكة وتحصل على حصة من محصولها. كل شجرة مقسمة إلى حصص، وتختار أنت عدد الحصص التي تكفلها.',
+            'With a sponsorship you support a specific tree of a partner farm and receive a share of its harvest. Each tree is divided into shares; you choose how many shares you take.',
+            'Mit einer Patenschaft unterstützen Sie einen bestimmten Baum eines Partnerhofs und erhalten einen Anteil an seiner Ernte. Jeder Baum ist in Anteile geteilt; Sie wählen, wie viele Anteile Sie übernehmen.'),
+          [
+            { head: tr3('ما تحصل عليه:', 'What you receive:', 'Was Sie erhalten:'),
+              items: [
+                tr3('حصة من محصول الشجرة. في الزيتون تُسجَّل حصتك في حسابك كمية من الزيت بعد العصر.', "A share of the tree's harvest. For olives, your share is recorded in your account as an amount of oil after pressing.", 'Einen Anteil an der Ernte des Baums. Bei Oliven wird Ihr Anteil nach der Pressung als Ölmenge in Ihrem Konto vermerkt.'),
+                tr3('شهادة كفالة (PDF) يمكن التحقق منها عبر رمز QR.', 'A certificate of your sponsorship (PDF) that can be checked with a QR code.', 'Ein Zertifikat über Ihre Patenschaft (PDF), das sich über einen QR-Code prüfen lässt.'),
+                tr3('تقارير المزرعة عن رعاية الشجرة، بعد مراجعتها ونشرها.', 'Reports from the farm about the care of the tree, once they have been reviewed and published.', 'Berichte des Hofs zur Pflege des Baums, sobald sie geprüft und veröffentlicht sind.')
+              ] },
+            { head: tr3('ما لا تحصل عليه:', 'What you do not receive:', 'Was Sie nicht erhalten:'),
+              items: [
+                tr3('لا ملكية للشجرة أو للأرض، ولا تسجيل في سجل عقاري أو طابو.', 'No ownership of the tree or the land, and no entry in a land register or cadastre.', 'Kein Eigentum am Baum oder am Boden und keine Eintragung in ein Grundbuch oder Kataster.'),
+                tr3('لا استثمار ولا عائد ولا حصة من الربح ولا أي دفعة نقدية.', 'No investment, no return, no profit share and no payout in money.', 'Keine Geldanlage, keine Gewinnbeteiligung und keine Auszahlung in Geld.'),
+                tr3('لا تأمين ولا حماية للمبلغ المدفوع.', 'No insurance and no protection of the amount paid.', 'Keine Versicherung und keinen Schutz des gezahlten Betrags.'),
+                tr3('لا إعادة بيع لمستخدمين آخرين. يمكنك إهداء حصة عبر رمز هدية.', 'No resale to other users. You can give a share away with a gift code.', 'Keinen Weiterverkauf an andere Nutzer. Einen Anteil können Sie über einen Geschenk-Code verschenken.')
+              ] },
+            { head: tr3('المحصول والمخاطر:', 'Harvest and risks:', 'Ernte und Risiken:'),
+              body: tr3('يتفاوت المحصول من سنة لأخرى، وقد يقلّ أو يتلف كلياً بسبب الطقس أو الآفات أو الظروف المحلية. لا نَعِد بكمية دنيا، وقد تخسر المبلغ المدفوع دون مقابل.',
+                'The harvest varies from year to year. Weather, pests or the local situation can reduce it or cause it to fail entirely. No minimum quantity is promised; you can lose the amount paid without anything in return.',
+                'Die Ernte schwankt von Jahr zu Jahr. Wetter, Schädlinge oder die Lage vor Ort können sie verringern oder ganz ausfallen lassen. Eine Mindestmenge wird nicht zugesagt; Sie können den gezahlten Betrag ohne Gegenwert verlieren.') }
+          ],
+          `
+            <a href="${escapeHtml(fullTextHref)}" target="_blank" rel="noopener" class="inline-flex items-center gap-1 font-bold text-olive-800 dark:text-olive-300 underline">${escapeHtml(tr3('النص الكامل لوصف الخدمة', 'Full service description', 'Vollständige Leistungsbeschreibung'))}</a>`);
       }
 
-      // 4. Tab 3: Farmer Partnership Agreement
+      // 4. Tab 3: Care agreement with partner farmers
       const panelFarmer = document.getElementById('legal-panel-farmer');
       if (panelFarmer) {
-        panelFarmer.innerHTML = isEn ? `
-          <div class="bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 p-4 rounded-2xl space-y-2 text-start">
-            <div class="flex items-center justify-between text-[11px] font-mono text-emerald-900 dark:text-emerald-300 border-b border-emerald-200 dark:border-emerald-800/60 pb-1.5">
-              <span>Agreement No: SYR-FRM-CONT-2026</span>
-              <span>Approved Across 11 Governorates</span>
-            </div>
-            <h4 class="font-black text-sm text-emerald-950 dark:text-emerald-200">Agricultural Stewardship & Grove Partnership Agreement (11 Governorates)</h4>
-            <p class="text-[11px] text-stone-700 dark:text-stone-300 leading-relaxed">
-              This agreement governs the obligations of the partner farmer in stewarding registered olive trees in accordance with certified clean organic farming standards, ensuring fruit delivery to authorized modern mills, backed by advance operational care funding from the platform.
-            </p>
-          </div>
-
-          <div class="space-y-2.5 text-[11px] text-start">
-            <div class="p-3 bg-stone-50 dark:bg-stone-800/60 rounded-xl border border-stone-200 dark:border-stone-700 space-y-1">
-              <strong class="font-black text-stone-900 dark:text-white block">Article 1 — Field Cultivation & Care Protocols:</strong>
-              <p class="text-stone-600 dark:text-stone-300">
-                The farmer commits to all seasonal plowing, balanced canopy pruning, systematic supplementary irrigation, and organic fertilization without synthetic hormones or harmful chemical pesticides, logging tasks with voice reports and geotagged photographs.
-              </p>
-            </div>
-
-            <div class="p-3 bg-stone-50 dark:bg-stone-800/60 rounded-xl border border-stone-200 dark:border-stone-700 space-y-1">
-              <strong class="font-black text-stone-900 dark:text-white block">Article 2 — Care Subsidies & Operational Advances:</strong>
-              <p class="text-stone-600 dark:text-stone-300">
-                The farmer receives upfront operational advances before every field phase (pruning, irrigation, harvest), disbursed seamlessly via Syriatel Cash, MTN Cash, or Al-Haram Exchange without financial delays.
-              </p>
-            </div>
-
-            <div class="p-3 bg-stone-50 dark:bg-stone-800/60 rounded-xl border border-stone-200 dark:border-stone-700 space-y-1">
-              <strong class="font-black text-stone-900 dark:text-white block">Article 3 — Force Majeure & Mutual Relief Fund:</strong>
-              <p class="text-stone-600 dark:text-stone-300">
-                In cases of acute drought, unseasonal spring frost, or verified wildfires, the farmer is relieved of default liability, and the Faseela Mutual Relief Fund is activated to compensate investors from reserve yields.
-              </p>
-            </div>
-          </div>
-        ` : `
-          <div class="bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 p-4 rounded-2xl space-y-2 text-start">
-            <div class="flex items-center justify-between text-[11px] font-mono text-emerald-900 dark:text-emerald-300 border-b border-emerald-200 dark:border-emerald-800/60 pb-1.5">
-              <span>عقد شراكة رقم: SYR-FRM-CONT-2026</span>
-              <span>معتمد للمحافظات الـ 11</span>
-            </div>
-            <h4 class="font-black text-sm text-emerald-950 dark:text-emerald-200">عقد الشراكة والرعاية الفلاحية في المحافظات السورية الـ 11</h4>
-            <p class="text-[11px] text-stone-700 dark:text-stone-300 leading-relaxed">
-              ينظم هذا العقد التزامات المزارع الشريك في رعاية أشجار الزيتون المسجلة وفق معايير الزراعة العضوية النظيفة، وضمانات تسليم المحصول للمعاصر المعتمدة، مع التزام المنصة بتمويل نفقات الرعاية بسلف نقدية مسبقة.
-            </p>
-          </div>
-
-          <div class="space-y-2.5 text-[11px] text-start">
-            <div class="p-3 bg-stone-50 dark:bg-stone-800/60 rounded-xl border border-stone-200 dark:border-stone-700 space-y-1">
-              <strong class="font-black text-stone-900 dark:text-white block">البند الأول — التزامات الفلاحة والرعاية الميدانية:</strong>
-              <p class="text-stone-600 dark:text-stone-300">
-                يلتزم المزارع بكافة أعمال الحراثة، التقليم المتوازن، الري التكميلي المنتظم، والتسميد العضوي بدون أي هرمونات أو مبيدات كيميائية ضارة، وتوثيق المهام عبر تسجيلات صوتية وصور دورية للمنظومة.
-              </p>
-            </div>
-
-            <div class="p-3 bg-stone-50 dark:bg-stone-800/60 rounded-xl border border-stone-200 dark:border-stone-700 space-y-1">
-              <strong class="font-black text-stone-900 dark:text-white block">البند الثاني — آلية التمويل والسلف النقدية:</strong>
-              <p class="text-stone-600 dark:text-stone-300">
-                يحصل المزارع على سلف نقدية تشغيلية مسبقة قبل كل مرحلة عمل (التقليم، الري، القطاف)، تُصرف فورياً عبر سيريتل كاش، MTN كاش، أو شركة الهرم للصرافة دون أي تأخير مالي.
-              </p>
-            </div>
-
-            <div class="p-3 bg-stone-50 dark:bg-stone-800/60 rounded-xl border border-stone-200 dark:border-stone-700 space-y-1">
-              <strong class="font-black text-stone-900 dark:text-white block">البند الثالث — القوة القاهرة وصندوق التكافل:</strong>
-              <p class="text-stone-600 dark:text-stone-300">
-                في حالات الجفاف الحاد، الصقيع الربيعي، أو حرائق الغابات المثبتة، يُعفى المزارع من المسؤولية التقصيرية، ويتم تفعيل صندوق فسيلة التكافلي لتعويض الكافلين من أشجار واحتياطيات المنظومة.
-              </p>
-            </div>
-          </div>
-        `;
+        panelFarmer.innerHTML = legalPanel('emerald',
+          tr3('مرجع: SYR-FRM-CONT-2026', 'Ref: SYR-FRM-CONT-2026', 'Ref.: SYR-FRM-CONT-2026'),
+          tr3('للمزارع الشريكة', 'For partner farms', 'Für Partnerhöfe'),
+          tr3('اتفاقية الرعاية للمزارعين الشركاء', 'Care agreement for partner farmers', 'Pflegevereinbarung für Partnerhöfe'),
+          tr3('تنظّم هذه الاتفاقية ما يقوم به المزارع الشريك لرعاية الأشجار المسجلة وكيف يُدفع له مقابل هذه الرعاية.',
+            'This agreement sets out what a partner farmer does to care for the registered trees and how the farm is paid for that care.',
+            'Diese Vereinbarung regelt, wie ein Partnerhof die registrierten Bäume pflegt und wie er für diese Pflege bezahlt wird.'),
+          [
+            { head: tr3('البند الأول — الرعاية الميدانية:', 'Article 1 — Field care:', 'Artikel 1 — Pflege vor Ort:'),
+              body: tr3('يقوم المزارع بالحراثة الموسمية والتقليم والري عند الحاجة والتسميد العضوي دون مبيدات كيميائية ضارة، ويوثّق العمل بتقارير وصور تحمل الموقع.',
+                'The farmer carries out seasonal ploughing, pruning, irrigation where needed and organic fertilisation without harmful chemical pesticides, and documents the work with reports and geotagged photos.',
+                'Der Landwirt übernimmt das saisonale Pflügen, den Schnitt, bei Bedarf die Bewässerung und eine organische Düngung ohne schädliche chemische Pestizide und dokumentiert die Arbeit mit Berichten und Fotos mit Standortangabe.') },
+            { head: tr3('البند الثاني — مراجعة التقارير:', 'Article 2 — Review of reports:', 'Artikel 2 — Prüfung der Berichte:'),
+              body: tr3('لا تُعرض التقارير على الكافلين إلا بعد أن يراجعها فريقنا.',
+                'Reports are shown to sponsors only after our team has reviewed them.',
+                'Berichte werden den Patinnen und Paten erst angezeigt, nachdem unser Team sie geprüft hat.') },
+            { head: tr3('البند الثالث — مقابل الرعاية:', 'Article 3 — Payment for care:', 'Artikel 3 — Vergütung der Pflege:'),
+              body: tr3('يُدفع للمزرعة مقابل أعمال الرعاية على مراحل، مقابل تقارير مُراجَعة.',
+                'The farm is paid for its care work in stages, against reviewed reports.',
+                'Der Hof wird für seine Pflegearbeit in Etappen bezahlt, gegen geprüfte Berichte.') },
+            { head: tr3('البند الرابع — القوة القاهرة:', 'Article 4 — Force majeure:', 'Artikel 4 — Höhere Gewalt:'),
+              body: tr3('في حالات الجفاف الشديد أو الصقيع المتأخر أو الحريق المثبت لا يتحمل المزارع المسؤولية. وقد تقلّ حصة الكافلين من المحصول أو تنعدم، ولا يوجد أي تعويض نقدي.',
+                'In cases of severe drought, late frost or proven wildfire, the farmer is not liable. The harvest share of sponsors can then be smaller or fail entirely; there is no compensation in money.',
+                'Bei schwerer Dürre, Spätfrost oder nachgewiesenem Brand haftet der Landwirt nicht. Der Ernteanteil der Patinnen und Paten kann dann kleiner ausfallen oder ganz entfallen; einen Ausgleich in Geld gibt es nicht.') }
+          ]);
       }
 
-      // 5. Tab 4: Mill Operation & EVOO Quality Accord
+      // 5. Tab 4: Quality standard for partner mills
       const panelMill = document.getElementById('legal-panel-mill');
       if (panelMill) {
-        panelMill.innerHTML = isEn ? `
-          <div class="bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 p-4 rounded-2xl space-y-2 text-start">
-            <div class="flex items-center justify-between text-[11px] font-mono text-amber-900 dark:text-amber-300 border-b border-amber-200 dark:border-amber-800/60 pb-1.5">
-              <span>Standard No: SYR-MILL-EVOO-2026</span>
-              <span>Physicochemical Lab & EVOO Quality Accord</span>
-            </div>
-            <h4 class="font-black text-sm text-amber-950 dark:text-amber-200">Modern Mill Operation & Physicochemical Quality Accord for Extra Virgin Olive Oil</h4>
-            <p class="text-[11px] text-stone-700 dark:text-stone-300 leading-relaxed">
-              The accredited network of olive mills across 11 Syrian governorates commits to strict Italian two-phase cold extraction protocols, performing mandatory spectrophotometric and chemical analyses for each milling lot before certifying investor allocations.
-            </p>
-          </div>
-
-          <div class="space-y-2.5 text-[11px] text-start">
-            <div class="p-3 bg-stone-50 dark:bg-stone-800/60 rounded-xl border border-stone-200 dark:border-stone-700 space-y-1">
-              <strong class="font-black text-stone-900 dark:text-white block">Article 1 — Mechanical Cold Pressing Controls:</strong>
-              <p class="text-stone-600 dark:text-stone-300">
-                Harvested olives must be processed within under 24 hours of picking, maintaining malaxation and washing temperatures strictly below 25°C to preserve polyphenols, antioxidants, and therapeutic qualities.
-              </p>
-            </div>
-
-            <div class="p-3 bg-stone-50 dark:bg-stone-800/60 rounded-xl border border-stone-200 dark:border-stone-700 space-y-1">
-              <strong class="font-black text-stone-900 dark:text-white block">Article 2 — Ultra-Premium EVOO Laboratory Standards:</strong>
-              <p class="text-stone-600 dark:text-stone-300">
-                Free acidity must strictly remain below 0.4% (vs 0.8% international ceiling), peroxide index below 12 meq O2/kg, and polyphenol count above 380 mg/kg, accompanied by a digitally signed laboratory certificate.
-              </p>
-            </div>
-
-            <div class="p-3 bg-stone-50 dark:bg-stone-800/60 rounded-xl border border-stone-200 dark:border-stone-700 space-y-1">
-              <strong class="font-black text-stone-900 dark:text-white block">Article 3 — Barcode Serialization & Tamper-Proof Seals:</strong>
-              <p class="text-stone-600 dark:text-stone-300">
-                Every tin and bottle is tagged with a serialized QR code linking oil directly to its parent tree, orchard parcel, extraction facility, and timestamp, guaranteeing 100% authenticity.
-              </p>
-            </div>
-          </div>
-        ` : `
-          <div class="bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 p-4 rounded-2xl space-y-2 text-start">
-            <div class="flex items-center justify-between text-[11px] font-mono text-amber-900 dark:text-amber-300 border-b border-amber-200 dark:border-amber-800/60 pb-1.5">
-              <span>ميثاق رقم: SYR-MILL-EVOO-2026</span>
-              <span>معايير الجودة والتحليل المخبري</span>
-            </div>
-            <h4 class="font-black text-sm text-amber-950 dark:text-amber-200">ميثاق تشغيل المعاصر الحديثة والفحص المخبري لزيت الزيتون البكر الممتاز</h4>
-            <p class="text-[11px] text-stone-700 dark:text-stone-300 leading-relaxed">
-              تلتزم شبكة المعاصر المعتمدة في المحافظات الـ 11 بتطبيق بروتوكول العصر البارد الإيطالي فائق النقاء، وإجراء التحليل الكيميائي والمطيافي الإلزامي لكل دفعة عصر قبل تعبئتها واعتمادها للكافلين.
-            </p>
-          </div>
-
-          <div class="space-y-2.5 text-[11px] text-start">
-            <div class="p-3 bg-stone-50 dark:bg-stone-800/60 rounded-xl border border-stone-200 dark:border-stone-700 space-y-1">
-              <strong class="font-black text-stone-900 dark:text-white block">البند الأول — ضوابط العصر البارد الميكانيكي:</strong>
-              <p class="text-stone-600 dark:text-stone-300">
-                عصر الثمار المقطوفة خلال أقل من 24 ساعة، مع تثبيت درجة حرارة العجينة والماء المضاف دون 25 درجة مئوية للحفاظ على مضادات الأكسدة والبوليفينول والخصائص العلاجية والدوائية للزيت.
-              </p>
-            </div>
-
-            <div class="p-3 bg-stone-50 dark:bg-stone-800/60 rounded-xl border border-stone-200 dark:border-stone-700 space-y-1">
-              <strong class="font-black text-stone-900 dark:text-white block">البند الثاني — المعايير المخبرية للبكر الممتاز الفائق:</strong>
-              <p class="text-stone-600 dark:text-stone-300">
-                يشترط ألا تتجاوز نسبة الحموضة الحرة 0.4% (مقارنة بـ 0.8% كحد عالمي)، وألا يتجاوز رقم البيروكسيد 12 meq O2/kg، ومحتوى البوليفينول أعلى من 380 mg/kg، مع صدور شهادة تحليل موقعة رقمياً.
-              </p>
-            </div>
-
-            <div class="p-3 bg-stone-50 dark:bg-stone-800/60 rounded-xl border border-stone-200 dark:border-stone-700 space-y-1">
-              <strong class="font-black text-stone-900 dark:text-white block">البند الثالث — التتبع بالباركود والأختام الذكية:</strong>
-              <p class="text-stone-600 dark:text-stone-300">
-                تزويد كل صفيحة أو عبوة برمز QR ورقم تسلسلي موثق يربط الزيت مباشرة بالشجرة المعصر منها والمزرعة والمعصرة وتاريخ العصر لتتبع المصدر والحد من الغش.
-              </p>
-            </div>
-          </div>
-        `;
+        panelMill.innerHTML = legalPanel('amber',
+          tr3('مرجع: SYR-MILL-EVOO-2026', 'Ref: SYR-MILL-EVOO-2026', 'Ref.: SYR-MILL-EVOO-2026'),
+          tr3('معايير الجودة والتحليل المخبري', 'Lab analysis & quality', 'Laboranalyse & Qualität'),
+          tr3('معيار الجودة للمعاصر الشريكة (زيت زيتون بكر ممتاز)', 'Quality standard for partner mills (extra virgin olive oil)', 'Qualitätsstandard für Partner-Ölmühlen (natives Olivenöl extra)'),
+          tr3('تعصر المعاصر الشريكة على البارد وتحلّل كل دفعة مخبرياً قبل تخصيص الزيت في حسابات الكافلين.',
+            "Partner mills press with cold extraction and have every batch analysed in a laboratory before oil is allocated to sponsors' accounts.",
+            'Partner-Ölmühlen pressen kalt und lassen jede Charge im Labor analysieren, bevor Öl den Konten der Patinnen und Paten zugeteilt wird.'),
+          [
+            { head: tr3('البند الأول — العصر البارد:', 'Article 1 — Cold pressing:', 'Artikel 1 — Kaltpressung:'),
+              body: tr3('تُعصر الثمار خلال 24 ساعة من القطاف، مع إبقاء حرارة العجينة والماء دون 25 درجة مئوية.',
+                'Olives are pressed within 24 hours of picking, with malaxation and water temperatures below 25 °C.',
+                'Die Oliven werden innerhalb von 24 Stunden nach der Ernte gepresst; Teig- und Wassertemperatur bleiben unter 25 °C.') },
+            { head: tr3('البند الثاني — القيم المخبرية:', 'Article 2 — Laboratory values:', 'Artikel 2 — Laborwerte:'),
+              body: tr3('القيم المستهدفة لكل دفعة: حموضة حرة أقل من 0.4% (الحد للبكر الممتاز 0.8%)، رقم بيروكسيد أقل من 12 meq O2/kg، بوليفينول أعلى من 380 mg/kg، مع شهادة تحليل موقعة.',
+                'Target values per batch: free acidity below 0.4 % (limit for extra virgin: 0.8 %), peroxide value below 12 meq O2/kg, polyphenols above 380 mg/kg, with a signed lab certificate.',
+                'Zielwerte je Charge: freie Säure unter 0,4 % (Grenzwert für nativ extra: 0,8 %), Peroxidzahl unter 12 meq O2/kg, Polyphenole über 380 mg/kg, mit unterschriebenem Laborbefund.') },
+            { head: tr3('البند الثالث — التتبع:', 'Article 3 — Traceability:', 'Artikel 3 — Rückverfolgbarkeit:'),
+              body: tr3('تحمل كل صفيحة أو عبوة رمز QR ورقماً تسلسلياً يربط الزيت بالشجرة والمزرعة والمعصرة وتاريخ العصر.',
+                'Each tin or bottle carries a QR code and serial number linking the oil to its tree, farm, mill and pressing date.',
+                'Jeder Kanister und jede Flasche trägt einen QR-Code und eine Seriennummer, die das Öl mit Baum, Hof, Mühle und Pressdatum verbindet.') }
+          ]);
       }
 
       // 6. Signatures & Seals
       const sealTitle = document.getElementById('legal-seal-title');
-      if (sealTitle) sealTitle.innerText = isEn ? "Faseela Verified Seal" : "الختم السيادي المعتمد لمنظومة فسيلة";
+      if (sealTitle) sealTitle.innerText = tr3('الختم السيادي المعتمد لمنظومة فسيلة', 'Faseela Verified Seal', 'Verifiziertes Faseela-Siegel');
 
       const sealAuthLbl = document.getElementById('legal-seal-auth-label');
-      if (sealAuthLbl) sealAuthLbl.innerText = isEn ? "Supreme Legal Administration:" : "اعتماد الإدارة القانونية العليا:";
+      if (sealAuthLbl) sealAuthLbl.innerText = tr3('اعتماد الإدارة القانونية العليا:', 'Supreme Legal Administration:', 'Oberste Rechtsverwaltung:');
 
       const sealAuthName = document.getElementById('legal-seal-auth-name');
-      if (sealAuthName) sealAuthName.innerText = isEn ? "Eng. Wissam Al-Hamdoli (Founder & COO)" : "م. وسام الحمدولي (مؤسس المنظومة)";
+      if (sealAuthName) sealAuthName.innerText = tr3('م. وسام الحمدولي (مؤسس المنظومة)', 'Eng. Wissam Al-Hamdoli (Founder & COO)', 'Ing. Wissam Al-Hamdoli (Gründer & COO)');
 
-      // 7. Tab Switcher Button labels
+      // 7. Tab Switcher Button labels (dictionary keys, so German readers get German)
       const tabCharter = document.querySelector('[data-i18n="legal_tab_charter"]');
-      if (tabCharter) tabCharter.innerText = isEn ? "Payment Terms" : "الميثاق ومراجعة الدفعات";
+      if (tabCharter) tabCharter.innerText = t('legal_tab_charter');
 
       const tabInvestor = document.querySelector('[data-i18n="legal_tab_investor"]');
-      if (tabInvestor) tabInvestor.innerText = isEn ? "Investor Deed (5 m²)" : "عقد الكافل (5 م²)";
+      if (tabInvestor) tabInvestor.innerText = t('legal_tab_investor');
 
       const tabFarmer = document.querySelector('[data-i18n="legal_tab_farmer"]');
-      if (tabFarmer) tabFarmer.innerText = isEn ? "Farmer Stewardship" : "عقد الرعاية الفلاحية";
+      if (tabFarmer) tabFarmer.innerText = t('legal_tab_farmer');
 
       const tabMill = document.querySelector('[data-i18n="legal_tab_mill"]');
-      if (tabMill) tabMill.innerText = isEn ? "Mill EVOO Accord" : "ميثاق جودة المعاصر";
+      if (tabMill) tabMill.innerText = t('legal_tab_mill');
 
       // 8. Farmer Partnership Contract Modal (modal-farmer-contract)
       const farmerDocBox = document.getElementById('farmer-contract-doc-box');
@@ -15212,6 +15026,7 @@ function setMarketplaceViewMode(mode) {
     state.currentVirginPackage = null;
     selectSharePercent(25);
     prepareInvestExtras();
+    state.paymentCountry = paymentCountryOf(tree);
     preparePaymentInstructions();
     openModal('modal-invest');
     lucide.createIcons();
@@ -15230,11 +15045,23 @@ function setMarketplaceViewMode(mode) {
     return ({ syriatel_cash: 'smartphone', mtn_cash: 'smartphone', bank_iban: 'landmark', exchange_office: 'store', other: 'wallet' })[id] || 'wallet';
   }
 
+  /** Country whose receiving accounts apply: the tree's country (trees_public.country_code), Syria by default. */
+  function paymentCountryOf(tree) {
+    const code = String(tree?.country_code || '').toUpperCase();
+    return /^[A-Z]{2}$/.test(code) ? code : 'SY';
+  }
+
+  /** Same rule as private.payment_channels_for: an account without a country list covers every country. */
+  function channelsForCountry(list, country) {
+    const code = country || state.paymentCountry || 'SY';
+    return (Array.isArray(list) ? list : []).filter(ch => ch && (!Array.isArray(ch.countries) || ch.countries.includes(code)));
+  }
+
   function renderPaymentChannels(instructions, demo) {
     const box = document.getElementById('local-pay-accounts');
     if (!box) return;
     const isEn = state.currentLang !== 'ar';
-    const channels = Array.isArray(instructions?.channels) ? instructions.channels : [];
+    const channels = demo ? (Array.isArray(instructions?.channels) ? instructions.channels : []) : channelsForCountry(instructions?.channels);
     if (channels.length === 0) {
       box.innerHTML = `<div role="alert" class="flex items-start gap-2 p-3 rounded-xl bg-red-50 border border-red-300 text-red-900 text-[11px] font-bold">
         <i data-lucide="octagon-alert" class="w-4 h-4 flex-shrink-0 mt-0.5" aria-hidden="true"></i><span>${t('local_pay_unconfigured')}</span></div>`;
@@ -15275,24 +15102,43 @@ function setMarketplaceViewMode(mode) {
       renderPaymentChannels({ channels: DEMO_PAYMENT_CHANNELS }, true);
       return;
     }
-    const fresh = state.paymentInstructions && Date.now() - (state.paymentInstructionsAt || 0) < 5 * 60 * 1000;
+    const country = state.paymentCountry || 'SY';
+    const cachedFor = state.paymentInstructionsCountry;
+    const fresh = state.paymentInstructions && (cachedFor === '*' || cachedFor === country)
+      && Date.now() - (state.paymentInstructionsAt || 0) < 5 * 60 * 1000;
     if (!fresh || force) {
       const box = document.getElementById('local-pay-accounts');
       if (box) box.innerHTML = `<p class="text-[11px] text-stone-500">${t('local_pay_loading')}</p>`;
       try {
-        const { data } = await api.paymentInstructions();
+        let data = null;
+        let scope = country;
+        if (api.paymentInstructionsFor) {
+          try {
+            ({ data } = await api.paymentInstructionsFor(country));
+          } catch (error) {
+            // Database without payment_instructions_for yet (PostgREST: function not found): all accounts, filtered here.
+            if (error?.code !== 'PGRST202') throw error;
+            ({ data } = await api.paymentInstructions());
+            scope = '*';
+          }
+        } else {
+          ({ data } = await api.paymentInstructions());
+          scope = '*';
+        }
         state.paymentInstructions = data || null;
+        state.paymentInstructionsCountry = scope;
         state.paymentInstructionsAt = Date.now();
       } catch (error) {
         console.warn('[faseela] payment instructions not loaded:', error?.code || error?.message);
         state.paymentInstructions = null;
+        state.paymentInstructionsCountry = null;
         state.paymentInstructionsAt = 0;
         state.paymentReady = false;
         if (box) box.innerHTML = `<div role="alert" class="p-3 rounded-xl bg-red-50 border border-red-300 text-red-900 text-[11px] font-bold">${t('local_pay_load_failed')}</div>`;
         return;
       }
     }
-    state.paymentReady = Array.isArray(state.paymentInstructions?.channels) && state.paymentInstructions.channels.length > 0;
+    state.paymentReady = channelsForCountry(state.paymentInstructions?.channels, country).length > 0;
     renderPaymentChannels(state.paymentInstructions, false);
   }
 
@@ -15560,6 +15406,11 @@ function setMarketplaceViewMode(mode) {
       }
 
       // Fail-closed: no reservation while the receiving accounts are unknown (server mode).
+      // Only the accounts for this tree's country count; a list loaded for another tree's country is reloaded first.
+      if (state.serverMode && state.paymentCountry !== paymentCountryOf(tree)) {
+        state.paymentCountry = paymentCountryOf(tree);
+        state.paymentReady = false;
+      }
       if (state.serverMode && !state.paymentReady) {
         showToast(t('invest_payment_blocked'));
         preparePaymentInstructions(true);
@@ -15748,16 +15599,16 @@ function setMarketplaceViewMode(mode) {
               <div class="mb-4 bg-amber-500/10 border border-amber-600/30 rounded-xl p-3 flex items-start gap-2.5 relative z-20">
                 <i data-lucide="shield-alert" class="w-5 h-5 text-amber-700 flex-shrink-0 mt-0.5"></i>
                 <div class="text-xs text-amber-900 dark:text-amber-200">
-                  <strong class="font-bold block">${tr3('تنبيه: سند حيازة استعراضي لباقة التنوع (غير مقيد)', 'Preview Specimen Notice', 'Hinweis: Mustervorschau')}</strong>
-                  <span>${tr3('يوضح هذا النموذج سند الحيازة الموحد لـ 4 حصص زراعية متنوعة (زيتون، فستق، لوز) مع مقسم أرض 15 م².', 'This certificate illustrates your multi-crop agrarian deed covering 4 diversified shares upon subscription.', 'Dieses Muster zeigt, wie Ihr Nachweis für das Mischkultur-Paket mit 4 Anteilen nach Abschluss aussehen würde.')}</span>
+                  <strong class="font-bold block">${tr3('تنبيه: نموذج استعراضي لشهادة كفالة باقة التنوع', 'Preview Specimen Notice', 'Hinweis: Mustervorschau')}</strong>
+                  <span>${tr3('يوضح هذا النموذج شكل شهادة الكفالة الموحدة لـ 4 حصص كفالة متنوعة (زيتون، فستق، لوز) بعد إتمام الكفالة.', 'This specimen shows how your sponsorship certificate for the 4-share multi-crop bundle would look once completed.', 'Dieses Muster zeigt, wie Ihr Nachweis für das Mischkultur-Paket mit 4 Anteilen nach Abschluss aussehen würde.')}</span>
                 </div>
               </div>
             ` : `
               <div class="mb-4 bg-purple-500/10 border border-purple-600/30 rounded-xl p-3 flex items-start gap-2.5 relative z-20">
                 <i data-lucide="award" class="w-5 h-5 text-purple-700 flex-shrink-0 mt-0.5"></i>
                 <div class="text-xs text-purple-900 dark:text-purple-200">
-                  <strong class="font-bold block">${tr3('سند حيازة موحد لباقة التنوع الزراعي ال', 'Officially Registered Agroforestry Deed', 'Offiziell registrierter Agroforst-Nachweis')}</strong>
-                  <span>${tr3('مقيد رسمياً في السجل الزراعي السوري الموحد ومحمي بمراجعة الدفعات البنكي.', 'Registered in Syrian Multi-Crop Cadastre under Payment Review.', 'Im syrischen Mischkultur-Kataster eingetragen, Zahlung in Prüfung.')}</span>
+                  <strong class="font-bold block">${tr3('شهادة كفالة موحدة لباقة التنوع الزراعي', 'Agroforestry Bundle Sponsorship Certificate', 'Patenschaftsnachweis für das Agroforst-Paket')}</strong>
+                  <span>${tr3('مسجلة في سجل كفالات فسيلة بعد مراجعة التحويل البنكي.', 'Recorded in the Faseela sponsorship register after review of the bank transfer.', 'Im Patenschaftsregister von Faseela erfasst, nach Prüfung der Banküberweisung.')}</span>
                 </div>
               </div>
             `}
@@ -15769,8 +15620,8 @@ function setMarketplaceViewMode(mode) {
                   <i data-lucide="sparkles" class="w-6 h-6 text-amber-300"></i>
                 </div>
                 <div>
-                  <span class="text-[10px] font-mono tracking-widest uppercase text-purple-900 dark:text-purple-300 block font-bold">FASEELA SOVEREIGN AGROFORESTRY TITLE</span>
-                  <h3 class="text-lg sm:text-xl font-black text-stone-900 dark:text-white">${tr3('سند حيازة التنوع الزراعي وملكية مقسم 15 م²', 'Multi-Crop Agroforestry Deed & 15m² Cadastral Land', 'Mischkultur-Agroforst-Nachweis & 15 m² Katasterfläche')}</h3>
+                  <span class="text-[10px] font-mono tracking-widest uppercase text-purple-900 dark:text-purple-300 block font-bold">FASEELA AGROFORESTRY SPONSORSHIP</span>
+                  <h3 class="text-lg sm:text-xl font-black text-stone-900 dark:text-white">${tr3('شهادة كفالة التنوع الزراعي لمقسم 15 م²', 'Multi-Crop Agroforestry Sponsorship Certificate & 15m² Plot', 'Mischkultur-Agroforst-Patenschaftsnachweis & 15 m² Fläche')}</h3>
                   <span class="text-[11px] text-stone-500 font-bold block">${tr3('مزيج الأصالة السورية • 4 حصص موحدة', 'Syrian Heritage Blend • 4 Shares Unified', 'Syrische Traditionsmischung • 4 Anteile gebündelt')}</span>
                 </div>
               </div>
@@ -15783,7 +15634,7 @@ function setMarketplaceViewMode(mode) {
             <!-- Details -->
             <div class="py-5 space-y-4 relative z-20">
               <div class="bg-white/80 dark:bg-stone-900/80 p-4 rounded-xl border border-purple-200 dark:border-stone-800">
-                <span class="text-[10px] text-stone-400 block font-bold">${tr3('المالك والكافل الحائز المسجل:', 'Registered Title Holder:', 'Eingetragener Inhaber:')}</span>
+                <span class="text-[10px] text-stone-400 block font-bold">${tr3('الكافل المسجل:', 'Registered Sponsor:', 'Eingetragener Baumpate:')}</span>
                 <div class="text-base sm:text-lg font-black text-stone-900 dark:text-white flex items-center justify-between">
                   <span>${investorName}</span>
                   <span class="text-xs font-mono text-purple-700 dark:text-purple-400 font-bold">DID: SYR-AGRO-2026-BUNDLE</span>
@@ -15809,8 +15660,8 @@ function setMarketplaceViewMode(mode) {
               </div>
 
               <div class="bg-stone-100/80 dark:bg-stone-900/90 p-3.5 rounded-xl border border-stone-200 dark:border-stone-800 text-[11px] text-stone-700 dark:text-stone-300">
-                <span class="font-bold text-stone-900 dark:text-white block mb-1">${tr3('سند المقسم المساحي الموحد (15.0 م² طابو أخضر):', 'Unified Cadastral Land Deed (15.0 m²):', 'Zusammengefasster Flächennachweis (15,0 m²):')}</span>
-                <span>${tr3('يشمل مقسماً مساحياً مفرزاً بمساحة 15.0 م² طابو زراعي مسجل مع حق عيني دائم في نواتج الثمار السنوية وشبكة الري الذكية.', 'Covers an aggregate 15.0 m² surveyed plot across partner agroforestry groves in Tartus, Hama, and Homs with solar irrigation rights.', 'Umfasst insgesamt 15,0 m² vermessene Fläche in Agroforst-Hainen unserer Partnerhöfe in Tartus, Hama und Homs, einschließlich Nutzung der solarbetriebenen Bewässerung.')}</span>
+                <span class="font-bold text-stone-900 dark:text-white block mb-1">${tr3('المقسم المشمول بالكفالة (15.0 م²):', 'Sponsored plot area (15.0 m²):', 'Zusammengefasster Flächennachweis (15,0 m²):')}</span>
+                <span>${tr3('يشمل مساحة إجمالية 15.0 م² في بساتين التنوع الزراعي لدى المزارع الشريكة في طرطوس وحماة وحمص، بما في ذلك الاستفادة من الري بالطاقة الشمسية.', 'Covers an aggregate 15.0 m² surveyed plot across partner agroforestry groves in Tartus, Hama, and Homs with solar irrigation rights.', 'Umfasst insgesamt 15,0 m² vermessene Fläche in Agroforst-Hainen unserer Partnerhöfe in Tartus, Hama und Homs, einschließlich Nutzung der solarbetriebenen Bewässerung.')}</span>
               </div>
             </div>
 
@@ -15867,16 +15718,16 @@ function setMarketplaceViewMode(mode) {
               <div class="mb-4 bg-amber-500/10 border border-amber-600/30 rounded-xl p-3 flex items-start gap-2.5 relative z-20">
                 <i data-lucide="shield-alert" class="w-5 h-5 text-amber-700 flex-shrink-0 mt-0.5"></i>
                 <div class="text-xs text-amber-900 dark:text-amber-200">
-                  <strong class="font-bold block">${tr3('تنبيه: سند حيازة استعراضي (غير مقيد)', 'Preview Specimen Notice', 'Hinweis: Mustervorschau')}</strong>
-                  <span>${tr3('هذه الوثيقة الاستعراضية توضح بيانات سند الحيازة الزراعية والمقسم العقاري الذي سيتم توثيقه باسمك فور الاكتتاب.', 'This certificate preview illustrates your registered land deed and sapling parcel upon subscription.', 'Diese Mustervorschau zeigt, wie Ihr registrierter Flächennachweis und Ihre Setzlingsparzelle nach Abschluss aussehen würden.')}</span>
+                  <strong class="font-bold block">${tr3('تنبيه: نموذج استعراضي (غير صادر)', 'Preview Specimen Notice', 'Hinweis: Mustervorschau')}</strong>
+                  <span>${tr3('توضح هذه الوثيقة الاستعراضية شكل شهادة الكفالة للغراس والمقسم المشمول بعد إتمام الكفالة.', 'This preview shows how your sponsorship certificate for the saplings and their plot would look once completed.', 'Diese Mustervorschau zeigt, wie Ihr Patenschaftsnachweis für die Setzlinge und ihre Parzelle nach Abschluss aussehen würde.')}</span>
                 </div>
               </div>
             ` : `
               <div class="mb-4 bg-emerald-500/10 border border-emerald-600/30 rounded-xl p-3 flex items-start gap-2.5 relative z-20">
                 <i data-lucide="shield-check" class="w-5 h-5 text-emerald-700 flex-shrink-0 mt-0.5"></i>
                 <div class="text-xs text-emerald-900 dark:text-emerald-200">
-                  <strong class="font-bold block">${tr3('سند حيازة طابو أخضر موثق ورسمي', 'Officially Registered Greenfield Title Deed', 'Offiziell registrierter Flächennachweis (Neuanlage)')}</strong>
-                  <span>${tr3('مقيد وموثق بالسجل العقاري الزراعي السوري ومحمي بمراجعة الدفعات البنكية.', 'Registered under Syrian Agricultural Land Stewardship laws with permanent GPS boundary deed.', 'Nach syrischem Agrarlandrecht registriert, mit dauerhaft per GPS dokumentierten Parzellengrenzen.')}</span>
+                  <strong class="font-bold block">${tr3('شهادة كفالة غراس بستان بكر', 'Greenfield Sapling Sponsorship Certificate', 'Patenschaftsnachweis für eine Neuanlage')}</strong>
+                  <span>${tr3('مسجلة في سجل كفالات فسيلة بعد مراجعة التحويل البنكي، مع توثيق حدود المقسم بإحداثيات GPS.', 'Recorded in the Faseela sponsorship register after review of the bank transfer, with the plot boundaries documented by GPS.', 'Im Patenschaftsregister von Faseela erfasst, nach Prüfung der Banküberweisung; die Parzellengrenzen sind per GPS dokumentiert.')}</span>
                 </div>
               </div>
             `}
@@ -15888,8 +15739,8 @@ function setMarketplaceViewMode(mode) {
                   ف
                 </div>
                 <div>
-                  <span class="text-[10px] font-mono tracking-widest uppercase text-emerald-900 dark:text-emerald-300 block font-bold">FASEELA SOVEREIGN GREENFIELD DEED</span>
-                  <h3 class="text-lg sm:text-xl font-black text-stone-900 dark:text-white">سند حيازة بستان بكر وملكية أرض زراعية</h3>
+                  <span class="text-[10px] font-mono tracking-widest uppercase text-emerald-900 dark:text-emerald-300 block font-bold">FASEELA GREENFIELD SPONSORSHIP</span>
+                  <h3 class="text-lg sm:text-xl font-black text-stone-900 dark:text-white">${tr3('شهادة كفالة غراس بستان بكر', 'Greenfield Grove Sponsorship Certificate', 'Patenschaftsnachweis für einen neu angelegten Hain')}</h3>
                   <span class="text-[11px] text-stone-500 font-bold block">${region} • الجمهورية العربية السورية</span>
                 </div>
               </div>
@@ -15902,7 +15753,7 @@ function setMarketplaceViewMode(mode) {
             <!-- Sponsor Name & Registration Details -->
             <div class="py-5 space-y-4 relative z-20">
               <div class="bg-white/80 dark:bg-stone-900/80 p-4 rounded-xl border border-emerald-200 dark:border-stone-800">
-                <span class="text-[10px] text-stone-400 block font-bold">${tr3('الكافل الحائز والمالك المسجل:', 'Beneficiary & Registered Title Holder:', 'Begünstigter & eingetragener Inhaber:')}</span>
+                <span class="text-[10px] text-stone-400 block font-bold">${tr3('الكافل المسجل:', 'Registered Sponsor:', 'Eingetragener Baumpate:')}</span>
                 <div class="text-base sm:text-lg font-black text-stone-900 dark:text-white flex items-center justify-between">
                   <span>${investorName}</span>
                   <span class="text-xs font-mono text-emerald-700 dark:text-emerald-400 font-bold">DID: SYR-AGR-2026-VG01</span>
@@ -15912,11 +15763,11 @@ function setMarketplaceViewMode(mode) {
               <!-- Cadastral Blueprint Spec -->
               <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs">
                 <div class="bg-emerald-50/60 dark:bg-stone-900 p-3 rounded-xl border border-emerald-200 dark:border-stone-800">
-                  <span class="text-[10px] text-stone-400 block font-bold">${tr3('رقم العقار المساحي:', 'Cadastral Parcel:', 'Katasterparzelle:')}</span>
+                  <span class="text-[10px] text-stone-400 block font-bold">${tr3('رقم المقسم:', 'Plot reference:', 'Parzelle:')}</span>
                   <strong class="text-stone-900 dark:text-white font-mono text-[11px] block mt-0.5">${parcelNo}</strong>
                 </div>
                 <div class="bg-emerald-50/60 dark:bg-stone-900 p-3 rounded-xl border border-emerald-200 dark:border-stone-800">
-                  <span class="text-[10px] text-stone-400 block font-bold">${tr3('مساحة المقسم المستقل:', 'Land Area (Deed):', 'Fläche (laut Nachweis):')}</span>
+                  <span class="text-[10px] text-stone-400 block font-bold">${tr3('مساحة المقسم المشمول:', 'Plot area:', 'Fläche (laut Nachweis):')}</span>
                   <strong class="text-emerald-700 dark:text-emerald-400 font-mono text-xs block mt-0.5">${landArea} m²</strong>
                 </div>
                 <div class="bg-emerald-50/60 dark:bg-stone-900 p-3 rounded-xl border border-emerald-200 dark:border-stone-800">
@@ -15930,8 +15781,8 @@ function setMarketplaceViewMode(mode) {
               </div>
 
               <div class="bg-stone-100/80 dark:bg-stone-900/90 p-3.5 rounded-xl border border-stone-200 dark:border-stone-800 text-[11px] text-stone-700 dark:text-stone-300 leading-relaxed">
-                <span class="font-bold text-stone-900 dark:text-white block mb-1">${tr3('الإطار القانوني والحيازة المستدامة:', 'Legal & Stewardship Terms:', 'Rechtliche Bedingungen & Pflege:')}</span>
-                <span>${tr3('وفقاً لأحكام القانون المدني السوري (المادة 768) وعقد الكفالة المشترك المحمي بمراجعة الدفعات، يمنح هذا السند صاحبه حيازة قانونية كاملة وحقاً عينياً في كافة نواتج الزيت وثمار المقسم مع حصة شائعة في شبكة الري بالطاقة الشمسية.', 'Usufruct terms are governed by the signed partnership contract. Legal effect under Syrian civil law is subject to review [PLATZHALTER: legal opinion].', 'Die Nutzungsbedingungen richten sich nach dem unterzeichneten Partnerschaftsvertrag. Die rechtliche Wirkung nach syrischem Zivilrecht steht unter dem Vorbehalt einer Prüfung [PLATZHALTER: legal opinion].')}</span>
+                <span class="font-bold text-stone-900 dark:text-white block mb-1">${tr3('الإطار القانوني وشروط الكفالة:', 'Legal & Stewardship Terms:', 'Rechtliche Bedingungen & Pflege:')}</span>
+                <span>${tr3('تخضع شروط الكفالة لعقد الشراكة الموقّع. الأثر القانوني وفق القانون المدني السوري قيد المراجعة [PLATZHALTER: legal opinion].', 'Sponsorship terms are governed by the signed partnership contract. Legal effect under Syrian civil law is subject to review [PLATZHALTER: legal opinion].', 'Die Patenschaftsbedingungen richten sich nach dem unterzeichneten Partnerschaftsvertrag. Die rechtliche Wirkung nach syrischem Zivilrecht steht unter dem Vorbehalt einer Prüfung [PLATZHALTER: legal opinion].')}</span>
               </div>
             </div>
 
@@ -15999,8 +15850,8 @@ function setMarketplaceViewMode(mode) {
                 <span class="font-black block">${tr3("نموذج استعراضي للمعاينة فقط (غير مسجل باسمك)", "Specimen Preview Only (Unregistered)", "Nur Mustervorschau (nicht registriert)")}</span>
                 <p class="text-[11px] text-amber-900 mt-0.5 leading-relaxed">
                   ${tr3(
-                    "هذه الشجرة المباركة غير مسجلة في محفظة كفالاتك حالياً. لإصدار سند ملكيتك الرسمي وتثبيت حيازتك برقم قيد معتمد صادر باسمك، يمكنك امتلاك حصة فيها الآن.",
-                    "This blessed tree is not currently in your investment portfolio. To issue your official verified usufruct deed and cadastral serial number in your name, invest in a share today.",
+                    "هذه الشجرة غير مسجلة في كفالاتك حالياً. لتحصل على شهادة كفالة برقم تسلسلي باسمك، اكفل حصة فيها الآن.",
+                    "You do not currently sponsor this tree. To receive a sponsorship certificate with a serial number in your name, sponsor a share today.",
                     "Für diesen Baum haben Sie derzeit keine Patenschaft. Um einen Patenschaftsnachweis mit Seriennummer auf Ihren Namen zu erhalten, übernehmen Sie noch heute einen Anteil.")}
                 </p>
               </div>
@@ -16010,7 +15861,7 @@ function setMarketplaceViewMode(mode) {
             <div class="mb-4 bg-emerald-700/10 border border-emerald-700/30 rounded-xl p-2.5 flex items-center justify-between">
               <div class="flex items-center gap-2 text-xs font-bold text-emerald-950">
                 <i data-lucide="badge-check" class="w-4 h-4 text-emerald-700"></i>
-                <span>${tr3("سند حيازة زراعية رسمي موثق ومقيد بالسجل الكاداستري", "Officially Registered & Verified Usufruct Deed", "Registrierter und geprüfter Patenschaftsnachweis")}</span>
+                <span>${tr3("شهادة كفالة مسجلة وموثقة", "Registered & Verified Sponsorship Certificate", "Registrierter und geprüfter Patenschaftsnachweis")}</span>
               </div>
               <span class="bg-emerald-700 text-white text-[10px] font-mono px-2 py-0.5 rounded-full font-bold">RLS Active • Tier 1</span>
             </div>
@@ -16022,14 +15873,14 @@ function setMarketplaceViewMode(mode) {
             </div>
             <h2 class="text-xl sm:text-2xl font-black text-olive-950">
               ${hasLand 
-                ? (isOwned ? tr3("شهادة ملكية شجرة وسند حيازة مقسم زراعي (5 م²)", "Syrian Olive Tree & 5m² Land Parcel Stewardship Deed", "Patenschaftsnachweis: syrischer Olivenbaum & 5 m² Parzelle") : tr3("نموذج استعراضي: شهادة ملكية شجرة وسند حيازة مقسم زراعي", "Specimen: Syrian Olive Tree & 5m² Land Parcel Deed", "Muster: Patenschaftsnachweis für syrischen Olivenbaum & 5 m² Parzelle")) 
-                : (isOwned ? tr3("شهادة ملكية ورعاية شجرة زيتون سورية", "Certificate of Syrian Olive Tree Stewardship", "Patenschaftszertifikat für einen syrischen Olivenbaum") : tr3("نموذج استعراضي: شهادة رعاية شجرة زيتون سورية", "Specimen: Certificate of Syrian Olive Tree Stewardship", "Muster: Patenschaftszertifikat für einen syrischen Olivenbaum"))}
+                ? (isOwned ? tr3("شهادة كفالة شجرة زيتون سورية ومقسم زراعي (5 م²)", "Syrian Olive Tree & 5m² Parcel Sponsorship Certificate", "Patenschaftsnachweis: syrischer Olivenbaum & 5 m² Parzelle") : tr3("نموذج استعراضي: شهادة كفالة شجرة ومقسم زراعي", "Specimen: Syrian Olive Tree & 5m² Parcel Sponsorship Certificate", "Muster: Patenschaftsnachweis für syrischen Olivenbaum & 5 m² Parzelle")) 
+                : (isOwned ? tr3("شهادة كفالة شجرة زيتون سورية", "Certificate of Syrian Olive Tree Sponsorship", "Patenschaftszertifikat für einen syrischen Olivenbaum") : tr3("نموذج استعراضي: شهادة رعاية شجرة زيتون سورية", "Specimen: Certificate of Syrian Olive Tree Stewardship", "Muster: Patenschaftszertifikat für einen syrischen Olivenbaum"))}
             </h2>
             <h3 class="text-xs sm:text-sm font-bold ${isOwned ? 'text-olive-700' : 'text-amber-800'} tracking-wider font-sans uppercase">
-              ${isOwned ? (hasLand ? "Official Agricultural Usufruct & Stewardship Deed" : "Official Fractional Tree Stewardship Certificate") : "Official Agrarian Specimen & Verification Sample"}
+              ${isOwned ? (hasLand ? "Tree & Plot Sponsorship Certificate" : "Tree Sponsorship Certificate") : "Specimen - Not Issued"}
             </h3>
             <p class="text-[10px] text-stone-500 font-mono">
-              Serial: ${treeSerial} ${hasLand ? `• Deed: ${deedSerial}` : ''} • SHA-256 Multi-Tenant RLS
+              Serial: ${treeSerial} ${hasLand ? `• Ref: ${deedSerial}` : ''} • SHA-256 Multi-Tenant RLS
             </p>
           </div>
 
@@ -16066,21 +15917,21 @@ function setMarketplaceViewMode(mode) {
               <div class="flex items-center justify-between">
                 <div class="flex items-center gap-2">
                   <i data-lucide="map" class="w-4 h-4 text-emerald-800"></i>
-                  <span class="font-black text-xs text-emerald-950">${tr3("بيان الحيازة العقارية للمقسم الزراعي (5.0 م² طابو أخضر)", "Cadastral Land Parcel Usufruct Record (5.0 m²)", "Nutzungsnachweis für die Parzelle (5,0 m²)")}</span>
+                  <span class="font-black text-xs text-emerald-950">${tr3("بيانات المقسم المشمول بالكفالة (5.0 م²)", "Sponsored Plot Details (5.0 m²)", "Angaben zur Patenschaftsparzelle (5,0 m²)")}</span>
                 </div>
-                <span class="bg-emerald-700 text-white text-[10px] font-mono px-2.5 py-0.5 rounded-full font-bold">${isOwned ? 'WGS84 Registered Deed' : 'Specimen Cadastral Grid'}</span>
+                <span class="bg-emerald-700 text-white text-[10px] font-mono px-2.5 py-0.5 rounded-full font-bold">${isOwned ? 'WGS84 Surveyed Plot' : 'Specimen Plot Grid'}</span>
               </div>
               <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-[11px]">
                 <div class="bg-white dark:bg-stone-900/90 p-2.5 rounded-xl border border-emerald-200/60 dark:border-emerald-800/50">
-                  <span class="text-stone-500 text-[10px] block">${tr3("المنطقة والحوض العقاري:", "Cadastral Sector & Basin:", "Katasterbezirk & Flur:")}</span>
+                  <span class="text-stone-500 text-[10px] block">${tr3("المنطقة والحوض:", "Sector & Basin:", "Bezirk & Flur:")}</span>
                   <span class="font-bold text-stone-900">${cadastralZone}</span>
                 </div>
                 <div class="bg-white dark:bg-stone-900/90 p-2.5 rounded-xl border border-emerald-200/60 dark:border-emerald-800/50">
-                  <span class="text-stone-500 text-[10px] block">${tr3("رقم المقسم والعقار:", "Parcel & Plot Number:", "Parzellen- & Flurstücksnummer:")}</span>
+                  <span class="text-stone-500 text-[10px] block">${tr3("رقم المقسم:", "Plot Number:", "Parzellen- & Flurstücksnummer:")}</span>
                   <span class="font-bold text-emerald-900">${parcelNo}</span>
                 </div>
                 <div class="bg-white dark:bg-stone-900/90 p-2.5 rounded-xl border border-emerald-200/60 dark:border-emerald-800/50">
-                  <span class="text-stone-500 text-[10px] block">${tr3("مساحة المقسم العقاري:", "Surveyed Parcel Area:", "Vermessene Parzellenfläche:")}</span>
+                  <span class="text-stone-500 text-[10px] block">${tr3("مساحة المقسم:", "Surveyed Plot Area:", "Vermessene Parzellenfläche:")}</span>
                   <span class="font-black text-stone-900">${landAreaSqm.toFixed(1)} ${tr3("م² مفرزة محيطة", "m² surveyed", "m² vermessen")}</span>
                 </div>
               </div>
@@ -16103,7 +15954,7 @@ function setMarketplaceViewMode(mode) {
               </div>
               <div class="text-[10px] text-stone-500">
                 <span class="font-bold block text-stone-700">${tr3('الختم الرقمي المشفر', 'Verified Digital Seal', 'Geprüftes digitales Siegel')}</span>
-                <span>Faseela Agrarian Cadastral Registry • Republic of Syria</span>
+                <span>Faseela Sponsorship Register</span>
               </div>
             </div>
             <div class="text-end">
@@ -16115,7 +15966,7 @@ function setMarketplaceViewMode(mode) {
               ` : `
                 <button data-click="closeModal('modal-certificate'); openInvestModal('${tree.id}', ${hasLand});" class="bg-olive-800 hover:bg-olive-900 text-white px-5 py-2.5 rounded-xl font-black text-xs shadow-md transition-all flex items-center gap-2 cursor-pointer">
                   <i data-lucide="shopping-cart" class="w-4 h-4 text-amber-300"></i>
-                  <span>${tr3('امتلك حصة لإصدار سندك الرسمي', 'Invest in Tree to Issue Deed', 'Patenschaft übernehmen und Nachweis erhalten')}</span>
+                  <span>${tr3('اكفل حصة لتحصل على شهادة الكفالة', 'Sponsor a Share to Receive Your Certificate', 'Patenschaft übernehmen und Nachweis erhalten')}</span>
                 </button>
               `}
             </div>
@@ -16701,7 +16552,6 @@ function setMarketplaceViewMode(mode) {
         const irrigation = escapeHtml(isEn ? (vg.irrigation_type_en || vg.irrigation_type) : vg.irrigation_type);
         const status = escapeHtml(isEn ? (vg.cadastral_status_en || vg.cadastral_status) : vg.cadastral_status);
         const partner = escapeHtml(isEn ? (vg.farm_partner_en || vg.farm_partner) : vg.farm_partner);
-        const growth = escapeHtml(isEn ? vg.projected_land_appreciation_pct_en : vg.projected_land_appreciation_pct);
 
         return `
           <div class="bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-3xl overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col justify-between text-start">
@@ -16742,16 +16592,8 @@ function setMarketplaceViewMode(mode) {
                   </div>
                 </div>
 
-                <div class="flex items-center justify-between text-[11px] p-2 bg-emerald-50/70 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/50 rounded-xl">
-                  <div class="flex items-center gap-1.5 text-emerald-900 dark:text-emerald-200 font-bold">
-                    <i data-lucide="trending-up" class="w-4 h-4 text-emerald-600"></i>
-                    <span>${tr3('معدل نمو قيمة الأرض:', 'Capital Land Growth:', 'Wertzuwachs des Landes:')}</span>
-                  </div>
-                  <span class="font-black text-emerald-800 dark:text-emerald-300">${growth}</span>
-                </div>
-
                 <div class="flex justify-between items-center text-stone-600 dark:text-stone-400 text-[11px]">
-                  <span>${tr3('سند الطابو الكاداستري:', 'Cadastral Tenure Deed:', 'Katasterstatus:')}</span>
+                  <span>${tr3('حالة تسجيل الأرض:', 'Land registry status:', 'Katasterstatus:')}</span>
                   <span class="text-stone-900 dark:text-stone-200 font-bold text-end">${status}</span>
                 </div>
               </div>
@@ -16760,7 +16602,7 @@ function setMarketplaceViewMode(mode) {
             <div class="p-5 pt-0 border-t border-stone-100 dark:border-stone-800 mt-2">
               <div class="flex items-center justify-between py-3">
                 <div>
-                  <span class="text-[10px] text-stone-400 block">${tr3('غرسة بكر + 25 م² أرض طابو:', 'Sapling + 25 m² Land Plot:', 'Setzling + 25 m² Fläche:')}</span>
+                  <span class="text-[10px] text-stone-400 block">${tr3('غرسة بكر + 25 م² مقسم مشمول:', 'Sapling + 25 m² Plot:', 'Setzling + 25 m² Fläche:')}</span>
                   <span class="text-xl font-black text-terracotta-600 dark:text-terracotta-400">${formatMoney(vg.price_per_sapling_with_land)}</span>
                 </div>
                 <div class="text-end">
@@ -17101,7 +16943,7 @@ function setMarketplaceViewMode(mode) {
       state.p2pListings = state.p2pListings.filter(l => l.id !== listingId);
 
       playAcousticChime(880, 0.25);
-      showToast(tr3(`🎉 تم تأكيد الشراء التشاركي ونقل ملكية ${title} إلى محفظتك بنجاح!`, `🎉 P2P purchase confirmed: ${title} transferred to your portfolio!`, `🎉 P2P-Kauf bestätigt: ${title} wurde Ihren Patenschaften hinzugefügt!`));
+      showToast(tr3(`🎉 تم التأكيد: أُضيفت ${title} إلى كفالاتك بنجاح!`, `🎉 Confirmed: ${title} has been added to your sponsorships!`, `🎉 Bestätigt: ${title} wurde Ihren Patenschaften hinzugefügt!`));
       if (typeof dispatchNotification === 'function') {
         dispatchNotification({
           role: 'investor',
@@ -17655,8 +17497,11 @@ function setMarketplaceViewMode(mode) {
             const message = (document.getElementById('gift-message')?.value || '').trim() || tr3('لتكن هذه الشجرة المباركة رمزاً للحياة والخير والبركة الدائمة.', 'May this olive tree grow as a symbol of life, peace, and abundance.', 'Möge dieser Olivenbaum als Zeichen für Leben, Frieden und Fülle wachsen.');
             const w = window.open('', '_blank');
             if (!w) return;
-            w.document.write('<!doctype html><html lang="' + (isEn ? 'en' : 'ar') + '" dir="' + (isEn ? 'ltr' : 'rtl') + '"><head><meta charset="utf-8"><title>' + tr3('وثيقة إهداء · فسيلة', 'Gift Certificate · Faseela', 'Geschenkgutschein · Faseela') + '</title><style>body{margin:0;padding:2rem;font-family:sans-serif;background:#fafaf9;color:#1c1917;display:flex;justify-content:center;align-items:center;min-height:90vh}.card{background:#fff;border:3px double #424830;padding:3rem;border-radius:1.5rem;max-width:540px;text-align:center;box-shadow:0 10px 25px rgba(0,0,0,0.05)}h1{color:#2c3e2d;margin:0 0 .5rem;font-size:1.8rem}.gold{color:#b45309;font-weight:bold;margin-bottom:1.5rem}.to{font-size:1.2rem;font-weight:bold;margin:1rem 0}.msg{font-style:italic;color:#57534e;margin:1.5rem 0;line-height:1.6}.code-box{background:#f5f0e8;border:2px dashed #424830;padding:1rem;border-radius:1rem;margin:1.5rem 0}.code{font-family:monospace;font-size:1.6rem;font-weight:bold;letter-spacing:.15em;color:#2c3e2d}.link{font-size:.85rem;color:#78716c;margin-top:.5rem}@media print{body{background:none;padding:0}.card{box-shadow:none;border-width:2px}}</style></head><body><div class="card"><h1>🌿 ' + tr3('وثيقة إهداء رعاية شجرة زيتون', 'Olive Tree Gift Certificate', 'Geschenkgutschein für eine Olivenbaum-Patenschaft') + '</h1><div class="gold">' + tr3('منصة فسيلة · برنامج رعاية أشجار الزيتون السورية', 'Faseela Agritech · Syrian Olive Stewardship', 'Faseela Agritech · Patenschaften für syrische Olivenbäume') + '</div><div class="to">' + tr3('مُهداة إلى:', 'Gifted to:', 'Für:') + ' ' + escapeHtml(recipient) + '</div><div class="msg">"' + escapeHtml(message) + '"</div><div class="code-box"><div style="font-size:.85rem;margin-bottom:.4rem;color:#57534e">' + tr3('رمز تفعيل الهدية', 'Gift Activation Code', 'Aktivierungscode für Ihr Geschenk') + '</div><div class="code">' + escapeHtml(data.code) + '</div><div class="link">' + escapeHtml(link) + '</div></div><p style="font-size:.8rem;color:#a8a29e;margin-top:2rem">' + tr3('يُدخل الرمز في منصة فسيلة لاستلام حصة الرعاية وشهادة الشجرة ومحصول الزيت.', 'Scan or enter code on faseela.sy to claim tree stewardship and extra virgin olive oil.', 'Scannen Sie den Code oder geben Sie ihn auf faseela.sy ein, um Ihre Baumpatenschaft und natives Olivenöl extra zu erhalten.') + '</p></div><script>window.onload=()=>{setTimeout(()=>{window.print();},400);};</script></body></html>');
+            w.document.write('<!doctype html><html lang="' + normalizeLang(state.currentLang) + '" dir="' + (state.currentLang === 'ar' ? 'rtl' : 'ltr') + '"><head><meta charset="utf-8"><title>' + tr3('وثيقة إهداء · فسيلة', 'Gift Certificate · Faseela', 'Geschenkgutschein · Faseela') + '</title><style>body{margin:0;padding:2rem;font-family:sans-serif;background:#fafaf9;color:#1c1917;display:flex;justify-content:center;align-items:center;min-height:90vh}.card{background:#fff;border:3px double #424830;padding:3rem;border-radius:1.5rem;max-width:540px;text-align:center;box-shadow:0 10px 25px rgba(0,0,0,0.05)}h1{color:#2c3e2d;margin:0 0 .5rem;font-size:1.8rem}.gold{color:#b45309;font-weight:bold;margin-bottom:1.5rem}.to{font-size:1.2rem;font-weight:bold;margin:1rem 0}.msg{font-style:italic;color:#57534e;margin:1.5rem 0;line-height:1.6}.code-box{background:#f5f0e8;border:2px dashed #424830;padding:1rem;border-radius:1rem;margin:1.5rem 0}.code{font-family:monospace;font-size:1.6rem;font-weight:bold;letter-spacing:.15em;color:#2c3e2d}.link{font-size:.85rem;color:#78716c;margin-top:.5rem}@media print{body{background:none;padding:0}.card{box-shadow:none;border-width:2px}}</style></head><body><div class="card"><h1>🌿 ' + tr3('وثيقة إهداء رعاية شجرة زيتون', 'Olive Tree Gift Certificate', 'Geschenkgutschein für eine Olivenbaum-Patenschaft') + '</h1><div class="gold">' + tr3('منصة فسيلة · برنامج رعاية أشجار الزيتون السورية', 'Faseela Agritech · Syrian Olive Stewardship', 'Faseela Agritech · Patenschaften für syrische Olivenbäume') + '</div><div class="to">' + tr3('مُهداة إلى:', 'Gifted to:', 'Für:') + ' ' + escapeHtml(recipient) + '</div><div class="msg">"' + escapeHtml(message) + '"</div><div class="code-box"><div style="font-size:.85rem;margin-bottom:.4rem;color:#57534e">' + tr3('رمز تفعيل الهدية', 'Gift Activation Code', 'Aktivierungscode für Ihr Geschenk') + '</div><div class="code">' + escapeHtml(data.code) + '</div><div class="link">' + escapeHtml(link) + '</div></div><p style="font-size:.8rem;color:#a8a29e;margin-top:2rem">' + tr3('يُدخل الرمز في منصة فسيلة لاستلام حصة الرعاية وشهادة الشجرة ومحصول الزيت.', 'Scan or enter code on faseela.sy to claim tree stewardship and extra virgin olive oil.', 'Scannen Sie den Code oder geben Sie ihn auf faseela.sy ein, um Ihre Baumpatenschaft und natives Olivenöl extra zu erhalten.') + '</p></div></body></html>');
             w.document.close();
+            // Printed from here: the about:blank popup inherits the CSP (script-src 'self'), which blocks inline scripts.
+            w.focus();
+            setTimeout(() => { try { w.print(); } catch (_) { /* popup closed meanwhile */ } }, 400);
           };
         }
         document.getElementById('gift-form')?.classList.add('hidden');
@@ -17962,7 +17807,13 @@ function setMarketplaceViewMode(mode) {
                   ${(() => {
                     if (!state.serverMode) return `<button data-click="openLabQrPassportModal('SYR-MILL-2025-0981')" class="bg-emerald-100 hover:bg-emerald-200 dark:bg-emerald-950 dark:hover:bg-emerald-900 text-emerald-900 dark:text-emerald-200 px-3 py-2 rounded-xl font-bold text-xs flex items-center gap-1 cursor-pointer" title="${tr3('جواز فحص الزيت المخبري', 'EVOO Lab Analysis Passport', 'Laborpass für natives Olivenöl extra')}"><i data-lucide="qr-code" class="w-3.5 h-3.5 text-emerald-700 dark:text-emerald-400"></i><span>${tr3('جواز الزيت', 'Lab Passport', 'Laborpass')}</span></button>`;
                     const lab = (state.myOilAllocations || []).find(a => a.treeId === share.tree_id && a.certificateSerial);
-                    return lab ? `<span class="bg-emerald-50 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 px-3 py-2 rounded-xl font-mono text-[10px] font-bold flex items-center gap-1" title="${tr3('شهادة المختبر لآخر عصرة', 'Lab certificate of the latest pressing', 'Laborbefund der letzten Pressung')}"><i data-lucide="flask-conical" class="w-3.5 h-3.5"></i>${escapeHtml(lab.certificateSerial)}</span>` : '';
+                    if (!lab) return '';
+                    // A weighed harvest (unit kg) has a harvest record (weighing record), not a lab certificate of a pressing.
+                    const weighed = allocationUnit(lab) === 'kg';
+                    const labTitle = weighed
+                      ? tr3('سجل الحصاد: محضر وزن آخر حصاد', 'Harvest record: weighing record of the latest harvest', 'Erntebeleg: Wiegeprotokoll der letzten Ernte')
+                      : tr3('شهادة المختبر لآخر عصرة', 'Lab certificate of the latest pressing', 'Laborbefund der letzten Pressung');
+                    return `<span class="bg-emerald-50 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 px-3 py-2 rounded-xl font-mono text-[10px] font-bold flex items-center gap-1" title="${labTitle}"><i data-lucide="${weighed ? 'scale' : 'flask-conical'}" class="w-3.5 h-3.5"></i>${escapeHtml(lab.certificateSerial)}</span>`;
                   })()}
                   <button data-click="openLegalContract('investor')" class="bg-purple-100 hover:bg-purple-200 dark:bg-purple-950 dark:hover:bg-purple-900 text-purple-900 dark:text-purple-200 px-3 py-2 rounded-xl font-bold text-xs flex items-center gap-1 cursor-pointer" title="${t('footer_link_investor_contract')}">
                     <i data-lucide="file-check-2" class="w-3.5 h-3.5 text-purple-700 dark:text-purple-400"></i>
@@ -18109,6 +17960,9 @@ function setMarketplaceViewMode(mode) {
     }
 
     function selectHarvestYieldAction(actionType) {
+      // Sponsors receive oil (delivery) or give it away (donation); there is no money option. A stored
+      // 'liquidate' choice from an older session falls back to delivery.
+      if (actionType !== 'donate') actionType = 'dispatch';
       if (state.investorYieldPreferences) {
         state.investorYieldPreferences.mode = actionType;
       }
@@ -18146,33 +18000,6 @@ function setMarketplaceViewMode(mode) {
             </div>
           </div>
         `;
-      } else if (actionType === 'liquidate') {
-        const litres = state.investorYieldPreferences?.selectedLitres || 7.4;
-        const totalSYP = litres * (state.investorYieldPreferences?.liquidationCashRateSYP || 195000);
-        const totalUSD = litres * (state.investorYieldPreferences?.liquidationCashRateUSD || 13.0);
-
-        container.innerHTML = `
-          <div class="space-y-3">
-            <div class="flex items-center justify-between text-xs font-bold text-purple-900 dark:text-purple-300">
-              <span>${tr3('قيمة التسييل الفوري لحصتك (7.4 لتر زيت بكر ممتاز):', 'Instant Liquidation Value for Your Share (7.4 L EVOO):', 'Sofortiger Verkaufswert Ihres Ölanteils (7,4 l natives Olivenöl extra):')}</span>
-              <span class="font-mono text-emerald-600 dark:text-emerald-400">International Export Parity</span>
-            </div>
-            <div class="flex items-baseline gap-3">
-              <span class="text-2xl font-black text-purple-900 dark:text-purple-300 font-mono">${Math.round(totalSYP).toLocaleString()} ${tr3('ل.س', 'SYP', 'SYP')}</span>
-              <span class="text-xs text-stone-500 dark:text-stone-400 font-bold">($${totalUSD.toFixed(2)} USD)</span>
-            </div>
-            <p class="text-xs text-stone-500 dark:text-stone-400 leading-relaxed">
-              ${tr3(
-                'يتم تحويل المبلغ فورياً إلى محفظتك في فسيلة أو سحبه نقداً عبر حساب سيريتل كاش أو الهرم إكسبرس بدون أي عمولات خفية.',
-                'Amount is credited immediately to your Faseela wallet balance or withdrawable in cash via Syriatel Cash or Al-Haram Express with zero hidden fees.',
-                'Der Betrag wird Ihrem Faseela-Guthaben sofort gutgeschrieben oder kann bar über Syriatel Cash oder Al-Haram Express ohne versteckte Gebühren ausgezahlt werden.')}
-            </p>
-            <button type="button" data-click="confirmYieldLiquidation()" class="w-full bg-purple-700 hover:bg-purple-800 text-white py-2.5 rounded-xl font-bold text-xs transition-all shadow-md cursor-pointer flex items-center justify-center gap-2">
-              <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-300"></i>
-              <span data-i18n="dash_btn_confirm_liquidate">${tr3('تأكيد تسييل الحصة وتحويل القيمة لمحفظتي', 'Confirm Liquidation & Credit Value to Wallet', 'Verkauf bestätigen und Betrag gutschreiben')}</span>
-            </button>
-          </div>
-        `;
       } else if (actionType === 'donate') {
         const charityName = isEn 
           ? (state.investorYieldPreferences?.donationCharity_en || 'Syrian Rural Orphan & Needy Welfare Initiative') 
@@ -18204,12 +18031,6 @@ function setMarketplaceViewMode(mode) {
       const isEn = state.currentLang !== 'ar';
       showToast(tr3("📦 تم إرسال الطلب بنجاح! تم قيد شحنة الزيت الخاصة بك للتجهيز والتسليم المبرد.", "📦 Order submitted! Your 7.4L EVOO dispatch staged with Climate Fleet.", "📦 Auftrag übermittelt! Der Versand Ihrer 7,4 l Olivenöl wird mit der klimatisierten Flotte vorbereitet."));
       playAcousticChime(650, 0.15);
-    }
-
-    function confirmYieldLiquidation() {
-      const isEn = state.currentLang !== 'ar';
-      showToast(tr3("💰 تم التسييل بنجاح! تم قيد 1,443,000 ل.س ($96.20) في رصيد محفظتك المتاح.", "💰 Liquidation confirmed! $96.20 (1,443,000 SYP) credited to your wallet balance.", "💰 Verkauf bestätigt! 96,20 USD (1.443.000 SYP) wurden Ihrem Guthaben gutgeschrieben."));
-      playAcousticChime(700, 0.15);
     }
 
     function confirmYieldDonation() {
@@ -18637,7 +18458,7 @@ function setMarketplaceViewMode(mode) {
       if (!state.serverMode) { box.classList.add('hidden'); return; }
       box.classList.remove('hidden');
       const items = (kind === 'farmer' ? state.myFarmerUpdates : state.myPressingBatches) || [];
-      const label = (status) => window.FaseelaMappers ? window.FaseelaMappers.statusLabel(status, isEn ? 'en' : 'ar') : status;
+      const label = (status) => window.FaseelaMappers ? window.FaseelaMappers.statusLabel(status, normalizeLang(state.currentLang)) : status;
       const title = kind === 'farmer' ? (tr3('تقاريري الميدانية المرسلة', 'My submitted field reports', 'Meine gesendeten Feldberichte')) : (tr3('دفعات العصر المرسلة', 'My submitted pressing batches', 'Meine gesendeten Pressungen'));
       const rows = items.map(item => {
         const when = Number.isFinite(item.createdAt) ? new Date(item.createdAt).toLocaleDateString(uiLocale()) : '';
@@ -18713,10 +18534,17 @@ function setMarketplaceViewMode(mode) {
     }
 
     // ---- Weighed harvest (every crop except olive): recorded by the assigned farmer, once per tree and season ----
-    /** Assigned trees with a weighed harvest. A tree whose crop this browser does not know stays: the server decides. */
+    /**
+     * Assigned trees with a weighed harvest. my_assignments returns each tree's crop, also for unlisted trees
+     * (migration 20261121000500); the catalogue is only a fallback for an older server. A tree whose crop is unknown
+     * is not offered, so an olive tree never appears in the harvest form.
+     */
     function farmerHarvestTrees() {
       const trees = (farmerQuick.assignments && farmerQuick.assignments.trees) || [];
-      return trees.filter(tr => (tr.cropCategory || treeCropCategory(tr.treeId)) !== 'olive');
+      return trees.filter(tr => {
+        const crop = tr.cropCategory || treeCropCategory(tr.treeId);
+        return Boolean(crop) && crop !== 'olive';
+      });
     }
 
     function farmerTreeLabel(tr) {
@@ -19499,7 +19327,7 @@ function setMarketplaceViewMode(mode) {
       try {
         const { data } = await api.adminPaymentState();
         renderFounderPaymentForm(data || null);
-        if (data?.live) { state.paymentInstructions = data.live; state.paymentInstructionsAt = Date.now(); state.paymentReady = (data.live.channels || []).length > 0; }
+        if (data?.live) { state.paymentInstructions = data.live; state.paymentInstructionsCountry = '*'; state.paymentInstructionsAt = Date.now(); state.paymentReady = channelsForCountry(data.live.channels).length > 0; }
       } catch (error) {
         const err = document.getElementById('fndr-pay-error');
         if (err) { err.textContent = t('local_pay_load_failed'); err.classList.remove('hidden'); }
@@ -22911,7 +22739,7 @@ function setMarketplaceViewMode(mode) {
       if (eligibility.status === 'unauthenticated') {
         playAcousticChime(400, 0.2);
         openAuthModal();
-        showToast(tr3('🔒 توثيق الهوية مطلوب: يرجى تسجيل الدخول للتحقق من ملكية الحصص واستلام المحصول.',
+        showToast(tr3('🔒 توثيق الهوية مطلوب: يرجى تسجيل الدخول للتحقق من حصص كفالتك واستلام المحصول.',
           '🔒 Verification required: Please log in to view and claim your verified harvest.',
           '🔒 Anmeldung erforderlich: Bitte melden Sie sich an, um Ihre geprüfte Ernte anzusehen und anzufordern.'));
         return;
@@ -22919,9 +22747,9 @@ function setMarketplaceViewMode(mode) {
 
       if (eligibility.status === 'no_shares' || eligibility.status === 'tree_not_owned') {
         playAcousticChime(400, 0.2);
-        showToast(tr3('🔒 إثبات الملكية مطلوب: خيارات استلام الزيت والتسييل النقدي مخصصة فقط لمالكي الحصص الزراعية.',
-          '🔒 Ownership Required: Oil delivery and cashout are reserved for verified tree share owners.',
-          '🔒 Patenschaft erforderlich: Ölversand und Verkaufsoption stehen nur Baumpaten mit bestätigtem Anteil zur Verfügung.'));
+        showToast(tr3('🔒 الكفالة مطلوبة: استلام حصة الزيت متاح فقط لكفلاء الأشجار ذوي الحصص المؤكدة.',
+          '🔒 Sponsorship required: oil delivery is available only to verified tree sponsors.',
+          '🔒 Patenschaft erforderlich: Der Ölversand steht nur Baumpaten mit bestätigtem Anteil zur Verfügung.'));
         navigateTo('marketplace');
         return;
       }
@@ -22978,9 +22806,9 @@ function setMarketplaceViewMode(mode) {
               <p>${tr3('1. صدور شهادة الفحص المخبري الرسمي (حموضة أقل من 0.35% بكر ممتاز).',
                 '1. Certified lab analysis issued (Acidity &lt; 0.35% Extra Virgin).',
                 '1. Ein zertifizierter Laborbefund wird ausgestellt (Säuregehalt &lt; 0,35 %, Extra Vergine).')}</p>
-              <p>${tr3('2. تفعيل خيارات الشحن الدولي والتسييل النقدي الفوري تلقائياً في ملف كفالاتك والمحادثة.',
-                '2. International Delivery & Export Cashout buttons unlock automatically in your Portfolio and Chat.',
-                '2. Die Schaltflächen für internationalen Versand und Exportverkauf werden in Ihrer Übersicht und im Chat automatisch freigeschaltet.')}</p>
+              <p>${tr3('2. تفعيل خيار شحن حصة الزيت تلقائياً في ملف كفالاتك والمحادثة.',
+                '2. The oil delivery option unlocks automatically in your Portfolio and Chat.',
+                '2. Die Option für den Ölversand wird in Ihrer Übersicht und im Chat automatisch freigeschaltet.')}</p>
             </div>
 
             <div class="pt-2 flex justify-end gap-2">
@@ -23058,15 +22886,6 @@ function setMarketplaceViewMode(mode) {
         qualityEl.innerText = tr3(`حموضة ${acidity} بكر ممتاز`, `Acidity ${acidity} (Super Extra Virgin)`, `Säuregehalt ${acidity} (Extra Vergine, Spitzenqualität)`);
       }
 
-      const cashDescEl = document.getElementById('harvest-cash-calc-desc');
-      if (cashDescEl) {
-        const netUsd = (totalLiters * 9.50).toFixed(2);
-        const netSyp = Math.round(netUsd * 15000).toLocaleString();
-        cashDescEl.innerHTML = tr3(`يمكن للمنصة، بناءً على طلبك، عرض كامل حصتك المعصورة الجاهزة (<strong>${totalLiters.toFixed(1)} لتر</strong>) لشركات التصدير المعتمدة بسعر <strong>$9.50 للتر</strong> بإجمالي صافي <strong>$${netUsd}</strong> (ما يعادل ~ <strong>${netSyp} ليرة سورية</strong>) مع إيداع مباشر.`,
-          `On request, Faseela can offer your full ready allocation (<strong>${totalLiters.toFixed(1)} Liters</strong>) to certified olive oil exporters at wholesale export price of <strong>$9.50/L</strong>, totaling <strong>$${netUsd}</strong> (~ ${netSyp} SYP) deposited directly.`,
-          `Auf Wunsch kann Faseela Ihre gesamte verfügbare Zuteilung (<strong>${totalLiters.toFixed(1)} Liter</strong>) zertifizierten Olivenöl-Exporteuren zum Großhandels-Exportpreis von <strong>$9.50/L</strong> anbieten; der Gesamtbetrag von <strong>$${netUsd}</strong> (~ ${netSyp} SYP) wird Ihnen direkt überwiesen.`);
-      }
-
       lucide.createIcons();
     }
 
@@ -23096,31 +22915,13 @@ function setMarketplaceViewMode(mode) {
       if (grid) grid.scrollIntoView({ behavior: 'smooth' });
     }
 
-    // Harvest Distribution & Payout Modal Controller
-    function switchHarvestOption(mode) {
+    // Harvest delivery modal: delivery is the only option (sponsors never receive money).
+    function switchHarvestOption() {
       const panelDeliv = document.getElementById('harvest-panel-delivery');
-      const panelCash = document.getElementById('harvest-panel-cash');
       const tabDeliv = document.getElementById('tab-oil-delivery');
-      const tabCash = document.getElementById('tab-oil-cash');
-
-      if (mode === 'delivery') {
-        if (panelDeliv) panelDeliv.classList.remove('hidden');
-        if (panelCash) panelCash.classList.add('hidden');
-        if (tabDeliv) {
-          tabDeliv.className = 'py-2.5 px-3 rounded-xl text-xs font-black transition-all bg-white text-olive-950 shadow-sm flex items-center justify-center gap-1.5';
-        }
-        if (tabCash) {
-          tabCash.className = 'py-2.5 px-3 rounded-xl text-xs font-bold transition-all text-stone-600 hover:text-stone-900 flex items-center justify-center gap-1.5';
-        }
-      } else {
-        if (panelDeliv) panelDeliv.classList.add('hidden');
-        if (panelCash) panelCash.classList.remove('hidden');
-        if (tabCash) {
-          tabCash.className = 'py-2.5 px-3 rounded-xl text-xs font-black transition-all bg-white text-olive-950 shadow-sm flex items-center justify-center gap-1.5';
-        }
-        if (tabDeliv) {
-          tabDeliv.className = 'py-2.5 px-3 rounded-xl text-xs font-bold transition-all text-stone-600 hover:text-stone-900 flex items-center justify-center gap-1.5';
-        }
+      if (panelDeliv) panelDeliv.classList.remove('hidden');
+      if (tabDeliv) {
+        tabDeliv.className = 'py-2.5 px-3 rounded-xl text-xs font-black transition-all bg-white text-olive-950 shadow-sm flex items-center justify-center gap-1.5';
       }
       playAcousticChime(550, 0.1);
     }
@@ -23134,7 +22935,6 @@ function setMarketplaceViewMode(mode) {
       }
       closeModal('modal-order-oil');
       playAcousticChime(700, 0.3);
-      const isCash = !document.getElementById('harvest-panel-cash').classList.contains('hidden');
       const liters = eligibility.totalReadyLiters.toFixed(1);
       const isEn = state.currentLang !== 'ar';
 
@@ -23142,15 +22942,15 @@ function setMarketplaceViewMode(mode) {
         id: `tx_disp_${Date.now()}`,
         user_id: state.currentUser ? state.currentUser.id : '',
         ref: `TX-DISP-${Math.floor(100000 + Math.random() * 900000)}`,
-        type: isCash ? "تسييل محاصيل المحصول نقداً" : "شحن زيت زيتون بكر ممتاز",
-        type_en: isCash ? "Export Harvest Liquidation" : "EVOO Olive Oil Dispatch",
-        details: isCash ? `تسييل ${liters} لتر بسعر التصدير الدولي` : `شحن ${liters} لتر معبأة ومفحوصة مخبرياً`,
-        details_en: isCash ? `Liquidation of ${liters}L EVOO at export value` : `Courier dispatch of ${liters}L bottled EVOO`,
-        amount: isCash ? (eligibility.totalReadyLiters * 13.5) : (eligibility.totalReadyLiters * 3.5),
+        type: "شحن زيت زيتون بكر ممتاز",
+        type_en: "EVOO Olive Oil Dispatch",
+        details: `شحن ${liters} لتر معبأة ومفحوصة مخبرياً`,
+        details_en: `Courier dispatch of ${liters}L bottled EVOO`,
+        amount: eligibility.totalReadyLiters * 3.5,
         currency: state.currency,
-        method: isCash ? "تحويل مصرفي معتمد" : "شحن لوجستي مبرد",
-        method_ar: isCash ? "تحويل مصرفي معتمد" : "شحن لوجستي مبرد",
-        method_en: isCash ? "Verified Bank Payout" : "Insured Express Courier",
+        method: "شحن لوجستي مبرد",
+        method_ar: "شحن لوجستي مبرد",
+        method_en: "Insured Express Courier",
         status: "قيد المعالجة والتنفيذ",
         status_en: "Processing & In-Transit",
         date: new Date().toISOString().split('T')[0]
@@ -23159,7 +22959,7 @@ function setMarketplaceViewMode(mode) {
       if (!state.transactions) state.transactions = [];
       state.transactions.unshift(newTx);
 
-      if (!isCash) {
+      {
         if (!state.millBottlingOrders) state.millBottlingOrders = [];
         const dispRef = `DISP-SYR-${Math.floor(1000 + Math.random() * 9000)}`;
         const botOrd = {
@@ -23190,9 +22990,7 @@ function setMarketplaceViewMode(mode) {
       renderDashboard();
       if (state.currentPage === 'mill-portal') renderMillPortal();
 
-      const msg = isCash
-        ? tr3(`تم تأكيد تسييل ${liters} لتر كاش بسعر التصدير! سيتم تحويل المردود الصافي لحسابك بعد المطابقة المصرفية.`, `Export cash liquidation of ${liters}L confirmed! Net payout will be disbursed to your account upon bank verification.`, `Auszahlung für ${liters} L zum Exportpreis bestätigt! Der Nettobetrag wird nach Prüfung durch die Bank auf Ihr Konto überwiesen.`)
-        : tr3(`تم تأكيد طلب شحن ${liters} لتر زيت بكر ممتاز! رقم بوليصة التتبع المعتمدة: FAS-SYR-2026-8891`, `EVOO delivery order for ${liters}L scheduled! Tracking code FAS-SYR-2026-8891 assigned.`, `Lieferung von ${liters} L nativem Olivenöl extra eingeplant! Sendungsnummer FAS-SYR-2026-8891 zugewiesen.`);
+      const msg = tr3(`تم تأكيد طلب شحن ${liters} لتر زيت بكر ممتاز! رقم بوليصة التتبع المعتمدة: FAS-SYR-2026-8891`, `EVOO delivery order for ${liters}L scheduled! Tracking code FAS-SYR-2026-8891 assigned.`, `Lieferung von ${liters} L nativem Olivenöl extra eingeplant! Sendungsnummer FAS-SYR-2026-8891 zugewiesen.`);
       showToast(msg);
     }
 
@@ -25512,7 +25310,7 @@ function setMarketplaceViewMode(mode) {
           });
           item.status = 'approved';
           savePlatformState();
-          showToast(tr3(`✅ تم اعتماد المعاملة ${reqId} وإصدار الحصص وسند الملكية بنجاح!`, `✅ Sponsorship ${reqId} approved & shares issued successfully!`, `✅ Patenschaft ${reqId} freigegeben und Anteile erfolgreich ausgegeben!`));
+          showToast(tr3(`✅ تم اعتماد الكفالة ${reqId} وإصدار الحصص وشهادة الكفالة بنجاح!`, `✅ Sponsorship ${reqId} approved & shares issued successfully!`, `✅ Patenschaft ${reqId} freigegeben und Anteile erfolgreich ausgegeben!`));
           playAcousticChime(800, 0.2);
           renderFounderApprovalsQueue();
           return;

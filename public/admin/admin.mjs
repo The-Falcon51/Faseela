@@ -726,7 +726,8 @@ async function openUserDetail(user) {
     ['Registriert', fmtDate(detail.createdAt)], ['E-Mail bestätigt', detail.emailConfirmedAt ? fmtDate(detail.emailConfirmedAt) : 'nein'],
     ['Letzte Anmeldung', detail.lastSignInAt ? fmtDate(detail.lastSignInAt) : 'nie'], ['Status', detail.suspended ? 'gesperrt' : 'aktiv'],
     ['Newsletter', detail.marketingOptIn ? 'eingewilligt' : 'nein'], ['Push-Geräte', fmtInt(detail.counts && detail.counts.pushDevices)],
-    ['Geworbene Personen', fmtInt(detail.counts && detail.counts.referralsMade)], ['Öl zugeteilt', `${fmtInt(Math.round((Number(detail.counts && detail.counts.oilAllocatedMl) || 0) / 1000))} l`]
+    ['Geworbene Personen', fmtInt(detail.counts && detail.counts.referralsMade)], ['Öl zugeteilt', `${fmtInt(Math.round((Number(detail.counts && detail.counts.oilAllocatedMl) || 0) / 1000))} l`],
+    ['Ernte zugeteilt', `${fmtInt(Math.round((Number(detail.counts && detail.counts.harvestAllocatedG) || 0) / 1000))} kg`]
   ];
   const requests = detail.requests || [];
   const shares = detail.shares || [];

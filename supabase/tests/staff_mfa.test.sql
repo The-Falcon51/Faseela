@@ -67,6 +67,23 @@ begin
   perform pg_temp.chk('password-only staff work again', pg_temp.call_as(c_f, 'aal1', 'select public.admin_list_trees()') = 'OK');
   perform pg_temp.chk('the switch is not writable for API roles', pg_temp.call_as(c_i, 'aal1', $q$insert into private.app_settings (key, value) values ('staff_mfa_required', 'true') on conflict (key) do update set value = 'true'$q$) <> 'OK');
 
+  -- ---------------------------------------------------------------- an enrolled factor is always required (launch_hardening)
+  perform pg_temp.as_pg();
+  perform pg_temp.chk('switch is off for the per-account rule', not private.staff_mfa_required());
+  insert into auth.mfa_factors (user_id, status) values (c_f, 'unverified');
+  perform pg_temp.chk('an unverified factor does not ask for aal2', pg_temp.call_as(c_f, 'aal1', 'select public.admin_list_trees()') = 'OK');
+  perform pg_temp.as_pg();
+  insert into auth.mfa_factors (user_id, status) values (c_f, 'verified');
+  perform pg_temp.chk('verified factor: password-only session is stopped', pg_temp.call_as(c_f, 'aal1', 'select public.admin_list_trees()') = 'mfa-required');
+  perform pg_temp.chk('verified factor: a session without the claim is stopped', pg_temp.call_as(c_f, '', 'select public.admin_list_trees()') = 'mfa-required');
+  perform pg_temp.chk('verified factor: aal2 session works', pg_temp.call_as(c_f, 'aal2', 'select public.admin_list_trees()') = 'OK');
+  perform pg_temp.chk('accounts without a factor are unchanged', pg_temp.call_as(c_a, 'aal1', 'select public.admin_list_master_data()') = 'OK');
+  perform pg_temp.as_pg();
+  insert into auth.mfa_factors (user_id, status) values (c_m, 'verified');
+  perform pg_temp.chk('the rule covers non-staff role holders too', pg_temp.call_as(c_m, 'aal1', $q$select public.submit_pressing_batch('{}'::jsonb)$q$) = 'mfa-required');
+  perform pg_temp.as_pg();
+  delete from auth.mfa_factors where user_id in (c_f, c_m);
+
   -- ---------------------------------------------------------------- mill assignments reference mill records
   perform pg_temp.chk('assigning an unknown mill is refused', pg_temp.call_as(c_a, 'aal1', format($q$select public.admin_assign('{"userId":"%s","kind":"mill","action":"add","targetId":"mill_unknown"}')$q$, c_m)) = 'not-found');
   perform pg_temp.chk('assigning an existing mill works', pg_temp.call_as(c_a, 'aal1', format($q$select public.admin_assign('{"userId":"%s","kind":"mill","action":"add","targetId":"mill_01"}')$q$, c_m)) = 'OK');

@@ -8,7 +8,11 @@
 --  c) The listing gate and the two registry RPCs read the old column, so they go here; the gate comes back on the
 --     master data model in 20261121000100_country_model_unified.sql.
 -- Safe to run on a database that never had the registry (every step checks first).
--- Down: alter table public.trees_public rename column country_code to country; then re-run 20261116000165-180.
+-- Down: forward-only once 20261118000100_master_data.sql has run (master data, later migrations and the gate of
+--       20261121000100 use country_code, and the Down of master data drops the column with its values).
+--       Before that, and only then: alter table public.trees_public rename column country_code to country; then
+--       re-run 20261116000165 and 20261116000170. Do not re-run 20261116000180 as it stands: it writes a separate
+--       element in front of every receiving account (repaired by 20261121000100).
 do $$
 begin
   if exists (select 1 from information_schema.columns where table_schema = 'public' and table_name = 'trees_public' and column_name = 'country')
