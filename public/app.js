@@ -6870,6 +6870,16 @@
     function tr3(ar, en, de) {
       return state.currentLang === 'ar' ? ar : (state.currentLang === 'de' ? de : en);
     }
+    /**
+     * Field of a content object in the active language: obj.f (Arabic), obj.f_en (English), obj.f_de (German, falls
+     * back to English while a text has no German version yet).
+     */
+    function loc(obj, field) {
+      if (!obj) return '';
+      if (state.currentLang === 'ar') return obj[field] ?? obj[field + '_en'] ?? '';
+      if (state.currentLang === 'de' && obj[field + '_de'] != null) return obj[field + '_de'];
+      return obj[field + '_en'] ?? obj[field] ?? '';
+    }
 
     /** BCP 47 locale for dates in the active UI language. */
     function uiLocale() {
@@ -7034,7 +7044,6 @@
       state.notificationSettings.soundEnabled = !state.notificationSettings.soundEnabled;
       const btn = document.getElementById('btn-toggle-notif-sound');
       const icon = document.getElementById('notif-sound-icon');
-      const isEn = state.currentLang !== 'ar';
       if (btn) {
         btn.title = state.notificationSettings.soundEnabled ? t('notif_sound_enabled') : t('notif_sound_disabled');
       }
@@ -7049,7 +7058,7 @@
         }
       }
       if (window.lucide) window.lucide.createIcons();
-      showToast(state.notificationSettings.soundEnabled ? (isEn ? "Notification sound enabled" : "تم تفعيل نغمة التنبيه") : (isEn ? "Notification sound muted" : "تم كتم نغمة التنبيه"));
+      showToast(state.notificationSettings.soundEnabled ? tr3("تم تفعيل نغمة التنبيه", "Notification sound enabled", "Benachrichtigungston eingeschaltet") : tr3("تم كتم نغمة التنبيه", "Notification sound muted", "Benachrichtigungston stummgeschaltet"));
     }
 
     function getActiveUserNotifications() {
@@ -7071,7 +7080,6 @@
       const mobBadge = document.getElementById('mobile-notifications-badge');
       const modalPill = document.getElementById('notif-unread-pill');
       const modalPulse = document.getElementById('notif-modal-pulse-dot');
-      const isEn = state.currentLang !== 'ar';
 
       if (badge) {
         if (unreadCount > 0) {
@@ -7092,7 +7100,7 @@
       }
 
       if (modalPill) {
-        modalPill.innerText = isEn ? `${unreadCount} unread` : `${unreadCount} غير مقروء`;
+        modalPill.innerText = tr3(`${unreadCount} غير مقروء`, `${unreadCount} unread`, `${unreadCount} ungelesen`);
         if (unreadCount > 0) {
           modalPill.className = "bg-red-100 dark:bg-red-950/80 text-red-700 dark:text-red-300 border border-red-300/60 dark:border-red-800/60 text-[10px] px-2 py-0.5 rounded-full font-black";
         } else {
@@ -7287,7 +7295,7 @@
       });
       updateNotificationsBadge();
       renderNotifications();
-      showToast(state.currentLang !== 'ar' ? "Read notifications cleared" : "تم مسح الإشعارات المقروءة");
+      showToast(tr3("تم مسح الإشعارات المقروءة", "Read notifications cleared", "Gelesene Benachrichtigungen gelöscht"));
     }
 
     function handleNotificationAction(notifId) {
@@ -7378,7 +7386,7 @@
 
     function openNotificationAutomationModal() {
       if (!state.currentUser || state.currentUser.role !== 'admin') {
-        showToast(state.currentLang !== 'ar' ? 'Unauthorized: Founder root clearance required' : 'غير مصرح: يتطلب صلاحيات المدير العام');
+        showToast(tr3('غير مصرح: يتطلب صلاحيات المدير العام', 'Unauthorized: Founder root clearance required', 'Nicht berechtigt: Gründerfreigabe erforderlich'));
         return;
       }
       openModal('modal-notification-automation');
@@ -7387,7 +7395,7 @@
 
     function prepareAutomatedNotificationPreset(presetKey) {
       if (!state.currentUser || state.currentUser.role !== 'admin') {
-        showToast(state.currentLang !== 'ar' ? 'Unauthorized: Founder root clearance required' : 'غير مصرح: يتطلب صلاحيات المدير العام');
+        showToast(tr3('غير مصرح: يتطلب صلاحيات المدير العام', 'Unauthorized: Founder root clearance required', 'Nicht berechtigt: Gründerfreigabe erforderlich'));
         return;
       }
       const p = notificationAutomationPresets[presetKey];
@@ -7421,7 +7429,7 @@
     function handleSendToFinalVerifier(e) {
       if (e) e.preventDefault();
       if (!state.currentUser || state.currentUser.role !== 'admin') {
-        showToast(state.currentLang !== 'ar' ? 'Unauthorized: Founder root clearance required' : 'غير مصرح: يتطلب صلاحيات المدير العام');
+        showToast(tr3('غير مصرح: يتطلب صلاحيات المدير العام', 'Unauthorized: Founder root clearance required', 'Nicht berechtigt: Gründerfreigabe erforderlich'));
         return;
       }
 
@@ -7432,7 +7440,7 @@
       const body = (document.getElementById('auto-notif-body')?.value || '').trim();
 
       if (!title || !body) {
-        showToast(state.currentLang !== 'ar' ? 'Please fill title and body' : 'يرجى ملء العنوان ونص الإشعار بدقة');
+        showToast(tr3('يرجى ملء العنوان ونص الإشعار بدقة', 'Please fill title and body', 'Bitte füllen Sie Titel und Text aus'));
         return;
       }
 
@@ -7460,32 +7468,32 @@
 
       if (previewBadge) {
         if (payload.target === 'investor') {
-          previewBadge.innerText = isEn ? 'Investors' : 'الكافلون الزراعيون';
+          previewBadge.innerText = tr3('الكافلون الزراعيون', 'Investors', 'Baumpaten');
           previewBadge.className = 'text-[10px] font-black px-2 py-0.5 rounded-md bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300';
         } else if (payload.target === 'farmer') {
-          previewBadge.innerText = isEn ? 'Farmers' : 'المزارعون الشركاء';
+          previewBadge.innerText = tr3('المزارعون الشركاء', 'Farmers', 'Partnerlandwirte');
           previewBadge.className = 'text-[10px] font-black px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300';
         } else if (payload.target === 'mill_owner') {
-          previewBadge.innerText = isEn ? 'Mill Owners' : 'أصحاب المعاصر';
+          previewBadge.innerText = tr3('أصحاب المعاصر', 'Mill Owners', 'Ölmühlenbetreiber');
           previewBadge.className = 'text-[10px] font-black px-2 py-0.5 rounded-md bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300';
         } else {
-          previewBadge.innerText = isEn ? 'All Users' : 'كافة المستخدمين';
+          previewBadge.innerText = tr3('كافة المستخدمين', 'All Users', 'Alle Nutzer');
           previewBadge.className = 'text-[10px] font-black px-2 py-0.5 rounded-md bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300';
         }
       }
 
       if (previewType) {
-        previewType.innerText = payload.type === 'financial' ? (isEn ? 'Financial' : 'مالية وكفالة') : (payload.type === 'field' ? (isEn ? 'Field & Harvest' : 'الحقل والمعاصر') : (isEn ? 'System Audit' : 'الأمان والرقابة'));
+        previewType.innerText = payload.type === 'financial' ? tr3('مالية وكفالة', 'Financial', 'Finanzen') : (payload.type === 'field' ? tr3('الحقل والمعاصر', 'Field & Harvest', 'Feld & Ernte') : tr3('الأمان والرقابة', 'System Audit', 'Systemprüfung'));
       }
 
       if (previewTitle) previewTitle.innerText = isEn ? payload.title_en : payload.title_ar;
       if (previewBody) previewBody.innerText = isEn ? payload.body_en : payload.body_ar;
 
       if (impactUsers) {
-        if (payload.target === 'investor') impactUsers.innerText = isEn ? '142 registered investors' : '142 كافلاً مسجلاً ومساهماً';
-        else if (payload.target === 'farmer') impactUsers.innerText = isEn ? '48 partner farmers across Tartous & Idlib' : '48 مزارعاً شريكاً في طرطوس وإدلب';
-        else if (payload.target === 'mill_owner') impactUsers.innerText = isEn ? '6 certified cold-press mills' : '6 معاصر إيطالية معتمدة';
-        else impactUsers.innerText = isEn ? '196 total platform network users' : '196 مستخدماً (الشبكة الكاملة)';
+        if (payload.target === 'investor') impactUsers.innerText = tr3('142 كافلاً مسجلاً ومساهماً', '142 registered investors', '142 registrierte Baumpaten');
+        else if (payload.target === 'farmer') impactUsers.innerText = tr3('48 مزارعاً شريكاً في طرطوس وإدلب', '48 partner farmers across Tartous & Idlib', '48 Partnerlandwirte in Tartus und Idlib');
+        else if (payload.target === 'mill_owner') impactUsers.innerText = tr3('6 معاصر إيطالية معتمدة', '6 certified cold-press mills', '6 zertifizierte Kaltpress-Ölmühlen');
+        else impactUsers.innerText = tr3('196 مستخدماً (الشبكة الكاملة)', '196 total platform network users', '196 Nutzer im gesamten Plattformnetzwerk');
       }
 
       openModal('modal-final-verifier');
@@ -7494,16 +7502,15 @@
 
     function executeVerifiedNotificationDispatch() {
       if (!state.currentUser || state.currentUser.role !== 'admin') {
-        showToast(state.currentLang !== 'ar' ? 'Unauthorized: Founder root clearance required' : 'غير مصرح: يتطلب صلاحيات المدير العام');
+        showToast(tr3('غير مصرح: يتطلب صلاحيات المدير العام', 'Unauthorized: Founder root clearance required', 'Nicht berechtigt: Gründerfreigabe erforderlich'));
         return;
       }
       if (!pendingVerifiedPayload) {
-        showToast(state.currentLang !== 'ar' ? 'No pending payload to verify' : 'لا توجد معاملة معلقة للمصادقة');
+        showToast(tr3('لا توجد معاملة معلقة للمصادقة', 'No pending payload to verify', 'Keine ausstehende Benachrichtigung zur Prüfung'));
         return;
       }
 
       const p = pendingVerifiedPayload;
-      const isEn = state.currentLang !== 'ar';
 
       if (!state.notifications) state.notifications = [];
       const newNotif = {
@@ -7536,7 +7543,7 @@
       closeModal('modal-notification-automation');
 
       playAcousticChime(950, 0.35);
-      showToast(isEn ? '🛡️ Final Verifier Approved: Notification safely dispatched to target users.' : '🛡️ مصادقة المدقق النهائي: تم فحص وإطلاق الإشعار بنجاح للمستخدمين بدون أي أخطاء.');
+      showToast(tr3('🛡️ مصادقة المدقق النهائي: تم فحص وإطلاق الإشعار بنجاح للمستخدمين بدون أي أخطاء.', '🛡️ Final Verifier Approved: Notification safely dispatched to target users.', '🛡️ Endprüfung freigegeben: Die Benachrichtigung wurde sicher an die Zielnutzer gesendet.'));
 
       pendingVerifiedPayload = null;
     }
@@ -7590,8 +7597,8 @@
       const nextTheme = state.currentTheme === 'dark' ? 'light' : 'dark';
       applyTheme(nextTheme);
       showToast(nextTheme === 'dark' 
-        ? (state.currentLang !== 'ar' ? '🌙 Dark Mode activated' : '🌙 تم تفعيل الوضع الليلي') 
-        : (state.currentLang !== 'ar' ? '☀️ Light Mode activated' : '☀️ تم تفعيل الوضع النهاري'));
+        ? tr3('🌙 تم تفعيل الوضع الليلي', '🌙 Dark Mode activated', '🌙 Dunkelmodus aktiviert') 
+        : tr3('☀️ تم تفعيل الوضع النهاري', '☀️ Light Mode activated', '☀️ Hellmodus aktiviert'));
     }
 
     function setTheme(theme) {
@@ -11046,9 +11053,10 @@
       // If user is not authenticated or guest, require authentication first
       if (!state.currentUser || state.currentUser.role === 'guest') {
         openAuthModal();
-        const msg = state.currentLang !== 'ar' 
-          ? 'Authentication required. Please verify your Email and Phone number to access your protected portal.' 
-          : 'المصادقة وتصريح الدخول مطلوب. يرجى إثبات هويتك بالبريد الإلكتروني ورقم الهاتف للوصول لمساحتك.';
+        const msg = tr3(
+          'المصادقة وتصريح الدخول مطلوب. يرجى إثبات هويتك بالبريد الإلكتروني ورقم الهاتف للوصول لمساحتك.',
+          'Authentication required. Please verify your Email and Phone number to access your protected portal.',
+          'Anmeldung erforderlich. Bitte bestätigen Sie Ihre E-Mail-Adresse und Telefonnummer, um Ihren geschützten Bereich zu öffnen.');
         showToast(msg);
         return false;
       }
@@ -11069,20 +11077,22 @@
 
       if (pageId === 'farmer-portal') {
         if (role === 'farmer' || role === 'admin') return true;
-        const reqRole = state.currentLang !== 'ar' ? 'Partner Farmer' : 'مزارع شريك معتمد';
-        const msg = state.currentLang !== 'ar' 
-          ? 'This portal is restricted to partner farmers for logging field care and withdrawing subsidies.' 
-          : 'هذه البوابة مخصصة حصرياً للمزارعين الميدانيين لتوثيق أعمال الرعاية وسحب أتعاب العمل ونداءات الطوارئ.';
+        const reqRole = tr3('مزارع شريك معتمد', 'Partner Farmer', 'Partnerlandwirt');
+        const msg = tr3(
+          'هذه البوابة مخصصة حصرياً للمزارعين الميدانيين لتوثيق أعمال الرعاية وسحب أتعاب العمل ونداءات الطوارئ.',
+          'This portal is restricted to partner farmers for logging field care and withdrawing subsidies.',
+          'Dieses Portal ist Partnerlandwirten vorbehalten, um Pflegearbeiten zu dokumentieren und Vergütungen abzurufen.');
         showAccessDenied(t('nav_farmer'), reqRole, msg);
         return false;
       }
 
       if (pageId === 'founder-control') {
         if (!state.currentUser || !['admin', 'finance_admin', 'quality_auditor'].includes(state.currentUser.role)) {
-          const reqRole = state.currentLang !== 'ar' ? 'Founder & CEO' : 'مؤسس المنصة والإدارة العليا';
-          const msg = state.currentLang !== 'ar'
-            ? 'The Operations Command & Control Center is strictly restricted to the platform Founder.'
-            : 'غرفة المراقبة والعمليات التنفيذية مخصصة ومحصورة حصرياً بالمؤسس والإدارة العليا للمنصة.';
+          const reqRole = tr3('مؤسس المنصة والإدارة العليا', 'Founder & CEO', 'Gründer & Geschäftsführung');
+          const msg = tr3(
+            'غرفة المراقبة والعمليات التنفيذية مخصصة ومحصورة حصرياً بالمؤسس والإدارة العليا للمنصة.',
+            'The Operations Command & Control Center is strictly restricted to the platform Founder.',
+            'Die Betriebs- und Steuerzentrale ist ausschließlich dem Gründer der Plattform vorbehalten.');
           showAccessDenied(t('cmd_center_title'), reqRole, msg);
           return false;
         }
@@ -11091,10 +11101,11 @@
 
       if (pageId === 'mill-portal') {
         if (role === 'mill_owner' || role === 'admin') return true;
-        const reqRole = state.currentLang !== 'ar' ? 'Certified Mill Operator' : 'صاحب معصرة / مخبر مرخص';
-        const msg = state.currentLang !== 'ar' 
-          ? 'This portal is reserved for licensed olive mills to register pressing batches and issue lab certificates.' 
-          : 'هذه البوابة مخصصة حصرياً لمعاصر الزيتون المعتمدة لتسجيل أوزان الثمار وإصدار شهادات التحليل المخبري.';
+        const reqRole = tr3('صاحب معصرة / مخبر مرخص', 'Certified Mill Operator', 'Zertifizierter Ölmühlenbetreiber');
+        const msg = tr3(
+          'هذه البوابة مخصصة حصرياً لمعاصر الزيتون المعتمدة لتسجيل أوزان الثمار وإصدار شهادات التحليل المخبري.',
+          'This portal is reserved for licensed olive mills to register pressing batches and issue lab certificates.',
+          'Dieses Portal ist zugelassenen Ölmühlen vorbehalten, um Presschargen zu erfassen und Laborzertifikate auszustellen.');
         showAccessDenied(t('nav_mill'), reqRole, msg);
         return false;
       }
@@ -11107,7 +11118,7 @@
       document.getElementById('access-denied-message').innerText = explanation;
       const curRoleName = state.currentUser 
         ? (state.currentLang !== 'ar' ? (state.currentUser.roleName_en || state.currentUser.roleName) : state.currentUser.roleName)
-        : (state.currentLang !== 'ar' ? 'Unauthenticated' : 'غير مسجل');
+        : tr3('غير مسجل', 'Unauthenticated', 'Nicht angemeldet');
       document.getElementById('denied-current-role').innerText = curRoleName;
       document.getElementById('denied-required-role').innerText = requiredRole;
       openModal('modal-access-denied');
@@ -11129,7 +11140,7 @@
         'mill': isAuth && (role === 'mill_owner' || role === 'admin')
       };
 
-      const lockTooltip = isEn ? "Role Protected - Click user session to switch" : "محمي بصلاحيات الدخول - اضغط لتبديل الحساب";
+      const lockTooltip = tr3("محمي بصلاحيات الدخول - اضغط لتبديل الحساب", "Role Protected - Click user session to switch", "Rollengeschützt – klicken Sie auf Ihre Sitzung, um das Konto zu wechseln");
 
       const dashBtn = document.getElementById('nav-dashboard');
       if (dashBtn) {
@@ -11188,7 +11199,7 @@
       const sessBtn = document.getElementById('btn-user-session');
 
       if (sessBtn) {
-        sessBtn.title = isEn ? "Identity Verification & Role Authorization (RBAC)" : "تصريح الدخول والمصادقة على الهوية (RBAC)";
+        sessBtn.title = tr3("تصريح الدخول والمصادقة على الهوية (RBAC)", "Identity Verification & Role Authorization (RBAC)", "Identitätsprüfung & Rollenberechtigung (RBAC)");
       }
 
       if (isAuth) {
@@ -11199,10 +11210,10 @@
           sessRole.className = `${state.currentUser.badgeColor || 'bg-olive-100 text-olive-800 border border-olive-300/60'} text-[9px] px-1.5 py-0.2 rounded-md font-semibold inline-block`;
         }
       } else {
-        if (sessAvatar) sessAvatar.innerText = isEn ? 'G' : '؟';
-        if (sessName) sessName.innerText = isEn ? 'Sign In' : 'تصريح الدخول';
+        if (sessAvatar) sessAvatar.innerText = tr3('؟', 'G', 'G');
+        if (sessName) sessName.innerText = tr3('تصريح الدخول', 'Sign In', 'Anmelden');
         if (sessRole) {
-          sessRole.innerText = isEn ? 'Guest' : 'غير مسجل';
+          sessRole.innerText = tr3('غير مسجل', 'Guest', 'Gast');
           sessRole.className = 'bg-stone-200 dark:bg-stone-700 text-stone-700 dark:text-stone-300 text-[9px] px-1.5 py-0.2 rounded-md font-semibold inline-block';
         }
       }
@@ -11334,8 +11345,8 @@
       const themeLbl = document.getElementById('prefs-theme-current-label');
       if (themeLbl) {
         themeLbl.innerText = isDark 
-          ? (isEn ? "Dark Mode Active" : "الوضع الليلي نشط") 
-          : (isEn ? "Light Mode Active" : "الوضع النهاري نشط");
+          ? tr3("الوضع الليلي نشط", "Dark Mode Active", "Dunkelmodus aktiv") 
+          : tr3("الوضع النهاري نشط", "Light Mode Active", "Hellmodus aktiv");
       }
       const langLbl = document.getElementById('prefs-lang-current-label');
       if (langLbl) {
@@ -11344,8 +11355,8 @@
       const currLbl = document.getElementById('prefs-curr-current-label');
       if (currLbl) {
         currLbl.innerText = curr === 'USD' 
-          ? (isEn ? "USD ($)" : "دولار أمريكي ($)") 
-          : (isEn ? "SYP (ل.س)" : "ليرة سورية (ل.س)");
+          ? tr3("دولار أمريكي ($)", "USD ($)", "USD ($)") 
+          : tr3("ليرة سورية (ل.س)", "SYP (ل.س)", "SYP (ل.س)");
       }
     }
 
@@ -11374,8 +11385,7 @@
     }
 
     async function exportMyAccountData() {
-      const isEn = state.currentLang !== 'ar';
-      if (!window.FaseelaFirebase?.exportMyData) { showToast(isEn ? 'Export is unavailable.' : 'التصدير غير متاح.'); return; }
+      if (!window.FaseelaFirebase?.exportMyData) { showToast(tr3('التصدير غير متاح.', 'Export is unavailable.', 'Der Export ist nicht verfügbar.')); return; }
       try {
         const data = await window.FaseelaFirebase.exportMyData();
         const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
@@ -11387,41 +11397,43 @@
         link.remove();
         setTimeout(() => URL.revokeObjectURL(link.href), 1000);
       } catch (err) {
-        showToast(isEn ? `Export failed: ${err.message}` : `تعذر التصدير: ${err.message}`);
+        showToast(tr3(`تعذر التصدير: ${err.message}`, `Export failed: ${err.message}`, `Export fehlgeschlagen: ${err.message}`));
       }
     }
 
     async function deleteMyAccountFlow() {
       const isEn = state.currentLang !== 'ar';
-      if (!window.FaseelaFirebase?.deleteMyAccount) { showToast(isEn ? 'Account deletion is unavailable.' : 'حذف الحساب غير متاح.'); return; }
+      if (!window.FaseelaFirebase?.deleteMyAccount) { showToast(tr3('حذف الحساب غير متاح.', 'Account deletion is unavailable.', 'Die Kontolöschung ist nicht verfügbar.')); return; }
       const word = 'DELETE';
-      const answer = prompt(isEn
-        ? `This removes your profile and login. Financial records are kept pseudonymised as required by law. Type ${word} to confirm.`
-        : `سيتم حذف ملفك الشخصي وبيانات الدخول. تُحفظ السجلات المالية بشكل مستعار وفق المتطلبات القانونية. اكتب ${word} للتأكيد.`);
+      const answer = prompt(tr3(
+        `سيتم حذف ملفك الشخصي وبيانات الدخول. تُحفظ السجلات المالية بشكل مستعار وفق المتطلبات القانونية. اكتب ${word} للتأكيد.`,
+        `This removes your profile and login. Financial records are kept pseudonymised as required by law. Type ${word} to confirm.`,
+        `Dadurch werden Ihr Profil und Ihre Anmeldedaten gelöscht. Finanzunterlagen bleiben gemäß den gesetzlichen Vorgaben pseudonymisiert gespeichert. Geben Sie ${word} ein, um zu bestätigen.`));
       if (answer !== word) return;
       try {
         await window.FaseelaFirebase.deleteMyAccount(word);
         closeModal('modal-auth-session');
-        showToast(isEn ? 'Your account has been deleted.' : 'تم حذف حسابك.');
+        showToast(tr3('تم حذف حسابك.', 'Your account has been deleted.', 'Ihr Konto wurde gelöscht.'));
         navigateTo('home');
       } catch (err) {
-        showToast(isEn ? `Deletion failed: ${err.message}` : `تعذر حذف الحساب: ${err.message}`);
+        showToast(tr3(`تعذر حذف الحساب: ${err.message}`, `Deletion failed: ${err.message}`, `Löschung fehlgeschlagen: ${err.message}`));
       }
     }
 
     function quickSwitchUser() {
-      showToast(state.currentLang !== 'ar'
-        ? 'Persona switching is disabled. Sign in with the account you need.'
-        : 'تم تعطيل تبديل الشخصيات. سجّل الدخول بالحساب المطلوب.');
+      showToast(tr3(
+        'تم تعطيل تبديل الشخصيات. سجّل الدخول بالحساب المطلوب.',
+        'Persona switching is disabled. Sign in with the account you need.',
+        'Der Wechsel zwischen Rollen ist deaktiviert. Melden Sie sich mit dem benötigten Konto an.'));
     }
 
     function initiateGoogleAuth() {
       if (!window.FaseelaFirebase) {
-        showToast(state.currentLang !== 'ar' ? 'Google sign-in is unavailable right now.' : 'تسجيل الدخول عبر Google غير متاح حالياً.');
+        showToast(tr3('تسجيل الدخول عبر Google غير متاح حالياً.', 'Google sign-in is unavailable right now.', 'Die Anmeldung mit Google ist derzeit nicht verfügbar.'));
         return;
       }
       if (window.FaseelaFirebase.googleEnabled === false) {
-        showToast(state.currentLang !== 'ar' ? 'Google sign-in is not available yet. Please use e-mail and password.' : 'تسجيل الدخول عبر Google غير متاح بعد. استخدم البريد وكلمة المرور.');
+        showToast(tr3('تسجيل الدخول عبر Google غير متاح بعد. استخدم البريد وكلمة المرور.', 'Google sign-in is not available yet. Please use e-mail and password.', 'Die Anmeldung mit Google ist noch nicht verfügbar. Bitte nutzen Sie E-Mail und Passwort.'));
         return;
       }
       window.FaseelaFirebase.signInWithGoogle().then(() => {
@@ -11434,9 +11446,10 @@
         navigateTo(destination);
       }).catch(error => {
         console.warn('Auth Google sign-in failed:', error.code || error.message);
-        showToast(state.currentLang !== 'ar'
-          ? 'Google sign-in failed. Please try again.'
-          : 'تعذر تسجيل الدخول عبر Google. حاول مجدداً.');
+        showToast(tr3(
+          'تعذر تسجيل الدخول عبر Google. حاول مجدداً.',
+          'Google sign-in failed. Please try again.',
+          'Die Anmeldung mit Google ist fehlgeschlagen. Bitte versuchen Sie es erneut.'));
       });
     }
 
@@ -11461,16 +11474,17 @@
       const hash = generatePassCryptoHash(u);
       const isEn = state.currentLang !== 'ar';
       playAcousticChime(760, 0.25);
-      showToast(isEn 
-        ? `🛡️ Document fingerprint: [${hash}] • Role-based access verified` 
-        : `🛡️ بصمة المستند: [${hash}] • تم التحقق من صلاحيات الوصول.`);
+      showToast(tr3(
+        `🛡️ بصمة المستند: [${hash}] • تم التحقق من صلاحيات الوصول.`,
+        `🛡️ Document fingerprint: [${hash}] • Role-based access verified`,
+        `🛡️ Dokumenten-Fingerabdruck: [${hash}] • Rollenbasierter Zugriff bestätigt`));
     }
 
     function copyCurrentDID() {
       const didEl = document.getElementById('auth-profile-did');
       const did = didEl ? didEl.innerText.trim() : '';
       if (did) {
-        copyToClipboard(did, state.currentLang !== 'ar' ? 'Digital Identity (DID)' : 'المعرّف الرقمي الموحد (DID)');
+        copyToClipboard(did, tr3('المعرّف الرقمي الموحد (DID)', 'Digital Identity (DID)', 'Digitale Identität (DID)'));
       }
     }
 
@@ -11644,7 +11658,7 @@
       const newConsent = consentInput ? consentInput.checked : Boolean(state.currentUser.marketing_opt_in);
 
       if (!newName || newName.length < 3) {
-        showToast(state.currentLang !== 'ar' ? 'Name must be at least 3 characters' : 'يجب أن يكون الاسم 3 أحرف على الأقل');
+        showToast(tr3('يجب أن يكون الاسم 3 أحرف على الأقل', 'Name must be at least 3 characters', 'Der Name muss mindestens 3 Zeichen lang sein'));
         return;
       }
 
@@ -11658,8 +11672,8 @@
           state.currentUser.marketing_opt_in = newConsent;
         } catch (error) {
           const msg = error?.code === 'invalid-argument'
-            ? (state.currentLang !== 'ar' ? 'Please check the name and phone number format.' : 'يرجى التحقق من الاسم وصيغة رقم الهاتف.')
-            : (state.currentLang !== 'ar' ? 'Saving failed. Please try again.' : 'فشل الحفظ. يرجى المحاولة مجدداً.');
+            ? tr3('يرجى التحقق من الاسم وصيغة رقم الهاتف.', 'Please check the name and phone number format.', 'Bitte prüfen Sie den Namen und das Format der Telefonnummer.')
+            : tr3('فشل الحفظ. يرجى المحاولة مجدداً.', 'Saving failed. Please try again.', 'Speichern fehlgeschlagen. Bitte versuchen Sie es erneut.');
           showToast(msg);
           return;
         }
@@ -11685,7 +11699,7 @@
       updateNavbarSecurityLocks();
       toggleProfileEditDrawer(false);
       playAcousticChime(660, 0.2);
-      showToast(state.currentLang !== 'ar' ? '✅ Profile updated successfully!' : '✅ تم حفظ وتحديث بيانات الملف الشخصي بنجاح!');
+      showToast(tr3('✅ تم حفظ وتحديث بيانات الملف الشخصي بنجاح!', '✅ Profile updated successfully!', '✅ Profil erfolgreich aktualisiert!'));
     }
 
     async function revokeAllOtherSessions() {
@@ -11721,16 +11735,16 @@
         if (viewOtp) viewOtp.classList.add('hidden');
 
         const titleEl = document.getElementById('auth-modal-title');
-        if (titleEl) titleEl.innerText = isEn ? "Digital Identity Clearance & Access Permit" : "تصريح الدخول والمصادقة على الهوية";
+        if (titleEl) titleEl.innerText = tr3("تصريح الدخول والمصادقة على الهوية", "Digital Identity Clearance & Access Permit", "Identitätsprüfung und Zugangsberechtigung");
         
         const subEl = document.getElementById('auth-modal-subtitle');
-        if (subEl) subEl.innerText = isEn ? "Authenticated Verification & Access Authorization (Strict RBAC)" : "التحقق المعتمد وتخويل الصلاحيات (Strict RBAC)";
+        if (subEl) subEl.innerText = tr3("التحقق المعتمد وتخويل الصلاحيات (Strict RBAC)", "Authenticated Verification & Access Authorization (Strict RBAC)", "Geprüfte Anmeldung und Zugriffsberechtigung (Strict RBAC)");
 
         const subtabLogin = document.getElementById('subtab-auth-login');
-        if (subtabLogin) subtabLogin.innerText = isEn ? "Sign In (Registered User)" : "تصريح دخول لحساب مسجل";
+        if (subtabLogin) subtabLogin.innerText = tr3("تصريح دخول لحساب مسجل", "Sign In (Registered User)", "Anmelden (registriertes Konto)");
 
         const subtabReg = document.getElementById('subtab-auth-register');
-        if (subtabReg) subtabReg.innerText = isEn ? "Register & New Authorization" : "تسجيل مستخدم وتصريح جديد";
+        if (subtabReg) subtabReg.innerText = tr3("تسجيل مستخدم وتصريح جديد", "Register & New Authorization", "Registrieren (neues Konto)");
 
         return;
       }
@@ -11745,22 +11759,22 @@
       if (subEl) subEl.innerText = state.currentLang === 'ar' ? 'بيانات حسابك وصلاحياته' : state.currentLang === 'de' ? 'Ihre Kontodaten und Zugriffsrechte' : 'Your account details and access';
 
       const badgeTxt = document.getElementById('auth-profile-badge-text');
-      if (badgeTxt) badgeTxt.innerText = isEn ? "Email verified" : "البريد موثّق";
+      if (badgeTxt) badgeTxt.innerText = tr3("البريد موثّق", "Email verified", "E-Mail bestätigt");
 
       const btnGoto = document.getElementById('auth-btn-goto-portal');
-      if (btnGoto) btnGoto.innerText = isEn ? "Go to My Authorized Portal" : "الانتقال إلى مساحتي المصرح بها";
+      if (btnGoto) btnGoto.innerText = tr3("الانتقال إلى مساحتي المصرح بها", "Go to My Authorized Portal", "Zu meinem Bereich");
 
       const btnSwitch = document.getElementById('auth-btn-switch-text');
-      if (btnSwitch) btnSwitch.innerText = isEn ? "Sign In New User" : "دخول بحساب جديد";
+      if (btnSwitch) btnSwitch.innerText = tr3("دخول بحساب جديد", "Sign In New User", "Mit anderem Konto anmelden");
 
       const btnSignout = document.getElementById('auth-btn-signout-text');
-      if (btnSignout) btnSignout.innerText = isEn ? "Sign Out" : "تسجيل الخروج";
+      if (btnSignout) btnSignout.innerText = tr3("تسجيل الخروج", "Sign Out", "Abmelden");
 
       const subtabLogin = document.getElementById('subtab-auth-login');
-      if (subtabLogin) subtabLogin.innerText = isEn ? "Sign In (Registered User)" : "تصريح دخول لحساب مسجل";
+      if (subtabLogin) subtabLogin.innerText = tr3("تصريح دخول لحساب مسجل", "Sign In (Registered User)", "Anmelden (registriertes Konto)");
 
       const subtabReg = document.getElementById('subtab-auth-register');
-      if (subtabReg) subtabReg.innerText = isEn ? "Register & New Authorization" : "تسجيل مستخدم وتصريح جديد";
+      if (subtabReg) subtabReg.innerText = tr3("تسجيل مستخدم وتصريح جديد", "Register & New Authorization", "Registrieren (neues Konto)");
 
       if (state.currentUser && state.currentUser.role !== 'guest') {
         const u = state.currentUser;
@@ -11786,7 +11800,7 @@
           const btnEl = document.getElementById(pId === 'usr_founder_01' ? 'persona-btn-founder' : (pId === 'usr_investor_01' ? 'persona-btn-investor' : (pId === 'usr_farmer_01' ? 'persona-btn-farmer' : 'persona-btn-mill')));
           if (statusEl) {
             if (u.id === pId) {
-              statusEl.innerText = isEn ? '● Active Persona' : '● الجلسة النشطة';
+              statusEl.innerText = tr3('● الجلسة النشطة', '● Active Persona', '● Aktive Sitzung');
               if (btnEl) btnEl.classList.add('ring-2', 'ring-emerald-500', 'bg-emerald-50/40', 'dark:bg-emerald-950/30');
             } else {
               statusEl.innerText = '';
@@ -11808,14 +11822,14 @@
         }
 
         const regTopVal = document.getElementById('auth-profile-region-val');
-        if (regTopVal) regTopVal.innerText = u.region || (isEn ? 'Syrian Arab Republic' : 'الجمهورية العربية السورية');
+        if (regTopVal) regTopVal.innerText = u.region || tr3('الجمهورية العربية السورية', 'Syrian Arab Republic', 'Arabische Republik Syrien');
 
         const dosRole = document.getElementById('auth-dossier-role-val');
         const dosRegion = document.getElementById('auth-dossier-region-val');
         const dosEmail = document.getElementById('auth-dossier-email-val');
         const dosPhone = document.getElementById('auth-dossier-phone-val');
         if (dosRole) dosRole.innerText = isEn ? (u.roleName_en || u.roleName || u.role) : (u.roleName || u.role);
-        if (dosRegion) dosRegion.innerText = u.region || (isEn ? 'Syrian Arab Republic' : 'الجمهورية العربية السورية');
+        if (dosRegion) dosRegion.innerText = u.region || tr3('الجمهورية العربية السورية', 'Syrian Arab Republic', 'Arabische Republik Syrien');
         if (dosEmail) dosEmail.innerText = u.email || '—';
         if (dosPhone) dosPhone.innerText = u.phone || '—';
 
@@ -11865,36 +11879,36 @@
           if (u.role === 'admin') {
             assetsGrid.innerHTML = `
               <div class="bg-stone-50 dark:bg-stone-800/80 p-3 rounded-2xl border border-stone-200 dark:border-stone-700">
-                <span class="text-[10px] text-stone-500 block font-bold">${isEn ? 'Payment Review' : 'أصول مراجعة الدفعات (Payment Review)'}</span>
+                <span class="text-[10px] text-stone-500 block font-bold">${tr3('أصول مراجعة الدفعات (Payment Review)', 'Payment Review', 'Zahlungsprüfung')}</span>
                 <span class="text-base font-black text-purple-900 dark:text-purple-300 font-mono">—</span>
-                <span class="text-[9px] text-stone-400 font-bold block">${isEn ? 'Live data pending' : 'بانتظار البيانات الفعلية'}</span>
+                <span class="text-[9px] text-stone-400 font-bold block">${tr3('بانتظار البيانات الفعلية', 'Live data pending', 'Noch keine Daten')}</span>
               </div>
               <div class="bg-stone-50 dark:bg-stone-800/80 p-3 rounded-2xl border border-stone-200 dark:border-stone-700">
                 <span class="text-[10px] text-stone-500 block font-bold">${L3('الحصص المكفولة', 'Sponsored shares', 'Anteile in Patenschaft')}</span>
                 <span class="text-base font-black text-stone-900 dark:text-white font-mono">—</span>
-                <span class="text-[9px] text-stone-400 font-bold block">${isEn ? 'Live data pending' : 'بانتظار البيانات الفعلية'}</span>
+                <span class="text-[9px] text-stone-400 font-bold block">${tr3('بانتظار البيانات الفعلية', 'Live data pending', 'Noch keine Daten')}</span>
               </div>
               <div class="bg-stone-50 dark:bg-stone-800/80 p-3 rounded-2xl border border-stone-200 dark:border-stone-700">
-                <span class="text-[10px] text-stone-500 block font-bold">${isEn ? 'Documented Trees' : 'الأشجار الموثقة في المنظومة'}</span>
+                <span class="text-[10px] text-stone-500 block font-bold">${tr3('الأشجار الموثقة في المنظومة', 'Documented Trees', 'Dokumentierte Bäume')}</span>
                 <span class="text-base font-black text-olive-900 dark:text-olive-300 font-mono">—</span>
                 <span class="text-[9px] text-stone-400 font-bold block">${L3('بانتظار البيانات الفعلية', 'Live data pending', 'Noch keine Daten')}</span>
               </div>
               <div class="bg-stone-50 dark:bg-stone-800/80 p-3 rounded-2xl border border-stone-200 dark:border-stone-700">
-                <span class="text-[10px] text-stone-500 block font-bold">${isEn ? 'System Health' : 'سلامة وأمان النظام'}</span>
+                <span class="text-[10px] text-stone-500 block font-bold">${tr3('سلامة وأمان النظام', 'System Health', 'Systemstatus')}</span>
                 <span class="text-base font-black text-emerald-700 dark:text-emerald-400 font-mono">—</span>
-                <span class="text-[9px] text-stone-400 font-bold block">${isEn ? 'Live data pending' : 'بانتظار البيانات الفعلية'}</span>
+                <span class="text-[9px] text-stone-400 font-bold block">${tr3('بانتظار البيانات الفعلية', 'Live data pending', 'Noch keine Daten')}</span>
               </div>
             `;
           } else if (u.role === 'farmer') {
             const w = state.farmerWallet || {};
             assetsGrid.innerHTML = `
               <div class="bg-stone-50 dark:bg-stone-800/80 p-3 rounded-2xl border border-stone-200 dark:border-stone-700">
-                <span class="text-[10px] text-stone-500 block font-bold">${isEn ? 'Assigned Olive Trees' : 'الأشجار المكلف برعايتها'}</span>
+                <span class="text-[10px] text-stone-500 block font-bold">${tr3('الأشجار المكلف برعايتها', 'Assigned Olive Trees', 'Zugewiesene Olivenbäume')}</span>
                 <span class="text-base font-black text-emerald-900 dark:text-emerald-300 font-mono">—</span>
                 <span class="text-[9px] text-stone-400 font-bold block">${L3('بانتظار البيانات الفعلية', 'Live data pending', 'Noch keine Daten')}</span>
               </div>
               <div class="bg-stone-50 dark:bg-stone-800/80 p-3 rounded-2xl border border-stone-200 dark:border-stone-700">
-                <span class="text-[10px] text-stone-500 block font-bold">${isEn ? 'Latest Dispatch' : 'آخر تقرير ميداني'}</span>
+                <span class="text-[10px] text-stone-500 block font-bold">${tr3('آخر تقرير ميداني', 'Latest Dispatch', 'Letzter Feldbericht')}</span>
                 <span class="text-xs font-black text-olive-900 dark:text-olive-300 block truncate">—</span>
                 <span class="text-[9px] text-stone-400 font-bold block">${L3('بانتظار البيانات الفعلية', 'Live data pending', 'Noch keine Daten')}</span>
               </div>
@@ -11902,12 +11916,12 @@
           } else if (u.role === 'mill_owner') {
             assetsGrid.innerHTML = `
               <div class="bg-stone-50 dark:bg-stone-800/80 p-3 rounded-2xl border border-stone-200 dark:border-stone-700">
-                <span class="text-[10px] text-stone-500 block font-bold">${isEn ? 'Milling Batches' : 'دفعات العصر الموثقة'}</span>
+                <span class="text-[10px] text-stone-500 block font-bold">${tr3('دفعات العصر الموثقة', 'Milling Batches', 'Pressungen')}</span>
                 <span class="text-base font-black text-amber-900 dark:text-amber-300 font-mono">—</span>
                 <span class="text-[9px] text-stone-400 font-bold block">${L3('بانتظار البيانات الفعلية', 'Live data pending', 'Noch keine Daten')}</span>
               </div>
               <div class="bg-stone-50 dark:bg-stone-800/80 p-3 rounded-2xl border border-stone-200 dark:border-stone-700">
-                <span class="text-[10px] text-stone-500 block font-bold">${isEn ? 'Oil Output' : 'إنتاجية الزيت البكر'}</span>
+                <span class="text-[10px] text-stone-500 block font-bold">${tr3('إنتاجية الزيت البكر', 'Oil Output', 'Ölausbeute')}</span>
                 <span class="text-base font-black text-emerald-700 dark:text-emerald-400 font-mono">—</span>
                 <span class="text-[9px] text-stone-400 font-bold block">${L3('بانتظار البيانات الفعلية', 'Live data pending', 'Noch keine Daten')}</span>
               </div>
@@ -11956,7 +11970,7 @@
       switchAuthSubTab('login');
       openModal('modal-auth-session');
       lucide.createIcons();
-      showToast(state.currentLang !== 'ar' ? 'Please enter Email and Password to authenticate.' : 'يرجى إدخال البريد الإلكتروني وكلمة المرور للمصادقة وتخويل الدخول.');
+      showToast(tr3('يرجى إدخال البريد الإلكتروني وكلمة المرور للمصادقة وتخويل الدخول.', 'Please enter Email and Password to authenticate.', 'Bitte geben Sie E-Mail und Passwort ein, um sich anzumelden.'));
     }
 
     // Two-Step Email & Phone OTP Authentication System
@@ -11964,7 +11978,7 @@
     function openDepositModal() {
       if (!state.currentUser || state.currentUser.role === 'guest') {
         openAuthModal();
-        showToast(state.currentLang !== 'ar' ? 'Please sign in first to deposit funds.' : 'يرجى تسجيل الدخول أولاً لتغذية محفظتك.');
+        showToast(tr3('يرجى تسجيل الدخول أولاً لتغذية محفظتك.', 'Please sign in first to deposit funds.', 'Bitte melden Sie sich zuerst an, um Guthaben einzuzahlen.'));
         return;
       }
       openModal('modal-deposit');
@@ -11989,16 +12003,18 @@
       const rate = state.exchangeRate || 15000;
       const syp = amount * rate;
       const isEn = state.currentLang !== 'ar';
-      el.innerText = isEn 
-        ? `Equivalent to: ${Math.round(syp).toLocaleString()} SYP (at rate ${rate.toLocaleString()} SYP/USD)` 
-        : `${state.currentLang !== 'ar' ? `Equivalent: ${Math.round(syp).toLocaleString()} SYP (at rate ${rate.toLocaleString()} SYP)` : `يعادل: ${Math.round(syp).toLocaleString()} ليرة سورية (بسعر الصرف ${rate.toLocaleString()} ل.س)`}`;
+      el.innerText = tr3(
+        `يعادل: ${Math.round(syp).toLocaleString()} ليرة سورية (بسعر الصرف ${rate.toLocaleString()} ل.س)`,
+        `Equivalent to: ${Math.round(syp).toLocaleString()} SYP (at rate ${rate.toLocaleString()} SYP/USD)`,
+        `Entspricht: ${Math.round(syp).toLocaleString()} SYP (zum Kurs ${rate.toLocaleString()} SYP/USD)`);
     }
 
     function submitWalletDeposit(e) {
       if (e) e.preventDefault();
-      showToast(state.currentLang !== 'ar'
-        ? 'Deposits are not connected to a verified payment service yet. No balance was changed.'
-        : 'خدمة الإيداع غير مرتبطة بعد ببوابة دفع موثقة؛ لم يتغير أي رصيد.');
+      showToast(tr3(
+        'خدمة الإيداع غير مرتبطة بعد ببوابة دفع موثقة؛ لم يتغير أي رصيد.',
+        'Deposits are not connected to a verified payment service yet. No balance was changed.',
+        'Einzahlungen sind noch nicht an einen geprüften Zahlungsdienst angebunden. Es wurde kein Guthaben geändert.'));
     }
 
     function openAuthModal(defaultTab = 'identity') {
@@ -12084,7 +12100,7 @@
         if (window.lucide) window.lucide.createIcons();
       }
       if (indicator) {
-        indicator.innerText = isPhone ? (state.currentLang !== 'ar' ? 'Phone' : 'رقم هاتف') : (state.currentLang !== 'ar' ? 'Email' : 'بريد إلكتروني');
+        indicator.innerText = isPhone ? tr3('رقم هاتف', 'Phone', 'Telefon') : tr3('بريد إلكتروني', 'Email', 'E-Mail');
       }
 
       const cleanPhone = raw.replace(/[\s-]/g, '');
@@ -12114,7 +12130,7 @@
 
         const roleName = isEn ? (user.roleName_en || user.roleName || user.role) : (user.roleName || user.role);
         const userName = isEn ? (user.name_en || user.name) : user.name;
-        const region = user.region || (isEn ? 'Syrian Arab Republic' : 'الجمهورية العربية السورية');
+        const region = user.region || tr3('الجمهورية العربية السورية', 'Syrian Arab Republic', 'Arabische Republik Syrien');
 
         box.className = "p-3 rounded-2xl border border-emerald-300/80 dark:border-emerald-800/80 bg-emerald-50/40 dark:bg-emerald-950/30 text-start space-y-1.5 transition-all animate-scale-up";
         box.innerHTML = `
@@ -12137,7 +12153,7 @@
           </div>
           <div class="flex items-center justify-between text-[10px] text-stone-500 dark:text-stone-400 border-t border-emerald-200/60 dark:border-emerald-900/60 pt-1.5">
             <span class="flex items-center gap-1"><i data-lucide="map-pin" class="w-3 h-3 text-emerald-600"></i> ${escapeHtml(region)}</span>
-            <span class="text-emerald-700 dark:text-emerald-400 font-bold">${isEn ? 'Account Recognized' : 'تم التعرف على الحساب تلقائياً'}</span>
+            <span class="text-emerald-700 dark:text-emerald-400 font-bold">${tr3('تم التعرف على الحساب تلقائياً', 'Account Recognized', 'Konto erkannt')}</span>
           </div>
         `;
         box.classList.remove('hidden');
@@ -12148,10 +12164,10 @@
           <div class="flex items-center justify-between gap-2 text-xs">
             <div class="flex items-center gap-1.5 text-amber-900 dark:text-amber-300 font-bold text-[11px]">
               <i data-lucide="help-circle" class="w-4 h-4 text-amber-600 flex-shrink-0"></i>
-              <span>${isEn ? 'Unregistered account identifier.' : 'هذا البريد أو الرقم غير مسجل بعد.'}</span>
+              <span>${tr3('هذا البريد أو الرقم غير مسجل بعد.', 'Unregistered account identifier.', 'Diese E-Mail-Adresse oder Nummer ist noch nicht registriert.')}</span>
             </div>
             <button type="button" data-click="switchAuthSubTab('register');" class="px-2 py-1 rounded-lg bg-amber-200/80 dark:bg-amber-900 text-amber-950 dark:text-amber-200 font-black text-[10px] hover:bg-amber-300 transition-all cursor-pointer">
-              ${isEn ? 'Register & Select Role' : 'تسجيل وتحديد العضوية'}
+              ${tr3('تسجيل وتحديد العضوية', 'Register & Select Role', 'Registrieren und Rolle wählen')}
             </button>
           </div>
         `;
@@ -12163,9 +12179,10 @@
     }
 
     function fillDemoCredentials(role) {
-      showToast(state.currentLang !== 'ar'
-        ? 'Demo accounts are disabled. Register or sign in with your Faseela account.'
-        : 'تم تعطيل الحسابات التجريبية. أنشئ حساباً أو سجّل الدخول بحسابك في فسيلة.');
+      showToast(tr3(
+        'تم تعطيل الحسابات التجريبية. أنشئ حساباً أو سجّل الدخول بحسابك في فسيلة.',
+        'Demo accounts are disabled. Register or sign in with your Faseela account.',
+        'Demo-Konten sind deaktiviert. Registrieren Sie sich oder melden Sie sich mit Ihrem Faseela-Konto an.'));
     }
 
     // ================= PASSWORD RECOVERY (Supabase Auth) =================
@@ -12173,38 +12190,41 @@
       const emailEl = document.getElementById('auth-login-email');
       const email = emailEl ? emailEl.value.trim().toLowerCase() : '';
       if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        showToast(state.currentLang !== 'ar' ? 'Enter a valid account email first.' : 'أدخل البريد الإلكتروني المسجل بشكل صحيح أولاً.');
+        showToast(tr3('أدخل البريد الإلكتروني المسجل بشكل صحيح أولاً.', 'Enter a valid account email first.', 'Geben Sie zuerst die E-Mail-Adresse Ihres Kontos korrekt ein.'));
         if (emailEl) emailEl.focus();
         return;
       }
       if (!window.FaseelaFirebase) {
-        showToast(state.currentLang !== 'ar' ? 'Password recovery is unavailable right now.' : 'استعادة كلمة المرور غير متاحة حالياً.');
+        showToast(tr3('استعادة كلمة المرور غير متاحة حالياً.', 'Password recovery is unavailable right now.', 'Das Zurücksetzen des Passworts ist derzeit nicht verfügbar.'));
         return;
       }
 
       window.FaseelaFirebase.requestPasswordReset(email).then(() => {
-        showToast(state.currentLang !== 'ar'
-          ? 'If an account exists for this email, a password reset link has been sent.'
-          : 'إذا كان هناك حساب بهذا البريد، فسيصلك رابط استعادة كلمة المرور.');
+        showToast(tr3(
+          'إذا كان هناك حساب بهذا البريد، فسيصلك رابط استعادة كلمة المرور.',
+          'If an account exists for this email, a password reset link has been sent.',
+          'Falls zu dieser E-Mail-Adresse ein Konto besteht, wurde ein Link zum Zurücksetzen des Passworts gesendet.'));
       }).catch(error => {
         console.warn('Auth password reset request failed:', error.code || error.message);
-        showToast(state.currentLang !== 'ar'
-          ? 'Could not send the reset email. Check the address and try again.'
-          : 'تعذر إرسال رسالة الاستعادة. تحقق من البريد وحاول مجدداً.');
+        showToast(tr3(
+          'تعذر إرسال رسالة الاستعادة. تحقق من البريد وحاول مجدداً.',
+          'Could not send the reset email. Check the address and try again.',
+          'Die E-Mail zum Zurücksetzen konnte nicht gesendet werden. Prüfen Sie die Adresse und versuchen Sie es erneut.'));
       });
     }
 
     function handleResetPasswordSubmit(e) {
       e.preventDefault();
-      showToast(state.currentLang !== 'ar'
-        ? 'Use the secure password reset link sent to your email.'
-        : 'استخدم رابط الاستعادة الآمن الذي أُرسل إلى بريدك الإلكتروني.');
+      showToast(tr3(
+        'استخدم رابط الاستعادة الآمن الذي أُرسل إلى بريدك الإلكتروني.',
+        'Use the secure password reset link sent to your email.',
+        'Nutzen Sie den sicheren Link zum Zurücksetzen des Passworts, den wir Ihnen per E-Mail gesendet haben.'));
     }
 
     function handleInitiateAuth(e) {
       e.preventDefault();
       if (!rateLimiter.checkLimit('auth_initiate', 10, 60000)) {
-        showToast(state.currentLang !== 'ar' ? 'Too many requests. Please wait a minute.' : 'تم تجاوز عدد المحاولات المسموح بها. يرجى الانتظار دقيقة.');
+        showToast(tr3('تم تجاوز عدد المحاولات المسموح بها. يرجى الانتظار دقيقة.', 'Too many requests. Please wait a minute.', 'Zu viele Anfragen. Bitte warten Sie eine Minute.'));
         return;
       }
 
@@ -12214,21 +12234,22 @@
       const password = pwdEl ? pwdEl.value : '';
 
       if (!email) {
-        showToast(state.currentLang !== 'ar' ? 'Please enter your email.' : 'يرجى إدخال البريد الإلكتروني.');
+        showToast(tr3('يرجى إدخال البريد الإلكتروني.', 'Please enter your email.', 'Bitte geben Sie Ihre E-Mail-Adresse ein.'));
         if (emailEl) emailEl.focus();
         return;
       }
 
       if (!password) {
-        showToast(state.currentLang !== 'ar' ? 'Please enter your password.' : 'يرجى إدخال كلمة المرور.');
+        showToast(tr3('يرجى إدخال كلمة المرور.', 'Please enter your password.', 'Bitte geben Sie Ihr Passwort ein.'));
         if (pwdEl) pwdEl.focus();
         return;
       }
 
       if (!window.FaseelaFirebase) {
-        showToast(state.currentLang !== 'ar'
-          ? 'Secure sign-in is unavailable. Please check the connection and try again.'
-          : 'تسجيل الدخول الآمن غير متاح حالياً. تحقق من الاتصال ثم أعد المحاولة.');
+        showToast(tr3(
+          'تسجيل الدخول الآمن غير متاح حالياً. تحقق من الاتصال ثم أعد المحاولة.',
+          'Secure sign-in is unavailable. Please check the connection and try again.',
+          'Die sichere Anmeldung ist derzeit nicht verfügbar. Bitte prüfen Sie die Verbindung und versuchen Sie es erneut.'));
         return;
       }
 
@@ -12252,12 +12273,14 @@
         if (loginBtn) loginBtn.disabled = false;
         if (loginTxt) loginTxt.innerText = t('auth_btn_login_submit');
         const message = error.code === 'auth/email-not-verified'
-          ? (state.currentLang !== 'ar'
-            ? 'Verify your email using the link we sent, then sign in again.'
-            : 'تحقق من بريدك عبر الرابط المرسل إليك ثم أعد تسجيل الدخول.')
-          : (state.currentLang !== 'ar'
-            ? 'Sign-in failed. Check your email and password and try again.'
-            : 'تعذر تسجيل الدخول. تحقق من البريد وكلمة المرور ثم حاول مجدداً.');
+          ? tr3(
+            'تحقق من بريدك عبر الرابط المرسل إليك ثم أعد تسجيل الدخول.',
+            'Verify your email using the link we sent, then sign in again.',
+            'Bestätigen Sie Ihre E-Mail-Adresse über den zugesandten Link und melden Sie sich dann erneut an.')
+          : tr3(
+            'تعذر تسجيل الدخول. تحقق من البريد وكلمة المرور ثم حاول مجدداً.',
+            'Sign-in failed. Check your email and password and try again.',
+            'Anmeldung fehlgeschlagen. Prüfen Sie E-Mail und Passwort und versuchen Sie es erneut.');
         showToast(message);
         if (pwdEl) {
           pwdEl.value = '';
@@ -12341,7 +12364,7 @@
     function handleRegisterNewUser(e) {
       e.preventDefault();
       if (!rateLimiter.checkLimit('auth_register', 6, 60000)) {
-        showToast(state.currentLang !== 'ar' ? 'Too many registration requests. Please wait.' : 'تم تجاوز الحد المسموح. يرجى الانتظار.');
+        showToast(tr3('تم تجاوز الحد المسموح. يرجى الانتظار.', 'Too many registration requests. Please wait.', 'Zu viele Registrierungsanfragen. Bitte warten Sie einen Moment.'));
         return;
       }
 
@@ -12360,33 +12383,33 @@
       const role = roleRadio ? roleRadio.value : 'investor';
 
       if (!name || name.length < 3) {
-        showToast(state.currentLang !== 'ar' ? 'Full Name must be at least 3 characters.' : 'يجب أن يتكون الاسم الكامل من 3 أحرف على الأقل.');
+        showToast(tr3('يجب أن يتكون الاسم الكامل من 3 أحرف على الأقل.', 'Full Name must be at least 3 characters.', 'Der vollständige Name muss mindestens 3 Zeichen lang sein.'));
         if (nameEl) nameEl.focus();
         return;
       }
 
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!email || !emailRegex.test(email)) {
-        showToast(state.currentLang !== 'ar' ? 'Please enter a valid email address.' : 'يرجى إدخال بريد إلكتروني صحيح ومعتمد.');
+        showToast(tr3('يرجى إدخال بريد إلكتروني صحيح ومعتمد.', 'Please enter a valid email address.', 'Bitte geben Sie eine gültige E-Mail-Adresse ein.'));
         if (emailEl) emailEl.focus();
         return;
       }
 
       if (!phone || phone.length < 9) {
-        showToast(state.currentLang !== 'ar' ? 'Please enter a valid phone number (e.g. +963 9xx xxx xxx).' : 'يرجى إدخال رقم هاتف صحيح (مثال: +963 9xx xxx xxx).');
+        showToast(tr3('يرجى إدخال رقم هاتف صحيح (مثال: +963 9xx xxx xxx).', 'Please enter a valid phone number (e.g. +963 9xx xxx xxx).', 'Bitte geben Sie eine gültige Telefonnummer ein (z. B. +963 9xx xxx xxx).'));
         if (phoneEl) phoneEl.focus();
         return;
       }
 
       if (!password || password.length < 10) {
-        showToast(state.currentLang !== 'ar' ? 'Password must be at least 10 characters.' : 'يجب ألا تقل كلمة المرور عن 10 خانات.');
+        showToast(tr3('يجب ألا تقل كلمة المرور عن 10 خانات.', 'Password must be at least 10 characters.', 'Das Passwort muss mindestens 10 Zeichen lang sein.'));
         if (pwdEl) pwdEl.focus();
         return;
       }
 
       if (password !== confirmPassword) {
         playAcousticChime(280, 0.3);
-        showToast(state.currentLang !== 'ar' ? 'Passwords do not match. Please re-enter.' : 'كلمتا المرور غير متطابقتين. يرجى إعادة التأكيد.');
+        showToast(tr3('كلمتا المرور غير متطابقتين. يرجى إعادة التأكيد.', 'Passwords do not match. Please re-enter.', 'Die Passwörter stimmen nicht überein. Bitte geben Sie sie erneut ein.'));
         if (pwdConfirmEl) {
           pwdConfirmEl.value = '';
           pwdConfirmEl.focus();
@@ -12404,9 +12427,10 @@
       const regionEl = document.getElementById('reg-input-region');
       const region = regionEl ? regionEl.value : (state.currentLang !== 'ar' ? 'Syrian Coast - Tartous' : 'الساحل السوري - طرطوس');
       if (!window.FaseelaFirebase) {
-        showToast(state.currentLang !== 'ar'
-          ? 'Secure registration is unavailable. Please check the connection and try again.'
-          : 'إنشاء الحساب الآمن غير متاح حالياً. تحقق من الاتصال ثم أعد المحاولة.');
+        showToast(tr3(
+          'إنشاء الحساب الآمن غير متاح حالياً. تحقق من الاتصال ثم أعد المحاولة.',
+          'Secure registration is unavailable. Please check the connection and try again.',
+          'Die sichere Registrierung ist derzeit nicht verfügbar. Bitte prüfen Sie Ihre Verbindung und versuchen Sie es erneut.'));
         return;
       }
 
@@ -12424,26 +12448,30 @@
         if (loginEmail) loginEmail.value = result.email || email;
         if (pwdEl) pwdEl.value = '';
         if (pwdConfirmEl) pwdConfirmEl.value = '';
-        showToast(state.currentLang !== 'ar'
-          ? 'Account created. Verify your email using the link we sent before signing in.'
-          : 'تم إنشاء الحساب. تحقق من بريدك عبر الرابط المرسل قبل تسجيل الدخول.');
+        showToast(tr3(
+          'تم إنشاء الحساب. تحقق من بريدك عبر الرابط المرسل قبل تسجيل الدخول.',
+          'Account created. Verify your email using the link we sent before signing in.',
+          'Konto erstellt. Bitte bestätigen Sie Ihre E-Mail-Adresse über den zugesandten Link, bevor Sie sich anmelden.'));
       }).catch(error => {
         console.warn('Auth registration failed:', error.code || error.message);
         const message = error.code === 'auth/email-already-in-use'
-          ? (state.currentLang !== 'ar'
-            ? 'An account with this email already exists. Please sign in.'
-            : 'هذا البريد مسجل مسبقاً. سجّل الدخول بدلاً من ذلك.')
-          : (state.currentLang !== 'ar'
-            ? 'Could not complete registration. Check your information and try again.'
-            : 'تعذر إكمال التسجيل. تحقق من البيانات وحاول مجدداً.');
+          ? (tr3(
+            'هذا البريد مسجل مسبقاً. سجّل الدخول بدلاً من ذلك.',
+            'An account with this email already exists. Please sign in.',
+            'Für diese E-Mail-Adresse besteht bereits ein Konto. Bitte melden Sie sich an.'))
+          : (tr3(
+            'تعذر إكمال التسجيل. تحقق من البيانات وحاول مجدداً.',
+            'Could not complete registration. Check your information and try again.',
+            'Die Registrierung konnte nicht abgeschlossen werden. Bitte prüfen Sie Ihre Angaben und versuchen Sie es erneut.'));
         showToast(message);
       });
     }
 
     function startOtpScreen() {
-      showToast(state.currentLang !== 'ar'
-        ? 'Verification codes are never displayed in the app. Use the secure email link.'
-        : 'لن يُعرض رمز التحقق داخل التطبيق. استخدم رابط التحقق الآمن المرسل إلى بريدك.');
+      showToast(tr3(
+        'لن يُعرض رمز التحقق داخل التطبيق. استخدم رابط التحقق الآمن المرسل إلى بريدك.',
+        'Verification codes are never displayed in the app. Use the secure email link.',
+        'Bestätigungscodes werden nie in der App angezeigt. Bitte nutzen Sie den sicheren Link in Ihrer E-Mail.'));
     }
 
     function startOtpCountdown() {
@@ -12456,7 +12484,7 @@
         timeLeft--;
         if (timeLeft <= 0) {
           clearInterval(state.otpTimerInterval);
-          if (timerEl) timerEl.innerText = state.currentLang !== 'ar' ? '00:00 (Expired)' : '00:00 (منتهي)';
+          if (timerEl) timerEl.innerText = tr3('00:00 (منتهي)', '00:00 (Expired)', '00:00 (abgelaufen)');
         } else {
           if (timerEl) timerEl.innerText = `00:${timeLeft.toString().padStart(2, '0')}`;
         }
@@ -12482,7 +12510,7 @@
         if (inp) inp.value = code[i] || '';
       }
       playAcousticChime(580, 0.15);
-      showToast(state.currentLang !== 'ar' ? 'Verification code autofilled' : 'تمت التعبئة التلقائية لرمز التحقق');
+      showToast(tr3('تمت التعبئة التلقائية لرمز التحقق', 'Verification code autofilled', 'Bestätigungscode automatisch eingetragen'));
       const lastInp = document.getElementById('otp-digit-4');
       if (lastInp) lastInp.focus();
     }
@@ -12517,16 +12545,18 @@
     }
 
     function resendOtpCode() {
-      showToast(state.currentLang !== 'ar'
-        ? 'Use the verification link sent to your email.'
-        : 'استخدم رابط التحقق المرسل إلى بريدك الإلكتروني.');
+      showToast(tr3(
+        'استخدم رابط التحقق المرسل إلى بريدك الإلكتروني.',
+        'Use the verification link sent to your email.',
+        'Bitte nutzen Sie den Bestätigungslink, den wir Ihnen per E-Mail gesendet haben.'));
     }
 
     function handleVerifyOtp(e) {
       e.preventDefault();
-      showToast(state.currentLang !== 'ar'
-        ? 'Sign-in requires a verified email address.'
-        : 'يتطلب تسجيل الدخول بريداً إلكترونياً مؤكداً.');
+      showToast(tr3(
+        'يتطلب تسجيل الدخول بريداً إلكترونياً مؤكداً.',
+        'Sign-in requires a verified email address.',
+        'Für die Anmeldung ist eine bestätigte E-Mail-Adresse erforderlich.'));
     }
 
     function goToUserAuthorizedSection() {
@@ -12777,7 +12807,7 @@
 
     async function handleSignOut() {
       if (!window.FaseelaFirebase) {
-        showToast(state.currentLang !== 'ar' ? 'Sign-out is unavailable right now.' : 'تسجيل الخروج غير متاح حالياً.');
+        showToast(tr3('تسجيل الخروج غير متاح حالياً.', 'Sign-out is unavailable right now.', 'Die Abmeldung ist derzeit nicht verfügbar.'));
         return;
       }
       try {
@@ -12785,12 +12815,13 @@
         await window.FaseelaFirebase.signOut();
         closeModal('modal-auth-session');
         playAcousticChime(420, 0.2);
-        showToast(state.currentLang !== 'ar'
-          ? 'Signed out successfully.'
-          : 'تم تسجيل الخروج بنجاح.');
+        showToast(tr3(
+          'تم تسجيل الخروج بنجاح.',
+          'Signed out successfully.',
+          'Sie wurden erfolgreich abgemeldet.'));
       } catch (error) {
         console.error('Auth sign-out failed:', error);
-        showToast(state.currentLang !== 'ar' ? 'Could not sign out. Please try again.' : 'تعذر تسجيل الخروج. حاول مجدداً.');
+        showToast(tr3('تعذر تسجيل الخروج. حاول مجدداً.', 'Could not sign out. Please try again.', 'Abmeldung fehlgeschlagen. Bitte versuchen Sie es erneut.'));
       }
     }
 
@@ -12919,13 +12950,13 @@
       if (state.currency === 'SYP') {
         const rate = state.exchangeRate || 14800;
         const syp = Math.round(amount * rate);
-        return state.currentLang !== 'ar' ? `${syp.toLocaleString()} SYP` : `${syp.toLocaleString()} ل.س`;
+        return tr3(`${syp.toLocaleString()} ل.س`, `${syp.toLocaleString()} SYP`, `${syp.toLocaleString()} SYP`);
       } else if (state.currency === 'EUR') {
         const eur = (amount * 0.92).toFixed(2);
         return `€${eur}`;
       } else if (state.currency === 'AED') {
         const aed = (amount * 3.67).toFixed(2);
-        return state.currentLang !== 'ar' ? `${aed} AED` : `${aed} د.إ`;
+        return tr3(`${aed} د.إ`, `${aed} AED`, `${aed} AED`);
       }
       return `$${amount.toFixed(2)}`;
     }
@@ -12963,9 +12994,9 @@
       state.roiSelectedTreeId = currentVal;
       select.innerHTML = offers.map(t => {
         const name = isEn ? ((t.region_en || t.region) + ' - ' + (t.tree_type_en || t.tree_type)) : (t.region + ' - ' + t.tree_type);
-        const age = t.age_years != null ? ` (${t.age_years} ${isEn ? 'yrs' : 'سنة'})` : '';
-        const price = `${formatMoney(t.price_per_share)} ${isEn ? '/ sh' : '/ حصة'}`;
-        const landPrice = (landOfferEnabled() && t.land_parcel) ? `${isEn ? '• land ' : '• أرض '}${formatMoney(t.land_parcel.land_addon_price_usd)}` : '';
+        const age = t.age_years != null ? ` (${t.age_years} ${tr3('سنة', 'yrs', 'Jahre')})` : '';
+        const price = `${formatMoney(t.price_per_share)} ${tr3('/ حصة', '/ sh', '/ Anteil')}`;
+        const landPrice = (landOfferEnabled() && t.land_parcel) ? `${tr3('• أرض ', '• land ', '• Land ')}${formatMoney(t.land_parcel.land_addon_price_usd)}` : '';
         return `<option value="${t.id}">${name}${age} • ${price} ${landPrice}</option>`;
       }).join('');
       select.value = currentVal;
@@ -13004,9 +13035,9 @@
       const treesBadge = document.getElementById('calc-trees-count-badge');
       if (treesBadge) {
         if (s % 4 === 0) {
-          treesBadge.innerText = isEn ? `${treesCount} Whole Tree(s)` : `${treesCount} شجرة كاملة`;
+          treesBadge.innerText = tr3(`${treesCount} شجرة كاملة`, `${treesCount} Whole Tree(s)`, `Ganze Bäume: ${treesCount}`);
         } else {
-          treesBadge.innerText = isEn ? `${treesCount.toFixed(2)} Tree(s)` : `${treesCount.toFixed(2)} شجرة`;
+          treesBadge.innerText = tr3(`${treesCount.toFixed(2)} شجرة`, `${treesCount.toFixed(2)} Tree(s)`, `Bäume: ${treesCount.toFixed(2)}`);
         }
       }
 
@@ -13050,9 +13081,10 @@
       // Update land toggle text
       const landToggleText = document.getElementById('roi-land-toggle-text');
       if (landToggleText) {
-        landToggleText.innerText = isEn 
-          ? `🌿 Include 5 m² land cadastral title deed with tree (+$${landAddonPerPlot.toFixed(0)})`
-          : `🌿 ضم سند حيازة 5 م² أرض مع كل شجرة (+${formatMoney(landAddonPerPlot)})`;
+        landToggleText.innerText = tr3(
+          `🌿 ضم سند حيازة 5 م² أرض مع كل شجرة (+${formatMoney(landAddonPerPlot)})`,
+          `🌿 Include 5 m² land cadastral title deed with tree (+$${landAddonPerPlot.toFixed(0)})`,
+          `🌿 5 m² Land mit Besitznachweis je Baum hinzufügen (+$${landAddonPerPlot.toFixed(0)})`);
       }
 
       // Tier banner: one neutral text for every amount (no packages, land, shipping or ESG perks).
@@ -13084,7 +13116,7 @@
       if (landBadge) {
         if (withLand) {
           landBadge.classList.remove('hidden');
-          landBadge.innerText = isEn ? `~ ${landSqm.toFixed(1)} m² deed` : `~ ${landSqm.toFixed(1)} م² طابو`;
+          landBadge.innerText = tr3(`~ ${landSqm.toFixed(1)} م² طابو`, `~ ${landSqm.toFixed(1)} m² deed`, `~ ${landSqm.toFixed(1)} m² Land mit Nachweis`);
         } else {
           landBadge.classList.add('hidden');
         }
@@ -13092,7 +13124,7 @@
 
       const landAreaCard = document.getElementById('calc-land-area');
       if (landAreaCard) {
-        landAreaCard.innerText = withLand ? (isEn ? `~ ${landSqm.toFixed(1)} m²` : `~ ${landSqm.toFixed(1)} م²`) : (isEn ? 'Optional' : 'اختياري');
+        landAreaCard.innerText = withLand ? tr3(`~ ${landSqm.toFixed(1)} م²`, `~ ${landSqm.toFixed(1)} m²`, `~ ${landSqm.toFixed(1)} m²`) : tr3('اختياري', 'Optional', 'Optional');
       }
 
       const oilEl = document.getElementById('calc-oil-liters');
@@ -13209,10 +13241,10 @@
       if (!navigator.onLine) {
         banner.classList.remove('hidden');
         triggerHaptic('warning');
-        showToast(state.currentLang !== 'ar' ? '⚠️ Offline mode active. All records saved locally.' : '⚠️ وضع عدم الاتصال: تم تفعيل الحفظ المحلي لكافة بياناتك وسجلاتك.');
+        showToast(tr3('⚠️ وضع عدم الاتصال: تم تفعيل الحفظ المحلي لكافة بياناتك وسجلاتك.', '⚠️ Offline mode active. All records saved locally.', '⚠️ Offline-Modus aktiv. Alle Einträge werden lokal gespeichert.'));
       } else {
         banner.classList.add('hidden');
-        showToast(state.currentLang !== 'ar' ? '✓ Internet connection restored. Synchronized.' : '✓ عادت شبكة الإنترنت. تمت مزامنة السجلات بنجاح.');
+        showToast(tr3('✓ عادت شبكة الإنترنت. تمت مزامنة السجلات بنجاح.', '✓ Internet connection restored. Synchronized.', '✓ Internetverbindung wiederhergestellt. Daten synchronisiert.'));
       }
     }
     window.addEventListener('online', updateNetworkStatus);
@@ -13855,139 +13887,140 @@ function togglePasswordVisibility(inputId, iconId) {
       const regionName = isEn ? (tree.region_detail_en || tree.region_detail) : tree.region_detail;
       if (treeNameEl) treeNameEl.innerText = isEn ? (tree.tree_name_en || tree.tree_name) : tree.tree_name;
       if (farmEl) farmEl.innerText = `${farmName} (${regionName})`;
-      if (dateEl) dateEl.innerText = `${isEn ? 'Analysis Date:' : 'تاريخ الاعتماد:'} 2026-09-12`;
+      if (dateEl) dateEl.innerText = `${tr3('تاريخ الاعتماد:', 'Analysis Date:', 'Analysedatum:')} 2026-09-12`;
 
       if (category === 'pistachio') {
-        if (subHeadingEl) subHeadingEl.innerText = isEn ? "Laser Optical Sorting & Biochemical Purity Certificate" : "الفحص البيوكيميائي والفرز البصري الدقيق للفستق الحلبي";
-        if (millEl) millEl.innerText = isEn ? (tree.processing_center || "Mork Modern Automated Pistachio Facility") : (tree.processing_center || "مركز فرز وتحميص فستق مورك الحديث");
-        if (operEl) operEl.innerText = isEn ? "High-Speed Optical Sorting • Controlled Humidity Curing • Hama & Idlib" : "فرز بصري ليزري آلي • تجفيف هوائي مراقب • حماة وإدلب";
+        if (subHeadingEl) subHeadingEl.innerText = tr3("الفحص البيوكيميائي والفرز البصري الدقيق للفستق الحلبي", "Laser Optical Sorting & Biochemical Purity Certificate", "Zertifikat über optische Lasersortierung und biochemische Reinheit");
+        if (millEl) millEl.innerText = tree.processing_center || tr3("مركز فرز وتحميص فستق مورك الحديث", "Mork Modern Automated Pistachio Facility", "Moderne automatisierte Pistazienanlage Mork");
+        if (operEl) operEl.innerText = tr3("فرز بصري ليزري آلي • تجفيف هوائي مراقب • حماة وإدلب", "High-Speed Optical Sorting • Controlled Humidity Curing • Hama & Idlib", "Optische Hochgeschwindigkeitssortierung • Trocknung bei kontrollierter Luftfeuchte • Hama & Idlib");
         if (gradeBadge) {
-          gradeBadge.innerText = isEn ? "Syrian Red Pistachio (Grade A)" : "فستق حلبي أحمر (نخب أول ممتاز)";
+          gradeBadge.innerText = tr3("فستق حلبي أحمر (نخب أول ممتاز)", "Syrian Red Pistachio (Grade A)", "Syrische rote Pistazie (Güteklasse A)");
           gradeBadge.className = "bg-emerald-100 text-emerald-800 border border-emerald-300 text-[10px] font-black px-2.5 py-1 rounded-full";
         }
-        if (serialEl) serialEl.innerText = `${isEn ? 'Batch Record:' : 'رقم الاعتماد:'} SYR-PIST-2026-0492`;
-        if (weightOilEl) weightOilEl.innerText = isEn ? "Yield: 48.0 kg Clean Dry Nuts" : "المحصول: 48.0 كغ مكسرات جافة نقية";
-        if (yieldRateEl) yieldRateEl.innerText = isEn ? "Natural Split: 94.2%" : "نسبة التفتح الطبيعي: 94.2%";
+        if (serialEl) serialEl.innerText = `${tr3('رقم الاعتماد:', 'Batch Record:', 'Chargennummer:')} SYR-PIST-2026-0492`;
+        if (weightOilEl) weightOilEl.innerText = tr3("المحصول: 48.0 كغ مكسرات جافة نقية", "Yield: 48.0 kg Clean Dry Nuts", "Ertrag: 48.0 kg saubere, trockene Nüsse");
+        if (yieldRateEl) yieldRateEl.innerText = tr3("نسبة التفتح الطبيعي: 94.2%", "Natural Split: 94.2%", "Natürlich aufgesprungen: 94.2%");
 
-        if (acidityLabel) acidityLabel.innerText = isEn ? "Aflatoxin B1 Level (HPLC):" : "نسبة سموم الأفلاطوكسين (Aflatoxin B1):";
-        if (acidityEl) acidityEl.innerText = isEn ? "< 1.8 ppb (Intl EU Limit < 2.0 ppb)" : "< 1.8 ppb (الحد الدولي المسموح < 2.0 ppb)";
-        if (peroxideLabel) peroxideLabel.innerText = isEn ? "Natural Shell Split Ratio:" : "نسبة تفتح الثمار الطبيعي:";
-        if (peroxideEl) peroxideEl.innerText = isEn ? "94.2% (Grade A Premium Split)" : "94.2% (صنف أول نخب ممتاز)";
-        if (tempLabel) tempLabel.innerText = isEn ? "Nut Moisture Content:" : "نسبة رطوبة الثمار واللب:";
-        if (tempEl) tempEl.innerText = isEn ? "5.1% (Ideal Aerated Curing)" : "5.1% (تجفيف طبيعي مظلل مثالي)";
-        if (uvLabel) uvLabel.innerText = isEn ? "Oleic Acid Purity (Lipid Profile):" : "نقاوة حمض الأولييك في الزيوت الصحية:";
-        if (uvEl) uvEl.innerText = isEn ? "56.4% Healthy Monounsaturated Lipids" : "56.4% أحماض أحادية غير مشبعة صحية";
+        if (acidityLabel) acidityLabel.innerText = tr3("نسبة سموم الأفلاطوكسين (Aflatoxin B1):", "Aflatoxin B1 Level (HPLC):", "Aflatoxin-B1-Gehalt (HPLC):");
+        if (acidityEl) acidityEl.innerText = tr3("< 1.8 ppb (الحد الدولي المسموح < 2.0 ppb)", "< 1.8 ppb (Intl EU Limit < 2.0 ppb)", "< 1.8 ppb (EU-Grenzwert < 2.0 ppb)");
+        if (peroxideLabel) peroxideLabel.innerText = tr3("نسبة تفتح الثمار الطبيعي:", "Natural Shell Split Ratio:", "Anteil natürlich aufgesprungener Schalen:");
+        if (peroxideEl) peroxideEl.innerText = tr3("94.2% (صنف أول نخب ممتاز)", "94.2% (Grade A Premium Split)", "94.2% (Güteklasse A, Premium)");
+        if (tempLabel) tempLabel.innerText = tr3("نسبة رطوبة الثمار واللب:", "Nut Moisture Content:", "Feuchtegehalt der Nüsse:");
+        if (tempEl) tempEl.innerText = tr3("5.1% (تجفيف طبيعي مظلل مثالي)", "5.1% (Ideal Aerated Curing)", "5.1% (ideale Lufttrocknung)");
+        if (uvLabel) uvLabel.innerText = tr3("نقاوة حمض الأولييك في الزيوت الصحية:", "Oleic Acid Purity (Lipid Profile):", "Ölsäureanteil (Fettprofil):");
+        if (uvEl) uvEl.innerText = tr3("56.4% أحماض أحادية غير مشبعة صحية", "56.4% Healthy Monounsaturated Lipids", "56.4% einfach ungesättigte Fettsäuren");
 
       } else if (category === 'almond') {
-        if (subHeadingEl) subHeadingEl.innerText = isEn ? "Syrian Sweet Almond Biochemical & Moisture Analysis" : "التحليل البيوكيميائي والرطوبة للوز السوري الحلو";
-        if (millEl) millEl.innerText = isEn ? "Mukharram Central Almond Dehulling Unit" : "وحدة تقشير وتجفيف لوز المخرم المركزية";
-        if (operEl) operEl.innerText = isEn ? "Cold Dehulling Technology • Zero Bitterness Certified • Homs" : "تقنية التقشير الآلي البارد • خلو تام من المرارة • حمص";
+        if (subHeadingEl) subHeadingEl.innerText = tr3("التحليل البيوكيميائي والرطوبة للوز السوري الحلو", "Syrian Sweet Almond Biochemical & Moisture Analysis", "Biochemische Analyse und Feuchteanalyse der syrischen Süßmandel");
+        if (millEl) millEl.innerText = tr3("وحدة تقشير وتجفيف لوز المخرم المركزية", "Mukharram Central Almond Dehulling Unit", "Zentrale Mandelschälanlage Mukharram");
+        if (operEl) operEl.innerText = tr3("تقنية التقشير الآلي البارد • خلو تام من المرارة • حمص", "Cold Dehulling Technology • Zero Bitterness Certified • Homs", "Kaltschälverfahren • Frei von Bitterstoffen (zertifiziert) • Homs");
         if (gradeBadge) {
-          gradeBadge.innerText = isEn ? "Mukharram Soft Sweet Almond" : "لوز فرك حلو (نخب ممتاز)";
+          gradeBadge.innerText = tr3("لوز فرك حلو (نخب ممتاز)", "Mukharram Soft Sweet Almond", "Weichschalige Süßmandel aus Mukharram");
           gradeBadge.className = "bg-amber-100 text-amber-800 border border-amber-300 text-[10px] font-black px-2.5 py-1 rounded-full";
         }
-        if (serialEl) serialEl.innerText = `${isEn ? 'Batch Record:' : 'رقم الاعتماد:'} SYR-ALMD-2026-0318`;
-        if (weightOilEl) weightOilEl.innerText = isEn ? "Yield: 35.0 kg Raw Almonds" : "المحصول: 35.0 كغ لوز مقشور صافي";
-        if (yieldRateEl) yieldRateEl.innerText = isEn ? "Healthy Natural Oil: 54.2%" : "نسبة الزيت الطبيعي: 54.2%";
+        if (serialEl) serialEl.innerText = `${tr3('رقم الاعتماد:', 'Batch Record:', 'Chargennummer:')} SYR-ALMD-2026-0318`;
+        if (weightOilEl) weightOilEl.innerText = tr3("المحصول: 35.0 كغ لوز مقشور صافي", "Yield: 35.0 kg Raw Almonds", "Ertrag: 35.0 kg rohe Mandeln");
+        if (yieldRateEl) yieldRateEl.innerText = tr3("نسبة الزيت الطبيعي: 54.2%", "Healthy Natural Oil: 54.2%", "Natürlicher Ölgehalt: 54.2%");
 
-        if (acidityLabel) acidityLabel.innerText = isEn ? "Free Fatty Acids (FFA):" : "الأحماض الدهنية الحرة:";
-        if (acidityEl) acidityEl.innerText = isEn ? "0.35% (Exceptional Freshness)" : "0.35% (طزاجة ونقاوة استثنائية)";
-        if (peroxideLabel) peroxideLabel.innerText = isEn ? "Bitter Cyanide (Amygdalin):" : "مركبات السيانيد المرة (Amygdalin):";
-        if (peroxideEl) peroxideEl.innerText = isEn ? "0.00% (Certified 100% Sweet)" : "0.00% (خلو تام - لوز حلو 100%)";
-        if (tempLabel) tempLabel.innerText = isEn ? "Kernel Moisture Content:" : "نسبة رطوبة اللب الداخلية:";
-        if (tempEl) tempEl.innerText = isEn ? "5.2% (Cold Air Cured)" : "5.2% (مجفف بالهواء البارد)";
-        if (uvLabel) uvLabel.innerText = isEn ? "Oleic / Linoleic Ratio:" : "معامل جودة الدهون غير المشبعة:";
-        if (uvEl) uvEl.innerText = isEn ? "Ratio: 2.85 (High Stability Grade)" : "المعامل: 2.85 (ثبات أكسدة ممتاز)";
+        if (acidityLabel) acidityLabel.innerText = tr3("الأحماض الدهنية الحرة:", "Free Fatty Acids (FFA):", "Freie Fettsäuren (FFA):");
+        if (acidityEl) acidityEl.innerText = tr3("0.35% (طزاجة ونقاوة استثنائية)", "0.35% (Exceptional Freshness)", "0.35% (außergewöhnliche Frische)");
+        if (peroxideLabel) peroxideLabel.innerText = tr3("مركبات السيانيد المرة (Amygdalin):", "Bitter Cyanide (Amygdalin):", "Cyanogene Bitterstoffe (Amygdalin):");
+        if (peroxideEl) peroxideEl.innerText = tr3("0.00% (خلو تام - لوز حلو 100%)", "0.00% (Certified 100% Sweet)", "0.00% (zertifiziert 100% süß)");
+        if (tempLabel) tempLabel.innerText = tr3("نسبة رطوبة اللب الداخلية:", "Kernel Moisture Content:", "Feuchtegehalt des Kerns:");
+        if (tempEl) tempEl.innerText = tr3("5.2% (مجفف بالهواء البارد)", "5.2% (Cold Air Cured)", "5.2% (mit Kaltluft getrocknet)");
+        if (uvLabel) uvLabel.innerText = tr3("معامل جودة الدهون غير المشبعة:", "Oleic / Linoleic Ratio:", "Verhältnis Ölsäure / Linolsäure:");
+        if (uvEl) uvEl.innerText = tr3("المعامل: 2.85 (ثبات أكسدة ممتاز)", "Ratio: 2.85 (High Stability Grade)", "Verhältnis: 2.85 (hohe Stabilität)");
 
       } else if (category === 'walnut') {
-        if (subHeadingEl) subHeadingEl.innerText = isEn ? "Damascus Mountain Walnut Kernel & Lipid Quality" : "فحص جودة لب ودهون الجوز البلدي (وادي بردى والقلمون)";
-        if (millEl) millEl.innerText = isEn ? "Barada Valley Mountain Nut Station" : "محطة تجفيف وتعبئة الجوز البلدي بوادي بردى";
-        if (operEl) operEl.innerText = isEn ? "Natural Shaded Air Curing • Hand-Sorted Grade A • Rural Damascus" : "تجفيف طبيعي مظلل • فرز يدوي صنف أول • ريف دمشق";
+        if (subHeadingEl) subHeadingEl.innerText = tr3("فحص جودة لب ودهون الجوز البلدي (وادي بردى والقلمون)", "Damascus Mountain Walnut Kernel & Lipid Quality", "Kern- und Fettqualität der Bergwalnuss aus dem Umland von Damaskus");
+        if (millEl) millEl.innerText = tr3("محطة تجفيف وتعبئة الجوز البلدي بوادي بردى", "Barada Valley Mountain Nut Station", "Trocknungs- und Abpackstation für Walnüsse im Barada-Tal");
+        if (operEl) operEl.innerText = tr3("تجفيف طبيعي مظلل • فرز يدوي صنف أول • ريف دمشق", "Natural Shaded Air Curing • Hand-Sorted Grade A • Rural Damascus", "Natürliche Lufttrocknung im Schatten • Handverlesen, Güteklasse A • Umland von Damaskus");
         if (gradeBadge) {
-          gradeBadge.innerText = isEn ? "Grade A Light White Kernel" : "لب أبيض بلدي نخب أول (Grade A)";
+          gradeBadge.innerText = tr3("لب أبيض بلدي نخب أول (Grade A)", "Grade A Light White Kernel", "Heller Kern, Güteklasse A");
           gradeBadge.className = "bg-stone-200 text-stone-800 border border-stone-400 text-[10px] font-black px-2.5 py-1 rounded-full";
         }
-        if (serialEl) serialEl.innerText = `${isEn ? 'Batch Record:' : 'رقم الاعتماد:'} SYR-WLNT-2026-0811`;
-        if (weightOilEl) weightOilEl.innerText = isEn ? "Yield: 52.0 kg Thin-Shelled Nuts" : "المحصول: 52.0 كغ جوز بلدي رقيق القشرة";
-        if (yieldRateEl) yieldRateEl.innerText = isEn ? "Total Natural Lipids: 65.4%" : "نسبة الدسم الكلي: 65.4%";
+        if (serialEl) serialEl.innerText = `${tr3('رقم الاعتماد:', 'Batch Record:', 'Chargennummer:')} SYR-WLNT-2026-0811`;
+        if (weightOilEl) weightOilEl.innerText = tr3("المحصول: 52.0 كغ جوز بلدي رقيق القشرة", "Yield: 52.0 kg Thin-Shelled Nuts", "Ertrag: 52.0 kg dünnschalige Nüsse");
+        if (yieldRateEl) yieldRateEl.innerText = tr3("نسبة الدسم الكلي: 65.4%", "Total Natural Lipids: 65.4%", "Gesamtfettgehalt: 65.4%");
 
-        if (acidityLabel) acidityLabel.innerText = isEn ? "Kernel Lightness (Color Index):" : "درجة بياض ونقاوة اللب:";
-        if (acidityEl) acidityEl.innerText = isEn ? "92.0% Grade-A Extra Light" : "92.0% لب أبيض ناصع (صنف أول)";
-        if (peroxideLabel) peroxideLabel.innerText = isEn ? "Lipid Peroxide Index:" : "رقم أكسدة الدهون (Peroxide):";
-        if (peroxideEl) peroxideEl.innerText = isEn ? "1.2 meq O2/kg (Ultra Fresh)" : "1.2 meq O2/kg (طازج جداً ومحمي)";
-        if (tempLabel) tempLabel.innerText = isEn ? "Nut Moisture Level:" : "نسبة رطوبة الثمار المخزنة:";
-        if (tempEl) tempEl.innerText = isEn ? "7.8% (Optimal Natural Stability)" : "7.8% (ثبات طبيعي دون تعفن)";
-        if (uvLabel) uvLabel.innerText = isEn ? "Omega-3 (Alpha-Linolenic):" : "نسبة أوميغا-3 الطبيعي (ALA):";
-        if (uvEl) uvEl.innerText = isEn ? "9.8 g / 100g (Cardiovascular Bio-Active)" : "9.8 غ / 100 غ (حيوي ومغذي للقلب)";
+        if (acidityLabel) acidityLabel.innerText = tr3("درجة بياض ونقاوة اللب:", "Kernel Lightness (Color Index):", "Helligkeit des Kerns (Farbindex):");
+        if (acidityEl) acidityEl.innerText = tr3("92.0% لب أبيض ناصع (صنف أول)", "92.0% Grade-A Extra Light", "92.0% extra hell, Güteklasse A");
+        if (peroxideLabel) peroxideLabel.innerText = tr3("رقم أكسدة الدهون (Peroxide):", "Lipid Peroxide Index:", "Peroxidzahl der Fette:");
+        if (peroxideEl) peroxideEl.innerText = tr3("1.2 meq O2/kg (طازج جداً ومحمي)", "1.2 meq O2/kg (Ultra Fresh)", "1.2 meq O2/kg (sehr frisch)");
+        if (tempLabel) tempLabel.innerText = tr3("نسبة رطوبة الثمار المخزنة:", "Nut Moisture Level:", "Feuchtegehalt der Nüsse:");
+        if (tempEl) tempEl.innerText = tr3("7.8% (ثبات طبيعي دون تعفن)", "7.8% (Optimal Natural Stability)", "7.8% (optimale natürliche Stabilität)");
+        if (uvLabel) uvLabel.innerText = tr3("نسبة أوميغا-3 الطبيعي (ALA):", "Omega-3 (Alpha-Linolenic):", "Omega-3 (Alpha-Linolensäure):");
+        if (uvEl) uvEl.innerText = tr3("9.8 غ / 100 غ (حيوي ومغذي للقلب)", "9.8 g / 100g (Cardiovascular Bio-Active)", "9.8 g / 100g (bioaktive Fettsäure)");
 
       } else if (category === 'pomegranate') {
-        if (subHeadingEl) subHeadingEl.innerText = isEn ? "Pure Pomegranate Juicing & Brix Density Passport" : "تحليل السكريات والنقاوة لدبس الرمان الطبيعي المركز";
-        if (millEl) millEl.innerText = isEn ? "Daraa Pomegranate Processing & Juicing Plant" : "محطة عصر وتكثيف دبس الرمان بدرعا (طريق طفس)";
-        if (operEl) operEl.innerText = isEn ? "Low-Temperature Vacuum Evaporation • 100% Pure • Hauran" : "تبخير تفريغي بدرجة حرارة منخفضة • 100% طبيعي • حوران";
+        if (subHeadingEl) subHeadingEl.innerText = tr3("تحليل السكريات والنقاوة لدبس الرمان الطبيعي المركز", "Pure Pomegranate Juicing & Brix Density Passport", "Zucker- und Reinheitsanalyse für natürlichen Granatapfelsirup (Brix)");
+        if (millEl) millEl.innerText = tr3("محطة عصر وتكثيف دبس الرمان بدرعا (طريق طفس)", "Daraa Pomegranate Processing & Juicing Plant", "Granatapfel-Verarbeitungs- und Pressanlage Daraa");
+        if (operEl) operEl.innerText = tr3("تبخير تفريغي بدرجة حرارة منخفضة • 100% طبيعي • حوران", "Low-Temperature Vacuum Evaporation • 100% Pure • Hauran", "Vakuumverdampfung bei niedriger Temperatur • 100% rein • Hauran");
         if (gradeBadge) {
-          gradeBadge.innerText = isEn ? "Pure Organic Syrup (Zero Sugar Added)" : "دبس رمان طبيعي صافي (بدون سكر)";
+          gradeBadge.innerText = tr3("دبس رمان طبيعي صافي (بدون سكر)", "Pure Organic Syrup (Zero Sugar Added)", "Reiner Granatapfelsirup (ohne Zuckerzusatz)");
           gradeBadge.className = "bg-rose-100 text-rose-900 border border-rose-300 text-[10px] font-black px-2.5 py-1 rounded-full";
         }
-        if (serialEl) serialEl.innerText = `${isEn ? 'Batch Record:' : 'رقم الاعتماد:'} SYR-PMGT-2026-0155`;
-        if (weightOilEl) weightOilEl.innerText = isEn ? "Fruit Yield: 110 kg ➔ 16.5 L Pure Molasses" : "الإنتاج: 110 كغ ثمار ➔ 16.5 لتر دبس صافي";
-        if (yieldRateEl) yieldRateEl.innerText = isEn ? "Extraction Ratio: 15.0%" : "نسبة الاستخلاص المركّز: 15.0%";
+        if (serialEl) serialEl.innerText = `${tr3('رقم الاعتماد:', 'Batch Record:', 'Chargennummer:')} SYR-PMGT-2026-0155`;
+        if (weightOilEl) weightOilEl.innerText = tr3("الإنتاج: 110 كغ ثمار ➔ 16.5 لتر دبس صافي", "Fruit Yield: 110 kg ➔ 16.5 L Pure Molasses", "Fruchtertrag: 110 kg ➔ 16.5 L reiner Granatapfelsirup");
+        if (yieldRateEl) yieldRateEl.innerText = tr3("نسبة الاستخلاص المركّز: 15.0%", "Extraction Ratio: 15.0%", "Ausbeute: 15.0%");
 
-        if (acidityLabel) acidityLabel.innerText = isEn ? "Total Soluble Solids (Brix Density):" : "كثافة السكريات الطبيعية (Brix):";
-        if (acidityEl) acidityEl.innerText = isEn ? "16.5° Brix (Optimal Natural Sweetness)" : "16.5° بريكس (حلاوة طبيعية متوازنة)";
-        if (peroxideLabel) peroxideLabel.innerText = isEn ? "Natural Titratable Acidity:" : "الحموضة الطبيعية (معبر عنها بحمض الستريك):";
-        if (peroxideEl) peroxideEl.innerText = isEn ? "1.35% (Invigorating Tangy Balance)" : "1.35% (مذاق حامض بلدي منعش)";
-        if (tempLabel) tempLabel.innerText = isEn ? "Extraction Method Temperature:" : "درجة حرارة التركيز بالفراغ:";
-        if (tempEl) tempEl.innerText = isEn ? "48.0° C (Protects Enzymes & Vitamins)" : "48.0° م (حفظ الإنزيمات والفيتامينات)";
-        if (uvLabel) uvLabel.innerText = isEn ? "Antioxidants & Punicalagin Index:" : "مضادات الأكسدة والبوليفينول:";
-        if (uvEl) uvEl.innerText = isEn ? "3,450 mg/L (Immunity Bio-Shield)" : "3,450 مغ/لتر (درع مناعي ومضاد أكسدة)";
+        if (acidityLabel) acidityLabel.innerText = tr3("كثافة السكريات الطبيعية (Brix):", "Total Soluble Solids (Brix Density):", "Lösliche Trockensubstanz (Brix):");
+        if (acidityEl) acidityEl.innerText = tr3("16.5° بريكس (حلاوة طبيعية متوازنة)", "16.5° Brix (Optimal Natural Sweetness)", "16.5° Brix (ausgewogene natürliche Süße)");
+        if (peroxideLabel) peroxideLabel.innerText = tr3("الحموضة الطبيعية (معبر عنها بحمض الستريك):", "Natural Titratable Acidity:", "Natürliche titrierbare Säure:");
+        if (peroxideEl) peroxideEl.innerText = tr3("1.35% (مذاق حامض بلدي منعش)", "1.35% (Invigorating Tangy Balance)", "1.35% (frische, säuerliche Note)");
+        if (tempLabel) tempLabel.innerText = tr3("درجة حرارة التركيز بالفراغ:", "Extraction Method Temperature:", "Temperatur der Vakuumkonzentration:");
+        if (tempEl) tempEl.innerText = tr3("48.0° م (حفظ الإنزيمات والفيتامينات)", "48.0° C (Protects Enzymes & Vitamins)", "48.0° C (schont Enzyme und Vitamine)");
+        if (uvLabel) uvLabel.innerText = tr3("مضادات الأكسدة والبوليفينول:", "Antioxidants & Punicalagin Index:", "Antioxidantien und Punicalagin-Index:");
+        if (uvEl) uvEl.innerText = tr3("3,450 مغ/لتر (درع مناعي ومضاد أكسدة)", "3,450 mg/L (Immunity Bio-Shield)", "3,450 mg/L (Antioxidantiengehalt)");
 
       } else if (category === 'date') {
         // No invented lab figures: a date record exists only once a harvest has been sorted.
-        const pending = isEn ? "Recorded after the harvest" : "يُسجَّل بعد الحصاد";
-        if (subHeadingEl) subHeadingEl.innerText = isEn ? "Date Sorting & Quality Record" : "سجل فرز وجودة التمور";
-        if (millEl) millEl.innerText = isEn ? "Sorting and packing station (assigned after the harvest)" : "محطة الفرز والتعبئة (تُحدَّد بعد الحصاد)";
-        if (operEl) operEl.innerText = isEn ? "Sorting by ripening stage • Hygienic packing" : "فرز حسب مرحلة النضج • تعبئة صحية";
+        const pending = tr3("يُسجَّل بعد الحصاد", "Recorded after the harvest", "Wird nach der Ernte erfasst");
+        if (subHeadingEl) subHeadingEl.innerText = tr3("سجل فرز وجودة التمور", "Date Sorting & Quality Record", "Sortier- und Qualitätsprotokoll für Datteln");
+        if (millEl) millEl.innerText = tr3("محطة الفرز والتعبئة (تُحدَّد بعد الحصاد)", "Sorting and packing station (assigned after the harvest)", "Sortier- und Packstation (wird nach der Ernte festgelegt)");
+        if (operEl) operEl.innerText = tr3("فرز حسب مرحلة النضج • تعبئة صحية", "Sorting by ripening stage • Hygienic packing", "Sortierung nach Reifestadium • Hygienische Verpackung");
         if (gradeBadge) {
-          gradeBadge.innerText = isEn ? "Record pending first harvest" : "السجل بانتظار أول موسم";
+          gradeBadge.innerText = tr3("السجل بانتظار أول موسم", "Record pending first harvest", "Protokoll folgt nach der ersten Ernte");
           gradeBadge.className = "bg-amber-100 text-amber-900 border border-amber-300 text-[10px] font-black px-2.5 py-1 rounded-full";
         }
-        if (serialEl) serialEl.innerText = `${isEn ? 'Batch Record:' : 'رقم الاعتماد:'} —`;
+        if (serialEl) serialEl.innerText = `${tr3('رقم الاعتماد:', 'Batch Record:', 'Chargennummer:')} —`;
         if (weightOilEl) weightOilEl.innerText = pending;
         if (yieldRateEl) yieldRateEl.innerText = pending;
-        if (acidityLabel) acidityLabel.innerText = isEn ? "Ripening stage at harvest:" : "مرحلة النضج عند القطاف:";
+        if (acidityLabel) acidityLabel.innerText = tr3("مرحلة النضج عند القطاف:", "Ripening stage at harvest:", "Reifestadium bei der Ernte:");
         if (acidityEl) acidityEl.innerText = pending;
-        if (peroxideLabel) peroxideLabel.innerText = isEn ? "Moisture content:" : "نسبة الرطوبة:";
+        if (peroxideLabel) peroxideLabel.innerText = tr3("نسبة الرطوبة:", "Moisture content:", "Feuchtegehalt:");
         if (peroxideEl) peroxideEl.innerText = pending;
-        if (tempLabel) tempLabel.innerText = isEn ? "Sorting grade:" : "درجة الفرز:";
+        if (tempLabel) tempLabel.innerText = tr3("درجة الفرز:", "Sorting grade:", "Sortierklasse:");
         if (tempEl) tempEl.innerText = pending;
-        if (uvLabel) uvLabel.innerText = isEn ? "Storage:" : "التخزين:";
+        if (uvLabel) uvLabel.innerText = tr3("التخزين:", "Storage:", "Lagerung:");
         if (uvEl) uvEl.innerText = pending;
 
       } else {
         // Olive standard Extra Virgin
-        if (subHeadingEl) subHeadingEl.innerText = isEn ? "Chemical & Spectrophotometric Extra Virgin Olive Oil Analysis" : "الفحص الكيميائي والمطيافي لزيت الزيتون البكر الممتاز";
+        if (subHeadingEl) subHeadingEl.innerText = tr3("الفحص الكيميائي والمطيافي لزيت الزيتون البكر الممتاز", "Chemical & Spectrophotometric Extra Virgin Olive Oil Analysis", "Chemische und spektrophotometrische Analyse des nativen Olivenöls extra");
         if (millEl) millEl.innerText = isEn ? (tree.mill_name_en || tree.mill_name) : tree.mill_name;
-        if (operEl) operEl.innerText = isEn 
-          ? `Cold Extraction Technology < 25°C • Two-Phase Centrifuge • ${tree.region_en || tree.region}`
-          : `تقنية العصر البارد الإيطالي مرحلتين دون 25° م • قطاع ${tree.region}`;
+        if (operEl) operEl.innerText = tr3(
+          `تقنية العصر البارد الإيطالي مرحلتين دون 25° م • قطاع ${tree.region}`,
+          `Cold Extraction Technology < 25°C • Two-Phase Centrifuge • ${tree.region_en || tree.region}`,
+          `Kaltextraktion < 25°C • Zwei-Phasen-Zentrifuge • ${tree.region_en || tree.region}`);
         if (gradeBadge) {
-          gradeBadge.innerText = isEn ? "Ultra Extra Virgin EVOO" : "بكر ممتاز فائق (Extra Virgin)";
+          gradeBadge.innerText = tr3("بكر ممتاز فائق (Extra Virgin)", "Ultra Extra Virgin EVOO", "Natives Olivenöl extra");
           gradeBadge.className = "bg-emerald-100 text-emerald-800 border border-emerald-300 text-[10px] font-black px-2.5 py-1 rounded-full";
         }
         if (serialEl) serialEl.innerText = tree.mill_batch_serial 
-          ? `${isEn ? 'Batch Record:' : 'رقم الاعتماد:'} ${tree.mill_batch_serial}`
-          : `${isEn ? 'Batch Record:' : 'رقم الاعتماد:'} SYR-MILL-2026-${tree.id.replace('tree_','00')}`;
-        if (weightOilEl) weightOilEl.innerText = isEn ? "Fruit: 68.5 kg ➔ 14.8 L Oil" : "الوزن: 68.5 كغ ثمار ➔ 14.8 لتر زيت";
-        if (yieldRateEl) yieldRateEl.innerText = isEn ? "Yield Rate: 21.6%" : "نسبة السيولة: 21.6%";
+          ? `${tr3('رقم الاعتماد:', 'Batch Record:', 'Chargennummer:')} ${tree.mill_batch_serial}`
+          : `${tr3('رقم الاعتماد:', 'Batch Record:', 'Chargennummer:')} SYR-MILL-2026-${tree.id.replace('tree_','00')}`;
+        if (weightOilEl) weightOilEl.innerText = tr3("الوزن: 68.5 كغ ثمار ➔ 14.8 لتر زيت", "Fruit: 68.5 kg ➔ 14.8 L Oil", "Früchte: 68.5 kg ➔ 14.8 L Öl");
+        if (yieldRateEl) yieldRateEl.innerText = tr3("نسبة السيولة: 21.6%", "Yield Rate: 21.6%", "Ölausbeute: 21.6%");
 
-        if (acidityLabel) acidityLabel.innerText = isEn ? "Free Acidity (IOC Standard):" : "درجة الحموضة الحرة (Free Acidity):";
-        if (acidityEl) acidityEl.innerText = isEn ? "0.28% (Intl Extra Virgin < 0.80%)" : "0.28% (المعيار الدولي < 0.80%)";
-        if (peroxideLabel) peroxideLabel.innerText = isEn ? "Peroxide Value (PV):" : "رقم البيروكسيد (Peroxide Value):";
-        if (peroxideEl) peroxideEl.innerText = isEn ? "5.2 meq O2/kg (Max Allowed: 20)" : "5.2 meq O2/kg (الحد الأقصى المسموح 20)";
-        if (tempLabel) tempLabel.innerText = isEn ? "Cold Mechanical Press Temp:" : "درجة حرارة العصر الميكانيكي:";
-        if (tempEl) tempEl.innerText = isEn ? "23.4° C (Certified Pure Cold-Press)" : "23.4° م (عصر بارد حقيقي معتمد)";
-        if (uvLabel) uvLabel.innerText = isEn ? "UV Spectrophotometry (K232 / K270):" : "معاملات الامتصاص الطيفي (UV K232 / K270):";
-        if (uvEl) uvEl.innerText = isEn ? "K232: 1.58 | K270: 0.12 (Ultra Pure)" : "K232: 1.58 | K270: 0.12 (نقاء طيفي فائق)";
+        if (acidityLabel) acidityLabel.innerText = tr3("درجة الحموضة الحرة (Free Acidity):", "Free Acidity (IOC Standard):", "Freie Säure (IOC-Standard):");
+        if (acidityEl) acidityEl.innerText = tr3("0.28% (المعيار الدولي < 0.80%)", "0.28% (Intl Extra Virgin < 0.80%)", "0.28% (internationaler Grenzwert Extra Vergine < 0.80%)");
+        if (peroxideLabel) peroxideLabel.innerText = tr3("رقم البيروكسيد (Peroxide Value):", "Peroxide Value (PV):", "Peroxidzahl (PV):");
+        if (peroxideEl) peroxideEl.innerText = tr3("5.2 meq O2/kg (الحد الأقصى المسموح 20)", "5.2 meq O2/kg (Max Allowed: 20)", "5.2 meq O2/kg (zulässiger Höchstwert: 20)");
+        if (tempLabel) tempLabel.innerText = tr3("درجة حرارة العصر الميكانيكي:", "Cold Mechanical Press Temp:", "Temperatur der mechanischen Kaltpressung:");
+        if (tempEl) tempEl.innerText = tr3("23.4° م (عصر بارد حقيقي معتمد)", "23.4° C (Certified Pure Cold-Press)", "23.4° C (zertifizierte Kaltpressung)");
+        if (uvLabel) uvLabel.innerText = tr3("معاملات الامتصاص الطيفي (UV K232 / K270):", "UV Spectrophotometry (K232 / K270):", "UV-Spektrophotometrie (K232 / K270):");
+        if (uvEl) uvEl.innerText = tr3("K232: 1.58 | K270: 0.12 (نقاء طيفي فائق)", "K232: 1.58 | K270: 0.12 (Ultra Pure)", "K232: 1.58 | K270: 0.12 (sehr rein)");
       }
 
       openModal('modal-lab-cert');
@@ -13998,13 +14031,13 @@ function showFarmerPayoutVoucher(payoutId) {
       const isEn = state.currentLang !== 'ar';
       const payout = (state.farmerPayouts || []).find(p => p.id === payoutId || p.receipt_num === payoutId);
       if (!payout) {
-        showToast(isEn ? 'Voucher not found' : 'لم يتم العثور على الإشعار المالي');
+        showToast(tr3('لم يتم العثور على الإشعار المالي', 'Voucher not found', 'Beleg nicht gefunden'));
         return;
       }
-      const title = isEn ? `🧾 Official Voucher ${payout.receipt_num || payout.id}` : `🧾 إشعار صرف مالي رسمي: ${payout.receipt_num || payout.id}`;
+      const title = tr3(`🧾 إشعار صرف مالي رسمي: ${payout.receipt_num || payout.id}`, `🧾 Official Voucher ${payout.receipt_num || payout.id}`, `🧾 Offizieller Auszahlungsbeleg ${payout.receipt_num || payout.id}`);
       const channel = isEn ? (payout.channel_en || payout.channel) : payout.channel;
       const desc = isEn ? (payout.work_desc_en || payout.work_desc) : payout.work_desc;
-      const amountStr = `${payout.amount_syp.toLocaleString()} ${isEn ? 'SYP' : 'ل.س'} ($${payout.amount_usd})`;
+      const amountStr = `${payout.amount_syp.toLocaleString()} ${tr3('ل.س', 'SYP', 'SYP')} ($${payout.amount_usd})`;
       
       showToast(`${title}
 ${desc} • ${amountStr}
@@ -14221,37 +14254,37 @@ function setMarketplaceViewMode(mode) {
     let activeTags = [];
 
     if (searchVal) {
-      activeTags.push({ label: `${state.currentLang !== 'ar' ? 'Search:' : 'بحث:'} "${searchVal}"`, clear: () => { searchInput.value = ''; renderMarketplace(); } });
+      activeTags.push({ label: `${tr3('بحث:', 'Search:', 'Suche:')} "${searchVal}"`, clear: () => { searchInput.value = ''; renderMarketplace(); } });
     }
     if (filterCountry !== 'all') {
       activeTags.push({ label: `${t('filter_country_lbl')}: ${countryName(filterCountry)}`, clear: () => { document.getElementById('filter-country').value = 'all'; renderMarketplace(); } });
     }
     if (filterRegion !== 'all') {
-      activeTags.push({ label: `${state.currentLang !== 'ar' ? 'Region:' : 'المنطقة:'} ${document.getElementById('filter-region')?.selectedOptions?.[0]?.textContent || filterRegion}`, clear: () => { document.getElementById('filter-region').value = 'all'; renderMarketplace(); } });
+      activeTags.push({ label: `${tr3('المنطقة:', 'Region:', 'Region:')} ${document.getElementById('filter-region')?.selectedOptions?.[0]?.textContent || filterRegion}`, clear: () => { document.getElementById('filter-region').value = 'all'; renderMarketplace(); } });
     }
     if (filterVariety !== 'all') {
-      activeTags.push({ label: `${state.currentLang !== 'ar' ? 'Variety:' : 'الصنف:'} ${filterVariety}`, clear: () => { document.getElementById('filter-variety').value = 'all'; renderMarketplace(); } });
+      activeTags.push({ label: `${tr3('الصنف:', 'Variety:', 'Sorte:')} ${filterVariety}`, clear: () => { document.getElementById('filter-variety').value = 'all'; renderMarketplace(); } });
     }
     if (filterAge !== 'all') {
-      const ageText = filterAge === 'heritage' ? (state.currentLang !== 'ar' ? 'Heritage (+50y)' : 'معمرة (+50 سنة)') : filterAge === 'prime' ? (state.currentLang !== 'ar' ? 'Prime (20-50y)' : 'مثمرة (20-50 سنة)') : (state.currentLang !== 'ar' ? 'Young (<20y)' : 'حديثة (<20 سنة)');
+      const ageText = filterAge === 'heritage' ? (tr3('معمرة (+50 سنة)', 'Heritage (+50y)', 'Altbaum (+50 J.)')) : filterAge === 'prime' ? (tr3('مثمرة (20-50 سنة)', 'Prime (20-50y)', 'Ertragsstark (20-50 J.)')) : (tr3('حديثة (<20 سنة)', 'Young (<20y)', 'Jung (<20 J.)'));
       activeTags.push({ label: ageText, clear: () => { document.getElementById('filter-age').value = 'all'; renderMarketplace(); } });
     }
     if (filterPrice !== 'all') {
       const priceText = filterPrice === 'low' ? '< $30' : filterPrice === 'mid' ? '$30 - $35' : '> $35';
-      activeTags.push({ label: `${state.currentLang !== 'ar' ? 'Price:' : 'السعر:'} ${priceText}`, clear: () => { document.getElementById('filter-price').value = 'all'; renderMarketplace(); } });
+      activeTags.push({ label: `${tr3('السعر:', 'Price:', 'Preis:')} ${priceText}`, clear: () => { document.getElementById('filter-price').value = 'all'; renderMarketplace(); } });
     }
     if (filterLand !== 'all') {
-      activeTags.push({ label: state.currentLang !== 'ar' ? 'With 5m² Land' : 'شجرة + 5 م² أرض طابو', clear: () => { document.getElementById('filter-land').value = 'all'; renderMarketplace(); } });
+      activeTags.push({ label: tr3('شجرة + 5 م² أرض طابو', 'With 5m² Land', 'Mit 5 m² Land'), clear: () => { document.getElementById('filter-land').value = 'all'; renderMarketplace(); } });
     }
     if (filterCrop !== 'all') {
-      const cropLabel = filterCrop === 'olive' ? (state.currentLang !== 'ar' ? 'Olives' : 'الزيتون المبارك') :
-                        filterCrop === 'pistachio' ? (state.currentLang !== 'ar' ? 'Aleppo Pistachio' : 'الفستق الحلبي') :
-                        filterCrop === 'almond_walnut' ? (state.currentLang !== 'ar' ? 'Almonds & Walnuts' : 'اللوزيات والجوز') :
-                        filterCrop === 'almond' ? (state.currentLang !== 'ar' ? 'Syrian Almonds' : 'اللوزيات السورية') :
-                        filterCrop === 'walnut' ? (state.currentLang !== 'ar' ? 'Mountain Walnuts' : 'الجوز البلدي') :
-                        filterCrop === 'pomegranate' ? (state.currentLang !== 'ar' ? 'Sweet Pomegranate' : 'رمان حوران') :
-                        filterCrop === 'date' ? (state.currentLang !== 'ar' ? 'Date Palm' : 'نخيل التمر') : filterCrop;
-      activeTags.push({ label: `${state.currentLang !== 'ar' ? 'Crop:' : 'المحصول:'} ${cropLabel}`, clear: () => { setCropCategoryFilter('all'); } });
+      const cropLabel = filterCrop === 'olive' ? (tr3('الزيتون المبارك', 'Olives', 'Oliven')) :
+                        filterCrop === 'pistachio' ? (tr3('الفستق الحلبي', 'Aleppo Pistachio', 'Aleppo-Pistazie')) :
+                        filterCrop === 'almond_walnut' ? (tr3('اللوزيات والجوز', 'Almonds & Walnuts', 'Mandeln & Walnüsse')) :
+                        filterCrop === 'almond' ? (tr3('اللوزيات السورية', 'Syrian Almonds', 'Syrische Mandeln')) :
+                        filterCrop === 'walnut' ? (tr3('الجوز البلدي', 'Mountain Walnuts', 'Bergwalnüsse')) :
+                        filterCrop === 'pomegranate' ? (tr3('رمان حوران', 'Sweet Pomegranate', 'Süßer Granatapfel')) :
+                        filterCrop === 'date' ? (tr3('نخيل التمر', 'Date Palm', 'Dattelpalme')) : filterCrop;
+      activeTags.push({ label: `${tr3('المحصول:', 'Crop:', 'Baumart:')} ${cropLabel}`, clear: () => { setCropCategoryFilter('all'); } });
     }
 
     if (activeFiltersBar && activeTagsContainer) {
@@ -14349,17 +14382,17 @@ function setMarketplaceViewMode(mode) {
     const countBadge = document.getElementById('marketplace-count-badge');
     const statTreesCount = document.getElementById('mkt-stat-trees-count');
     if (statTreesCount) {
-      statTreesCount.innerText = isEn ? `${state.trees.length} Trees` : `${state.trees.length} أشجار`;
+      statTreesCount.innerText = tr3(`${state.trees.length} أشجار`, `${state.trees.length} Trees`, `${state.trees.length} Bäume`);
     }
     if (countBadge) {
       if (filtered.length === 0) {
-        countBadge.innerText = isEn ? '0 Trees Found' : '0 أشجار مطابقة';
+        countBadge.innerText = tr3('0 أشجار مطابقة', '0 Trees Found', '0 Bäume gefunden');
       } else if (filtered.length === 1) {
-        countBadge.innerText = isEn ? '1 Tree Available' : 'شجرة واحدة متاحة';
+        countBadge.innerText = tr3('شجرة واحدة متاحة', '1 Tree Available', '1 Baum verfügbar');
       } else if (filtered.length === 2) {
-        countBadge.innerText = isEn ? '2 Trees Available' : 'شجرتان متاحتان';
+        countBadge.innerText = tr3('شجرتان متاحتان', '2 Trees Available', '2 Bäume verfügbar');
       } else {
-        countBadge.innerText = isEn ? `${filtered.length} Trees Available` : `${filtered.length} أشجار متاحة`;
+        countBadge.innerText = tr3(`${filtered.length} أشجار متاحة`, `${filtered.length} Trees Available`, `${filtered.length} Bäume verfügbar`);
       }
     }
 
@@ -14404,7 +14437,7 @@ function setMarketplaceViewMode(mode) {
               <div class="relative w-24 h-24 rounded-2xl overflow-hidden flex-shrink-0 border border-stone-200">
                 <img loading="lazy" src="${tree.images[0]}" alt="${displayName}" class="w-full h-full object-cover group-hover:scale-105 transition-all duration-300">
                 <span data-feature="land" class="absolute bottom-1 start-1 bg-emerald-800 text-white text-[8px] font-black px-1.5 py-0.5 rounded-full">
-                  ${state.currentLang !== 'ar' ? '5 m² Land' : '5 م² أرض'}
+                  ${tr3('5 م² أرض', '5 m² Land', '5 m² Land')}
                 </span>
               </div>
               <div class="space-y-1">
@@ -14426,12 +14459,12 @@ function setMarketplaceViewMode(mode) {
                 <div class="flex items-baseline gap-2">
                   <span class="text-xl font-black text-stone-900">${formatMoney(tree.price_per_share)}</span>
                   <span data-feature="land" class="text-[10px] font-black text-emerald-800 bg-emerald-50 border border-emerald-300 px-2 py-0.5 rounded-md">
-                    ${formatMoney(tree.price_per_share + (tree.land_parcel?.land_addon_price_usd || 18))} ${state.currentLang !== 'ar' ? 'w/ land' : 'مع أرض'}
+                    ${formatMoney(tree.price_per_share + (tree.land_parcel?.land_addon_price_usd || 18))} ${tr3('مع أرض', 'w/ land', 'mit Land')}
                   </span>
                 </div>
                 ${(tree.total_shares_available || 0) <= 0 ? `
                   <span class="text-[10px] font-black text-rose-700 bg-rose-50 border border-rose-200 px-2 py-0.5 rounded-md block mt-0.5">
-                    ${state.currentLang !== 'ar' ? 'Sold Out (100%)' : 'مكتمل الاكتتاب (100%)'}
+                    ${tr3('مكتمل الاكتتاب (100%)', 'Sold Out (100%)', 'Vollständig vergeben (100%)')}
                   </span>
                 ` : `
                   <span class="text-[10px] font-bold text-terracotta-600 block mt-0.5">
@@ -14446,9 +14479,9 @@ function setMarketplaceViewMode(mode) {
                   <span>${t('btn_view_tree')}</span>
                 </button>
                 ${(tree.total_shares_available || 0) <= 0 ? `
-                  <button data-click="viewTreeDetails('${tree.id}')" class="bg-stone-200 text-stone-500 px-4 py-2.5 rounded-xl font-bold text-xs flex items-center gap-1.5 cursor-pointer" title="${state.currentLang !== 'ar' ? 'Tree fully subscribed' : 'اكتمل الاكتتاب بالكامل'}">
+                  <button data-click="viewTreeDetails('${tree.id}')" class="bg-stone-200 text-stone-500 px-4 py-2.5 rounded-xl font-bold text-xs flex items-center gap-1.5 cursor-pointer" title="${tr3('اكتمل الاكتتاب بالكامل', 'Tree fully subscribed', 'Alle Anteile dieses Baums sind vergeben')}">
                     <i data-lucide="lock" class="w-3.5 h-3.5"></i>
-                    <span>${state.currentLang !== 'ar' ? 'Sold Out' : 'مكتمل الاكتتاب'}</span>
+                    <span>${tr3('مكتمل الاكتتاب', 'Sold Out', 'Vergeben')}</span>
                   </button>
                 ` : `
                   <button data-click="openInvestModal('${tree.id}')" class="bg-olive-700 hover:bg-olive-800 text-white px-5 py-2.5 rounded-xl font-black text-xs transition-all shadow-xs flex items-center gap-1.5 cursor-pointer">
@@ -14485,7 +14518,7 @@ function setMarketplaceViewMode(mode) {
                 </span>
                 <span data-feature="land" class="absolute bottom-3 end-3 bg-emerald-800 text-white text-[10px] font-black px-2.5 py-1 rounded-full shadow-xs border border-emerald-400/40 flex items-center gap-1">
                   <i data-lucide="map" class="w-3 h-3"></i>
-                  <span>🌿 + ${state.currentLang !== 'ar' ? '5 m² Deed Land' : '5 م² أرض طابو'}</span>
+                  <span>🌿 + ${tr3('5 م² أرض طابو', '5 m² Deed Land', '5 m² eingetragenes Land')}</span>
                 </span>
                 <span class="absolute bottom-3 start-3 ${meta.badgeBg} text-[9px] font-black px-2 py-0.5 rounded-full backdrop-blur-xs shadow-xs">
                   ${meta.badge}
@@ -14516,15 +14549,15 @@ function setMarketplaceViewMode(mode) {
                 <div class="space-y-1 pt-1">
                   ${(tree.total_shares_available || 0) <= 0 ? `
                     <div class="flex justify-between text-[10px] font-bold">
-                      <span class="text-stone-500">${state.currentLang !== 'ar' ? 'Status:' : 'حالة الاكتتاب:'}</span>
-                      <span class="text-rose-700 font-black">${state.currentLang !== 'ar' ? 'Fully Subscribed (100%)' : 'مكتمل الاكتتاب (100%)'}</span>
+                      <span class="text-stone-500">${tr3('حالة الاكتتاب:', 'Status:', 'Status:')}</span>
+                      <span class="text-rose-700 font-black">${tr3('مكتمل الاكتتاب (100%)', 'Fully Subscribed (100%)', 'Vollständig vergeben (100%)')}</span>
                     </div>
                     <div class="w-full bg-rose-100 h-1.5 rounded-full overflow-hidden">
                       <div class="bg-rose-600 h-full rounded-full" style="width: 100%"></div>
                     </div>
                   ` : `
                     <div class="flex justify-between text-[10px] font-bold">
-                      <span class="text-stone-500">${state.currentLang !== 'ar' ? 'Available Shares:' : 'الحصص المتاحة:'}</span>
+                      <span class="text-stone-500">${tr3('الحصص المتاحة:', 'Available Shares:', 'Verfügbare Anteile:')}</span>
                       <span class="text-terracotta-600 font-black">${tree.total_shares_available}% ${t('avail_label')}</span>
                     </div>
                     <div class="w-full bg-stone-100 h-1.5 rounded-full overflow-hidden">
@@ -14539,17 +14572,17 @@ function setMarketplaceViewMode(mode) {
             <div class="p-5 pt-0">
               <div class="flex items-center justify-between border-t border-stone-100 pt-3 mb-3">
                 <div>
-                  <span class="text-[10px] text-stone-400 block">${state.currentLang !== 'ar' ? 'Pricing Packages:' : 'خيارات الكفالة:'}</span>
+                  <span class="text-[10px] text-stone-400 block">${tr3('خيارات الكفالة:', 'Pricing Packages:', 'Patenschaftsoptionen:')}</span>
                   <div class="flex items-baseline gap-2">
                     <span class="text-lg font-black text-stone-900 dark:text-white">${formatMoney(tree.price_per_share)}</span>
-                    <span data-feature="land" class="text-[10px] font-black text-emerald-800 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-300 dark:border-emerald-700/60 px-2 py-0.5 rounded-md" title="${state.currentLang !== 'ar' ? 'With 5 m² Registered Land Plot' : 'مع مقسم 5 م² أرض طابو'}">
-                      ${formatMoney(tree.price_per_share + (tree.land_parcel?.land_addon_price_usd || 18))} ${state.currentLang !== 'ar' ? 'w/ land' : 'مع أرض'}
+                    <span data-feature="land" class="text-[10px] font-black text-emerald-800 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-300 dark:border-emerald-700/60 px-2 py-0.5 rounded-md" title="${tr3('مع مقسم 5 م² أرض طابو', 'With 5 m² Registered Land Plot', 'Mit 5 m² eingetragener Landparzelle')}">
+                      ${formatMoney(tree.price_per_share + (tree.land_parcel?.land_addon_price_usd || 18))} ${tr3('مع أرض', 'w/ land', 'mit Land')}
                     </span>
                   </div>
                 </div>
-                <button data-feature="land" data-click="viewTreeDetails('${tree.id}')" title="${state.currentLang !== 'ar' ? 'View Cadastral Blueprint' : 'معاينة المخطط المساحي'}" class="text-emerald-700 hover:text-emerald-900 text-xs font-bold flex items-center gap-0.5 bg-emerald-50 px-2 py-1 rounded-lg cursor-pointer">
+                <button data-feature="land" data-click="viewTreeDetails('${tree.id}')" title="${tr3('معاينة المخطط المساحي', 'View Cadastral Blueprint', 'Katasterplan ansehen')}" class="text-emerald-700 hover:text-emerald-900 text-xs font-bold flex items-center gap-0.5 bg-emerald-50 px-2 py-1 rounded-lg cursor-pointer">
                   <i data-lucide="map" class="w-3.5 h-3.5"></i>
-                  <span>${state.currentLang !== 'ar' ? '5 m²' : '5 م²'}</span>
+                  <span>${tr3('5 م²', '5 m²', '5 m²')}</span>
                 </button>
               </div>
 
@@ -14559,9 +14592,9 @@ function setMarketplaceViewMode(mode) {
                   <span>${t('btn_view_tree')}</span>
                 </button>
                 ${(tree.total_shares_available || 0) <= 0 ? `
-                  <button data-click="viewTreeDetails('${tree.id}')" class="w-full bg-stone-200 text-stone-500 py-2.5 rounded-xl font-bold text-xs text-center flex items-center justify-center gap-1 cursor-pointer" title="${state.currentLang !== 'ar' ? 'Tree fully subscribed' : 'اكتمل الاكتتاب بالكامل'}">
+                  <button data-click="viewTreeDetails('${tree.id}')" class="w-full bg-stone-200 text-stone-500 py-2.5 rounded-xl font-bold text-xs text-center flex items-center justify-center gap-1 cursor-pointer" title="${tr3('اكتمل الاكتتاب بالكامل', 'Tree fully subscribed', 'Alle Anteile dieses Baums sind vergeben')}">
                     <i data-lucide="lock" class="w-3.5 h-3.5"></i>
-                    <span>${state.currentLang !== 'ar' ? 'Sold Out' : 'مكتمل الاكتتاب'}</span>
+                    <span>${tr3('مكتمل الاكتتاب', 'Sold Out', 'Vergeben')}</span>
                   </button>
                 ` : `
                   <button data-click="openInvestModal('${tree.id}')" class="w-full bg-olive-700 hover:bg-olive-800 text-white py-2.5 rounded-xl font-black text-xs transition-all text-center shadow-xs flex items-center justify-center gap-1 cursor-pointer">
@@ -14603,7 +14636,7 @@ function setMarketplaceViewMode(mode) {
                 <span class="text-xs font-bold text-stone-500 dark:text-stone-400 font-mono">GPS: 34.8921 N, 36.1284 E</span>
               </div>
               <h1 class="text-2xl sm:text-3xl font-black text-stone-900 dark:text-white">${title}</h1>
-              <p class="text-stone-600 dark:text-stone-300 text-xs">${region} • ${isEn ? 'Greenfield Virgin Olive Project with Land Title Deed' : 'مشروع بستان زيتون بكر تأسيسي مع طابو أرض زراعية مستقل'}</p>
+              <p class="text-stone-600 dark:text-stone-300 text-xs">${region} • ${tr3('مشروع بستان زيتون بكر تأسيسي مع طابو أرض زراعية مستقل', 'Greenfield Virgin Olive Project with Land Title Deed', 'Neu angelegter Olivenhain mit eigener, eingetragener Landparzelle')}</p>
 
               <div class="rounded-2xl overflow-hidden shadow-sm h-72 border border-stone-200 dark:border-stone-700">
                 <img alt="" loading="lazy" src="${vg.image || 'images/tree_ancient_khodairi.webp'}" class="w-full h-full object-cover">
@@ -14618,20 +14651,20 @@ function setMarketplaceViewMode(mode) {
                     <i data-lucide="map" class="w-5 h-5"></i>
                   </div>
                   <div>
-                    <h3 class="font-black text-stone-900 dark:text-white text-base" data-i18n="vg_detail_blueprint_lbl">${isEn ? 'Topographic Blueprint & Solar Drip Network' : 'المخطط الطوبوغرافي وشبكة الري بالطاقة الشمسية'}</h3>
+                    <h3 class="font-black text-stone-900 dark:text-white text-base" data-i18n="vg_detail_blueprint_lbl">${tr3('المخطط الطوبوغرافي وشبكة الري بالطاقة الشمسية', 'Topographic Blueprint & Solar Drip Network', 'Topografischer Plan & solarbetriebene Tropfbewässerung')}</h3>
                     <span class="text-xs text-stone-500 dark:text-stone-400">${status}</span>
                   </div>
                 </div>
-                <span class="bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 text-xs font-bold px-3 py-1 rounded-full">${vg.land_area_per_sapling_sqm} m² / ${isEn ? 'sapling' : 'غرسة'}</span>
+                <span class="bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 text-xs font-bold px-3 py-1 rounded-full">${vg.land_area_per_sapling_sqm} m² / ${tr3('غرسة', 'sapling', 'Setzling')}</span>
               </div>
 
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                 <div class="bg-stone-50 dark:bg-stone-800/80 p-3.5 rounded-2xl border border-stone-200 dark:border-stone-700 space-y-1">
-                  <strong class="text-stone-900 dark:text-white block font-bold">${isEn ? 'Soil Properties:' : 'خصائص التربة:'}</strong>
+                  <strong class="text-stone-900 dark:text-white block font-bold">${tr3('خصائص التربة:', 'Soil Properties:', 'Bodeneigenschaften:')}</strong>
                   <p class="text-stone-600 dark:text-stone-300">${soil}</p>
                 </div>
                 <div class="bg-stone-50 dark:bg-stone-800/80 p-3.5 rounded-2xl border border-stone-200 dark:border-stone-700 space-y-1">
-                  <strong class="text-stone-900 dark:text-white block font-bold">${isEn ? 'Irrigation Technology:' : 'تقنية الري:'}</strong>
+                  <strong class="text-stone-900 dark:text-white block font-bold">${tr3('تقنية الري:', 'Irrigation Technology:', 'Bewässerungstechnik:')}</strong>
                   <p class="text-stone-600 dark:text-stone-300">${irrigation}</p>
                 </div>
               </div>
@@ -14642,21 +14675,21 @@ function setMarketplaceViewMode(mode) {
           <div class="lg:col-span-4 sticky top-24 space-y-4">
             <div class="bg-white dark:bg-stone-900 rounded-3xl p-6 border border-stone-200 dark:border-stone-800 shadow-xl space-y-5">
               <div>
-                <span class="text-xs text-stone-500 dark:text-stone-400 block mb-1">${isEn ? 'Unit Package (1 Sapling + 25 m² Land):' : 'سعر الباقة الواحدة (غرسة + 25 م² أرض):'}</span>
+                <span class="text-xs text-stone-500 dark:text-stone-400 block mb-1">${tr3('سعر الباقة الواحدة (غرسة + 25 م² أرض):', 'Unit Package (1 Sapling + 25 m² Land):', 'Preis pro Paket (1 Setzling + 25 m² Land):')}</span>
                 <div class="text-3xl font-black text-terracotta-600 dark:text-terracotta-400 font-mono">${formatMoney(vg.price_per_sapling_with_land)}</div>
               </div>
 
               <div class="space-y-2 pt-2 border-t border-stone-100 dark:border-stone-800 text-xs">
                 <div class="flex justify-between text-stone-600 dark:text-stone-300">
-                  <span>${isEn ? 'Available Saplings:' : 'الغراس المتاحة:'}</span>
+                  <span>${tr3('الغراس المتاحة:', 'Available Saplings:', 'Verfügbare Setzlinge:')}</span>
                   <strong class="text-stone-900 dark:text-white">${vg.available_saplings} / ${vg.total_saplings}</strong>
                 </div>
                 <div class="flex justify-between text-stone-600 dark:text-stone-300">
-                  <span>${isEn ? 'Sapling Age:' : 'عمر الغراس:'}</span>
-                  <strong class="text-stone-900 dark:text-white">${vg.sapling_age_years} ${isEn ? 'Years' : 'سنوات'}</strong>
+                  <span>${tr3('عمر الغراس:', 'Sapling Age:', 'Alter der Setzlinge:')}</span>
+                  <strong class="text-stone-900 dark:text-white">${vg.sapling_age_years} ${tr3('سنوات', 'Years', 'Jahre')}</strong>
                 </div>
                 <div class="flex justify-between text-stone-600 dark:text-stone-300">
-                  <span>${isEn ? 'First Harvest:' : 'باكورة الإنتاج:'}</span>
+                  <span>${tr3('باكورة الإنتاج:', 'First Harvest:', 'Erste Ernte:')}</span>
                   <strong class="text-stone-900 dark:text-white">${vg.first_commercial_harvest_year}</strong>
                 </div>
               </div>
@@ -14664,11 +14697,11 @@ function setMarketplaceViewMode(mode) {
               <div class="space-y-2 pt-2">
                 <button type="button" data-click="investInVirginPackage('${vg.id}', 1, ${vg.price_per_sapling_with_land}, ${vg.land_area_per_sapling_sqm})" class="w-full bg-emerald-700 hover:bg-emerald-800 text-white py-3.5 rounded-2xl font-black text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer">
                   <i data-lucide="shopping-bag" class="w-4 h-4"></i>
-                  <span>${isEn ? 'Invest (1 Sapling + 25 m²)' : 'اكتتب بغرسة واحدة + 25 م²'}</span>
+                  <span>${tr3('اكتتب بغرسة واحدة + 25 م²', 'Invest (1 Sapling + 25 m²)', 'Pate werden (1 Setzling + 25 m²)')}</span>
                 </button>
                 <button type="button" data-click="investInVirginPackage('${vg.id}', 10, ${(vg.price_per_sapling_with_land * 9).toFixed(2)}, 250)" class="w-full bg-olive-800 hover:bg-olive-900 text-white py-3.5 rounded-2xl font-black text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer">
                   <i data-lucide="trees" class="w-4 h-4 text-amber-300"></i>
-                  <span>${isEn ? 'Quarter Dunum (10 Saplings + 250 m²)' : 'ربع دونم (10 غرسات + 250 م²)'}</span>
+                  <span>${tr3('ربع دونم (10 غرسات + 250 م²)', 'Quarter Dunum (10 Saplings + 250 m²)', 'Viertel-Dunum (10 Setzlinge + 250 m²)')}</span>
                 </button>
               </div>
             </div>
@@ -14724,9 +14757,9 @@ function setMarketplaceViewMode(mode) {
               facDesc = state.currentLang === 'ar' ? 'تُنشر النتائج بعد اعتمادها' : state.currentLang === 'de' ? 'Ergebnisse werden nach Freigabe veröffentlicht' : 'Results are published once approved';
               facIcon = 'package-check';
             } else if (tree.crop_category === 'date') {
-              facTitle = state.currentLang !== 'ar' ? 'Date Sorting & Packing Station:' : 'محطة فرز وتعبئة التمور:';
-              facName = tree.processing_center || (state.currentLang !== 'ar' ? 'Assigned after the harvest' : 'تُحدَّد بعد الحصاد');
-              facDesc = state.currentLang !== 'ar' ? 'Sorting by ripening stage • Hygienic packing' : 'فرز حسب مرحلة النضج • تعبئة صحية';
+              facTitle = tr3('محطة فرز وتعبئة التمور:', 'Date Sorting & Packing Station:', 'Sortier- und Packstation für Datteln:');
+              facName = tree.processing_center || tr3('تُحدَّد بعد الحصاد', 'Assigned after the harvest', 'Wird nach der Ernte festgelegt');
+              facDesc = tr3('فرز حسب مرحلة النضج • تعبئة صحية', 'Sorting by ripening stage • Hygienic packing', 'Sortierung nach Reifestadium • Hygienische Verpackung');
               facIcon = 'package-check';
             }
 
@@ -14754,20 +14787,20 @@ function setMarketplaceViewMode(mode) {
                   <i data-lucide="map" class="w-6 h-6"></i>
                 </div>
                 <div>
-                  <span class="text-[11px] font-bold text-emerald-700 block uppercase tracking-wider">${state.currentLang !== 'ar' ? 'Cadastral Land Parcel (5 m² Plot)' : 'المخطط المساحي للمقسم الزراعي (5 م²)'}</span>
-                  <h4 class="font-black text-base text-stone-900">${(state.currentLang !== 'ar' ? tree.land_parcel?.parcel_number_en : tree.land_parcel?.parcel_number) || (state.currentLang !== 'ar' ? 'Parcel A-5 / Registered Green Deed' : 'مقسم A-5 / طابو زراعي أخضر')}</h4>
+                  <span class="text-[11px] font-bold text-emerald-700 block uppercase tracking-wider">${tr3('المخطط المساحي للمقسم الزراعي (5 م²)', 'Cadastral Land Parcel (5 m² Plot)', 'Katasterparzelle (5 m² Fläche)')}</span>
+                  <h4 class="font-black text-base text-stone-900">${(state.currentLang !== 'ar' ? tree.land_parcel?.parcel_number_en : tree.land_parcel?.parcel_number) || tr3('مقسم A-5 / طابو زراعي أخضر', 'Parcel A-5 / Registered Green Deed', 'Parzelle A-5 / eingetragene Agrarfläche')}</h4>
                 </div>
               </div>
               <span class="bg-emerald-100/90 text-emerald-800 border border-emerald-200 text-xs font-black px-3.5 py-1.5 rounded-full flex items-center gap-1.5 shadow-2xs">
                 <i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-700"></i>
-                <span>${state.currentLang !== 'ar' ? '5.0 m² Usufruct Deed' : 'حيازة 5.0 م² مفرزة'}</span>
+                <span>${tr3('حيازة 5.0 م² مفرزة', '5.0 m² Usufruct Deed', '5,0 m² Nutzungsrecht')}</span>
               </span>
             </div>
 
             <p class="text-xs sm:text-sm text-stone-600 leading-relaxed">
-              ${state.currentLang !== 'ar' 
-                ? 'Fertile agrarian soil parcel surrounding this olive tree trunk. Includes an official digital cadastral deed and strict farmer soil protection stewardship.'
-                : 'مقسم أرض زراعية خصبة محيطة بجذع الشجرة موثقة بسند حيازة رسمي وانتفاع زراعي طويل الأمد مع تعهد المزارع بعدم المساس بحرم التربة أو تجريفها.'}
+              ${tr3('مقسم أرض زراعية خصبة محيطة بجذع الشجرة موثقة بسند حيازة رسمي وانتفاع زراعي طويل الأمد مع تعهد المزارع بعدم المساس بحرم التربة أو تجريفها.',
+                'Fertile agrarian soil parcel surrounding this olive tree trunk. Includes an official digital cadastral deed and strict farmer soil protection stewardship.',
+                'Eine Parzelle fruchtbaren Ackerbodens rund um den Stamm dieses Olivenbaums – mit offiziellem digitalem Katasternachweis und der verbindlichen Zusage des Landwirts, den Boden zu schützen.')}
             </p>
 
             <!-- 2D Cadastral SVG Blueprint - Architectural Parchment Style -->
@@ -14775,7 +14808,7 @@ function setMarketplaceViewMode(mode) {
               <div class="flex items-center justify-between mb-3">
                 <span class="text-[11px] font-mono font-bold text-olive-900 flex items-center gap-1.5">
                   <i data-lucide="compass" class="w-4 h-4 text-olive-700"></i>
-                  ${state.currentLang !== 'ar' ? 'Cadastral Topographic Blueprint (5.0 m² Circular Perimeter)' : 'المخطط المساحي الطوبوغرافي (حرم 5.0 م² دائري حول الجذع)'}
+                  ${tr3('المخطط المساحي الطوبوغرافي (حرم 5.0 م² دائري حول الجذع)', 'Cadastral Topographic Blueprint (5.0 m² Circular Perimeter)', 'Topografischer Katasterplan (5,0 m² Kreisfläche um den Stamm)')}
                 </span>
                 <span class="text-[10px] font-mono font-bold text-stone-600 bg-white px-2.5 py-0.5 rounded-md border border-stone-200 shadow-2xs">Scale 1:50</span>
               </div>
@@ -14800,7 +14833,7 @@ function setMarketplaceViewMode(mode) {
                   <text x="221" y="93" fill="#b45309" font-size="9" text-anchor="middle" font-weight="bold">r = 1.26m (5.0 m²)</text>
                   <circle cx="190" cy="100" r="13" fill="#3d5a28" stroke="#ffffff" stroke-width="2"/>
                   <text x="190" y="104.5" fill="#ffffff" font-size="10" text-anchor="middle">🌳</text>
-                  <text x="190" y="125" fill="#2d5016" font-size="9" text-anchor="middle" font-weight="bold">${state.currentLang !== 'ar' ? 'Tree Trunk Datum' : 'جذع الشجرة (نقطة الأساس)'}</text>
+                  <text x="190" y="125" fill="#2d5016" font-size="9" text-anchor="middle" font-weight="bold">${tr3('جذع الشجرة (نقطة الأساس)', 'Tree Trunk Datum', 'Baumstamm (Bezugspunkt)')}</text>
                   <circle cx="25" cy="15" r="4.5" fill="#3d5a28" stroke="#ffffff" stroke-width="1.5"/>
                   <text x="35" y="27" fill="#4a5522" font-size="8.5" font-weight="bold">NW</text>
                   <circle cx="355" cy="15" r="4.5" fill="#3d5a28" stroke="#ffffff" stroke-width="1.5"/>
@@ -14816,12 +14849,12 @@ function setMarketplaceViewMode(mode) {
             <!-- Cadastral Information Grid -->
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
               <div class="bg-stone-50 p-4 rounded-2xl border border-stone-200">
-                <span class="text-[11px] text-stone-500 font-bold block mb-1">${state.currentLang !== 'ar' ? 'Cadastral Sector & Basin:' : 'المنطقة والحوض العقاري:'}</span>
-                <span class="font-black text-stone-900 text-xs">${(state.currentLang !== 'ar' ? tree.land_parcel?.cadastral_zone_en : tree.land_parcel?.cadastral_zone) || (state.currentLang !== 'ar' ? 'Dreikish District - Basin 14' : 'منطقة الدريكيش - حوض 14')}</span>
+                <span class="text-[11px] text-stone-500 font-bold block mb-1">${tr3('المنطقة والحوض العقاري:', 'Cadastral Sector & Basin:', 'Katasterbezirk und Flur:')}</span>
+                <span class="font-black text-stone-900 text-xs">${(state.currentLang !== 'ar' ? tree.land_parcel?.cadastral_zone_en : tree.land_parcel?.cadastral_zone) || tr3('منطقة الدريكيش - حوض 14', 'Dreikish District - Basin 14', 'Bezirk Dreikish - Flur 14')}</span>
               </div>
               <div class="bg-stone-50 p-4 rounded-2xl border border-stone-200">
-                <span class="text-[11px] text-stone-500 font-bold block mb-1">${state.currentLang !== 'ar' ? 'Soil Classification:' : 'طبيعة وتصنيف التربة:'}</span>
-                <span class="font-black text-terracotta-700 text-xs">${(state.currentLang !== 'ar' ? tree.land_parcel?.soil_type_en : tree.land_parcel?.soil_type) || (state.currentLang !== 'ar' ? 'Red Calcic Soil (Terra Rossa)' : 'تربة كلسية حمراء (Terra Rossa)')}</span>
+                <span class="text-[11px] text-stone-500 font-bold block mb-1">${tr3('طبيعة وتصنيف التربة:', 'Soil Classification:', 'Bodenklassifizierung:')}</span>
+                <span class="font-black text-terracotta-700 text-xs">${(state.currentLang !== 'ar' ? tree.land_parcel?.soil_type_en : tree.land_parcel?.soil_type) || tr3('تربة كلسية حمراء (Terra Rossa)', 'Red Calcic Soil (Terra Rossa)', 'Roter Kalkboden (Terra Rossa)')}</span>
               </div>
             </div>
 
@@ -14830,25 +14863,25 @@ function setMarketplaceViewMode(mode) {
               <div class="flex items-center justify-between">
                 <span class="text-[11px] font-mono text-emerald-900 block font-bold flex items-center gap-1.5">
                   <i data-lucide="crosshair" class="w-3.5 h-3.5 text-emerald-700"></i>
-                  <span>${state.currentLang !== 'ar' ? 'GPS Boundary Corner Points (WGS84):' : 'إحداثيات أركان المقسم الأربعة (نظام WGS84):'}</span>
+                  <span>${tr3('إحداثيات أركان المقسم الأربعة (نظام WGS84):', 'GPS Boundary Corner Points (WGS84):', 'GPS-Eckpunkte der Parzellengrenze (WGS84):')}</span>
                 </span>
                 <span class="text-[10px] text-emerald-700 font-bold bg-white px-2 py-0.5 rounded-md border border-emerald-200/70 shadow-2xs font-mono">Precision ±10cm</span>
               </div>
               <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-[11px] font-mono">
                 <div class="bg-white p-2.5 rounded-xl border border-emerald-200/70 text-center shadow-2xs">
-                  <span class="text-stone-500 text-[10px] font-bold block mb-0.5">${state.currentLang !== 'ar' ? 'N (North)' : 'N (شمال)'}</span>
+                  <span class="text-stone-500 text-[10px] font-bold block mb-0.5">${tr3('N (شمال)', 'N (North)', 'N (Nord)')}</span>
                   <span class="text-olive-950 font-black">${tree.land_parcel?.polygon_corners?.[0]?.lat.toFixed(4) || '34.8971'}, ${tree.land_parcel?.polygon_corners?.[0]?.lng.toFixed(4) || '36.1438'}</span>
                 </div>
                 <div class="bg-white p-2.5 rounded-xl border border-emerald-200/70 text-center shadow-2xs">
-                  <span class="text-stone-500 text-[10px] font-bold block mb-0.5">${state.currentLang !== 'ar' ? 'E (East)' : 'E (شرق)'}</span>
+                  <span class="text-stone-500 text-[10px] font-bold block mb-0.5">${tr3('E (شرق)', 'E (East)', 'O (Ost)')}</span>
                   <span class="text-olive-950 font-black">${tree.land_parcel?.polygon_corners?.[1]?.lat.toFixed(4) || '34.8971'}, ${tree.land_parcel?.polygon_corners?.[1]?.lng.toFixed(4) || '36.1438'}</span>
                 </div>
                 <div class="bg-white p-2.5 rounded-xl border border-emerald-200/70 text-center shadow-2xs">
-                  <span class="text-stone-500 text-[10px] font-bold block mb-0.5">${state.currentLang !== 'ar' ? 'S (South)' : 'S (جنوب)'}</span>
+                  <span class="text-stone-500 text-[10px] font-bold block mb-0.5">${tr3('S (جنوب)', 'S (South)', 'S (Süd)')}</span>
                   <span class="text-olive-950 font-black">${tree.land_parcel?.polygon_corners?.[2]?.lat.toFixed(4) || '34.8971'}, ${tree.land_parcel?.polygon_corners?.[2]?.lng.toFixed(4) || '36.1438'}</span>
                 </div>
                 <div class="bg-white p-2.5 rounded-xl border border-emerald-200/70 text-center shadow-2xs">
-                  <span class="text-stone-500 text-[10px] font-bold block mb-0.5">${state.currentLang !== 'ar' ? 'W (West)' : 'W (غرب)'}</span>
+                  <span class="text-stone-500 text-[10px] font-bold block mb-0.5">${tr3('W (غرب)', 'W (West)', 'W (West)')}</span>
                   <span class="text-olive-950 font-black">${tree.land_parcel?.polygon_corners?.[3]?.lat.toFixed(4) || '34.8971'}, ${tree.land_parcel?.polygon_corners?.[3]?.lng.toFixed(4) || '36.1438'}</span>
                 </div>
               </div>
@@ -14893,7 +14926,7 @@ function setMarketplaceViewMode(mode) {
                         </div>
                       ` : ''}
 
-                      <span class="text-[10px] text-stone-400 block pt-1">${state.currentLang !== 'ar' ? 'By Farmer: ' : 'بواسطة المزارع: '}${logBy}</span>
+                      <span class="text-[10px] text-stone-400 block pt-1">${tr3('بواسطة المزارع: ', 'By Farmer: ', 'Erfasst vom Landwirt: ')}${logBy}</span>
                     </div>
                   </div>
                 `;
@@ -14923,13 +14956,13 @@ function setMarketplaceViewMode(mode) {
               </div>
 
               <div id="detail-pkg-land" data-feature="land" data-click="selectDetailPackage(true)" class="p-3 rounded-2xl border-2 cursor-pointer transition-all relative ${state.includeLandInModal ? 'border-emerald-600 bg-emerald-50/70 shadow-xs ring-2 ring-emerald-500/20' : 'border-stone-200 bg-white hover:border-stone-300'}">
-                <span class="absolute -top-2 end-3 bg-emerald-700 text-white text-[9px] font-black px-2 py-0.5 rounded-full">${state.currentLang !== 'ar' ? 'Most Popular' : 'الأكثر طلباً'}</span>
+                <span class="absolute -top-2 end-3 bg-emerald-700 text-white text-[9px] font-black px-2 py-0.5 rounded-full">${tr3('الأكثر طلباً', 'Most Popular', 'Am beliebtesten')}</span>
                 <div class="flex items-center justify-between">
                   <div class="flex items-center gap-2">
                     <i data-lucide="map" class="w-4 h-4 text-emerald-700"></i>
                     <div>
-                      <span class="font-black text-xs text-emerald-950 block">${state.currentLang !== 'ar' ? 'Tree + 5 m² Land Parcel' : 'شجرة + 5 م² أرض طابو'}</span>
-                      <span class="text-[10px] text-emerald-700 block font-medium">${state.currentLang !== 'ar' ? 'Usufruct deed + WGS84' : 'سند حيازة ومسح طوبوغرافي'}</span>
+                      <span class="font-black text-xs text-emerald-950 block">${tr3('شجرة + 5 م² أرض طابو', 'Tree + 5 m² Land Parcel', 'Baum + 5 m² Parzelle')}</span>
+                      <span class="text-[10px] text-emerald-700 block font-medium">${tr3('سند حيازة ومسح طوبوغرافي', 'Usufruct deed + WGS84', 'Nutzungsrecht + WGS84-Vermessung')}</span>
                     </div>
                   </div>
                   <span class="font-black text-sm text-emerald-900">${formatMoney(tree.price_per_share + (tree.land_parcel?.land_addon_price_usd || 18))}</span>
@@ -14939,15 +14972,15 @@ function setMarketplaceViewMode(mode) {
 
             <div class="space-y-3 py-4 border-y border-stone-100 text-xs">
               ${tree.planted_year ? `<div class="flex justify-between">
-                <span class="text-stone-500">${state.currentLang !== 'ar' ? 'Planted Year:' : 'العمر:'}</span>
+                <span class="text-stone-500">${tr3('العمر:', 'Planted Year:', 'Pflanzjahr:')}</span>
                 <span class="font-bold text-stone-900">${tree.planted_year} (${treeAge} ${t('year_unit')})</span>
               </div>` : ''}
               <div class="flex justify-between">
-                <span class="text-stone-500">${state.currentLang !== 'ar' ? 'Variety:' : 'الصنف:'}</span>
+                <span class="text-stone-500">${tr3('الصنف:', 'Variety:', 'Sorte:')}</span>
                 <span class="font-bold text-stone-900">${displayType}</span>
               </div>
               <div class="flex justify-between">
-                <span class="text-stone-500">${state.currentLang !== 'ar' ? 'Available:' : 'المتاح:'}</span>
+                <span class="text-stone-500">${tr3('المتاح:', 'Available:', 'Verfügbar:')}</span>
                 <span class="font-bold text-terracotta-600">${tree.total_shares_available}% ${t('avail_label')}</span>
               </div>
             </div>
@@ -15023,7 +15056,7 @@ function setMarketplaceViewMode(mode) {
     const tree = state.trees.find(t => t.id === treeId) || state.trees[0];
     if (!tree) return;
     if ((tree.total_shares_available || 0) <= 0) {
-      showToast(state.currentLang !== 'ar' ? '⚠️ This tree is fully subscribed. Please browse other available trees.' : '⚠️ هذه الشجرة مكتملة الاكتتاب بالكامل. يرجى استعراض الأشجار المتاحة الأخرى في السوق.');
+      showToast(tr3('⚠️ هذه الشجرة مكتملة الاكتتاب بالكامل. يرجى استعراض الأشجار المتاحة الأخرى في السوق.', '⚠️ This tree is fully subscribed. Please browse other available trees.', '⚠️ Für diesen Baum sind bereits alle Anteile vergeben. Bitte sehen Sie sich andere verfügbare Bäume an.'));
       return;
     }
     state.currentTreeId = tree.id;
@@ -15207,7 +15240,7 @@ function setMarketplaceViewMode(mode) {
       let s = Math.max(1, parseInt(shares) || 1);
       if (tree && tree.total_shares_available > 0 && s > maxAvailShares) {
         s = Math.max(1, maxAvailShares);
-        showToast(state.currentLang !== 'ar' ? `⚠️ Only ${maxAvailShares} share(s) available for this tree.` : `⚠️ المتبقي في هذه الشجرة ${maxAvailShares} حصة فقط.`);
+        showToast(tr3(`⚠️ المتبقي في هذه الشجرة ${maxAvailShares} حصة فقط.`, `⚠️ Only ${maxAvailShares} share(s) available for this tree.`, `⚠️ Für diesen Baum sind nur noch ${maxAvailShares} Anteil(e) verfügbar.`));
       }
       state.selectedSharePct = s * 25;
 
@@ -15242,10 +15275,10 @@ function setMarketplaceViewMode(mode) {
         if (landRow && landVal) {
           if (withLand) {
             landRow.classList.remove('hidden');
-            landVal.innerText = state.currentLang !== 'ar' ? `~ ${totalLandSqm} m² surveyed deed` : `~ ${totalLandSqm} م² طابو زراعي مسجل`;
+            landVal.innerText = tr3(`~ ${totalLandSqm} م² طابو زراعي مسجل`, `~ ${totalLandSqm} m² surveyed deed`, `~ ${totalLandSqm} m² vermessene Parzelle`);
             if (landBadge) {
               landBadge.classList.remove('hidden');
-              landBadge.innerText = state.currentLang !== 'ar' ? `+ ${totalLandSqm} m² Land` : `+ ${totalLandSqm} م² أرض`;
+              landBadge.innerText = tr3(`+ ${totalLandSqm} م² أرض`, `+ ${totalLandSqm} m² Land`, `+ ${totalLandSqm} m² Land`);
             }
           } else {
             landRow.classList.add('hidden');
@@ -15267,9 +15300,9 @@ function setMarketplaceViewMode(mode) {
           const trees = s / 4;
           const isEn = state.currentLang !== 'ar';
           if (s % 4 === 0) {
-            treesBadge.innerText = isEn ? `${trees} Whole Tree(s)` : `${trees} شجرة كاملة`;
+            treesBadge.innerText = tr3(`${trees} شجرة كاملة`, `${trees} Whole Tree(s)`, `${trees} ganze(r) Baum/Bäume`);
           } else {
-            treesBadge.innerText = isEn ? `${s} Shares (${(s * 25)}%)` : `${s} حصص (${(s * 25)}%)`;
+            treesBadge.innerText = tr3(`${s} حصص (${(s * 25)}%)`, `${s} Shares (${(s * 25)}%)`, `${s} Anteil(e) (${(s * 25)}%)`);
           }
         }
 
@@ -15310,7 +15343,7 @@ function setMarketplaceViewMode(mode) {
     }
 
     function copyToClipboard(text, label) {
-      const successMsg = state.currentLang !== 'ar' ? `Copied: ${label || ''}` : `تم نسخ: ${label || ''} بنجاح`;
+      const successMsg = tr3(`تم نسخ: ${label || ''} بنجاح`, `Copied: ${label || ''}`, `Kopiert: ${label || ''}`);
       if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
         navigator.clipboard.writeText(text).then(() => {
           showToast(successMsg);
@@ -15337,7 +15370,7 @@ function setMarketplaceViewMode(mode) {
         document.body.removeChild(textArea);
         showToast(successMsg);
       } catch (err) {
-        showToast(state.currentLang !== 'ar' ? 'Copy command failed' : 'تعذر النسخ التلقائي');
+        showToast(tr3('تعذر النسخ التلقائي', 'Copy command failed', 'Kopieren fehlgeschlagen'));
       }
     }
 
@@ -15381,9 +15414,10 @@ function setMarketplaceViewMode(mode) {
       }
 
       if (state.currentBundlePackage || (state.currentVirginGroveId && state.currentVirginPackage)) {
-        showToast(isEn
-          ? 'Notice: Multi-crop bundles and virgin grove tenure require certified notary deeds. Please consult the admin desk.'
-          : 'تنبيه: باقات التنوع الزراعي والأراضي البكر تتطلب سندات طابو موثقة من إدارة المنصة.');
+        showToast(tr3(
+          'تنبيه: باقات التنوع الزراعي والأراضي البكر تتطلب سندات طابو موثقة من إدارة المنصة.',
+          'Notice: Multi-crop bundles and virgin grove tenure require certified notary deeds. Please consult the admin desk.',
+          'Hinweis: Für Mischkultur-Pakete und neu angelegte Haine sind notariell beglaubigte Dokumente erforderlich. Bitte wenden Sie sich an die Plattformverwaltung.'));
         return;
       }
 
@@ -15402,7 +15436,7 @@ function setMarketplaceViewMode(mode) {
 
       const tree = state.trees.find(t => t.id === state.currentTreeId) || state.trees[0];
       if (!tree) {
-        showToast(isEn ? 'Please select an available tree first.' : 'يرجى اختيار شجرة متاحة للكفالة أولاً.');
+        showToast(tr3('يرجى اختيار شجرة متاحة للكفالة أولاً.', 'Please select an available tree first.', 'Bitte wählen Sie zuerst einen verfügbaren Baum aus.'));
         return;
       }
 
@@ -15427,13 +15461,14 @@ function setMarketplaceViewMode(mode) {
       if (withLand && s !== totalShares) {
         // Server rule: the 5 m² parcel can only be reserved together with the complete tree.
         s = totalShares;
-        showToast(isEn
-          ? `The 5 m² land package always includes the complete tree (${totalShares} shares).`
-          : `باقة الأرض 5 م² تشمل الشجرة كاملة دائماً (${totalShares} حصص).`);
+        showToast(tr3(
+          `باقة الأرض 5 م² تشمل الشجرة كاملة دائماً (${totalShares} حصص).`,
+          `The 5 m² land package always includes the complete tree (${totalShares} shares).`,
+          `Das 5-m²-Landpaket umfasst immer den gesamten Baum (${totalShares} Anteile).`));
       }
 
       if (!state.selectedReceiptFile) {
-        showToast(isEn ? '⚠️ Please attach your payment transfer receipt (JPG, PNG, or PDF).' : '⚠️ يرجى إرفاق صورة أو ملف إشعار التحويل المالي قبل التأكيد.');
+        showToast(tr3('⚠️ يرجى إرفاق صورة أو ملف إشعار التحويل المالي قبل التأكيد.', '⚠️ Please attach your payment transfer receipt (JPG, PNG, or PDF).', '⚠️ Bitte fügen Sie Ihren Überweisungsbeleg bei (JPG, PNG oder PDF).'));
         return;
       }
 
@@ -15454,7 +15489,7 @@ function setMarketplaceViewMode(mode) {
       const origHtml = submitBtn ? submitBtn.innerHTML : '';
       if (submitBtn) {
         submitBtn.disabled = true;
-        submitBtn.innerHTML = `<span class="animate-spin inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full me-2"></span>${isEn ? 'Reserving Shares...' : 'جاري حجز الحصص...'}`;
+        submitBtn.innerHTML = `<span class="animate-spin inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full me-2"></span>${tr3('جاري حجز الحصص...', 'Reserving Shares...', 'Anteile werden reserviert...')}`;
       }
 
       // The server refuses a sponsorship without a recorded acceptance of the current documents.
@@ -15503,7 +15538,7 @@ function setMarketplaceViewMode(mode) {
         }
 
         if (submitBtn) {
-          submitBtn.innerHTML = `<span class="animate-spin inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full me-2"></span>${isEn ? 'Uploading Payment Proof...' : 'جاري رفع إشعار الدفع...'}`;
+          submitBtn.innerHTML = `<span class="animate-spin inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full me-2"></span>${tr3('جاري رفع إشعار الدفع...', 'Uploading Payment Proof...', 'Zahlungsbeleg wird hochgeladen...')}`;
         }
 
         await window.FaseelaFirebase.uploadPaymentProof(reqData.requestId, state.selectedReceiptFile);
@@ -15518,9 +15553,10 @@ function setMarketplaceViewMode(mode) {
         document.getElementById('receipt-drop-prompt')?.classList.remove('hidden');
         resetInvestExtras();
 
-        showToast((isEn
-          ? `Sponsorship request submitted${confirmedAmount ? ` (amount confirmed by server: $${confirmedAmount})` : ''}. Your payment receipt is being reviewed.`
-          : `تم تقديم طلب الكفالة${confirmedAmount ? ` (المبلغ المعتمد من الخادم: $${confirmedAmount})` : ''}. إشعار الدفع قيد المراجعة المالية.`) + extrasNote);
+        showToast(tr3(
+          `تم تقديم طلب الكفالة${confirmedAmount ? ` (المبلغ المعتمد من الخادم: $${confirmedAmount})` : ''}. إشعار الدفع قيد المراجعة المالية.`,
+          `Sponsorship request submitted${confirmedAmount ? ` (amount confirmed by server: $${confirmedAmount})` : ''}. Your payment receipt is being reviewed.`,
+          `Patenschaftsanfrage eingereicht${confirmedAmount ? ` (vom Server bestätigter Betrag: $${confirmedAmount})` : ''}. Ihr Zahlungsbeleg wird geprüft.`) + extrasNote);
 
         if (typeof dispatchNotification === 'function') {
           dispatchNotification({
@@ -15539,7 +15575,7 @@ function setMarketplaceViewMode(mode) {
       } catch (err) {
         console.error('Investment error:', err);
         const errMsg = err?.message || '';
-        showToast(isEn ? `Transaction error: ${errMsg}` : `تعذر إتمام المعاملة: ${errMsg}`);
+        showToast(tr3(`تعذر إتمام المعاملة: ${errMsg}`, `Transaction error: ${errMsg}`, `Vorgang fehlgeschlagen: ${errMsg}`));
       } finally {
         if (submitBtn) {
           submitBtn.disabled = false;
@@ -15562,7 +15598,7 @@ function setMarketplaceViewMode(mode) {
         showToast(L3('تم إلغاء طلب الكفالة بنجاح.', 'Sponsorship request cancelled.', 'Patenschaftsanfrage storniert.'));
         renderDashboard();
       } catch (err) {
-        showToast(isEn ? `Could not cancel request: ${err.message}` : `تعذر إلغاء الطلب: ${err.message}`);
+        showToast(tr3(`تعذر إلغاء الطلب: ${err.message}`, `Could not cancel request: ${err.message}`, `Anfrage konnte nicht storniert werden: ${err.message}`));
       }
     }
 
@@ -15578,7 +15614,7 @@ function setMarketplaceViewMode(mode) {
         const isOwned = !!userShare;
         const investorName = isOwned
           ? (state.currentUser ? (isEn ? (state.currentUser.name_en || state.currentUser.name) : state.currentUser.name) : 'Tariq The Syrian')
-          : (state.currentUser && state.currentUser.role !== 'guest' ? (isEn ? (state.currentUser.name_en || state.currentUser.name) : state.currentUser.name) : (isEn ? 'Prospective Sponsor (Sample)' : 'كافل مرتقب (عينة استعراضية)'));
+          : (state.currentUser && state.currentUser.role !== 'guest' ? (isEn ? (state.currentUser.name_en || state.currentUser.name) : state.currentUser.name) : (tr3('كافل مرتقب (عينة استعراضية)', 'Prospective Sponsor (Sample)', 'Künftiger Baumpate (Muster)')));
 
         const deedSerial = isOwned ? (userShare?.land_deed_serial || 'SYR-BUNDLE-DEED-2026-9901') : 'SPECIMEN-AGROFORESTRY-PREVIEW';
 
@@ -15593,16 +15629,16 @@ function setMarketplaceViewMode(mode) {
               <div class="mb-4 bg-amber-500/10 border border-amber-600/30 rounded-xl p-3 flex items-start gap-2.5 relative z-20">
                 <i data-lucide="shield-alert" class="w-5 h-5 text-amber-700 flex-shrink-0 mt-0.5"></i>
                 <div class="text-xs text-amber-900 dark:text-amber-200">
-                  <strong class="font-bold block">${isEn ? 'Preview Specimen Notice' : 'تنبيه: سند حيازة استعراضي لباقة التنوع (غير مقيد)'}</strong>
-                  <span>${isEn ? 'This certificate illustrates your multi-crop agrarian deed covering 4 diversified shares upon subscription.' : 'يوضح هذا النموذج سند الحيازة الموحد لـ 4 حصص زراعية متنوعة (زيتون، فستق، لوز) مع مقسم أرض 15 م².'}</span>
+                  <strong class="font-bold block">${tr3('تنبيه: سند حيازة استعراضي لباقة التنوع (غير مقيد)', 'Preview Specimen Notice', 'Hinweis: Mustervorschau')}</strong>
+                  <span>${tr3('يوضح هذا النموذج سند الحيازة الموحد لـ 4 حصص زراعية متنوعة (زيتون، فستق، لوز) مع مقسم أرض 15 م².', 'This certificate illustrates your multi-crop agrarian deed covering 4 diversified shares upon subscription.', 'Dieses Muster zeigt, wie Ihr Nachweis für das Mischkultur-Paket mit 4 Anteilen nach Abschluss aussehen würde.')}</span>
                 </div>
               </div>
             ` : `
               <div class="mb-4 bg-purple-500/10 border border-purple-600/30 rounded-xl p-3 flex items-start gap-2.5 relative z-20">
                 <i data-lucide="award" class="w-5 h-5 text-purple-700 flex-shrink-0 mt-0.5"></i>
                 <div class="text-xs text-purple-900 dark:text-purple-200">
-                  <strong class="font-bold block">${isEn ? 'Officially Registered Agroforestry Deed' : 'سند حيازة موحد لباقة التنوع الزراعي ال'}</strong>
-                  <span>${isEn ? 'Registered in Syrian Multi-Crop Cadastre under Payment Review.' : 'مقيد رسمياً في السجل الزراعي السوري الموحد ومحمي بمراجعة الدفعات البنكي.'}</span>
+                  <strong class="font-bold block">${tr3('سند حيازة موحد لباقة التنوع الزراعي ال', 'Officially Registered Agroforestry Deed', 'Offiziell registrierter Agroforst-Nachweis')}</strong>
+                  <span>${tr3('مقيد رسمياً في السجل الزراعي السوري الموحد ومحمي بمراجعة الدفعات البنكي.', 'Registered in Syrian Multi-Crop Cadastre under Payment Review.', 'Im syrischen Mischkultur-Kataster eingetragen, Zahlung in Prüfung.')}</span>
                 </div>
               </div>
             `}
@@ -15615,8 +15651,8 @@ function setMarketplaceViewMode(mode) {
                 </div>
                 <div>
                   <span class="text-[10px] font-mono tracking-widest uppercase text-purple-900 dark:text-purple-300 block font-bold">FASEELA SOVEREIGN AGROFORESTRY TITLE</span>
-                  <h3 class="text-lg sm:text-xl font-black text-stone-900 dark:text-white">${isEn ? 'Multi-Crop Agroforestry Deed & 15m² Cadastral Land' : 'سند حيازة التنوع الزراعي وملكية مقسم 15 م²'}</h3>
-                  <span class="text-[11px] text-stone-500 font-bold block">${isEn ? 'Syrian Heritage Blend • 4 Shares Unified' : 'مزيج الأصالة السورية • 4 حصص موحدة'}</span>
+                  <h3 class="text-lg sm:text-xl font-black text-stone-900 dark:text-white">${tr3('سند حيازة التنوع الزراعي وملكية مقسم 15 م²', 'Multi-Crop Agroforestry Deed & 15m² Cadastral Land', 'Mischkultur-Agroforst-Nachweis & 15 m² Katasterfläche')}</h3>
+                  <span class="text-[11px] text-stone-500 font-bold block">${tr3('مزيج الأصالة السورية • 4 حصص موحدة', 'Syrian Heritage Blend • 4 Shares Unified', 'Syrische Traditionsmischung • 4 Anteile gebündelt')}</span>
                 </div>
               </div>
               <div class="text-end font-mono text-[10px] text-stone-500">
@@ -15628,7 +15664,7 @@ function setMarketplaceViewMode(mode) {
             <!-- Details -->
             <div class="py-5 space-y-4 relative z-20">
               <div class="bg-white/80 dark:bg-stone-900/80 p-4 rounded-xl border border-purple-200 dark:border-stone-800">
-                <span class="text-[10px] text-stone-400 block font-bold">${isEn ? 'Registered Title Holder:' : 'المالك والكافل الحائز المسجل:'}</span>
+                <span class="text-[10px] text-stone-400 block font-bold">${tr3('المالك والكافل الحائز المسجل:', 'Registered Title Holder:', 'Eingetragener Inhaber:')}</span>
                 <div class="text-base sm:text-lg font-black text-stone-900 dark:text-white flex items-center justify-between">
                   <span>${investorName}</span>
                   <span class="text-xs font-mono text-purple-700 dark:text-purple-400 font-bold">DID: SYR-AGRO-2026-BUNDLE</span>
@@ -15637,25 +15673,25 @@ function setMarketplaceViewMode(mode) {
 
               <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs">
                 <div class="bg-purple-50/60 dark:bg-stone-900 p-3 rounded-xl border border-purple-200 dark:border-stone-800">
-                  <span class="text-[10px] text-stone-400 block font-bold">${isEn ? 'Olive Component:' : 'مكون الزيتون (حصتان):'}</span>
+                  <span class="text-[10px] text-stone-400 block font-bold">${tr3('مكون الزيتون (حصتان):', 'Olive Component:', 'Olivenanteil:')}</span>
                   <strong class="text-stone-900 dark:text-white block mt-0.5">خضيري دريكيش عتيق</strong>
                   <span class="text-[10px] text-emerald-700 dark:text-emerald-400 font-mono">~ 8 لتر زيت بكر ممتاز</span>
                 </div>
                 <div class="bg-purple-50/60 dark:bg-stone-900 p-3 rounded-xl border border-purple-200 dark:border-stone-800">
-                  <span class="text-[10px] text-stone-400 block font-bold">${isEn ? 'Pistachio Component:' : 'مكون الفستق (حصة):'}</span>
+                  <span class="text-[10px] text-stone-400 block font-bold">${tr3('مكون الفستق (حصة):', 'Pistachio Component:', 'Pistazienanteil:')}</span>
                   <strong class="text-stone-900 dark:text-white block mt-0.5">عاشوري مورك أصيل</strong>
                   <span class="text-[10px] text-amber-700 dark:text-amber-400 font-mono">~ 3 كغ فستق نخب أول</span>
                 </div>
                 <div class="bg-purple-50/60 dark:bg-stone-900 p-3 rounded-xl border border-purple-200 dark:border-stone-800">
-                  <span class="text-[10px] text-stone-400 block font-bold">${isEn ? 'Almond Component:' : 'مكون اللوز (حصة):'}</span>
+                  <span class="text-[10px] text-stone-400 block font-bold">${tr3('مكون اللوز (حصة):', 'Almond Component:', 'Mandelanteil:')}</span>
                   <strong class="text-stone-900 dark:text-white block mt-0.5">فرك المخرم الفاخر</strong>
                   <span class="text-[10px] text-pink-700 dark:text-pink-400 font-mono">~ 2.5 كغ لوز فرك</span>
                 </div>
               </div>
 
               <div class="bg-stone-100/80 dark:bg-stone-900/90 p-3.5 rounded-xl border border-stone-200 dark:border-stone-800 text-[11px] text-stone-700 dark:text-stone-300">
-                <span class="font-bold text-stone-900 dark:text-white block mb-1">${isEn ? 'Unified Cadastral Land Deed (15.0 m²):' : 'سند المقسم المساحي الموحد (15.0 م² طابو أخضر):'}</span>
-                <span>${isEn ? 'Covers an aggregate 15.0 m² surveyed plot across partner agroforestry groves in Tartus, Hama, and Homs with solar irrigation rights.' : 'يشمل مقسماً مساحياً مفرزاً بمساحة 15.0 م² طابو زراعي مسجل مع حق عيني دائم في نواتج الثمار السنوية وشبكة الري الذكية.'}</span>
+                <span class="font-bold text-stone-900 dark:text-white block mb-1">${tr3('سند المقسم المساحي الموحد (15.0 م² طابو أخضر):', 'Unified Cadastral Land Deed (15.0 m²):', 'Zusammengefasster Flächennachweis (15,0 m²):')}</span>
+                <span>${tr3('يشمل مقسماً مساحياً مفرزاً بمساحة 15.0 م² طابو زراعي مسجل مع حق عيني دائم في نواتج الثمار السنوية وشبكة الري الذكية.', 'Covers an aggregate 15.0 m² surveyed plot across partner agroforestry groves in Tartus, Hama, and Homs with solar irrigation rights.', 'Umfasst insgesamt 15,0 m² vermessene Fläche in Agroforst-Hainen unserer Partnerhöfe in Tartus, Hama und Homs, einschließlich Nutzung der solarbetriebenen Bewässerung.')}</span>
               </div>
             </div>
 
@@ -15690,7 +15726,7 @@ function setMarketplaceViewMode(mode) {
         const isOwned = !!userShare;
         const investorName = isOwned
           ? (state.currentUser ? (isEn ? (state.currentUser.name_en || state.currentUser.name) : state.currentUser.name) : 'Tariq The Syrian')
-          : (state.currentUser && state.currentUser.role !== 'guest' ? (isEn ? (state.currentUser.name_en || state.currentUser.name) : state.currentUser.name) : (isEn ? 'Prospective Sponsor (Sample)' : 'كافل مرتقب (عينة استعراضية)'));
+          : (state.currentUser && state.currentUser.role !== 'guest' ? (isEn ? (state.currentUser.name_en || state.currentUser.name) : state.currentUser.name) : (tr3('كافل مرتقب (عينة استعراضية)', 'Prospective Sponsor (Sample)', 'Künftiger Baumpate (Muster)')));
 
         const title = isEn ? (vg.title_en || vg.title) : vg.title;
         const region = isEn ? (vg.region_en || vg.region) : vg.region;
@@ -15712,16 +15748,16 @@ function setMarketplaceViewMode(mode) {
               <div class="mb-4 bg-amber-500/10 border border-amber-600/30 rounded-xl p-3 flex items-start gap-2.5 relative z-20">
                 <i data-lucide="shield-alert" class="w-5 h-5 text-amber-700 flex-shrink-0 mt-0.5"></i>
                 <div class="text-xs text-amber-900 dark:text-amber-200">
-                  <strong class="font-bold block">${isEn ? 'Preview Specimen Notice' : 'تنبيه: سند حيازة استعراضي (غير مقيد)'}</strong>
-                  <span>${isEn ? 'This certificate preview illustrates your registered land deed and sapling parcel upon subscription.' : 'هذه الوثيقة الاستعراضية توضح بيانات سند الحيازة الزراعية والمقسم العقاري الذي سيتم توثيقه باسمك فور الاكتتاب.'}</span>
+                  <strong class="font-bold block">${tr3('تنبيه: سند حيازة استعراضي (غير مقيد)', 'Preview Specimen Notice', 'Hinweis: Mustervorschau')}</strong>
+                  <span>${tr3('هذه الوثيقة الاستعراضية توضح بيانات سند الحيازة الزراعية والمقسم العقاري الذي سيتم توثيقه باسمك فور الاكتتاب.', 'This certificate preview illustrates your registered land deed and sapling parcel upon subscription.', 'Diese Mustervorschau zeigt, wie Ihr registrierter Flächennachweis und Ihre Setzlingsparzelle nach Abschluss aussehen würden.')}</span>
                 </div>
               </div>
             ` : `
               <div class="mb-4 bg-emerald-500/10 border border-emerald-600/30 rounded-xl p-3 flex items-start gap-2.5 relative z-20">
                 <i data-lucide="shield-check" class="w-5 h-5 text-emerald-700 flex-shrink-0 mt-0.5"></i>
                 <div class="text-xs text-emerald-900 dark:text-emerald-200">
-                  <strong class="font-bold block">${isEn ? 'Officially Registered Greenfield Title Deed' : 'سند حيازة طابو أخضر موثق ورسمي'}</strong>
-                  <span>${isEn ? 'Registered under Syrian Agricultural Land Stewardship laws with permanent GPS boundary deed.' : 'مقيد وموثق بالسجل العقاري الزراعي السوري ومحمي بمراجعة الدفعات البنكية.'}</span>
+                  <strong class="font-bold block">${tr3('سند حيازة طابو أخضر موثق ورسمي', 'Officially Registered Greenfield Title Deed', 'Offiziell registrierter Flächennachweis (Neuanlage)')}</strong>
+                  <span>${tr3('مقيد وموثق بالسجل العقاري الزراعي السوري ومحمي بمراجعة الدفعات البنكية.', 'Registered under Syrian Agricultural Land Stewardship laws with permanent GPS boundary deed.', 'Nach syrischem Agrarlandrecht registriert, mit dauerhaft per GPS dokumentierten Parzellengrenzen.')}</span>
                 </div>
               </div>
             `}
@@ -15747,7 +15783,7 @@ function setMarketplaceViewMode(mode) {
             <!-- Sponsor Name & Registration Details -->
             <div class="py-5 space-y-4 relative z-20">
               <div class="bg-white/80 dark:bg-stone-900/80 p-4 rounded-xl border border-emerald-200 dark:border-stone-800">
-                <span class="text-[10px] text-stone-400 block font-bold">${isEn ? 'Beneficiary & Registered Title Holder:' : 'الكافل الحائز والمالك المسجل:'}</span>
+                <span class="text-[10px] text-stone-400 block font-bold">${tr3('الكافل الحائز والمالك المسجل:', 'Beneficiary & Registered Title Holder:', 'Begünstigter & eingetragener Inhaber:')}</span>
                 <div class="text-base sm:text-lg font-black text-stone-900 dark:text-white flex items-center justify-between">
                   <span>${investorName}</span>
                   <span class="text-xs font-mono text-emerald-700 dark:text-emerald-400 font-bold">DID: SYR-AGR-2026-VG01</span>
@@ -15757,26 +15793,26 @@ function setMarketplaceViewMode(mode) {
               <!-- Cadastral Blueprint Spec -->
               <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs">
                 <div class="bg-emerald-50/60 dark:bg-stone-900 p-3 rounded-xl border border-emerald-200 dark:border-stone-800">
-                  <span class="text-[10px] text-stone-400 block font-bold">${isEn ? 'Cadastral Parcel:' : 'رقم العقار المساحي:'}</span>
+                  <span class="text-[10px] text-stone-400 block font-bold">${tr3('رقم العقار المساحي:', 'Cadastral Parcel:', 'Katasterparzelle:')}</span>
                   <strong class="text-stone-900 dark:text-white font-mono text-[11px] block mt-0.5">${parcelNo}</strong>
                 </div>
                 <div class="bg-emerald-50/60 dark:bg-stone-900 p-3 rounded-xl border border-emerald-200 dark:border-stone-800">
-                  <span class="text-[10px] text-stone-400 block font-bold">${isEn ? 'Land Area (Deed):' : 'مساحة المقسم المستقل:'}</span>
+                  <span class="text-[10px] text-stone-400 block font-bold">${tr3('مساحة المقسم المستقل:', 'Land Area (Deed):', 'Fläche (laut Nachweis):')}</span>
                   <strong class="text-emerald-700 dark:text-emerald-400 font-mono text-xs block mt-0.5">${landArea} m²</strong>
                 </div>
                 <div class="bg-emerald-50/60 dark:bg-stone-900 p-3 rounded-xl border border-emerald-200 dark:border-stone-800">
-                  <span class="text-[10px] text-stone-400 block font-bold">${isEn ? 'Sapling Variety:' : 'صنف الغراس المؤصلة:'}</span>
+                  <span class="text-[10px] text-stone-400 block font-bold">${tr3('صنف الغراس المؤصلة:', 'Sapling Variety:', 'Setzlingssorte:')}</span>
                   <strong class="text-stone-900 dark:text-white text-xs block mt-0.5">${variety}</strong>
                 </div>
                 <div class="bg-emerald-50/60 dark:bg-stone-900 p-3 rounded-xl border border-emerald-200 dark:border-stone-800">
-                  <span class="text-[10px] text-stone-400 block font-bold">${isEn ? 'Irrigation Network:' : 'تقنية الري:'}</span>
+                  <span class="text-[10px] text-stone-400 block font-bold">${tr3('تقنية الري:', 'Irrigation Network:', 'Bewässerung:')}</span>
                   <strong class="text-stone-900 dark:text-white text-xs block mt-0.5">${irrigation}</strong>
                 </div>
               </div>
 
               <div class="bg-stone-100/80 dark:bg-stone-900/90 p-3.5 rounded-xl border border-stone-200 dark:border-stone-800 text-[11px] text-stone-700 dark:text-stone-300 leading-relaxed">
-                <span class="font-bold text-stone-900 dark:text-white block mb-1">${isEn ? 'Legal & Stewardship Terms:' : 'الإطار القانوني والحيازة المستدامة:'}</span>
-                <span>${isEn ? 'Usufruct terms are governed by the signed partnership contract. Legal effect under Syrian civil law is subject to review [PLATZHALTER: legal opinion].' : 'وفقاً لأحكام القانون المدني السوري (المادة 768) وعقد الكفالة المشترك المحمي بمراجعة الدفعات، يمنح هذا السند صاحبه حيازة قانونية كاملة وحقاً عينياً في كافة نواتج الزيت وثمار المقسم مع حصة شائعة في شبكة الري بالطاقة الشمسية.'}</span>
+                <span class="font-bold text-stone-900 dark:text-white block mb-1">${tr3('الإطار القانوني والحيازة المستدامة:', 'Legal & Stewardship Terms:', 'Rechtliche Bedingungen & Pflege:')}</span>
+                <span>${tr3('وفقاً لأحكام القانون المدني السوري (المادة 768) وعقد الكفالة المشترك المحمي بمراجعة الدفعات، يمنح هذا السند صاحبه حيازة قانونية كاملة وحقاً عينياً في كافة نواتج الزيت وثمار المقسم مع حصة شائعة في شبكة الري بالطاقة الشمسية.', 'Usufruct terms are governed by the signed partnership contract. Legal effect under Syrian civil law is subject to review [PLATZHALTER: legal opinion].', 'Die Nutzungsbedingungen richten sich nach dem unterzeichneten Partnerschaftsvertrag. Die rechtliche Wirkung nach syrischem Zivilrecht steht unter dem Vorbehalt einer Prüfung [PLATZHALTER: legal opinion].')}</span>
               </div>
             </div>
 
@@ -15811,7 +15847,7 @@ function setMarketplaceViewMode(mode) {
 
       const investorName = isOwned 
         ? (state.currentUser ? (isEn ? (state.currentUser.name_en || state.currentUser.name) : state.currentUser.name) : 'Tariq The Syrian')
-        : (state.currentUser && state.currentUser.role !== 'guest' ? (isEn ? (state.currentUser.name_en || state.currentUser.name) : state.currentUser.name) : (isEn ? 'Prospective Sponsor (Sample)' : 'كافل مرتقب (عينة استعراضية)'));
+        : (state.currentUser && state.currentUser.role !== 'guest' ? (isEn ? (state.currentUser.name_en || state.currentUser.name) : state.currentUser.name) : (tr3('كافل مرتقب (عينة استعراضية)', 'Prospective Sponsor (Sample)', 'Künftiger Baumpate (Muster)')));
 
       const displayName = isEn ? (tree.tree_name_en || tree.tree_name) : tree.tree_name;
       const displayRegion = isEn ? (tree.region_detail_en || tree.region_detail) : tree.region_detail;
@@ -15841,11 +15877,12 @@ function setMarketplaceViewMode(mode) {
             <div class="mb-4 bg-amber-500/10 border border-amber-600/30 rounded-xl p-3 flex items-start gap-2.5 relative z-20">
               <i data-lucide="shield-alert" class="w-5 h-5 text-amber-700 flex-shrink-0 mt-0.5"></i>
               <div class="text-xs text-amber-950">
-                <span class="font-black block">${isEn ? "Specimen Preview Only (Unregistered)" : "نموذج استعراضي للمعاينة فقط (غير مسجل باسمك)"}</span>
+                <span class="font-black block">${tr3("نموذج استعراضي للمعاينة فقط (غير مسجل باسمك)", "Specimen Preview Only (Unregistered)", "Nur Mustervorschau (nicht registriert)")}</span>
                 <p class="text-[11px] text-amber-900 mt-0.5 leading-relaxed">
-                  ${isEn 
-                    ? "This blessed tree is not currently in your investment portfolio. To issue your official verified usufruct deed and cadastral serial number in your name, invest in a share today." 
-                    : "هذه الشجرة المباركة غير مسجلة في محفظة كفالاتك حالياً. لإصدار سند ملكيتك الرسمي وتثبيت حيازتك برقم قيد معتمد صادر باسمك، يمكنك امتلاك حصة فيها الآن."}
+                  ${tr3(
+                    "هذه الشجرة المباركة غير مسجلة في محفظة كفالاتك حالياً. لإصدار سند ملكيتك الرسمي وتثبيت حيازتك برقم قيد معتمد صادر باسمك، يمكنك امتلاك حصة فيها الآن.",
+                    "This blessed tree is not currently in your investment portfolio. To issue your official verified usufruct deed and cadastral serial number in your name, invest in a share today.",
+                    "Für diesen Baum haben Sie derzeit keine Patenschaft. Um einen Patenschaftsnachweis mit Seriennummer auf Ihren Namen zu erhalten, übernehmen Sie noch heute einen Anteil.")}
                 </p>
               </div>
             </div>
@@ -15854,7 +15891,7 @@ function setMarketplaceViewMode(mode) {
             <div class="mb-4 bg-emerald-700/10 border border-emerald-700/30 rounded-xl p-2.5 flex items-center justify-between">
               <div class="flex items-center gap-2 text-xs font-bold text-emerald-950">
                 <i data-lucide="badge-check" class="w-4 h-4 text-emerald-700"></i>
-                <span>${isEn ? "Officially Registered & Verified Usufruct Deed" : "سند حيازة زراعية رسمي موثق ومقيد بالسجل الكاداستري"}</span>
+                <span>${tr3("سند حيازة زراعية رسمي موثق ومقيد بالسجل الكاداستري", "Officially Registered & Verified Usufruct Deed", "Registrierter und geprüfter Patenschaftsnachweis")}</span>
               </div>
               <span class="bg-emerald-700 text-white text-[10px] font-mono px-2 py-0.5 rounded-full font-bold">RLS Active • Tier 1</span>
             </div>
@@ -15866,8 +15903,8 @@ function setMarketplaceViewMode(mode) {
             </div>
             <h2 class="text-xl sm:text-2xl font-black text-olive-950">
               ${hasLand 
-                ? (isEn ? (isOwned ? "Syrian Olive Tree & 5m² Land Parcel Stewardship Deed" : "Specimen: Syrian Olive Tree & 5m² Land Parcel Deed") : (isOwned ? "شهادة ملكية شجرة وسند حيازة مقسم زراعي (5 م²)" : "نموذج استعراضي: شهادة ملكية شجرة وسند حيازة مقسم زراعي")) 
-                : (isEn ? (isOwned ? "Certificate of Syrian Olive Tree Stewardship" : "Specimen: Certificate of Syrian Olive Tree Stewardship") : (isOwned ? "شهادة ملكية ورعاية شجرة زيتون سورية" : "نموذج استعراضي: شهادة رعاية شجرة زيتون سورية"))}
+                ? (isOwned ? tr3("شهادة ملكية شجرة وسند حيازة مقسم زراعي (5 م²)", "Syrian Olive Tree & 5m² Land Parcel Stewardship Deed", "Patenschaftsnachweis: syrischer Olivenbaum & 5 m² Parzelle") : tr3("نموذج استعراضي: شهادة ملكية شجرة وسند حيازة مقسم زراعي", "Specimen: Syrian Olive Tree & 5m² Land Parcel Deed", "Muster: Patenschaftsnachweis für syrischen Olivenbaum & 5 m² Parzelle")) 
+                : (isOwned ? tr3("شهادة ملكية ورعاية شجرة زيتون سورية", "Certificate of Syrian Olive Tree Stewardship", "Patenschaftszertifikat für einen syrischen Olivenbaum") : tr3("نموذج استعراضي: شهادة رعاية شجرة زيتون سورية", "Specimen: Certificate of Syrian Olive Tree Stewardship", "Muster: Patenschaftszertifikat für einen syrischen Olivenbaum"))}
             </h2>
             <h3 class="text-xs sm:text-sm font-bold ${isOwned ? 'text-olive-700' : 'text-amber-800'} tracking-wider font-sans uppercase">
               ${isOwned ? (hasLand ? "Official Agricultural Usufruct & Stewardship Deed" : "Official Fractional Tree Stewardship Certificate") : "Official Agrarian Specimen & Verification Sample"}
@@ -15879,27 +15916,27 @@ function setMarketplaceViewMode(mode) {
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs relative z-10">
             <div class="bg-white dark:bg-stone-900/90 p-3 rounded-xl border border-stone-200 dark:border-stone-800">
-              <span class="text-stone-400 text-[10px] block">${isEn ? "Steward / Sponsor:" : "الكافل الشريك:"}</span>
+              <span class="text-stone-400 text-[10px] block">${tr3("الكافل الشريك:", "Steward / Sponsor:", "Baumpate:")}</span>
               <span class="font-black ${isOwned ? 'text-stone-900' : 'text-amber-800'} text-sm">${investorName}</span>
             </div>
             <div class="bg-white dark:bg-stone-900/90 p-3 rounded-xl border border-stone-200 dark:border-stone-800">
-              <span class="text-stone-400 text-[10px] block">${isEn ? "Blessed Olive Tree:" : "الشجرة المباركة:"}</span>
+              <span class="text-stone-400 text-[10px] block">${tr3("الشجرة المباركة:", "Blessed Olive Tree:", "Olivenbaum:")}</span>
               <span class="font-black text-olive-900 text-sm">${displayName}</span>
             </div>
             <div class="bg-white dark:bg-stone-900/90 p-3 rounded-xl border border-stone-200 dark:border-stone-800">
-              <span class="text-stone-400 text-[10px] block">${isEn ? "Variety & Terroir:" : "الصنف والمنطقة:"}</span>
+              <span class="text-stone-400 text-[10px] block">${tr3("الصنف والمنطقة:", "Variety & Terroir:", "Sorte & Herkunft:")}</span>
               <span class="font-bold text-stone-800">${displayType} • ${displayRegion}</span>
             </div>
             <div class="bg-white dark:bg-stone-900/90 p-3 rounded-xl border border-stone-200 dark:border-stone-800">
-              <span class="text-stone-400 text-[10px] block">${isEn ? "Tree GPS Coordinates:" : "إحداثيات الشجرة (GPS):"}</span>
+              <span class="text-stone-400 text-[10px] block">${tr3("إحداثيات الشجرة (GPS):", "Tree GPS Coordinates:", "GPS-Koordinaten des Baums:")}</span>
               <span class="font-bold text-stone-800 font-mono">${tree.gps_lat.toFixed(4)}, ${tree.gps_lng.toFixed(4)}</span>
             </div>
             <div class="bg-white dark:bg-stone-900/90 p-3 rounded-xl border border-stone-200 dark:border-stone-800">
-              <span class="text-stone-400 text-[10px] block">${isEn ? "Grove & Farming Partner:" : "المزرعة والشريك الفلاحي:"}</span>
+              <span class="text-stone-400 text-[10px] block">${tr3("المزرعة والشريك الفلاحي:", "Grove & Farming Partner:", "Hain & Partnerhof:")}</span>
               <span class="font-bold text-stone-800">${displayFarm}</span>
             </div>
             <div class="bg-white dark:bg-stone-900/90 p-3 rounded-xl border border-stone-200 dark:border-stone-800">
-              <span class="text-stone-400 text-[10px] block">${isEn ? "Certified Cold Mill:" : "المعصرة المعتمدة:"}</span>
+              <span class="text-stone-400 text-[10px] block">${tr3("المعصرة المعتمدة:", "Certified Cold Mill:", "Zertifizierte Ölmühle:")}</span>
               <span class="font-bold text-stone-800">${displayMill || 'معصرة الدريكيش الحديثة'}</span>
             </div>
           </div>
@@ -15910,26 +15947,26 @@ function setMarketplaceViewMode(mode) {
               <div class="flex items-center justify-between">
                 <div class="flex items-center gap-2">
                   <i data-lucide="map" class="w-4 h-4 text-emerald-800"></i>
-                  <span class="font-black text-xs text-emerald-950">${isEn ? "Cadastral Land Parcel Usufruct Record (5.0 m²)" : "بيان الحيازة العقارية للمقسم الزراعي (5.0 م² طابو أخضر)"}</span>
+                  <span class="font-black text-xs text-emerald-950">${tr3("بيان الحيازة العقارية للمقسم الزراعي (5.0 م² طابو أخضر)", "Cadastral Land Parcel Usufruct Record (5.0 m²)", "Nutzungsnachweis für die Parzelle (5,0 m²)")}</span>
                 </div>
                 <span class="bg-emerald-700 text-white text-[10px] font-mono px-2.5 py-0.5 rounded-full font-bold">${isOwned ? 'WGS84 Registered Deed' : 'Specimen Cadastral Grid'}</span>
               </div>
               <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-[11px]">
                 <div class="bg-white dark:bg-stone-900/90 p-2.5 rounded-xl border border-emerald-200/60 dark:border-emerald-800/50">
-                  <span class="text-stone-500 text-[10px] block">${isEn ? "Cadastral Sector & Basin:" : "المنطقة والحوض العقاري:"}</span>
+                  <span class="text-stone-500 text-[10px] block">${tr3("المنطقة والحوض العقاري:", "Cadastral Sector & Basin:", "Katasterbezirk & Flur:")}</span>
                   <span class="font-bold text-stone-900">${cadastralZone}</span>
                 </div>
                 <div class="bg-white dark:bg-stone-900/90 p-2.5 rounded-xl border border-emerald-200/60 dark:border-emerald-800/50">
-                  <span class="text-stone-500 text-[10px] block">${isEn ? "Parcel & Plot Number:" : "رقم المقسم والعقار:"}</span>
+                  <span class="text-stone-500 text-[10px] block">${tr3("رقم المقسم والعقار:", "Parcel & Plot Number:", "Parzellen- & Flurstücksnummer:")}</span>
                   <span class="font-bold text-emerald-900">${parcelNo}</span>
                 </div>
                 <div class="bg-white dark:bg-stone-900/90 p-2.5 rounded-xl border border-emerald-200/60 dark:border-emerald-800/50">
-                  <span class="text-stone-500 text-[10px] block">${isEn ? "Surveyed Parcel Area:" : "مساحة المقسم العقاري:"}</span>
-                  <span class="font-black text-stone-900">${landAreaSqm.toFixed(1)} ${isEn ? "m² surveyed" : "م² مفرزة محيطة"}</span>
+                  <span class="text-stone-500 text-[10px] block">${tr3("مساحة المقسم العقاري:", "Surveyed Parcel Area:", "Vermessene Parzellenfläche:")}</span>
+                  <span class="font-black text-stone-900">${landAreaSqm.toFixed(1)} ${tr3("م² مفرزة محيطة", "m² surveyed", "m² vermessen")}</span>
                 </div>
               </div>
               <div class="bg-white/80 dark:bg-stone-900/90 p-2.5 rounded-xl border border-emerald-200/60 dark:border-emerald-800/50">
-                <span class="text-[10px] text-stone-500 block mb-1 font-bold">${isEn ? "GPS Boundary Corner Points (4 Pillars):" : "إحداثيات أركان المقسم الأربعة (نظام WGS84):"}</span>
+                <span class="text-[10px] text-stone-500 block mb-1 font-bold">${tr3("إحداثيات أركان المقسم الأربعة (نظام WGS84):", "GPS Boundary Corner Points (4 Pillars):", "GPS-Eckpunkte der Parzellengrenze (4 Grenzpunkte):")}</span>
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[10px] font-mono">
                   <div class="bg-stone-50 dark:bg-stone-800/80 p-1 rounded border border-stone-200 dark:border-stone-700 text-center text-stone-700 dark:text-stone-300"><span class="text-stone-400">N: </span>${(tree.gps_lat + 0.00003).toFixed(4)}, ${(tree.gps_lng - 0.00002).toFixed(4)}</div>
                   <div class="bg-stone-50 dark:bg-stone-800/80 p-1 rounded border border-stone-200 dark:border-stone-700 text-center text-stone-700 dark:text-stone-300"><span class="text-stone-400">E: </span>${(tree.gps_lat + 0.00002).toFixed(4)}, ${(tree.gps_lng + 0.00003).toFixed(4)}</div>
@@ -15946,7 +15983,7 @@ function setMarketplaceViewMode(mode) {
                 <i data-lucide="qr-code" class="w-12 h-12 text-stone-800 dark:text-stone-200"></i>
               </div>
               <div class="text-[10px] text-stone-500">
-                <span class="font-bold block text-stone-700">${isEn ? 'Verified Digital Seal' : 'الختم الرقمي المشفر'}</span>
+                <span class="font-bold block text-stone-700">${tr3('الختم الرقمي المشفر', 'Verified Digital Seal', 'Geprüftes digitales Siegel')}</span>
                 <span>Faseela Agrarian Cadastral Registry • Republic of Syria</span>
               </div>
             </div>
@@ -15954,12 +15991,12 @@ function setMarketplaceViewMode(mode) {
               ${isOwned ? `
                 <button data-click="printCertificate()" class="bg-olive-800 hover:bg-olive-900 text-white px-4 py-2.5 rounded-xl font-bold text-xs shadow-md transition-all flex items-center gap-1.5 cursor-pointer">
                   <i data-lucide="printer" class="w-4 h-4"></i>
-                  <span>${isEn ? 'Print / Save PDF' : 'طباعة وحفظ كـ PDF'}</span>
+                  <span>${tr3('طباعة وحفظ كـ PDF', 'Print / Save PDF', 'Drucken / Als PDF speichern')}</span>
                 </button>
               ` : `
                 <button data-click="closeModal('modal-certificate'); openInvestModal('${tree.id}', ${hasLand});" class="bg-olive-800 hover:bg-olive-900 text-white px-5 py-2.5 rounded-xl font-black text-xs shadow-md transition-all flex items-center gap-2 cursor-pointer">
                   <i data-lucide="shopping-cart" class="w-4 h-4 text-amber-300"></i>
-                  <span>${isEn ? 'Invest in Tree to Issue Deed' : 'امتلك حصة لإصدار سندك الرسمي'}</span>
+                  <span>${tr3('امتلك حصة لإصدار سندك الرسمي', 'Invest in Tree to Issue Deed', 'Patenschaft übernehmen und Nachweis erhalten')}</span>
                 </button>
               `}
             </div>
@@ -16018,9 +16055,9 @@ function setMarketplaceViewMode(mode) {
 
       if (!data) return;
 
-      if (badgeEl) badgeEl.innerText = isEn ? data.badge_en : data.badge;
-      if (titleEl) titleEl.innerText = isEn ? data.title_en : data.title;
-      if (subEl) subEl.innerText = isEn ? data.sub_en : data.sub;
+      if (badgeEl) badgeEl.innerText = loc(data, 'badge');
+      if (titleEl) titleEl.innerText = loc(data, 'title');
+      if (subEl) subEl.innerText = loc(data, 'sub');
 
       if (!grid) return;
 
@@ -16044,30 +16081,30 @@ function setMarketplaceViewMode(mode) {
           <div class="${cardBorder} rounded-3xl p-6 flex flex-col justify-between relative overflow-hidden transition-all hover:shadow-lg hover:-translate-y-0.5">
             ${isFeatured ? `
               <div class="absolute top-0 end-0 z-10 bg-olive-700 dark:bg-olive-600 text-white text-[10px] font-black px-3 py-1 rounded-bl-xl uppercase tracking-wider shadow-2xs">
-                ${isEn ? (item.highlight_badge_en || item.highlight_badge) : item.highlight_badge}
+                ${loc(item, 'highlight_badge')}
               </div>
             ` : ''}
             <div>
               <div class="relative overflow-hidden rounded-2xl mb-4 group">
-                <img loading="lazy" src="${item.image}" alt="${escapeHtml(isEn ? item.name_en : item.name)}" class="w-full h-44 object-cover rounded-2xl shadow-xs border border-stone-100 dark:border-stone-700 group-hover:scale-105 transition-transform duration-500">
+                <img loading="lazy" src="${item.image}" alt="${escapeHtml(loc(item, 'name'))}" class="w-full h-44 object-cover rounded-2xl shadow-xs border border-stone-100 dark:border-stone-700 group-hover:scale-105 transition-transform duration-500">
                 <div class="absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
               </div>
 
               <div class="flex items-center justify-between mb-3">
                 <span class="text-xs font-black ${badgePillColor} px-3 py-1 rounded-lg">
-                  ${isEn ? item.region_en : item.region}
+                  ${loc(item, 'region')}
                 </span>
                 <span class="text-xs font-bold text-stone-500 dark:text-stone-400">
-                  ${isEn ? item.badge_top_en : item.badge_top}
+                  ${loc(item, 'badge_top')}
                 </span>
               </div>
 
               <h3 class="text-xl font-black text-stone-900 dark:text-white mb-2 leading-tight">
-                ${isEn ? item.name_en : item.name}
+                ${loc(item, 'name')}
               </h3>
 
               <p class="text-xs text-stone-600 dark:text-stone-300 leading-relaxed mb-4 min-h-[50px]">
-                ${isEn ? item.desc_en : item.desc}
+                ${loc(item, 'desc')}
               </p>
 
               <div class="space-y-2.5 bg-stone-50 dark:bg-stone-900/60 p-4 rounded-2xl border border-stone-100 dark:border-stone-700/80 text-xs mb-4">
@@ -16075,8 +16112,8 @@ function setMarketplaceViewMode(mode) {
                   if (m.is_text) {
                     return `
                       <div class="pt-1 border-t border-stone-200/50 dark:border-stone-700/50 flex justify-between font-bold text-stone-700 dark:text-stone-300">
-                        <span>${isEn ? m.label_en : m.label}</span>
-                        <span class="text-stone-900 dark:text-white font-black">${isEn ? m.val_en : m.val}</span>
+                        <span>${loc(m, 'label')}</span>
+                        <span class="text-stone-900 dark:text-white font-black">${loc(m, 'val')}</span>
                       </div>
                     `;
                   }
@@ -16085,8 +16122,8 @@ function setMarketplaceViewMode(mode) {
                   return `
                     <div>
                       <div class="flex justify-between font-bold text-stone-700 dark:text-stone-300 mb-1">
-                        <span>${isEn ? m.label_en : m.label}</span>
-                        <span class="${valColor} font-black">${isEn ? m.val_en : m.val}</span>
+                        <span>${loc(m, 'label')}</span>
+                        <span class="${valColor} font-black">${loc(m, 'val')}</span>
                       </div>
                       <div class="w-full bg-stone-200 dark:bg-stone-700 h-1.5 rounded-full overflow-hidden">
                         <div class="${barColor} h-full rounded-full transition-all duration-700" style="width: ${m.pct}%"></div>
@@ -16099,7 +16136,7 @@ function setMarketplaceViewMode(mode) {
 
             <button type="button" data-click="filterByCultivar('${item.filter_keyword}', '${crop}')" class="${btnClass}">
               <i data-lucide="search" class="w-3.5 h-3.5"></i>
-              <span>${isEn ? item.btn_text_en : item.btn_text}</span>
+              <span>${loc(item, 'btn_text')}</span>
             </button>
           </div>
         `;
@@ -16242,12 +16279,12 @@ function setMarketplaceViewMode(mode) {
 
             <div class="p-5 pt-0 border-t border-stone-100 dark:border-stone-700/60 mt-3 flex items-center justify-between gap-3">
               <div>
-                <span class="text-[10px] text-stone-400 block">${isEn ? 'Unit Price' : 'سعر العبوة'}</span>
+                <span class="text-[10px] text-stone-400 block">${tr3('سعر العبوة', 'Unit Price', 'Stückpreis')}</span>
                 <span class="text-xl font-black text-amber-600 dark:text-amber-400 font-mono">${formattedPrice}</span>
               </div>
               <button type="button" data-click="openBoutiqueCheckout('${p.id}')" class="bg-gradient-to-r from-amber-600 to-olive-800 hover:from-amber-700 hover:to-olive-900 text-white font-bold text-xs px-4 py-2.5 rounded-xl shadow-xs transition-all cursor-pointer flex items-center gap-1.5">
                 <i data-lucide="shopping-cart" class="w-3.5 h-3.5"></i>
-                <span data-i18n="boutique_btn_order_now">${isEn ? 'Order Now' : 'اطلب الآن'}</span>
+                <span data-i18n="boutique_btn_order_now">${tr3('اطلب الآن', 'Order Now', 'Jetzt bestellen')}</span>
               </button>
             </div>
           </div>
@@ -16361,9 +16398,10 @@ function setMarketplaceViewMode(mode) {
         });
       }
 
-      showToast(state.currentLang !== 'ar' 
-        ? `✅ Order Confirmed! Tracking #${orderId}. Thank you for supporting Syrian local producers!` 
-        : `✅ تم تأكيد طلبك بنجاح برقم تتبع: ${orderId}. شكراً لدعمك للإنتاج الزراعي السوري!`);
+      showToast(tr3(
+        `✅ تم تأكيد طلبك بنجاح برقم تتبع: ${orderId}. شكراً لدعمك للإنتاج الزراعي السوري!`,
+        `✅ Order Confirmed! Tracking #${orderId}. Thank you for supporting Syrian local producers!`,
+        `✅ Bestellung bestätigt! Sendungsnummer: ${orderId}. Vielen Dank, dass Sie syrische Erzeuger unterstützen!`));
     }
 
     // -----------------------------------------------------------------
@@ -16409,8 +16447,8 @@ function setMarketplaceViewMode(mode) {
         discountPct: 7,
         sharesCount: 4,
         landSqm: 15.0,
-        cropsSummary: isEn ? '2 Khodairi Olive + 1 Ashouri Pistachio + 1 Farak Almond' : '2 زيتون خضيري ساحلي + 1 فستق عاشوري مورك + 1 لوز المخرم الفرك',
-        expectedYield: isEn ? '8L EVOO + 3kg Pistachios + 2.5kg Almonds' : '8 لتر زيت بكر ممتاز + 3 كغ فستق نخب أول + 2.5 كغ لوز فرك'
+        cropsSummary: tr3('2 زيتون خضيري ساحلي + 1 فستق عاشوري مورك + 1 لوز المخرم الفرك', '2 Khodairi Olive + 1 Ashouri Pistachio + 1 Farak Almond', '2 Khodairi-Olivenbäume + 1 Ashouri-Pistazienbaum + 1 Farak-Mandelbaum'),
+        expectedYield: tr3('8 لتر زيت بكر ممتاز + 3 كغ فستق نخب أول + 2.5 كغ لوز فرك', '8L EVOO + 3kg Pistachios + 2.5kg Almonds', '8 l natives Olivenöl extra + 3 kg Pistazien + 2,5 kg Mandeln')
       };
 
       state.currentVirginGroveId = null;
@@ -16420,10 +16458,10 @@ function setMarketplaceViewMode(mode) {
       const modalTreeName = document.getElementById('modal-tree-name');
       const modalTreeSub = document.getElementById('modal-tree-sub');
       if (modalTreeName) {
-        modalTreeName.innerText = isEn ? 'Syrian Agroforestry Bundle (4 Shares)' : 'باقة التنوع الزراعي السوري التشاركي (4 حصص)';
+        modalTreeName.innerText = tr3('باقة التنوع الزراعي السوري التشاركي (4 حصص)', 'Syrian Agroforestry Bundle (4 Shares)', 'Syrisches Agroforst-Paket (4 Anteile)');
       }
       if (modalTreeSub) {
-        modalTreeSub.innerText = isEn ? 'Syrian Terroir Blend • $130.00 • 15.0 m² Unified Cadastral Deed' : 'تنوع زراعي سوري شامل • $130.00 • 15.0 م² طابو مساحي موحد';
+        modalTreeSub.innerText = tr3('تنوع زراعي سوري شامل • $130.00 • 15.0 م² طابو مساحي موحد', 'Syrian Terroir Blend • $130.00 • 15.0 m² Unified Cadastral Deed', 'Syrische Terroir-Vielfalt • 130,00 $ • 15,0 m² gemeinsame Katasterparzelle');
       }
 
       // Configure Modal UI for Bundle Mode
@@ -16440,18 +16478,18 @@ function setMarketplaceViewMode(mode) {
 
       const oilEl = document.getElementById('invest-summary-oil');
       if (oilEl) {
-        oilEl.innerText = isEn ? '~ 8L EVOO + 3kg Pistachio + 2.5kg Almond' : '~ 8 لتر زيت + 3 كغ فستق + 2.5 كغ لوز';
+        oilEl.innerText = tr3('~ 8 لتر زيت + 3 كغ فستق + 2.5 كغ لوز', '~ 8L EVOO + 3kg Pistachio + 2.5kg Almond', '~ 8 l Olivenöl + 3 kg Pistazien + 2,5 kg Mandeln');
       }
 
       const landRow = document.getElementById('invest-summary-land-row');
       const landVal = document.getElementById('invest-summary-land');
       if (landRow && landVal) {
         landRow.classList.remove('hidden');
-        landVal.innerText = isEn ? '~ 15.0 m² Unified Cadastral Deed' : '~ 15.0 م² طابو زراعي مساحي موحد';
+        landVal.innerText = tr3('~ 15.0 م² طابو زراعي مساحي موحد', '~ 15.0 m² Unified Cadastral Deed', '~ 15,0 m² gemeinsame Katasterparzelle');
       }
 
       openModal('modal-invest');
-      showToast(isEn ? '🌾 Agroforestry Bundle Selected ($130.00 with 7% Discount & 15 m² Land Deed)!' : '🌾 تم اختيار باقة التنوع الزراعي السوري ($130.00 بخصم 7% وسند 15 م² موحد)!');
+      showToast(tr3('🌾 تم اختيار باقة التنوع الزراعي السوري ($130.00 بخصم 7% وسند 15 م² موحد)!', '🌾 Agroforestry Bundle Selected ($130.00 with 7% Discount & 15 m² Land Deed)!', '🌾 Agroforst-Paket ausgewählt (130,00 $ mit 7 % Rabatt und 15 m² gemeinsamer Parzelle)!'));
       lucide.createIcons();
     }
 
@@ -16496,7 +16534,7 @@ function setMarketplaceViewMode(mode) {
         if (matureCards) matureCards.classList.add('hidden');
         if (bundleBanner) bundleBanner.classList.add('hidden');
         if (cropTabs) cropTabs.classList.add('hidden');
-        if (countBadge) countBadge.innerText = state.currentLang !== 'ar' ? '4 Virgin Projects' : '4 مشاريع بكر';
+        if (countBadge) countBadge.innerText = tr3('4 مشاريع بكر', '4 Virgin Projects', '4 Neuanlage-Projekte');
         renderVirginGroves();
       } else if (track === 'shop') {
         if (virginContainer) virginContainer.classList.add('hidden');
@@ -16516,7 +16554,7 @@ function setMarketplaceViewMode(mode) {
         if (matureCards) matureCards.classList.add('hidden');
         if (bundleBanner) bundleBanner.classList.add('hidden');
         if (cropTabs) cropTabs.classList.add('hidden');
-        if (countBadge) countBadge.innerText = state.currentLang !== 'ar' ? '6 Gourmet Items' : '6 مؤن معتمدة';
+        if (countBadge) countBadge.innerText = tr3('6 مؤن معتمدة', '6 Gourmet Items', '6 Feinkostprodukte');
         renderBoutiqueProducts();
       } else {
         if (virginContainer) virginContainer.classList.add('hidden');
@@ -16554,7 +16592,7 @@ function setMarketplaceViewMode(mode) {
                 <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
                 <div class="absolute top-3 start-3 bg-emerald-700 text-white text-[10px] font-black px-2.5 py-1 rounded-full shadow-xs flex items-center gap-1">
                   <i data-lucide="sprout" class="w-3.5 h-3.5"></i>
-                  <span>${isEn ? `Age: ${vg.sapling_age_years} Years` : `عمر الغرسة: ${vg.sapling_age_years} سنوات`}</span>
+                  <span>${tr3(`عمر الغرسة: ${vg.sapling_age_years} سنوات`, `Age: ${vg.sapling_age_years} Years`, `Alter: ${vg.sapling_age_years} Jahre`)}</span>
                 </div>
                 <div class="absolute top-3 end-3 bg-white/90 dark:bg-stone-900/90 backdrop-blur-xs text-olive-950 dark:text-stone-100 text-[10px] font-bold px-2.5 py-1 rounded-full shadow-xs">
                   ${region}
@@ -16568,19 +16606,19 @@ function setMarketplaceViewMode(mode) {
               <div class="p-5 space-y-3.5 text-xs">
                 <div class="grid grid-cols-2 gap-2 bg-stone-50 dark:bg-stone-800/60 p-3 rounded-2xl border border-stone-100 dark:border-stone-700/60 text-[11px]">
                   <div>
-                    <span class="text-stone-400 block text-[9.5px]">${isEn ? 'Sapling Variety:' : 'صنف الغراس:'}</span>
+                    <span class="text-stone-400 block text-[9.5px]">${tr3('صنف الغراس:', 'Sapling Variety:', 'Setzlingssorte:')}</span>
                     <strong class="text-stone-800 dark:text-stone-200">${variety}</strong>
                   </div>
                   <div>
-                    <span class="text-stone-400 block text-[9.5px]">${isEn ? 'Land Parcel Plot:' : 'مقسم الأرض المشمول:'}</span>
-                    <strong class="text-emerald-700 dark:text-emerald-400">${vg.land_area_per_sapling_sqm} m² ${isEn ? 'per sapling' : 'لكل غرسة'}</strong>
+                    <span class="text-stone-400 block text-[9.5px]">${tr3('مقسم الأرض المشمول:', 'Land Parcel Plot:', 'Zugehörige Fläche:')}</span>
+                    <strong class="text-emerald-700 dark:text-emerald-400">${vg.land_area_per_sapling_sqm} m² ${tr3('لكل غرسة', 'per sapling', 'pro Setzling')}</strong>
                   </div>
                   <div>
-                    <span class="text-stone-400 block text-[9.5px]">${isEn ? 'Soil Taxonomy:' : 'طبيعة التربة:'}</span>
+                    <span class="text-stone-400 block text-[9.5px]">${tr3('طبيعة التربة:', 'Soil Taxonomy:', 'Bodenart:')}</span>
                     <span class="text-stone-700 dark:text-stone-300 font-medium">${soil}</span>
                   </div>
                   <div>
-                    <span class="text-stone-400 block text-[9.5px]">${isEn ? 'Irrigation System:' : 'نظام السقاية:'}</span>
+                    <span class="text-stone-400 block text-[9.5px]">${tr3('نظام السقاية:', 'Irrigation System:', 'Bewässerungssystem:')}</span>
                     <span class="text-stone-700 dark:text-stone-300 font-medium">${irrigation}</span>
                   </div>
                 </div>
@@ -16588,13 +16626,13 @@ function setMarketplaceViewMode(mode) {
                 <div class="flex items-center justify-between text-[11px] p-2 bg-emerald-50/70 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/50 rounded-xl">
                   <div class="flex items-center gap-1.5 text-emerald-900 dark:text-emerald-200 font-bold">
                     <i data-lucide="trending-up" class="w-4 h-4 text-emerald-600"></i>
-                    <span>${isEn ? 'Capital Land Growth:' : 'معدل نمو قيمة الأرض:'}</span>
+                    <span>${tr3('معدل نمو قيمة الأرض:', 'Capital Land Growth:', 'Wertzuwachs des Landes:')}</span>
                   </div>
                   <span class="font-black text-emerald-800 dark:text-emerald-300">${growth}</span>
                 </div>
 
                 <div class="flex justify-between items-center text-stone-600 dark:text-stone-400 text-[11px]">
-                  <span>${isEn ? 'Cadastral Tenure Deed:' : 'سند الطابو الكاداستري:'}</span>
+                  <span>${tr3('سند الطابو الكاداستري:', 'Cadastral Tenure Deed:', 'Katasterstatus:')}</span>
                   <span class="text-stone-900 dark:text-stone-200 font-bold text-end">${status}</span>
                 </div>
               </div>
@@ -16603,27 +16641,27 @@ function setMarketplaceViewMode(mode) {
             <div class="p-5 pt-0 border-t border-stone-100 dark:border-stone-800 mt-2">
               <div class="flex items-center justify-between py-3">
                 <div>
-                  <span class="text-[10px] text-stone-400 block">${isEn ? 'Sapling + 25 m² Land Plot:' : 'غرسة بكر + 25 م² أرض طابو:'}</span>
+                  <span class="text-[10px] text-stone-400 block">${tr3('غرسة بكر + 25 م² أرض طابو:', 'Sapling + 25 m² Land Plot:', 'Setzling + 25 m² Fläche:')}</span>
                   <span class="text-xl font-black text-terracotta-600 dark:text-terracotta-400">${formatMoney(vg.price_per_sapling_with_land)}</span>
                 </div>
                 <div class="text-end">
-                  <span class="text-[10px] text-stone-400 block">${isEn ? 'First Harvest Year:' : 'موسم الإثمار الأول:'}</span>
+                  <span class="text-[10px] text-stone-400 block">${tr3('موسم الإثمار الأول:', 'First Harvest Year:', 'Erstes Erntejahr:')}</span>
                   <span class="text-xs font-black text-olive-800 dark:text-olive-300">${vg.first_commercial_harvest_year}</span>
                 </div>
               </div>
 
               <button type="button" data-click="viewTreeDetails('${vg.id}')" class="w-full mb-2 bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-800 dark:text-stone-200 py-2 rounded-xl font-bold text-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer">
                 <i data-lucide="eye" class="w-3.5 h-3.5 text-olive-600 dark:text-olive-400"></i>
-                <span data-i18n="vg_detail_btn_preview">${isEn ? 'View Project Blueprint & Details' : 'معاينة المخطط وتفاصيل المشروع'}</span>
+                <span data-i18n="vg_detail_btn_preview">${tr3('معاينة المخطط وتفاصيل المشروع', 'View Project Blueprint & Details', 'Projektplan & Details ansehen')}</span>
               </button>
               <div class="grid grid-cols-2 gap-2">
                 <button type="button" data-click="investInVirginPackage('${vg.id}', 1, ${vg.price_per_sapling_with_land}, ${vg.land_area_per_sapling_sqm})" class="w-full bg-emerald-700 hover:bg-emerald-800 text-white py-2.5 rounded-xl font-black text-xs transition-all flex items-center justify-center gap-1 cursor-pointer">
                   <i data-lucide="shopping-bag" class="w-3.5 h-3.5"></i>
-                  <span>${isEn ? 'Invest (1 Sapling + 25 m²)' : 'اكتتب بغرسة + 25 م²'}</span>
+                  <span>${tr3('اكتتب بغرسة + 25 م²', 'Invest (1 Sapling + 25 m²)', 'Fördern (1 Setzling + 25 m²)')}</span>
                 </button>
                 <button type="button" data-click="investInVirginPackage('${vg.id}', 10, ${(vg.price_per_sapling_with_land * 9).toFixed(2)}, 250)" class="w-full bg-olive-800 hover:bg-olive-900 text-white py-2.5 rounded-xl font-bold text-xs transition-all flex items-center justify-center gap-1 cursor-pointer">
                   <i data-lucide="trees" class="w-3.5 h-3.5"></i>
-                  <span>${isEn ? 'Quarter Dunum (10 Saplings)' : 'ربع دونم (10 غرسات)'}</span>
+                  <span>${tr3('ربع دونم (10 غرسات)', 'Quarter Dunum (10 Saplings)', 'Viertel-Dunum (10 Setzlinge)')}</span>
                 </button>
               </div>
             </div>
@@ -16646,8 +16684,8 @@ function setMarketplaceViewMode(mode) {
       state.currentTreeId = 'tree_01'; // Fallback link
       const modalTreeName = document.getElementById('modal-tree-name');
       const modalTreeSub = document.getElementById('modal-tree-sub');
-      if (modalTreeName) modalTreeName.innerText = `${title} (${saplingsCount} ${isEn ? 'Sapling(s)' : 'غرسة بكر'})`;
-      if (modalTreeSub) modalTreeSub.innerText = `${vg.region} • ${formatMoney(priceUsd)} • ${landSqm} m² ${isEn ? 'Cadastral Land' : 'أرض طابو'}`;
+      if (modalTreeName) modalTreeName.innerText = `${title} (${saplingsCount} ${tr3('غرسة بكر', 'Sapling(s)', 'Setzling(e)')})`;
+      if (modalTreeSub) modalTreeSub.innerText = `${vg.region} • ${formatMoney(priceUsd)} • ${landSqm} m² ${tr3('أرض طابو', 'Cadastral Land', 'Katasterfläche')}`;
 
       // Open investment modal with prefilled details
       state.currentBundlePackage = null;
@@ -16663,14 +16701,14 @@ function setMarketplaceViewMode(mode) {
       const totalEl = document.getElementById('invest-summary-total');
       if (totalEl) totalEl.innerText = formatMoney(priceUsd);
       const oilEl = document.getElementById('invest-summary-oil');
-      if (oilEl) oilEl.innerText = isEn ? `~ ${(saplingsCount * 22.0).toFixed(1)} L/Yr at maturity` : `~ ${(saplingsCount * 22.0).toFixed(1)} لتر/سنة عند النضج`;
+      if (oilEl) oilEl.innerText = tr3(`~ ${(saplingsCount * 22.0).toFixed(1)} لتر/سنة عند النضج`, `~ ${(saplingsCount * 22.0).toFixed(1)} L/Yr at maturity`, `~ ${(saplingsCount * 22.0).toFixed(1)} L/Jahr ab Ertragsreife`);
       const landRow = document.getElementById('invest-summary-land-row');
       const landVal = document.getElementById('invest-summary-land');
       if (landRow && landVal) {
         landRow.classList.remove('hidden');
-        landVal.innerText = isEn ? `~ ${landSqm} m² Green Title Deed` : `~ ${landSqm} م² طابو أخضر مفرز`;
+        landVal.innerText = tr3(`~ ${landSqm} م² طابو أخضر مفرز`, `~ ${landSqm} m² Green Title Deed`, `~ ${landSqm} m² vermessene Parzelle`);
       }
-      showToast(isEn ? `🌱 Selected Virgin Greenfield Package: ${saplingsCount} Sapling(s) with ${landSqm} m² Land!` : `🌱 تم اختيار باقة الغراس البكر: ${saplingsCount} غرسة مع ${landSqm} م² أرض طابو!`);
+      showToast(tr3(`🌱 تم اختيار باقة الغراس البكر: ${saplingsCount} غرسة مع ${landSqm} م² أرض طابو!`, `🌱 Selected Virgin Greenfield Package: ${saplingsCount} Sapling(s) with ${landSqm} m² Land!`, `🌱 Neupflanzungspaket gewählt: ${saplingsCount} Setzling(e) mit ${landSqm} m² Fläche!`));
       lucide.createIcons();
     }
 
@@ -16708,7 +16746,7 @@ function setMarketplaceViewMode(mode) {
         container.innerHTML = `
           <div class="col-span-full py-12 text-center text-stone-400 bg-white dark:bg-stone-900 rounded-3xl border border-stone-200 dark:border-stone-800 p-6">
             <i data-lucide="inbox" class="w-10 h-10 mx-auto text-stone-300 mb-2"></i>
-            <h4 class="font-bold text-stone-700 dark:text-stone-300 text-sm">${isEn ? 'No active secondary listings at this moment' : 'لا توجد عروض تداول نشطة حالياً في السوق الثانوي'}</h4>
+            <h4 class="font-bold text-stone-700 dark:text-stone-300 text-sm">${tr3('لا توجد عروض تداول نشطة حالياً في السوق الثانوي', 'No active secondary listings at this moment', 'Derzeit gibt es keine aktiven Angebote auf dem Zweitmarkt')}</h4>
           </div>
         `;
         lucide.createIcons();
@@ -16720,8 +16758,8 @@ function setMarketplaceViewMode(mode) {
         const title = isEn ? (l.asset_title_en || l.asset_title) : l.asset_title;
         const region = isEn ? (l.region_en || l.region_ar) : l.region_ar;
         const typeBadge = isVirgin 
-          ? (isEn ? 'Virgin Greenfield & Land' : 'غراس بكر ومقسم أرض') 
-          : (isEn ? 'Mature Productive Tree' : 'شجرة معمرة منتجة');
+          ? tr3('غراس بكر ومقسم أرض', 'Virgin Greenfield & Land', 'Neupflanzung mit Fläche') 
+          : tr3('شجرة معمرة منتجة', 'Mature Productive Tree', 'Ausgewachsener, tragender Baum');
 
         return `
           <div class="bg-white dark:bg-stone-850 rounded-3xl p-5 border border-stone-200 dark:border-stone-700 shadow-sm flex flex-col justify-between space-y-4 text-start">
@@ -16731,7 +16769,7 @@ function setMarketplaceViewMode(mode) {
                 <span class="text-[10px] font-mono text-stone-400">${l.listed_date}</span>
               </div>
               <h4 class="font-black text-stone-900 dark:text-white text-sm sm:text-base">${escapeHtml(title)}</h4>
-              <p class="text-xs text-stone-500 dark:text-stone-400">${escapeHtml(region)} • ${l.includes_land ? (isEn ? `${l.land_sqm} m² Cadastral Land` : `${l.land_sqm} م² طابو مساحي`) : ''}</p>
+              <p class="text-xs text-stone-500 dark:text-stone-400">${escapeHtml(region)} • ${l.includes_land ? tr3(`${l.land_sqm} م² طابو مساحي`, `${l.land_sqm} m² Cadastral Land`, `${l.land_sqm} m² Katasterfläche`) : ''}</p>
               <div class="flex items-center gap-1.5 text-[11px] text-stone-600 dark:text-stone-300 pt-1">
                 <i data-lucide="shield-check" class="w-3.5 h-3.5 text-purple-600"></i>
                 <span>${escapeHtml(isEn ? (l.seller_tier_en || l.seller_tier) : l.seller_tier)}</span>
@@ -16740,12 +16778,12 @@ function setMarketplaceViewMode(mode) {
 
             <div class="pt-3 border-t border-stone-100 dark:border-stone-800 flex items-center justify-between gap-3">
               <div>
-                <span class="text-[10px] text-stone-400 block">${isEn ? 'Asking Price' : 'سعر العرض'}</span>
+                <span class="text-[10px] text-stone-400 block">${tr3('سعر العرض', 'Asking Price', 'Angebotspreis')}</span>
                 <span class="text-lg font-black text-cyan-800 dark:text-cyan-300 font-mono">${formatMoney(l.asking_price_usd)}</span>
               </div>
               <button type="button" data-click="buyP2PListing('${escapeHtml(l.id)}')" class="bg-cyan-700 hover:bg-cyan-800 text-white px-4 py-2.5 rounded-xl font-bold text-xs flex items-center gap-1.5 shadow-sm transition-all cursor-pointer">
                 <i data-lucide="check" class="w-3.5 h-3.5"></i>
-                <span data-i18n="dash_trade_btn_instant_buy">${isEn ? 'Instant Payment Review Buy' : 'شراء فوري عبر الضمان'}</span>
+                <span data-i18n="dash_trade_btn_instant_buy">${tr3('شراء فوري عبر الضمان', 'Instant Payment Review Buy', 'Sofortkauf mit Zahlungsprüfung')}</span>
               </button>
             </div>
           </div>
@@ -16757,8 +16795,8 @@ function setMarketplaceViewMode(mode) {
     function openP2PListModal() {
       if (!p2pEnabled()) { showToast(t('p2p_beta_unavailable')); return; }
       if (!state.currentUser || (state.currentUser.role !== 'investor' && state.currentUser.role !== 'admin')) {
-        const reqRole = state.currentLang !== 'ar' ? 'Verified Investor' : 'كافل زراعي معتمد';
-        const msg = state.currentLang !== 'ar' ? 'Listing shares for sale is restricted to registered investors.' : 'عرض الحصص في سوق التداول مقتصر على الكافلين المعتمدين.';
+        const reqRole = tr3('كافل زراعي معتمد', 'Verified Investor', 'Verifizierter Baumpate');
+        const msg = tr3('عرض الحصص في سوق التداول مقتصر على الكافلين المعتمدين.', 'Listing shares for sale is restricted to registered investors.', 'Nur registrierte Baumpaten können Anteile zum Verkauf anbieten.');
         showAccessDenied(t('dash_btn_list_for_sale'), reqRole, msg);
         return;
       }
@@ -16768,7 +16806,7 @@ function setMarketplaceViewMode(mode) {
 
       const myShares = state.userShares.filter(s => s.user_id === state.currentUser.id);
       if (myShares.length === 0) {
-        showToast(state.currentLang !== 'ar' ? '⚠️ You currently own no shares or plots to list for sale.' : '⚠️ لا توجد لديك حصص أو مقاسم مسجلة حالياً لعرضها للبيع.');
+        showToast(tr3('⚠️ لا توجد لديك حصص أو مقاسم مسجلة حالياً لعرضها للبيع.', '⚠️ You currently own no shares or plots to list for sale.', '⚠️ Sie haben derzeit keine Anteile oder Parzellen, die Sie zum Verkauf anbieten könnten.'));
         return;
       }
 
@@ -16776,15 +16814,15 @@ function setMarketplaceViewMode(mode) {
       select.innerHTML = myShares.map(s => {
         if (s.is_bundle) {
           const name = isEn ? (s.bundle_name_en || s.bundle_name) : s.bundle_name;
-          return `<option value="${s.id}">${name} (4 ${isEn ? 'Shares' : 'حصص'} + 15 m²)</option>`;
+          return `<option value="${s.id}">${name} (4 ${tr3('حصص', 'Shares', 'Anteile')} + 15 m²)</option>`;
         } else if (s.is_virgin_grove) {
           const vg = (state.virginGroves && state.virginGroves.find(g => g.id === s.virgin_grove_id)) || state.virginGroves[0];
           const name = isEn ? (vg.title_en || vg.title) : vg.title;
-          return `<option value="${s.id}">${name} (${s.saplings_count} ${isEn ? 'Saplings' : 'غراس'} + ${s.land_parcel_sqm} m²)</option>`;
+          return `<option value="${s.id}">${name} (${s.saplings_count} ${tr3('غراس', 'Saplings', 'Setzlinge')} + ${s.land_parcel_sqm} m²)</option>`;
         } else {
           const tree = state.trees.find(t => t.id === s.tree_id) || state.trees[0];
           const name = isEn ? (tree.tree_name_en || tree.tree_name) : tree.tree_name;
-          return `<option value="${s.id}">${name} (${s.percentage}% ${isEn ? 'Share' : 'حصة'})</option>`;
+          return `<option value="${s.id}">${name} (${s.percentage}% ${tr3('حصة', 'Share', 'Anteil')})</option>`;
         }
       }).join('');
 
@@ -16797,7 +16835,7 @@ function setMarketplaceViewMode(mode) {
       const rawPrice = parseFloat(document.getElementById('p2p-list-price-input').value);
       const isEn = state.currentLang !== 'ar';
       if (isNaN(rawPrice) || rawPrice <= 0) {
-        showToast(isEn ? 'Please enter a valid listing price (greater than $0)' : 'يرجى إدخال سعر بيع صالح أكبر من $0');
+        showToast(tr3('يرجى إدخال سعر بيع صالح أكبر من $0', 'Please enter a valid listing price (greater than $0)', 'Bitte geben Sie einen gültigen Angebotspreis ein (größer als $0)'));
         return;
       }
       const price = rawPrice;
@@ -16874,15 +16912,15 @@ function setMarketplaceViewMode(mode) {
       state.p2pListings.unshift(newListing);
       closeModal('modal-p2p-list');
       playAcousticChime(750, 0.2);
-      showToast(isEn ? '🎉 Your agricultural asset is now listed on the P2P Secondary Market!' : '🎉 تم طرح أصلك الزراعي بنجاح في سوق التداول وإعادة البيع!');
+      showToast(tr3('🎉 تم طرح أصلك الزراعي بنجاح في سوق التداول وإعادة البيع!', '🎉 Your agricultural asset is now listed on the P2P Secondary Market!', '🎉 Ihr Angebot ist jetzt auf dem P2P-Zweitmarkt eingestellt!'));
       renderInvestorTrade();
     }
 
     function buyP2PListing(listingId) {
       const isEn = state.currentLang !== 'ar';
       if (!state.currentUser || (state.currentUser.role !== 'investor' && state.currentUser.role !== 'admin')) {
-        const reqRole = isEn ? 'Verified Investor' : 'كافل زراعي معتمد';
-        const msg = isEn ? 'Purchasing secondary market assets is restricted to verified investors.' : 'شراء الحصص من سوق التداول متاح فقط للكافلين المعتمدين.';
+        const reqRole = tr3('كافل زراعي معتمد', 'Verified Investor', 'Verifizierter Baumpate');
+        const msg = tr3('شراء الحصص من سوق التداول متاح فقط للكافلين المعتمدين.', 'Purchasing secondary market assets is restricted to verified investors.', 'Käufe auf dem Zweitmarkt sind verifizierten Baumpaten vorbehalten.');
         showAccessDenied(t('dash_trade_btn_instant_buy'), reqRole, msg);
         return;
       }
@@ -16891,7 +16929,7 @@ function setMarketplaceViewMode(mode) {
       if (!listing) return;
 
       if (listing.seller_id === state.currentUser.id) {
-        showToast(isEn ? '⚠️ You cannot purchase your own active listing.' : '⚠️ لا يمكنك شراء عرض بيع خاص بك.');
+        showToast(tr3('⚠️ لا يمكنك شراء عرض بيع خاص بك.', '⚠️ You cannot purchase your own active listing.', '⚠️ Sie können Ihr eigenes aktives Angebot nicht kaufen.'));
         return;
       }
 
@@ -16944,7 +16982,7 @@ function setMarketplaceViewMode(mode) {
       state.p2pListings = state.p2pListings.filter(l => l.id !== listingId);
 
       playAcousticChime(880, 0.25);
-      showToast(isEn ? `🎉 P2P purchase confirmed: ${title} transferred to your portfolio!` : `🎉 تم تأكيد الشراء التشاركي ونقل ملكية ${title} إلى محفظتك بنجاح!`);
+      showToast(tr3(`🎉 تم تأكيد الشراء التشاركي ونقل ملكية ${title} إلى محفظتك بنجاح!`, `🎉 P2P purchase confirmed: ${title} transferred to your portfolio!`, `🎉 P2P-Kauf bestätigt: ${title} wurde Ihren Patenschaften hinzugefügt!`));
       if (typeof dispatchNotification === 'function') {
         dispatchNotification({
           role: 'investor',
@@ -16965,8 +17003,8 @@ function setMarketplaceViewMode(mode) {
     // --- FARMER ADVANCE LOGIC ---
     function openFarmerAdvanceModal() {
       if (!state.currentUser || (state.currentUser.role !== 'farmer' && state.currentUser.role !== 'admin')) {
-        const reqRole = state.currentLang !== 'ar' ? 'Certified Field Farmer' : 'مزارع ميداني معتمد';
-        const msg = state.currentLang !== 'ar' ? 'Requesting micro-advances is restricted to certified farmers.' : 'طلب السلف التشغيلية مقتصر على المزارعين المعتمدين.';
+        const reqRole = tr3('مزارع ميداني معتمد', 'Certified Field Farmer', 'Zertifizierter Landwirt');
+        const msg = tr3('طلب السلف التشغيلية مقتصر على المزارعين المعتمدين.', 'Requesting micro-advances is restricted to certified farmers.', 'Mikrovorschüsse können nur zertifizierte Landwirte beantragen.');
         showAccessDenied(t('farmer_btn_advance'), reqRole, msg);
         return;
       }
@@ -16978,7 +17016,7 @@ function setMarketplaceViewMode(mode) {
       const isEn = state.currentLang !== 'ar';
       const rawAmount = parseInt(document.getElementById('farmer-adv-amount').value, 10);
       if (isNaN(rawAmount) || rawAmount <= 0) {
-        showToast(isEn ? 'Please enter a valid advance amount (greater than 0 SYP)' : 'يرجى إدخال مبلغ سلفة صالح أكبر من الصفر');
+        showToast(tr3('يرجى إدخال مبلغ سلفة صالح أكبر من الصفر', 'Please enter a valid advance amount (greater than 0 SYP)', 'Bitte geben Sie einen gültigen Vorschussbetrag ein (größer als 0 SYP)'));
         return;
       }
       const amountSyp = rawAmount;
@@ -17011,15 +17049,15 @@ function setMarketplaceViewMode(mode) {
 
       closeModal('modal-farmer-advance');
       playAcousticChime(780, 0.25);
-      showToast(isEn ? `✅ Advance of ${amountSyp.toLocaleString()} SYP approved & deposited directly into your wallet!` : `✅ تمت الموافقة الفورية وإيداع سلفة ${amountSyp.toLocaleString()} ل.س في محفظتك بنجاح!`);
+      showToast(tr3(`✅ تمت الموافقة الفورية وإيداع سلفة ${amountSyp.toLocaleString()} ل.س في محفظتك بنجاح!`, `✅ Advance of ${amountSyp.toLocaleString()} SYP approved & deposited directly into your wallet!`, `✅ Vorschuss über ${amountSyp.toLocaleString()} SYP genehmigt und direkt Ihrem Guthaben gutgeschrieben!`));
       renderFarmerPortal();
     }
 
     // --- MILL TANK LAB TEST LOGIC ---
     function openTankLabTestModal(tankId) {
       if (!state.currentUser || (state.currentUser.role !== 'mill_owner' && state.currentUser.role !== 'admin')) {
-        const reqRole = state.currentLang !== 'ar' ? 'Certified Mill Operator' : 'صاحب معصرة معتمد';
-        const msg = state.currentLang !== 'ar' ? 'Logging tank lab tests is restricted to certified mill operators.' : 'تسجيل فحوصات خزانات الزيت مقتصر على أصحاب المعاصر المعتمدين.';
+        const reqRole = tr3('صاحب معصرة معتمد', 'Certified Mill Operator', 'Zertifizierter Ölmühlenbetreiber');
+        const msg = tr3('تسجيل فحوصات خزانات الزيت مقتصر على أصحاب المعاصر المعتمدين.', 'Logging tank lab tests is restricted to certified mill operators.', 'Nur zertifizierte Ölmühlenbetreiber können Laborprüfungen von Öltanks erfassen.');
         showAccessDenied(t('mill_btn_log_tank_test'), reqRole, msg);
         return;
       }
@@ -17035,7 +17073,7 @@ function setMarketplaceViewMode(mode) {
       const rawAcidity = parseFloat(document.getElementById('tank-test-acidity').value);
       const rawPeroxide = parseFloat(document.getElementById('tank-test-peroxide').value);
       if (isNaN(rawAcidity) || isNaN(rawPeroxide)) {
-        showToast(isEn ? 'Please enter valid numerical values for acidity and peroxide' : 'يرجى إدخال قيم عددية صحيحة لنسبتي الحموضة والبيروكسيد');
+        showToast(tr3('يرجى إدخال قيم عددية صحيحة لنسبتي الحموضة والبيروكسيد', 'Please enter valid numerical values for acidity and peroxide', 'Bitte geben Sie gültige Zahlenwerte für Säuregehalt und Peroxidzahl ein'));
         return;
       }
       const acidity = rawAcidity.toFixed(2);
@@ -17052,7 +17090,7 @@ function setMarketplaceViewMode(mode) {
 
       closeModal('modal-log-tank-test');
       playAcousticChime(640, 0.2);
-      showToast(isEn ? `🔬 Certified lab test recorded for ${tank ? tank.code : 'tank'}: Acidity ${acidity}%, Peroxide ${peroxide}` : `🔬 تم توثيق الفحص المخبري لـ ${tank ? tank.name : 'الخزان'}: حموضة ${acidity}%، بيروكسيد ${peroxide}`);
+      showToast(tr3(`🔬 تم توثيق الفحص المخبري لـ ${tank ? tank.name : 'الخزان'}: حموضة ${acidity}%، بيروكسيد ${peroxide}`, `🔬 Certified lab test recorded for ${tank ? tank.code : 'tank'}: Acidity ${acidity}%, Peroxide ${peroxide}`, `🔬 Laborprüfung für ${tank ? tank.code : 'Tank'} erfasst: Säuregehalt ${acidity}%, Peroxidzahl ${peroxide}`));
       if (typeof dispatchNotification === 'function') {
         dispatchNotification({
           role: 'mill_owner',
@@ -17152,7 +17190,7 @@ function setMarketplaceViewMode(mode) {
               : 'bg-stone-100 text-stone-700 dark:bg-stone-800 dark:text-stone-300';
             return `<div class="flex items-center justify-between gap-3 p-3 rounded-2xl border border-stone-100 dark:border-stone-800">
               <div class="min-w-0">
-                <div class="text-xs font-bold text-stone-900 dark:text-white truncate">${name} · ${isEn ? 'Season' : 'موسم'} ${escapeHtml(String(a.seasonYear || ''))}</div>
+                <div class="text-xs font-bold text-stone-900 dark:text-white truncate">${name} · ${tr3('موسم', 'Season', 'Saison')} ${escapeHtml(String(a.seasonYear || ''))}</div>
                 <div class="text-[10px] text-stone-500 dark:text-stone-400 font-mono truncate">${escapeHtml(a.certificateSerial || '')}</div>
               </div>
               <div class="flex items-center gap-2 whitespace-nowrap">
@@ -17185,12 +17223,12 @@ function setMarketplaceViewMode(mode) {
     async function downloadShareCertificatePdf(shareId) {
       const isEn = state.currentLang !== 'ar';
       if (!window.FaseelaFirebase?.downloadShareCertificate) return;
-      showToast(isEn ? 'Preparing your certificate…' : 'جارٍ تجهيز شهادتك…');
+      showToast(tr3('جارٍ تجهيز شهادتك…', 'Preparing your certificate…', 'Ihr Zertifikat wird vorbereitet…'));
       try {
         const { serial } = await window.FaseelaFirebase.downloadShareCertificate(shareId);
-        showToast(isEn ? `Certificate ${serial} downloaded.` : `تم تنزيل الشهادة ${serial}.`);
+        showToast(tr3(`تم تنزيل الشهادة ${serial}.`, `Certificate ${serial} downloaded.`, `Zertifikat ${serial} heruntergeladen.`));
       } catch (error) {
-        showToast(isEn ? 'Could not generate the certificate. Please try again.' : 'تعذر إنشاء الشهادة. يرجى المحاولة مجدداً.');
+        showToast(tr3('تعذر إنشاء الشهادة. يرجى المحاولة مجدداً.', 'Could not generate the certificate. Please try again.', 'Das Zertifikat konnte nicht erstellt werden. Bitte versuchen Sie es erneut.'));
       }
     }
 
@@ -17276,10 +17314,10 @@ function setMarketplaceViewMode(mode) {
       const v = (id) => (document.getElementById(id)?.value || '').trim();
       const contact = { name: v('oil-name'), phone: v('oil-phone'), addressLine1: v('oil-line1'), addressLine2: v('oil-line2'), city: v('oil-city'), country: v('oil-country').toUpperCase(), note: v('oil-note') };
       if (kind !== 'donate' && (contact.name.length < 2 || !/^\+?[0-9 ()-]{6,40}$/.test(contact.phone))) {
-        fail(isEn ? 'Please enter your name and a valid phone number.' : 'يرجى إدخال الاسم ورقم هاتف صالح.'); return;
+        fail(tr3('يرجى إدخال الاسم ورقم هاتف صالح.', 'Please enter your name and a valid phone number.', 'Bitte geben Sie Ihren Namen und eine gültige Telefonnummer ein.')); return;
       }
       if (kind === 'delivery' && (contact.addressLine1.length < 3 || contact.city.length < 2 || !/^[A-Z]{2}$/.test(contact.country))) {
-        fail(isEn ? 'Please complete the delivery address (street, city, 2-letter country code).' : 'يرجى إكمال عنوان التسليم (الشارع، المدينة، رمز الدولة من حرفين).'); return;
+        fail(tr3('يرجى إكمال عنوان التسليم (الشارع، المدينة، رمز الدولة من حرفين).', 'Please complete the delivery address (street, city, 2-letter country code).', 'Bitte vervollständigen Sie die Lieferadresse (Straße, Ort, zweistelliger Ländercode).')); return;
       }
       const btn = document.getElementById('oil-submit-btn');
       if (btn) btn.disabled = true;
@@ -17287,17 +17325,17 @@ function setMarketplaceViewMode(mode) {
         await window.FaseelaFirebase.requestOil({ kind, allocationIds: available.map(a => a.id), contact: kind === 'donate' ? undefined : contact });
         closeModal('modal-oil-request');
         ['oil-line1', 'oil-line2', 'oil-city', 'oil-country', 'oil-note'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
-        showToast(group.unit === 'l' ? (isEn ? '✅ Oil request sent. We will e-mail you at every step.' : '✅ أُرسل طلب الزيت. ستصلك رسالة عند كل خطوة.')
+        showToast(group.unit === 'l' ? tr3('✅ أُرسل طلب الزيت. ستصلك رسالة عند كل خطوة.', '✅ Oil request sent. We will e-mail you at every step.', '✅ Ölanfrage gesendet. Sie erhalten bei jedem Schritt eine E-Mail.')
           : group.unit === 'kg' ? L3('✅ أُرسل طلب المحصول. ستصلك رسالة عند كل خطوة.', '✅ Harvest request sent. We will e-mail you at every step.', '✅ Ernteanfrage gesendet. Sie erhalten bei jedem Schritt eine E-Mail.')
           : L3('✅ أُرسل طلبك. ستصلك رسالة عند كل خطوة.', '✅ Request sent. We will e-mail you at every step.', '✅ Anfrage gesendet. Sie erhalten bei jedem Schritt eine E-Mail.'));
         playAcousticChime(660, 0.2);
       } catch (error) {
         const code = error?.code || '';
         fail(code === 'failed-precondition' ? (group.unit === 'l'
-            ? (isEn ? 'Please verify your e-mail and make sure the oil is still available.' : 'يرجى تأكيد بريدك والتحقق من أن الزيت ما زال متاحاً.')
+            ? tr3('يرجى تأكيد بريدك والتحقق من أن الزيت ما زال متاحاً.', 'Please verify your e-mail and make sure the oil is still available.', 'Bitte bestätigen Sie Ihre E-Mail-Adresse und prüfen Sie, ob das Öl noch verfügbar ist.')
             : L3('يرجى تأكيد بريدك والتحقق من أن حصتك ما زالت متاحة.', 'Please verify your e-mail and make sure your share is still available.', 'Bitte bestätigen Sie Ihre E-Mail-Adresse und prüfen Sie, ob Ihr Anteil noch verfügbar ist.'))
-          : code === 'resource-exhausted' ? (isEn ? 'Too many open requests. Wait for the current ones first.' : 'طلبات مفتوحة كثيرة. انتظر معالجة الطلبات الحالية أولاً.')
-          : (isEn ? 'Request failed. Please check the fields and try again.' : 'فشل الإرسال. يرجى التحقق من الحقول والمحاولة مجدداً.'));
+          : code === 'resource-exhausted' ? tr3('طلبات مفتوحة كثيرة. انتظر معالجة الطلبات الحالية أولاً.', 'Too many open requests. Wait for the current ones first.', 'Zu viele offene Anfragen. Bitte warten Sie, bis die laufenden bearbeitet sind.')
+          : tr3('فشل الإرسال. يرجى التحقق من الحقول والمحاولة مجدداً.', 'Request failed. Please check the fields and try again.', 'Anfrage fehlgeschlagen. Bitte prüfen Sie die Felder und versuchen Sie es erneut.'));
       } finally {
         if (btn) btn.disabled = false;
       }
@@ -17311,9 +17349,9 @@ function setMarketplaceViewMode(mode) {
         await window.FaseelaFirebase.cancelOilRequest({ requestId });
         showToast(cancelled && cancelled.unit === 'kg'
           ? (state.currentLang === 'ar' ? 'أُلغي الطلب وأُعيد المحصول إلى رصيدك.' : state.currentLang === 'de' ? 'Anfrage storniert. Die Ernte ist wieder in Ihrem Guthaben.' : 'Request cancelled. The harvest is back in your balance.')
-          : (isEn ? 'Request cancelled. The oil is back in your balance.' : 'أُلغي الطلب وأُعيد الزيت إلى رصيدك.'));
+          : tr3('أُلغي الطلب وأُعيد الزيت إلى رصيدك.', 'Request cancelled. The oil is back in your balance.', 'Anfrage storniert. Das Öl ist wieder in Ihrem Guthaben.'));
       } catch (error) {
-        showToast(isEn ? 'Only pending requests can be cancelled.' : 'يمكن إلغاء الطلبات قيد المراجعة فقط.');
+        showToast(tr3('يمكن إلغاء الطلبات قيد المراجعة فقط.', 'Only pending requests can be cancelled.', 'Nur ausstehende Anfragen können storniert werden.'));
       }
     }
 
@@ -17377,9 +17415,10 @@ function setMarketplaceViewMode(mode) {
       if (waLink) {
         if (ref?.code) {
           const link = api.referralLink(ref.code);
-          const text = isEn
-            ? `I steward olive trees in Syria with Faseela. Join with my code ${ref.code} and we both get extra olive oil: ${link}`
-            : `أرعى أشجار زيتون في سورية مع فسيلة. انضم برمزي ${ref.code} ونحصل معاً على زيت إضافي: ${link}`;
+          const text = tr3(
+            `أرعى أشجار زيتون في سورية مع فسيلة. انضم برمزي ${ref.code} ونحصل معاً على زيت إضافي: ${link}`,
+            `I steward olive trees in Syria with Faseela. Join with my code ${ref.code} and we both get extra olive oil: ${link}`,
+            `Ich bin Baumpate für Olivenbäume in Syrien bei Faseela. Werden Sie mit meinem Code ${ref.code} ebenfalls Baumpate – dann erhalten wir beide zusätzliches Olivenöl: ${link}`);
           waLink.href = `https://wa.me/?text=${encodeURIComponent(text)}`;
           waLink.classList.remove('pointer-events-none', 'opacity-50');
           waLink.removeAttribute('aria-disabled');
@@ -17485,18 +17524,19 @@ function setMarketplaceViewMode(mode) {
         const printBtn = document.getElementById('gift-result-print');
         const link = `${location.origin}${location.pathname}?gift=${data.code}`;
         if (wa) {
-          const text = isEn
-            ? `A gift for you: stewardship of an olive tree in Syria with Faseela. Your code: ${data.code} — redeem it here: ${link}`
-            : `هدية لك: رعاية شجرة زيتون في سورية مع فسيلة. رمزك: ${data.code} — استلمها هنا: ${link}`;
+          const text = tr3(
+            `هدية لك: رعاية شجرة زيتون في سورية مع فسيلة. رمزك: ${data.code} — استلمها هنا: ${link}`,
+            `A gift for you: stewardship of an olive tree in Syria with Faseela. Your code: ${data.code} — redeem it here: ${link}`,
+            `Ein Geschenk für Sie: eine Patenschaft für einen Olivenbaum in Syrien bei Faseela. Ihr Code: ${data.code} — hier einlösen: ${link}`);
           wa.href = `https://wa.me/?text=${encodeURIComponent(text)}`;
         }
         if (printBtn) {
           printBtn.onclick = () => {
-            const recipient = (document.getElementById('gift-recipient')?.value || '').trim() || (isEn ? 'Valued Partner' : 'الصديق العزيز');
-            const message = (document.getElementById('gift-message')?.value || '').trim() || (isEn ? 'May this olive tree grow as a symbol of life, peace, and abundance.' : 'لتكن هذه الشجرة المباركة رمزاً للحياة والخير والبركة الدائمة.');
+            const recipient = (document.getElementById('gift-recipient')?.value || '').trim() || tr3('الصديق العزيز', 'Valued Partner', 'einen lieben Menschen');
+            const message = (document.getElementById('gift-message')?.value || '').trim() || tr3('لتكن هذه الشجرة المباركة رمزاً للحياة والخير والبركة الدائمة.', 'May this olive tree grow as a symbol of life, peace, and abundance.', 'Möge dieser Olivenbaum als Zeichen für Leben, Frieden und Fülle wachsen.');
             const w = window.open('', '_blank');
             if (!w) return;
-            w.document.write('<!doctype html><html lang="' + (isEn ? 'en' : 'ar') + '" dir="' + (isEn ? 'ltr' : 'rtl') + '"><head><meta charset="utf-8"><title>' + (isEn ? 'Gift Certificate · Faseela' : 'وثيقة إهداء · فسيلة') + '</title><style>body{margin:0;padding:2rem;font-family:sans-serif;background:#fafaf9;color:#1c1917;display:flex;justify-content:center;align-items:center;min-height:90vh}.card{background:#fff;border:3px double #424830;padding:3rem;border-radius:1.5rem;max-width:540px;text-align:center;box-shadow:0 10px 25px rgba(0,0,0,0.05)}h1{color:#2c3e2d;margin:0 0 .5rem;font-size:1.8rem}.gold{color:#b45309;font-weight:bold;margin-bottom:1.5rem}.to{font-size:1.2rem;font-weight:bold;margin:1rem 0}.msg{font-style:italic;color:#57534e;margin:1.5rem 0;line-height:1.6}.code-box{background:#f5f0e8;border:2px dashed #424830;padding:1rem;border-radius:1rem;margin:1.5rem 0}.code{font-family:monospace;font-size:1.6rem;font-weight:bold;letter-spacing:.15em;color:#2c3e2d}.link{font-size:.85rem;color:#78716c;margin-top:.5rem}@media print{body{background:none;padding:0}.card{box-shadow:none;border-width:2px}}</style></head><body><div class="card"><h1>🌿 ' + (isEn ? 'Olive Tree Gift Certificate' : 'وثيقة إهداء رعاية شجرة زيتون') + '</h1><div class="gold">' + (isEn ? 'Faseela Agritech · Syrian Olive Stewardship' : 'منصة فسيلة · برنامج رعاية أشجار الزيتون السورية') + '</div><div class="to">' + (isEn ? 'Gifted to:' : 'مُهداة إلى:') + ' ' + escapeHtml(recipient) + '</div><div class="msg">"' + escapeHtml(message) + '"</div><div class="code-box"><div style="font-size:.85rem;margin-bottom:.4rem;color:#57534e">' + (isEn ? 'Gift Activation Code' : 'رمز تفعيل الهدية') + '</div><div class="code">' + escapeHtml(data.code) + '</div><div class="link">' + escapeHtml(link) + '</div></div><p style="font-size:.8rem;color:#a8a29e;margin-top:2rem">' + (isEn ? 'Scan or enter code on faseela.sy to claim tree stewardship and extra virgin olive oil.' : 'يُدخل الرمز في منصة فسيلة لاستلام حصة الرعاية وشهادة الشجرة ومحصول الزيت.') + '</p></div><script>window.onload=()=>{setTimeout(()=>{window.print();},400);};</script></body></html>');
+            w.document.write('<!doctype html><html lang="' + (isEn ? 'en' : 'ar') + '" dir="' + (isEn ? 'ltr' : 'rtl') + '"><head><meta charset="utf-8"><title>' + tr3('وثيقة إهداء · فسيلة', 'Gift Certificate · Faseela', 'Geschenkgutschein · Faseela') + '</title><style>body{margin:0;padding:2rem;font-family:sans-serif;background:#fafaf9;color:#1c1917;display:flex;justify-content:center;align-items:center;min-height:90vh}.card{background:#fff;border:3px double #424830;padding:3rem;border-radius:1.5rem;max-width:540px;text-align:center;box-shadow:0 10px 25px rgba(0,0,0,0.05)}h1{color:#2c3e2d;margin:0 0 .5rem;font-size:1.8rem}.gold{color:#b45309;font-weight:bold;margin-bottom:1.5rem}.to{font-size:1.2rem;font-weight:bold;margin:1rem 0}.msg{font-style:italic;color:#57534e;margin:1.5rem 0;line-height:1.6}.code-box{background:#f5f0e8;border:2px dashed #424830;padding:1rem;border-radius:1rem;margin:1.5rem 0}.code{font-family:monospace;font-size:1.6rem;font-weight:bold;letter-spacing:.15em;color:#2c3e2d}.link{font-size:.85rem;color:#78716c;margin-top:.5rem}@media print{body{background:none;padding:0}.card{box-shadow:none;border-width:2px}}</style></head><body><div class="card"><h1>🌿 ' + tr3('وثيقة إهداء رعاية شجرة زيتون', 'Olive Tree Gift Certificate', 'Geschenkgutschein für eine Olivenbaum-Patenschaft') + '</h1><div class="gold">' + tr3('منصة فسيلة · برنامج رعاية أشجار الزيتون السورية', 'Faseela Agritech · Syrian Olive Stewardship', 'Faseela Agritech · Patenschaften für syrische Olivenbäume') + '</div><div class="to">' + tr3('مُهداة إلى:', 'Gifted to:', 'Für:') + ' ' + escapeHtml(recipient) + '</div><div class="msg">"' + escapeHtml(message) + '"</div><div class="code-box"><div style="font-size:.85rem;margin-bottom:.4rem;color:#57534e">' + tr3('رمز تفعيل الهدية', 'Gift Activation Code', 'Aktivierungscode für Ihr Geschenk') + '</div><div class="code">' + escapeHtml(data.code) + '</div><div class="link">' + escapeHtml(link) + '</div></div><p style="font-size:.8rem;color:#a8a29e;margin-top:2rem">' + tr3('يُدخل الرمز في منصة فسيلة لاستلام حصة الرعاية وشهادة الشجرة ومحصول الزيت.', 'Scan or enter code on faseela.sy to claim tree stewardship and extra virgin olive oil.', 'Scannen Sie den Code oder geben Sie ihn auf faseela.sy ein, um Ihre Baumpatenschaft und natives Olivenöl extra zu erhalten.') + '</p></div><script>window.onload=()=>{setTimeout(()=>{window.print();},400);};</script></body></html>');
             w.document.close();
           };
         }
@@ -17517,7 +17557,7 @@ function setMarketplaceViewMode(mode) {
 
     function copyGiftCode() {
       if (!lastGiftCode) return;
-      copyToClipboard(lastGiftCode, state.currentLang !== 'ar' ? 'Gift code' : 'رمز الهدية');
+      copyToClipboard(lastGiftCode, tr3('رمز الهدية', 'Gift code', 'Geschenkcode'));
     }
 
     async function cancelGiftCode(giftId) {
@@ -17529,7 +17569,7 @@ function setMarketplaceViewMode(mode) {
         showToast(t('gift_cancelled_toast'));
         await loadRewards(true);
       } catch (error) {
-        showToast(isEn ? 'Only unused gift codes can be cancelled.' : 'يمكن إلغاء الرموز غير المستعملة فقط.');
+        showToast(tr3('يمكن إلغاء الرموز غير المستعملة فقط.', 'Only unused gift codes can be cancelled.', 'Nur nicht eingelöste Geschenkcodes können storniert werden.'));
       }
     }
 
@@ -17578,7 +17618,7 @@ function setMarketplaceViewMode(mode) {
       const api = window.FaseelaFirebase;
       const code = state.myReferral?.code;
       if (!code || !api?.referralLink) return;
-      copyToClipboard(api.referralLink(code), state.currentLang !== 'ar' ? 'Referral link' : 'رابط التوصية');
+      copyToClipboard(api.referralLink(code), tr3('رابط التوصية', 'Referral link', 'Empfehlungslink'));
     }
 
     // ------------------------------------------------------------------
@@ -17705,8 +17745,8 @@ function setMarketplaceViewMode(mode) {
           container.innerHTML = `
             <div class="col-span-full py-12 text-center text-stone-500 dark:text-stone-400 bg-white dark:bg-stone-900 rounded-3xl border border-stone-200 dark:border-stone-800 p-6">
               <i data-lucide="shopping-bag" class="w-10 h-10 mx-auto text-stone-300 dark:text-stone-600 mb-2"></i>
-              <h4 class="font-bold text-stone-800 dark:text-white text-sm mb-1">${isEn ? 'No shares owned in this account' : 'لا توجد حصص مسجلة لهذا الحساب حالياً'}</h4>
-              <p class="text-xs text-stone-400 mb-4">${isEn ? 'Your data is strictly isolated under Multi-Tenant RBAC.' : 'بيانات كل مستخدم معزولة تماماً لحماية الخصوصية.'}</p>
+              <h4 class="font-bold text-stone-800 dark:text-white text-sm mb-1">${tr3('لا توجد حصص مسجلة لهذا الحساب حالياً', 'No shares owned in this account', 'Für dieses Konto sind noch keine Anteile erfasst')}</h4>
+              <p class="text-xs text-stone-400 mb-4">${tr3('بيانات كل مستخدم معزولة تماماً لحماية الخصوصية.', 'Your data is strictly isolated under Multi-Tenant RBAC.', 'Ihre Daten sind zum Schutz Ihrer Privatsphäre strikt von anderen Konten getrennt.')}</p>
               <button data-click="navigateTo('marketplace')" class="bg-olive-700 text-white px-4 py-2 rounded-xl text-xs font-bold cursor-pointer">${t('nav_marketplace')}</button>
             </div>
           `;
@@ -17722,9 +17762,9 @@ function setMarketplaceViewMode(mode) {
                     <div>
                       <div class="flex items-center gap-2">
                         <h4 class="font-black text-stone-900 dark:text-white text-sm">${escapeHtml(isEn ? (share.bundle_name_en || share.bundle_name) : share.bundle_name)}</h4>
-                        <span class="text-[10px] font-bold px-2 py-0.2 rounded-full bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300">${isEn ? 'Bundle' : 'باقة التنوع الزراعي'}</span>
+                        <span class="text-[10px] font-bold px-2 py-0.2 rounded-full bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300">${tr3('باقة التنوع الزراعي', 'Bundle', 'Paket')}</span>
                       </div>
-                      <p class="text-xs text-stone-500 dark:text-stone-400">4 ${isEn ? 'Shares' : 'حصص متنوعة'} (2x خضيري + 1x عاشوري + 1x فرك) • 15 m²</p>
+                      <p class="text-xs text-stone-500 dark:text-stone-400">4 ${tr3('حصص متنوعة', 'Shares', 'Anteile')} (2x خضيري + 1x عاشوري + 1x فرك) • 15 m²</p>
                       <span class="text-[10px] text-purple-700 dark:text-purple-300 font-bold bg-purple-50 dark:bg-purple-950 px-2 py-0.5 rounded mt-1 inline-block font-mono">${escapeHtml(share.land_deed_serial || 'SYR-BUNDLE-DEED-2026-9901')}</span>
                     </div>
                   </div>
@@ -17756,9 +17796,9 @@ function setMarketplaceViewMode(mode) {
                     <div>
                       <div class="flex items-center gap-2">
                         <h4 class="font-black text-stone-900 dark:text-white text-sm">${displayName}</h4>
-                        <span class="text-[10px] font-bold px-2 py-0.2 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">${isEn ? 'Virgin Greenfield' : 'غراس بكر وأرض'}</span>
+                        <span class="text-[10px] font-bold px-2 py-0.2 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">${tr3('غراس بكر وأرض', 'Virgin Greenfield', 'Neupflanzung')}</span>
                       </div>
-                      <p class="text-xs text-stone-500 dark:text-stone-400">${displayRegion} • ${share.saplings_count} ${isEn ? 'Saplings' : 'غرسة بكر'} + ${share.land_parcel_sqm} m²</p>
+                      <p class="text-xs text-stone-500 dark:text-stone-400">${displayRegion} • ${share.saplings_count} ${tr3('غرسة بكر', 'Saplings', 'Setzlinge')} + ${share.land_parcel_sqm} m²</p>
                       <span class="text-[10px] text-emerald-700 dark:text-emerald-300 font-bold bg-emerald-50 dark:bg-emerald-950 px-2 py-0.5 rounded mt-1 inline-block font-mono">${share.land_deed_serial || 'SYR-LAND-DEED-2026-8841'}</span>
                     </div>
                   </div>
@@ -17792,18 +17832,18 @@ function setMarketplaceViewMode(mode) {
                 </div>
                 <div class="flex items-center gap-2 flex-wrap sm:flex-nowrap">
                   ${state.serverMode && /^[0-9a-f]{64}$/.test(String(share.id || '')) ? `
-                  <button data-click="downloadShareCertificatePdf('${share.id}')" class="bg-amber-100 hover:bg-amber-200 dark:bg-amber-950 dark:hover:bg-amber-900 text-amber-900 dark:text-amber-200 px-3 py-2 rounded-xl font-bold text-xs flex items-center gap-1 cursor-pointer" title="${isEn ? 'Download certificate (PDF)' : 'تحميل الشهادة (PDF)'}">
+                  <button data-click="downloadShareCertificatePdf('${share.id}')" class="bg-amber-100 hover:bg-amber-200 dark:bg-amber-950 dark:hover:bg-amber-900 text-amber-900 dark:text-amber-200 px-3 py-2 rounded-xl font-bold text-xs flex items-center gap-1 cursor-pointer" title="${tr3('تحميل الشهادة (PDF)', 'Download certificate (PDF)', 'Zertifikat herunterladen (PDF)')}">
                     <i data-lucide="award" class="w-3.5 h-3.5"></i>
-                    <span>${isEn ? 'Certificate PDF' : 'شهادة PDF'}</span>
+                    <span>${tr3('شهادة PDF', 'Certificate PDF', 'Zertifikat (PDF)')}</span>
                   </button>` : `
                   <button data-click="openCertificateModal('${tree.id}')" class="bg-amber-100 hover:bg-amber-200 dark:bg-amber-950 dark:hover:bg-amber-900 text-amber-900 dark:text-amber-200 px-3 py-2 rounded-xl font-bold text-xs flex items-center gap-1 cursor-pointer" title="${t('btn_view_cert')}">
                     <i data-lucide="award" class="w-3.5 h-3.5"></i>
                     <span>${t('btn_view_cert')}</span>
                   </button>`}
                   ${(() => {
-                    if (!state.serverMode) return `<button data-click="openLabQrPassportModal('SYR-MILL-2025-0981')" class="bg-emerald-100 hover:bg-emerald-200 dark:bg-emerald-950 dark:hover:bg-emerald-900 text-emerald-900 dark:text-emerald-200 px-3 py-2 rounded-xl font-bold text-xs flex items-center gap-1 cursor-pointer" title="${isEn ? 'EVOO Lab Analysis Passport' : 'جواز فحص الزيت المخبري'}"><i data-lucide="qr-code" class="w-3.5 h-3.5 text-emerald-700 dark:text-emerald-400"></i><span>${isEn ? 'Lab Passport' : 'جواز الزيت'}</span></button>`;
+                    if (!state.serverMode) return `<button data-click="openLabQrPassportModal('SYR-MILL-2025-0981')" class="bg-emerald-100 hover:bg-emerald-200 dark:bg-emerald-950 dark:hover:bg-emerald-900 text-emerald-900 dark:text-emerald-200 px-3 py-2 rounded-xl font-bold text-xs flex items-center gap-1 cursor-pointer" title="${tr3('جواز فحص الزيت المخبري', 'EVOO Lab Analysis Passport', 'Laborpass für natives Olivenöl extra')}"><i data-lucide="qr-code" class="w-3.5 h-3.5 text-emerald-700 dark:text-emerald-400"></i><span>${tr3('جواز الزيت', 'Lab Passport', 'Laborpass')}</span></button>`;
                     const lab = (state.myOilAllocations || []).find(a => a.treeId === share.tree_id && a.certificateSerial);
-                    return lab ? `<span class="bg-emerald-50 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 px-3 py-2 rounded-xl font-mono text-[10px] font-bold flex items-center gap-1" title="${isEn ? 'Lab certificate of the latest pressing' : 'شهادة المختبر لآخر عصرة'}"><i data-lucide="flask-conical" class="w-3.5 h-3.5"></i>${escapeHtml(lab.certificateSerial)}</span>` : '';
+                    return lab ? `<span class="bg-emerald-50 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 px-3 py-2 rounded-xl font-mono text-[10px] font-bold flex items-center gap-1" title="${tr3('شهادة المختبر لآخر عصرة', 'Lab certificate of the latest pressing', 'Laborbefund der letzten Pressung')}"><i data-lucide="flask-conical" class="w-3.5 h-3.5"></i>${escapeHtml(lab.certificateSerial)}</span>` : '';
                   })()}
                   <button data-click="openLegalContract('investor')" class="bg-purple-100 hover:bg-purple-200 dark:bg-purple-950 dark:hover:bg-purple-900 text-purple-900 dark:text-purple-200 px-3 py-2 rounded-xl font-bold text-xs flex items-center gap-1 cursor-pointer" title="${t('footer_link_investor_contract')}">
                     <i data-lucide="file-check-2" class="w-3.5 h-3.5 text-purple-700 dark:text-purple-400"></i>
@@ -17876,7 +17916,7 @@ function setMarketplaceViewMode(mode) {
                       ${statusBadge}
                     </div>
                     <p class="text-xs text-stone-600 dark:text-stone-300 font-medium mt-0.5">${escapeHtml(treeName)} • ${sharesCount} ${t('share_unit')} • <strong class="font-mono text-emerald-800 dark:text-emerald-400">$${amountUsd}</strong></p>
-                    <span class="text-[10px] text-stone-600 dark:text-stone-400 block">${isEn ? 'Bank transfer' : 'تحويل بنكي'} • ${Number.isFinite(req.createdAt) ? new Date(req.createdAt).toLocaleString(uiLocale()) : ''}</span>
+                    <span class="text-[10px] text-stone-600 dark:text-stone-400 block">${tr3('تحويل بنكي', 'Bank transfer', 'Banküberweisung')} • ${Number.isFinite(req.createdAt) ? new Date(req.createdAt).toLocaleString(uiLocale()) : ''}</span>
                   </div>
                 </div>
                 <div class="flex items-center gap-2 self-end sm:self-center flex-wrap">
@@ -17909,7 +17949,7 @@ function setMarketplaceViewMode(mode) {
           txBody.innerHTML = `
             <tr>
               <td colspan="6" class="py-8 text-center text-stone-400 font-normal">
-                ${isEn ? 'No transaction records found for this account yet.' : 'لا توجد سجلات عمليات أو مدفوعات مسجلة لهذا الحساب حتى الآن.'}
+                ${tr3('لا توجد سجلات عمليات أو مدفوعات مسجلة لهذا الحساب حتى الآن.', 'No transaction records found for this account yet.', 'Für dieses Konto liegen noch keine Buchungen vor.')}
               </td>
             </tr>
           `;
@@ -17965,24 +18005,24 @@ function setMarketplaceViewMode(mode) {
         container.innerHTML = `
           <div class="space-y-3">
             <div class="flex items-center justify-between text-xs font-bold text-stone-800 dark:text-white">
-              <span data-i18n="dash_dispatch_pkg_lbl">${isEn ? 'Packaging & Premium Shipping Options:' : 'خيارات التعبئة والشحن الفاخر:'}</span>
-              <span class="text-[10px] text-olive-700 dark:text-olive-400">${isEn ? 'Faseela Climate-Controlled Dedicated Fleet' : 'أسطول النقل المبرد لمنصة فسيلة'}</span>
+              <span data-i18n="dash_dispatch_pkg_lbl">${tr3('خيارات التعبئة والشحن الفاخر:', 'Packaging & Premium Shipping Options:', 'Verpackung und Premium-Versandoptionen:')}</span>
+              <span class="text-[10px] text-olive-700 dark:text-olive-400">${tr3('أسطول النقل المبرد لمنصة فسيلة', 'Faseela Climate-Controlled Dedicated Fleet', 'Klimatisierte Transportflotte von Faseela')}</span>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
               <div class="bg-stone-50 dark:bg-stone-800/80 p-3 rounded-xl border border-stone-200 dark:border-stone-700 space-y-1">
-                <span class="font-bold text-stone-900 dark:text-white block" data-i18n="dash_dispatch_pkg_tin">${isEn ? 'Syrian Food-Grade Tin (16 Liters)' : 'تنك معدني سوري غذائي (16 لتر)'}</span>
-                <p class="text-[11px] text-stone-500 dark:text-stone-400">${isEn ? 'Optimal shield against light and heat for year-round EVOO preservation.' : 'حماية مثالية من الضوء والحرارة لحفظ الزيت طوال العام.'}</p>
+                <span class="font-bold text-stone-900 dark:text-white block" data-i18n="dash_dispatch_pkg_tin">${tr3('تنك معدني سوري غذائي (16 لتر)', 'Syrian Food-Grade Tin (16 Liters)', 'Syrischer lebensmittelechter Kanister (16 Liter)')}</span>
+                <p class="text-[11px] text-stone-500 dark:text-stone-400">${tr3('حماية مثالية من الضوء والحرارة لحفظ الزيت طوال العام.', 'Optimal shield against light and heat for year-round EVOO preservation.', 'Optimaler Schutz vor Licht und Wärme, damit das Olivenöl das ganze Jahr frisch bleibt.')}</p>
               </div>
               <div class="bg-stone-50 dark:bg-stone-800/80 p-3 rounded-xl border border-stone-200 dark:border-stone-700 space-y-1">
-                <span class="font-bold text-stone-900 dark:text-white block" data-i18n="dash_dispatch_pkg_bottle">${isEn ? 'Italian Dark Marasca UV Glass (500 ml)' : 'عبوات زجاجية داكنة معتمة فاخرة (500 مل)'}</span>
-                <p class="text-[11px] text-stone-500 dark:text-stone-400">${isEn ? 'Dark UV-protective Marasca glass for luxury gifting and gourmet use.' : 'زجاج ماراسكا إيطالي داكن مضاد للأشعة فوق البنفسجية للإهداء الفاخر.'}</p>
+                <span class="font-bold text-stone-900 dark:text-white block" data-i18n="dash_dispatch_pkg_bottle">${tr3('عبوات زجاجية داكنة معتمة فاخرة (500 مل)', 'Italian Dark Marasca UV Glass (500 ml)', 'Italienische dunkle Marasca-Glasflasche mit UV-Schutz (500 ml)')}</span>
+                <p class="text-[11px] text-stone-500 dark:text-stone-400">${tr3('زجاج ماراسكا إيطالي داكن مضاد للأشعة فوق البنفسجية للإهداء الفاخر.', 'Dark UV-protective Marasca glass for luxury gifting and gourmet use.', 'Dunkles Marasca-Glas mit UV-Schutz – ideal als Geschenk und für die feine Küche.')}</p>
               </div>
             </div>
             <div class="pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <span class="text-xs text-stone-500 dark:text-stone-400">${isEn ? 'Registered Shipping Address:' : 'العنوان المسجل:'} <strong class="text-stone-800 dark:text-stone-200">${escapeHtml(addressText)}</strong></span>
+              <span class="text-xs text-stone-500 dark:text-stone-400">${tr3('العنوان المسجل:', 'Registered Shipping Address:', 'Hinterlegte Lieferadresse:')} <strong class="text-stone-800 dark:text-stone-200">${escapeHtml(addressText)}</strong></span>
               <button type="button" data-click="confirmYieldDispatchOrder()" class="bg-olive-800 hover:bg-olive-900 text-white px-5 py-2.5 rounded-xl font-bold text-xs transition-all shadow-md cursor-pointer flex items-center justify-center gap-2">
                 <i data-lucide="truck" class="w-4 h-4 text-amber-300"></i>
-                <span data-i18n="dash_btn_confirm_dispatch">${isEn ? 'Confirm Premium Olive Oil Dispatch Order' : 'تأكيد أمر شحن الزيت الفاخر'}</span>
+                <span data-i18n="dash_btn_confirm_dispatch">${tr3('تأكيد أمر شحن الزيت الفاخر', 'Confirm Premium Olive Oil Dispatch Order', 'Versand des Premium-Olivenöls bestätigen')}</span>
               </button>
             </div>
           </div>
@@ -17995,21 +18035,22 @@ function setMarketplaceViewMode(mode) {
         container.innerHTML = `
           <div class="space-y-3">
             <div class="flex items-center justify-between text-xs font-bold text-purple-900 dark:text-purple-300">
-              <span>${isEn ? 'Instant Liquidation Value for Your Share (7.4 L EVOO):' : 'قيمة التسييل الفوري لحصتك (7.4 لتر زيت بكر ممتاز):'}</span>
+              <span>${tr3('قيمة التسييل الفوري لحصتك (7.4 لتر زيت بكر ممتاز):', 'Instant Liquidation Value for Your Share (7.4 L EVOO):', 'Sofortiger Verkaufswert Ihres Ölanteils (7,4 l natives Olivenöl extra):')}</span>
               <span class="font-mono text-emerald-600 dark:text-emerald-400">International Export Parity</span>
             </div>
             <div class="flex items-baseline gap-3">
-              <span class="text-2xl font-black text-purple-900 dark:text-purple-300 font-mono">${Math.round(totalSYP).toLocaleString()} ${isEn ? 'SYP' : 'ل.س'}</span>
+              <span class="text-2xl font-black text-purple-900 dark:text-purple-300 font-mono">${Math.round(totalSYP).toLocaleString()} ${tr3('ل.س', 'SYP', 'SYP')}</span>
               <span class="text-xs text-stone-500 dark:text-stone-400 font-bold">($${totalUSD.toFixed(2)} USD)</span>
             </div>
             <p class="text-xs text-stone-500 dark:text-stone-400 leading-relaxed">
-              ${isEn 
-                ? 'Amount is credited immediately to your Faseela wallet balance or withdrawable in cash via Syriatel Cash or Al-Haram Express with zero hidden fees.' 
-                : 'يتم تحويل المبلغ فورياً إلى محفظتك في فسيلة أو سحبه نقداً عبر حساب سيريتل كاش أو الهرم إكسبرس بدون أي عمولات خفية.'}
+              ${tr3(
+                'يتم تحويل المبلغ فورياً إلى محفظتك في فسيلة أو سحبه نقداً عبر حساب سيريتل كاش أو الهرم إكسبرس بدون أي عمولات خفية.',
+                'Amount is credited immediately to your Faseela wallet balance or withdrawable in cash via Syriatel Cash or Al-Haram Express with zero hidden fees.',
+                'Der Betrag wird Ihrem Faseela-Guthaben sofort gutgeschrieben oder kann bar über Syriatel Cash oder Al-Haram Express ohne versteckte Gebühren ausgezahlt werden.')}
             </p>
             <button type="button" data-click="confirmYieldLiquidation()" class="w-full bg-purple-700 hover:bg-purple-800 text-white py-2.5 rounded-xl font-bold text-xs transition-all shadow-md cursor-pointer flex items-center justify-center gap-2">
               <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-300"></i>
-              <span data-i18n="dash_btn_confirm_liquidate">${isEn ? 'Confirm Liquidation & Credit Value to Wallet' : 'تأكيد تسييل الحصة وتحويل القيمة لمحفظتي'}</span>
+              <span data-i18n="dash_btn_confirm_liquidate">${tr3('تأكيد تسييل الحصة وتحويل القيمة لمحفظتي', 'Confirm Liquidation & Credit Value to Wallet', 'Verkauf bestätigen und Betrag gutschreiben')}</span>
             </button>
           </div>
         `;
@@ -18021,17 +18062,18 @@ function setMarketplaceViewMode(mode) {
         container.innerHTML = `
           <div class="space-y-3">
             <div class="flex items-center justify-between text-xs font-bold text-emerald-900 dark:text-emerald-300">
-              <span>${isEn ? 'Blessed Gift & Ongoing Charity (Sadaqah Jariyah):' : 'إهداء وتبرع مبارك (صدقة جارية):'}</span>
-              <span class="text-stone-400">${isEn ? 'Blessed Tree for Syrian Families' : 'شجرة مباركة لأسر سورية'}</span>
+              <span>${tr3('إهداء وتبرع مبارك (صدقة جارية):', 'Blessed Gift & Ongoing Charity (Sadaqah Jariyah):', 'Gesegnete Spende und fortwährende Wohltat (Sadaqa Dschariya):')}</span>
+              <span class="text-stone-400">${tr3('شجرة مباركة لأسر سورية', 'Blessed Tree for Syrian Families', 'Ein gesegneter Baum für syrische Familien')}</span>
             </div>
             <p class="text-xs text-stone-600 dark:text-stone-300 leading-relaxed">
-              ${isEn 
-                ? `Your olive oil share (7.4 Liters) will be delivered to <strong>${escapeHtml(charityName)}</strong> and distributed to dignified rural families in Syria, with an authenticated donation certificate issued in your name.`
-                : `سيتم تسليم حصتك من الزيت (7.4 لتر) إلى <strong>${escapeHtml(charityName)}</strong> وتوزيعها على عائلات ريفية متعففة مع إصدار إشعار إهداء موثق باسمك.`}
+              ${tr3(
+                `سيتم تسليم حصتك من الزيت (7.4 لتر) إلى <strong>${escapeHtml(charityName)}</strong> وتوزيعها على عائلات ريفية متعففة مع إصدار إشعار إهداء موثق باسمك.`,
+                `Your olive oil share (7.4 Liters) will be delivered to <strong>${escapeHtml(charityName)}</strong> and distributed to dignified rural families in Syria, with an authenticated donation certificate issued in your name.`,
+                `Ihr Olivenölanteil (7,4 Liter) wird an <strong>${escapeHtml(charityName)}</strong> übergeben und an bedürftige Familien auf dem Land in Syrien verteilt; Sie erhalten eine Spendenbestätigung auf Ihren Namen.`)}
             </p>
             <button type="button" data-click="confirmYieldDonation()" class="w-full bg-emerald-700 hover:bg-emerald-800 text-white py-2.5 rounded-xl font-bold text-xs transition-all shadow-md cursor-pointer flex items-center justify-center gap-2">
               <i data-lucide="heart" class="w-4 h-4 text-red-300"></i>
-              <span data-i18n="dash_btn_confirm_donate">${isEn ? 'Confirm Charitable Allocation & Issue Deed' : 'تأكيد إهداء الحصة وتوثيق التبرع'}</span>
+              <span data-i18n="dash_btn_confirm_donate">${tr3('تأكيد إهداء الحصة وتوثيق التبرع', 'Confirm Charitable Allocation & Issue Deed', 'Spende bestätigen und Nachweis ausstellen')}</span>
             </button>
           </div>
         `;
@@ -18041,19 +18083,19 @@ function setMarketplaceViewMode(mode) {
 
     function confirmYieldDispatchOrder() {
       const isEn = state.currentLang !== 'ar';
-      showToast(isEn ? "📦 Order submitted! Your 7.4L EVOO dispatch staged with Climate Fleet." : "📦 تم إرسال الطلب بنجاح! تم قيد شحنة الزيت الخاصة بك للتجهيز والتسليم المبرد.");
+      showToast(tr3("📦 تم إرسال الطلب بنجاح! تم قيد شحنة الزيت الخاصة بك للتجهيز والتسليم المبرد.", "📦 Order submitted! Your 7.4L EVOO dispatch staged with Climate Fleet.", "📦 Auftrag übermittelt! Der Versand Ihrer 7,4 l Olivenöl wird mit der klimatisierten Flotte vorbereitet."));
       playAcousticChime(650, 0.15);
     }
 
     function confirmYieldLiquidation() {
       const isEn = state.currentLang !== 'ar';
-      showToast(isEn ? "💰 Liquidation confirmed! $96.20 (1,443,000 SYP) credited to your wallet balance." : "💰 تم التسييل بنجاح! تم قيد 1,443,000 ل.س ($96.20) في رصيد محفظتك المتاح.");
+      showToast(tr3("💰 تم التسييل بنجاح! تم قيد 1,443,000 ل.س ($96.20) في رصيد محفظتك المتاح.", "💰 Liquidation confirmed! $96.20 (1,443,000 SYP) credited to your wallet balance.", "💰 Verkauf bestätigt! 96,20 USD (1.443.000 SYP) wurden Ihrem Guthaben gutgeschrieben."));
       playAcousticChime(700, 0.15);
     }
 
     function confirmYieldDonation() {
       const isEn = state.currentLang !== 'ar';
-      showToast(isEn ? "🌿 Donation deed issued! May your blessed olive oil bring abundant blessing." : "🌿 جزاك الله خيراً! تم إصدار سند الإهداء الخيري وتخصيص الزيت للأسر المستفيدة.");
+      showToast(tr3("🌿 جزاك الله خيراً! تم إصدار سند الإهداء الخيري وتخصيص الزيت للأسر المستفيدة.", "🌿 Donation deed issued! May your blessed olive oil bring abundant blessing.", "🌿 Spendenbestätigung ausgestellt! Möge Ihr Olivenöl reichen Segen bringen."));
       playAcousticChime(750, 0.2);
     }
 
@@ -18099,7 +18141,7 @@ function setMarketplaceViewMode(mode) {
         document.querySelectorAll('.playing').forEach(el => el.classList.remove('playing'));
         btn.classList.add('playing');
         if (wave) wave.classList.add('playing');
-        btn.innerHTML = `<i data-lucide="square" class="w-3.5 h-3.5"></i><span>${state.currentLang !== 'ar' ? 'Stop' : 'إيقاف'}</span>`;
+        btn.innerHTML = `<i data-lucide="square" class="w-3.5 h-3.5"></i><span>${tr3('إيقاف', 'Stop', 'Stopp')}</span>`;
 
         playAcousticChime(520, 0.2);
         const utter = new SpeechSynthesisUtterance(text);
@@ -18116,9 +18158,10 @@ function setMarketplaceViewMode(mode) {
     }
 
     function speakFarmerWelcome() {
-      const text = state.currentLang !== 'ar' 
-        ? "Welcome, respected partner farmer! Tap the big green button to record your field care directly by voice without typing. Or tap the red alert button for emergency advice."
-        : "أهلاً بك يا عم أبو أحمد الطرطوسي! يمكنك تسجيل أعمال السقاية والتقليم بصوتك مباشرة بالضغط على الزر الأخضر الكبير، أو طلب استشارة عاجلة بالزر الأحمر دون حاجة لأي قراءة أو كتابة.";
+      const text = tr3(
+        "أهلاً بك يا عم أبو أحمد الطرطوسي! يمكنك تسجيل أعمال السقاية والتقليم بصوتك مباشرة بالضغط على الزر الأخضر الكبير، أو طلب استشارة عاجلة بالزر الأحمر دون حاجة لأي قراءة أو كتابة.",
+        "Welcome, respected partner farmer! Tap the big green button to record your field care directly by voice without typing. Or tap the red alert button for emergency advice.",
+        "Willkommen, geschätzter Partnerlandwirt! Tippen Sie auf die große grüne Taste, um Ihre Feldarbeiten direkt per Sprache ohne Tippen zu erfassen. Oder tippen Sie auf die rote Alarmtaste für eine dringende Beratung.");
       speakVoiceGuidance(text);
     }
 
@@ -18141,8 +18184,8 @@ function setMarketplaceViewMode(mode) {
 
     function openVoiceRecorderModal(treeId) {
       if (!state.currentUser || (state.currentUser.role !== 'farmer' && state.currentUser.role !== 'admin')) {
-        const reqRole = state.currentLang !== 'ar' ? 'Partner Farmer' : 'مزارع شريك معتمد';
-        const msg = state.currentLang !== 'ar' ? 'Voice field logs are restricted to partner farmers. Please sign in with your farmer credentials.' : 'تسجيل التقارير الصوتية الميدانية مخصص حصرياً للمزارعين الشركاء المعتمدين والمشرفين الميدانيين.';
+        const reqRole = tr3('مزارع شريك معتمد', 'Partner Farmer', 'Partnerlandwirt');
+        const msg = tr3('تسجيل التقارير الصوتية الميدانية مخصص حصرياً للمزارعين الشركاء المعتمدين والمشرفين الميدانيين.', 'Voice field logs are restricted to partner farmers. Please sign in with your farmer credentials.', 'Sprachberichte vom Feld sind Partnerlandwirten vorbehalten. Bitte melden Sie sich mit Ihrem Landwirt-Zugang an.');
         showAccessDenied(t('farmer_btn_record'), reqRole, msg);
         return;
       }
@@ -18152,8 +18195,8 @@ function setMarketplaceViewMode(mode) {
 
     function openFarmerPayoutModal() {
       if (!state.currentUser || (state.currentUser.role !== 'farmer' && state.currentUser.role !== 'admin')) {
-        const reqRole = state.currentLang !== 'ar' ? 'Partner Farmer' : 'مزارع شريك معتمد';
-        const msg = state.currentLang !== 'ar' ? 'Subsidies withdrawal is reserved for verified partner farmers.' : 'طلب صرف المستحقات مخصص فقط للمزارعين الشركاء الموثقين.';
+        const reqRole = tr3('مزارع شريك معتمد', 'Partner Farmer', 'Partnerlandwirt');
+        const msg = tr3('طلب صرف المستحقات مخصص فقط للمزارعين الشركاء الموثقين.', 'Subsidies withdrawal is reserved for verified partner farmers.', 'Die Auszahlung von Vergütungen ist verifizierten Partnerlandwirten vorbehalten.');
         showAccessDenied(t('farmer_btn_payout'), reqRole, msg);
         return;
       }
@@ -18162,8 +18205,8 @@ function setMarketplaceViewMode(mode) {
 
     function openEmergencyVoiceModal() {
       if (!state.currentUser || (state.currentUser.role !== 'farmer' && state.currentUser.role !== 'admin')) {
-        const reqRole = state.currentLang !== 'ar' ? 'Partner Farmer' : 'مزارع شريك معتمد';
-        const msg = state.currentLang !== 'ar' ? 'Emergency field alerts are reserved for verified partner farmers.' : 'نداءات الطوارئ الحقلية محصورة بالمزارعين والفرق الزراعية الميدانية.';
+        const reqRole = tr3('مزارع شريك معتمد', 'Partner Farmer', 'Partnerlandwirt');
+        const msg = tr3('نداءات الطوارئ الحقلية محصورة بالمزارعين والفرق الزراعية الميدانية.', 'Emergency field alerts are reserved for verified partner farmers.', 'Notfallmeldungen vom Feld sind verifizierten Partnerlandwirten vorbehalten.');
         showAccessDenied(t('farmer_btn_emergency'), reqRole, msg);
         return;
       }
@@ -18172,8 +18215,8 @@ function setMarketplaceViewMode(mode) {
 
     async function openMillBatchModal() {
       if (!state.currentUser || (state.currentUser.role !== 'mill_owner' && state.currentUser.role !== 'admin')) {
-        const reqRole = state.currentLang !== 'ar' ? 'Certified Mill Operator' : 'صاحب معصرة معتمد';
-        const msg = state.currentLang !== 'ar' ? 'Recording pressing batches is restricted to licensed mill operators.' : 'تسجيل وجبات عصر الزيتون مقتصر حصرياً على أصحاب المعاصر المعتمدين بشهادات فحص مخبري.';
+        const reqRole = tr3('صاحب معصرة معتمد', 'Certified Mill Operator', 'Zertifizierter Ölmühlenbetreiber');
+        const msg = tr3('تسجيل وجبات عصر الزيتون مقتصر حصرياً على أصحاب المعاصر المعتمدين بشهادات فحص مخبري.', 'Recording pressing batches is restricted to licensed mill operators.', 'Das Erfassen von Pressungen ist zugelassenen Ölmühlenbetreibern vorbehalten.');
         showAccessDenied(t('mill_btn_new_batch'), reqRole, msg);
         return;
       }
@@ -18198,10 +18241,10 @@ function setMarketplaceViewMode(mode) {
         }
         const assigned = document.getElementById('batch-mill-select');
         if (assigned) {
-          assigned.innerHTML = `<option value="">${isEn ? 'Select assigned mill' : 'اختر المعصرة المكلف بها'}</option>`
+          assigned.innerHTML = `<option value="">${tr3('اختر المعصرة المكلف بها', 'Select assigned mill', 'Zugewiesene Ölmühle auswählen')}</option>`
             + millIds.map(id => `<option value="${escapeHtml(id)}">${escapeHtml(id)}</option>`).join('');
         }
-        if (!millIds.length) showToast(isEn ? 'No mill is assigned to this account yet. Please contact the team.' : 'لا توجد معصرة مسندة لهذا الحساب بعد. يرجى التواصل مع الفريق.');
+        if (!millIds.length) showToast(tr3('لا توجد معصرة مسندة لهذا الحساب بعد. يرجى التواصل مع الفريق.', 'No mill is assigned to this account yet. Please contact the team.', 'Diesem Konto ist noch keine Ölmühle zugewiesen. Bitte wenden Sie sich an das Team.'));
         openModal('modal-mill-batch');
         if (window.lucide && typeof window.lucide.createIcons === 'function') lucide.createIcons();
         return;
@@ -18222,7 +18265,7 @@ function setMarketplaceViewMode(mode) {
       const millSelect = document.getElementById('batch-mill-select');
       if (millSelect) {
         const mills = (state.partnerMills || []).filter(mill => mill.status === 'approved');
-        millSelect.innerHTML = `<option value="">${state.currentLang !== 'ar' ? 'Select assigned mill' : 'اختر المعصرة المكلف بها'}</option>`
+        millSelect.innerHTML = `<option value="">${tr3('اختر المعصرة المكلف بها', 'Select assigned mill', 'Zugewiesene Ölmühle auswählen')}</option>`
           + mills.map(mill => {
             const name = state.currentLang !== 'ar' ? (mill.name_en || mill.name_ar) : (mill.name_ar || mill.name_en);
             const location = state.currentLang !== 'ar' ? (mill.location_en || mill.location_ar) : (mill.location_ar || mill.location_en);
@@ -18264,17 +18307,17 @@ function setMarketplaceViewMode(mode) {
       if (!state.currentUser || state.currentUser.role !== 'farmer') {
         showAccessDenied(
           t('farmer_btn_record'),
-          isEn ? 'Partner Farmer' : 'مزارع شريك معتمد',
-          isEn ? 'Only an approved farmer account can submit field reports.' : 'يمكن لحساب المزارع الشريك المعتمد فقط إرسال التقارير الميدانية.'
+          tr3('مزارع شريك معتمد', 'Partner Farmer', 'Partnerlandwirt'),
+          tr3('يمكن لحساب المزارع الشريك المعتمد فقط إرسال التقارير الميدانية.', 'Only an approved farmer account can submit field reports.', 'Nur freigegebene Konten von Partnerlandwirten können Feldberichte senden.')
         );
         return;
       }
       if (!window.FaseelaFirebase) {
-        showToast(isEn ? 'Secure field reporting is unavailable.' : 'إرسال التقارير الميدانية الآمن غير متاح حالياً.');
+        showToast(tr3('إرسال التقارير الميدانية الآمن غير متاح حالياً.', 'Secure field reporting is unavailable.', 'Das sichere Senden von Feldberichten ist derzeit nicht verfügbar.'));
         return;
       }
       if (!rateLimiter.checkLimit('voice_log_' + state.currentUser.id, 5, 60000)) {
-        showToast(isEn ? 'Too many reports. Please wait a minute.' : 'تم تجاوز الحد المسموح للتقارير. يرجى الانتظار دقيقة.');
+        showToast(tr3('تم تجاوز الحد المسموح للتقارير. يرجى الانتظار دقيقة.', 'Too many reports. Please wait a minute.', 'Zu viele Berichte. Bitte warten Sie eine Minute.'));
         return;
       }
 
@@ -18290,7 +18333,7 @@ function setMarketplaceViewMode(mode) {
               : activity.includes('قطاف') || /harvest/i.test(activity) ? 'harvest'
                 : 'other';
       if (!treeId || notes.length > 1200) {
-        showToast(isEn ? 'Select a tree and keep the report under 1,200 characters.' : 'اختر شجرة واجعل التقرير أقل من 1200 حرف.');
+        showToast(tr3('اختر شجرة واجعل التقرير أقل من 1200 حرف.', 'Select a tree and keep the report under 1,200 characters.', 'Wählen Sie einen Baum und halten Sie den Bericht unter 1.200 Zeichen.'));
         return;
       }
 
@@ -18303,26 +18346,26 @@ function setMarketplaceViewMode(mode) {
         });
         closeModal('modal-add-maintenance');
         playAcousticChime(740, 0.2);
-        showToast(isEn
-          ? 'Report submitted for review. Audio and photos are not uploaded yet.'
-          : 'أُرسل التقرير النصي للمراجعة. لم يُرفع التسجيل الصوتي أو الصور بعد.');
+        showToast(tr3(
+          'أُرسل التقرير النصي للمراجعة. لم يُرفع التسجيل الصوتي أو الصور بعد.',
+          'Report submitted for review. Audio and photos are not uploaded yet.', 'Bericht zur Prüfung gesendet. Sprachaufnahme und Fotos wurden noch nicht hochgeladen.'));
       } catch (error) {
         console.error('Farmer report submission failed:', error);
-        showToast(isEn
-          ? 'Could not submit the report. Check your farmer assignment and try again.'
-          : 'تعذر إرسال التقرير. تحقق من اعتماد حسابك على الشجرة ثم أعد المحاولة.');
+        showToast(tr3(
+          'تعذر إرسال التقرير. تحقق من اعتماد حسابك على الشجرة ثم أعد المحاولة.',
+          'Could not submit the report. Check your farmer assignment and try again.', 'Der Bericht konnte nicht gesendet werden. Prüfen Sie, ob Ihr Konto diesem Baum als Landwirt zugeordnet ist, und versuchen Sie es erneut.'));
       }
     }
 
     function submitFarmerPayout() {
       if (!state.currentUser || (state.currentUser.role !== 'farmer' && state.currentUser.role !== 'admin')) {
-        const reqRole = state.currentLang !== 'ar' ? 'Partner Farmer' : 'مزارع شريك معتمد';
-        const msg = state.currentLang !== 'ar' ? 'Subsidies withdrawal is reserved for partner farmers.' : 'طلب صرف المستحقات مخصص فقط للمزارعين الشركاء الموثقين.';
+        const reqRole = tr3('مزارع شريك معتمد', 'Partner Farmer', 'Partnerlandwirt');
+        const msg = tr3('طلب صرف المستحقات مخصص فقط للمزارعين الشركاء الموثقين.', 'Subsidies withdrawal is reserved for partner farmers.', 'Die Auszahlung von Vergütungen ist Partnerlandwirten vorbehalten.');
         showAccessDenied(t('farmer_btn_payout'), reqRole, msg);
         return;
       }
       if (!rateLimiter.checkLimit('farmer_payout_' + state.currentUser.id, 2, 60000)) {
-        showToast(state.currentLang !== 'ar' ? '⚠️ Please wait a minute before requesting another payout.' : '⚠️ يرجى الانتظار دقيقة قبل إرسال طلب صرف مالي جديد لحماية العمليات.');
+        showToast(tr3('⚠️ يرجى الانتظار دقيقة قبل إرسال طلب صرف مالي جديد لحماية العمليات.', '⚠️ Please wait a minute before requesting another payout.', '⚠️ Bitte warten Sie eine Minute, bevor Sie eine weitere Auszahlung anfordern.'));
         return;
       }
 
@@ -18382,7 +18425,7 @@ function setMarketplaceViewMode(mode) {
       savePlatformState();
       closeModal('modal-farmer-payout');
       playAcousticChime(620, 0.25);
-      showToast(isEn ? `✅ Payout of ${withdrawSyp.toLocaleString()} SYP transferred successfully!` : `✅ تم تأكيد صرف وتحويل ${withdrawSyp.toLocaleString()} ل.س بنجاح وإيداع الإشعار بالسجل!`);
+      showToast(tr3(`✅ تم تأكيد صرف وتحويل ${withdrawSyp.toLocaleString()} ل.س بنجاح وإيداع الإشعار بالسجل!`, `✅ Payout of ${withdrawSyp.toLocaleString()} SYP transferred successfully!`, `✅ Auszahlung von ${withdrawSyp.toLocaleString()} SYP erfolgreich überwiesen!`));
       renderFarmerPortal();
       renderDashboard();
     }
@@ -18395,23 +18438,23 @@ function setMarketplaceViewMode(mode) {
       if (emergencyRecording) {
         playAcousticChime(780, 0.2);
         btn.classList.add('animate-pulse', 'ring-8', 'ring-red-300');
-        status.innerHTML = `<span class="text-red-700 font-black animate-pulse">${state.currentLang !== 'ar' ? '🔴 Recording emergency alert... speak now' : '🔴 جاري تسجيل نداء الطوارئ... تحدث الآن'}</span>`;
+        status.innerHTML = `<span class="text-red-700 font-black animate-pulse">${tr3('🔴 جاري تسجيل نداء الطوارئ... تحدث الآن', '🔴 Recording emergency alert... speak now', '🔴 Notfallmeldung wird aufgenommen … sprechen Sie jetzt')}</span>`;
       } else {
         playAcousticChime(500, 0.2);
         btn.classList.remove('animate-pulse', 'ring-8', 'ring-red-300');
-        status.innerHTML = `<span class="text-emerald-700 font-bold">${state.currentLang !== 'ar' ? 'Emergency alert captured and ready to broadcast' : 'تم تسجيل النداء وهو جاهز للبث الفوري'}</span>`;
+        status.innerHTML = `<span class="text-emerald-700 font-bold">${tr3('تم تسجيل النداء وهو جاهز للبث الفوري', 'Emergency alert captured and ready to broadcast', 'Notfallmeldung aufgenommen und bereit zum Senden')}</span>`;
       }
     }
 
     function submitEmergencyVoiceAlert() {
       if (!state.currentUser || (state.currentUser.role !== 'farmer' && state.currentUser.role !== 'admin')) {
-        const reqRole = state.currentLang !== 'ar' ? 'Partner Farmer' : 'مزارع شريك معتمد';
-        const msg = state.currentLang !== 'ar' ? 'Emergency field alerts are reserved for verified farmers.' : 'نداءات الطوارئ الحقلية محصورة بالمزارعين والفرق الزراعية الميدانية.';
+        const reqRole = tr3('مزارع شريك معتمد', 'Partner Farmer', 'Partnerlandwirt');
+        const msg = tr3('نداءات الطوارئ الحقلية محصورة بالمزارعين والفرق الزراعية الميدانية.', 'Emergency field alerts are reserved for verified farmers.', 'Notfallmeldungen vom Feld sind verifizierten Landwirten vorbehalten.');
         showAccessDenied(t('farmer_btn_emergency'), reqRole, msg);
         return;
       }
       if (!rateLimiter.checkLimit('emergency_alert_' + state.currentUser.id, 2, 60000)) {
-        showToast(state.currentLang !== 'ar' ? '⚠️ Emergency alert already received. Field team is dispatched.' : '⚠️ تم استلام نداء طوارئ مؤخراً، فرق الدعم تعمل على معالجته.');
+        showToast(tr3('⚠️ تم استلام نداء طوارئ مؤخراً، فرق الدعم تعمل على معالجته.', '⚠️ Emergency alert already received. Field team is dispatched.', '⚠️ Notfallmeldung bereits eingegangen. Das Feldteam ist unterwegs.'));
         return;
       }
 
@@ -18430,7 +18473,7 @@ function setMarketplaceViewMode(mode) {
 
       closeModal('modal-emergency-voice');
       playAcousticChime(850, 0.3);
-      showToast(state.currentLang !== 'ar' ? '🚨 Emergency audio broadcast dispatched to agronomy response team!' : '🚨 تم بث نداء الطوارئ الصوتي للمهندسين الزراعيين وفريق التدخل الميداني بطرطوس!');
+      showToast(tr3('🚨 تم بث نداء الطوارئ الصوتي للمهندسين الزراعيين وفريق التدخل الميداني بطرطوس!', '🚨 Emergency audio broadcast dispatched to agronomy response team!', '🚨 Sprach-Notfallmeldung an das agronomische Einsatzteam gesendet!'));
       renderFarmerPortal();
     }
 
@@ -18439,7 +18482,7 @@ function setMarketplaceViewMode(mode) {
         state.emergencyAlerts = state.emergencyAlerts.filter(a => a.id !== alertId);
         savePlatformState();
         playAcousticChime(700, 0.15);
-        showToast(state.currentLang !== 'ar' ? 'Emergency alert marked as resolved by field agronomy team.' : 'تم تأكيد معالجة نداء الطوارئ وإغلاقه من قبل الفريق الزراعي الميداني.');
+        showToast(tr3('تم تأكيد معالجة نداء الطوارئ وإغلاقه من قبل الفريق الزراعي الميداني.', 'Emergency alert marked as resolved by field agronomy team.', 'Notfallmeldung vom agronomischen Feldteam als erledigt markiert.'));
         renderFarmerPortal();
       }
     }
@@ -18476,7 +18519,7 @@ function setMarketplaceViewMode(mode) {
       box.classList.remove('hidden');
       const items = (kind === 'farmer' ? state.myFarmerUpdates : state.myPressingBatches) || [];
       const label = (status) => window.FaseelaMappers ? window.FaseelaMappers.statusLabel(status, isEn ? 'en' : 'ar') : status;
-      const title = kind === 'farmer' ? (isEn ? 'My submitted field reports' : 'تقاريري الميدانية المرسلة') : (isEn ? 'My submitted pressing batches' : 'دفعات العصر المرسلة');
+      const title = kind === 'farmer' ? (tr3('تقاريري الميدانية المرسلة', 'My submitted field reports', 'Meine gesendeten Feldberichte')) : (tr3('دفعات العصر المرسلة', 'My submitted pressing batches', 'Meine gesendeten Pressungen'));
       const rows = items.map(item => {
         const when = Number.isFinite(item.createdAt) ? new Date(item.createdAt).toLocaleDateString(uiLocale()) : '';
         const detail = kind === 'farmer'
@@ -18491,7 +18534,7 @@ function setMarketplaceViewMode(mode) {
       }).join('');
       box.innerHTML = `<h3 class="font-black text-sm text-stone-900 dark:text-white mb-2">${title}</h3>${items.length
         ? `<ul>${rows}</ul>`
-        : `<p class="text-xs text-stone-600 dark:text-stone-400">${isEn ? 'Nothing submitted yet.' : 'لا توجد إرسالات بعد.'}</p>`}`;
+        : `<p class="text-xs text-stone-600 dark:text-stone-400">${tr3('لا توجد إرسالات بعد.', 'Nothing submitted yet.', 'Noch nichts gesendet.')}</p>`}`;
     }
 
     // ---- Farmer server tools: mobile quick report + public profile (server mode, role farmer) ----
@@ -18737,7 +18780,7 @@ function setMarketplaceViewMode(mode) {
       const trees = (farmerQuick.assignments && farmerQuick.assignments.trees) || [];
       if (!treeId || !trees.some(tr => tr.treeId === treeId)) { fqrShowError(t('fqr_err_tree')); return; }
       if (!rateLimiter.checkLimit('quick_report_' + state.currentUser.id, 5, 60000)) {
-        showToast(state.currentLang !== 'ar' ? 'Too many reports. Please wait a minute.' : 'تم تجاوز الحد المسموح للتقارير. يرجى الانتظار دقيقة.');
+        showToast(tr3('تم تجاوز الحد المسموح للتقارير. يرجى الانتظار دقيقة.', 'Too many reports. Please wait a minute.', 'Zu viele Berichte. Bitte warten Sie eine Minute.'));
         return;
       }
       const notes = (document.getElementById('fqr-notes')?.value || '').trim().slice(0, 1200);
@@ -18805,7 +18848,7 @@ function setMarketplaceViewMode(mode) {
           : `<span class="px-2 py-0.5 rounded-md bg-stone-100 dark:bg-stone-800">${escapeHtml(t('fp_status_private'))}</span>`) + links;
       }
       const ph = document.getElementById('fp-photo-ph');
-      if (ph) ph.textContent = (p && p.displayName ? String(p.displayName).trim().charAt(0) : (isEn ? 'F' : 'م')) || 'م';
+      if (ph) ph.textContent = (p && p.displayName ? String(p.displayName).trim().charAt(0) : (tr3('م', 'F', 'L'))) || 'م';
     }
 
     function fpPhotoChanged() {
@@ -18835,7 +18878,7 @@ function setMarketplaceViewMode(mode) {
       const name = val('fp-name');
       if (consent && name.length < 2) { fpShowError(t('fp_err_name')); return; }
       if (!rateLimiter.checkLimit('farmer_profile_' + state.currentUser.id, 5, 60000)) {
-        showToast(state.currentLang !== 'ar' ? 'Please wait a minute before saving again.' : 'يرجى الانتظار دقيقة قبل الحفظ مجدداً.');
+        showToast(tr3('يرجى الانتظار دقيقة قبل الحفظ مجدداً.', 'Please wait a minute before saving again.', 'Bitte warten Sie eine Minute, bevor Sie erneut speichern.'));
         return;
       }
       const btn = document.getElementById('fp-save');
@@ -18886,19 +18929,19 @@ function setMarketplaceViewMode(mode) {
       if (fTasksEl) fTasksEl.innerText = `${compTasks} ${t('farmer_kpi_tasks_done')} • ${remTasks} ${t('farmer_kpi_tasks_rem')}`;
 
       const fWagesEl = document.getElementById('farmer-stat-wages');
-      if (fWagesEl) fWagesEl.innerText = `${(state.farmerWallet?.totalSubsidiesSyp || 1890000).toLocaleString()} ${isEn ? 'SYP' : 'ل.س'}`;
+      if (fWagesEl) fWagesEl.innerText = `${(state.farmerWallet?.totalSubsidiesSyp || 1890000).toLocaleString()} ${tr3('ل.س', 'SYP', 'SYP')}`;
 
       const fMillEl = document.getElementById('farmer-stat-mill');
-      if (fMillEl) fMillEl.innerText = isEn ? 'Sept 15 • 8:00 AM' : '15 أيلول • 8:00 ص';
+      if (fMillEl) fMillEl.innerText = tr3('15 أيلول • 8:00 ص', 'Sept 15 • 8:00 AM', '15. Sept. • 8:00 Uhr');
 
       const wTotalSub = document.getElementById('farmer-wallet-total-sub');
-      if (wTotalSub) wTotalSub.innerText = `${isEn ? 'SYP' : 'ل.س'} ($126)`;
+      if (wTotalSub) wTotalSub.innerText = `${tr3('ل.س', 'SYP', 'SYP')} ($126)`;
 
       const wReadySub = document.getElementById('farmer-wallet-ready-sub');
-      if (wReadySub) wReadySub.innerText = `${isEn ? 'SYP' : 'ل.س'} ($42)`;
+      if (wReadySub) wReadySub.innerText = `${tr3('ل.س', 'SYP', 'SYP')} ($42)`;
 
       const wShares = document.getElementById('farmer-wallet-shares-count');
-      if (wShares) wShares.innerText = isEn ? 'Ancient Trees (12 Shares)' : 'أشجار معمرة (12 حصة)';
+      if (wShares) wShares.innerText = tr3('أشجار معمرة (12 حصة)', 'Ancient Trees (12 Shares)', 'Uralte Bäume (12 Anteile)');
 
       // 1. Render Tasks in Panel 1
       const tasksContainer = document.getElementById('farmer-tasks-list');
@@ -18923,7 +18966,7 @@ function setMarketplaceViewMode(mode) {
                   <div class="flex items-center gap-2 text-[11px] text-stone-500 dark:text-stone-400 mt-1">
                     <span>${treeName}</span>
                     <span>•</span>
-                    <span class="font-bold text-olive-800 dark:text-olive-300 font-mono">${task.wage_syp.toLocaleString()} ${isEn ? 'SYP Wage' : 'ل.س بدل الإنجاز'}</span>
+                    <span class="font-bold text-olive-800 dark:text-olive-300 font-mono">${task.wage_syp.toLocaleString()} ${tr3('ل.س بدل الإنجاز', 'SYP Wage', 'SYP Lohn')}</span>
                   </div>
                 </div>
               </div>
@@ -18932,12 +18975,12 @@ function setMarketplaceViewMode(mode) {
                 ${isDone ? `
                   <span class="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-800 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-950 px-3 py-1.5 rounded-xl border border-emerald-200 dark:border-emerald-800">
                     <i data-lucide="check" class="w-3.5 h-3.5"></i>
-                    <span>${isEn ? 'Completed & Credited' : 'تم الإنجاز وإيداع البدل'}</span>
+                    <span>${tr3('تم الإنجاز وإيداع البدل', 'Completed & Credited', 'Abgeschlossen & Lohn gutgeschrieben')}</span>
                   </span>
                 ` : `
                   <button type="button" data-click="completeFarmerTask('${task.id}')" class="w-full sm:w-auto bg-emerald-700 hover:bg-emerald-800 text-white px-4 py-2 rounded-xl text-xs font-bold transition-all shadow-xs flex items-center justify-center gap-1.5 cursor-pointer">
                     <i data-lucide="check-square" class="w-3.5 h-3.5"></i>
-                    <span>${isEn ? 'Complete & Claim Wage' : 'تم الإنجاز (إيداع البدل)'}</span>
+                    <span>${tr3('تم الإنجاز (إيداع البدل)', 'Complete & Claim Wage', 'Abschließen & Lohn anfordern')}</span>
                   </button>
                 `}
               </div>
@@ -18965,7 +19008,7 @@ function setMarketplaceViewMode(mode) {
                     <span class="bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 text-[10px] font-black px-2.5 py-0.5 rounded-full">${displayHealth}</span>
                     ${tree.age_years != null ? `<span class="bg-stone-100 dark:bg-stone-700 text-stone-600 dark:text-stone-300 text-[10px] font-bold px-2 py-0.5 rounded">${tree.age_years} ${t('year_unit')}</span>` : ''}
                   </div>
-                  <p class="text-xs text-stone-500 dark:text-stone-400">${displayRegion} • ${tree.maintenance_logs.length} ${isEn ? 'Field Reports' : 'تقارير موثقة'}</p>
+                  <p class="text-xs text-stone-500 dark:text-stone-400">${displayRegion} • ${tree.maintenance_logs.length} ${tr3('تقارير موثقة', 'Field Reports', 'Feldberichte')}</p>
 
                   ${latestVoiceLog ? `
                     <div class="inline-flex items-center gap-2 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-950 dark:text-emerald-200 border border-emerald-200 dark:border-emerald-800 px-3 py-1.5 rounded-xl text-xs font-bold mt-1">
@@ -19049,8 +19092,8 @@ function setMarketplaceViewMode(mode) {
       const isEn = state.currentLang !== 'ar';
 
       if (!state.currentUser || (state.currentUser.role !== 'farmer' && state.currentUser.role !== 'admin')) {
-        const reqRole = isEn ? 'Certified Field Farmer' : 'مزارع ميداني معتمد';
-        const msg = isEn ? 'Completing tasks and claiming wages is restricted to certified farmers.' : 'تأكيد إنجاز المهام وقيد الأتعاب مقتصر على المزارعين المعتمدين.';
+        const reqRole = tr3('مزارع ميداني معتمد', 'Certified Field Farmer', 'Zertifizierter Landwirt');
+        const msg = tr3('تأكيد إنجاز المهام وقيد الأتعاب مقتصر على المزارعين المعتمدين.', 'Completing tasks and claiming wages is restricted to certified farmers.', 'Das Bestätigen erledigter Aufgaben und das Abrechnen des Arbeitslohns sind zertifizierten Landwirten vorbehalten.');
         showAccessDenied(t('farmer_tasks_title'), reqRole, msg);
         return;
       }
@@ -19062,25 +19105,25 @@ function setMarketplaceViewMode(mode) {
       state.farmerWallet.readySyp = (state.farmerWallet.readySyp || 0) + task.wage_syp;
       state.farmerWallet.totalSubsidiesSyp = (state.farmerWallet.totalSubsidiesSyp || 0) + task.wage_syp;
       playAcousticChime(700, 0.2);
-      showToast(isEn ? `✅ Task completed! ${task.wage_syp.toLocaleString()} SYP credited to your labor wallet.` : `✅ تم إنجاز المهمة بنجاح! تم قيد ${task.wage_syp.toLocaleString()} ل.س في محفظة أتعابك.`);
+      showToast(tr3(`✅ تم إنجاز المهمة بنجاح! تم قيد ${task.wage_syp.toLocaleString()} ل.س في محفظة أتعابك.`, `✅ Task completed! ${task.wage_syp.toLocaleString()} SYP credited to your labor wallet.`, `✅ Aufgabe erledigt! ${task.wage_syp.toLocaleString()} SYP wurden Ihrem Lohnkonto gutgeschrieben.`));
       renderFarmerPortal();
     }
 
     function bookFarmerMillDelivery() {
       const isEn = state.currentLang !== 'ar';
       if (!state.currentUser || (state.currentUser.role !== 'farmer' && state.currentUser.role !== 'admin')) {
-        const reqRole = isEn ? 'Certified Field Farmer' : 'مزارع ميداني معتمد';
-        const msg = isEn ? 'Mill slot booking is restricted to certified farmers.' : 'حجز دور المعصرة مقتصر على المزارعين المعتمدين.';
+        const reqRole = tr3('مزارع ميداني معتمد', 'Certified Field Farmer', 'Zertifizierter Landwirt');
+        const msg = tr3('حجز دور المعصرة مقتصر على المزارعين المعتمدين.', 'Mill slot booking is restricted to certified farmers.', 'Die Buchung eines Termins in der Ölmühle ist zertifizierten Landwirten vorbehalten.');
         showAccessDenied(t('farmer_mill_booking_title'), reqRole, msg);
         return;
       }
-      showToast(isEn ? "📅 Cold-press milling slot confirmed for Sept 15 with Eng. Samir at Dreikish Mill." : "📅 تم تأكيد حجز دور العصر البارد ليوم 15 أيلول بنجاح مع معصرة الدريكيش الحديثة.");
+      showToast(tr3("📅 تم تأكيد حجز دور العصر البارد ليوم 15 أيلول بنجاح مع معصرة الدريكيش الحديثة.", "📅 Cold-press milling slot confirmed for Sept 15 with Eng. Samir at Dreikish Mill.", "📅 Ihr Termin für die Kaltpressung am 15. September bei Ing. Samir in der Ölmühle Dreikish ist bestätigt."));
       playAcousticChime(600, 0.15);
     }
 
     function requestFarmerInput(itemKey) {
       const isEn = state.currentLang !== 'ar';
-      showToast(isEn ? "📦 Equipment requisition sent to cooperative: 50 ventilated crates scheduled for delivery." : "📦 تم إرسال طلب المستلزمات بنجاح: سيتم تسليم 50 صندوقاً مهواة لمزرعتك غداً.");
+      showToast(tr3("📦 تم إرسال طلب المستلزمات بنجاح: سيتم تسليم 50 صندوقاً مهواة لمزرعتك غداً.", "📦 Equipment requisition sent to cooperative: 50 ventilated crates scheduled for delivery.", "📦 Materialanforderung an die Genossenschaft gesendet: 50 belüftete Kisten sind zur Lieferung eingeplant."));
       playAcousticChime(650, 0.15);
     }
 
@@ -19107,7 +19150,7 @@ function setMarketplaceViewMode(mode) {
       const yieldRate = ((batch.oil_liters * 0.916) / (batch.olives_kg || 1) * 100).toFixed(1);
 
       const serialEl = document.getElementById('lab-cert-batch-serial');
-      if (serialEl) serialEl.innerText = `${isEn ? 'Accreditation No:' : 'رقم الاعتماد:'} ${batch.serial}`;
+      if (serialEl) serialEl.innerText = `${tr3('رقم الاعتماد:', 'Accreditation No:', 'Akkreditierungs-Nr.:')} ${batch.serial}`;
 
       const treeEl = document.getElementById('lab-cert-tree-name');
       if (treeEl) treeEl.innerText = displayName;
@@ -19116,16 +19159,16 @@ function setMarketplaceViewMode(mode) {
       if (farmEl) farmEl.innerText = displayFarm;
 
       const weightOilEl = document.getElementById('lab-cert-weight-oil');
-      if (weightOilEl) weightOilEl.innerText = isEn ? `${batch.olives_kg} kg Fruit ➔ ${batch.oil_liters} L EVOO` : `${batch.olives_kg} كغ ثمار ➔ ${batch.oil_liters} لتر زيت`;
+      if (weightOilEl) weightOilEl.innerText = tr3(`${batch.olives_kg} كغ ثمار ➔ ${batch.oil_liters} لتر زيت`, `${batch.olives_kg} kg Fruit ➔ ${batch.oil_liters} L EVOO`, `${batch.olives_kg} kg Früchte ➔ ${batch.oil_liters} L natives Olivenöl extra`);
 
       const yieldEl = document.getElementById('lab-cert-yield-rate');
-      if (yieldEl) yieldEl.innerText = `${isEn ? 'Extraction Yield:' : 'نسبة السيولة:'} ${yieldRate}%`;
+      if (yieldEl) yieldEl.innerText = `${tr3('نسبة السيولة:', 'Extraction Yield:', 'Ölausbeute:')} ${yieldRate}%`;
 
       const acidityEl = document.getElementById('lab-cert-acidity');
-      if (acidityEl) acidityEl.innerText = `${batch.acidity} ${isEn ? '(International limit < 0.8%)' : '(المعيار الدولي أقل من 0.8%)'}`;
+      if (acidityEl) acidityEl.innerText = `${batch.acidity} ${tr3('(المعيار الدولي أقل من 0.8%)', '(International limit < 0.8%)', '(Internationaler Grenzwert < 0,8 %)')}`;
 
       const tempEl = document.getElementById('lab-cert-temp');
-      if (tempEl) tempEl.innerText = `${batch.temp} ${isEn ? '(True Cold Pressing)' : '(عصر بارد حقيقي)'}`;
+      if (tempEl) tempEl.innerText = `${batch.temp} ${tr3('(عصر بارد حقيقي)', '(True Cold Pressing)', '(Echte Kaltpressung)')}`;
 
       const badgeEl = document.getElementById('lab-cert-grade-badge');
       if (badgeEl) badgeEl.innerText = displayGrade;
@@ -19404,18 +19447,18 @@ function setMarketplaceViewMode(mode) {
       try {
         const s = await window.FaseelaFirebase.adminSystemStatus();
         const o = s.outbox || {}; const c = s.clientErrors || {}; const r = s.reviews || {};
-        const jobs = (s.jobs || []).map(j => `<li class="flex justify-between gap-2"><span class="font-mono">${escapeHtml(j.name.replace('faseela-', ''))}</span><span class="${j.lastStatus === 'succeeded' || !j.lastStatus ? 'text-olive-700 dark:text-olive-300' : 'text-red-700 dark:text-red-300'}">${escapeHtml(j.lastStatus || (isEn ? 'not run yet' : 'لم يعمل بعد'))}</span></li>`).join('');
+        const jobs = (s.jobs || []).map(j => `<li class="flex justify-between gap-2"><span class="font-mono">${escapeHtml(j.name.replace('faseela-', ''))}</span><span class="${j.lastStatus === 'succeeded' || !j.lastStatus ? 'text-olive-700 dark:text-olive-300' : 'text-red-700 dark:text-red-300'}">${escapeHtml(j.lastStatus || (tr3('لم يعمل بعد', 'not run yet', 'noch nicht ausgeführt')))}</span></li>`).join('');
         const top = (c.top || []).map(t => `<li class="truncate" title="${escapeHtml(t.message)}">${escapeHtml(t.count)}× ${escapeHtml(t.message)}</li>`).join('');
         body.innerHTML = [
-          tile(isEn ? 'E-mails pending' : 'رسائل قيد الإرسال', o.pending ?? 0, (o.pending ?? 0) > 20 ? 'warn' : 'ok'),
-          tile(isEn ? 'E-mails failed' : 'رسائل فاشلة', o.failed ?? 0, (o.failed ?? 0) > 0 ? 'bad' : 'ok'),
-          tile(isEn ? 'Client errors (24 h)' : 'أخطاء العميل (24 س)', c.last24h ?? 0, (c.last24h ?? 0) > 20 ? 'bad' : (c.last24h ?? 0) > 0 ? 'warn' : 'ok'),
-          tile(isEn ? 'Overdue reviews' : 'مراجعات متأخرة', r.paymentsOverdue ?? 0, (r.paymentsOverdue ?? 0) > 0 ? 'bad' : 'ok'),
-          `<div class="col-span-2 bg-stone-50 dark:bg-stone-800 rounded-2xl p-3 border border-stone-200 dark:border-stone-700"><div class="text-[10px] font-bold text-stone-500 dark:text-stone-400 mb-1">${isEn ? 'Scheduled jobs' : 'المهام المجدولة'}</div><ul class="space-y-0.5 text-[11px]">${jobs || `<li class="text-stone-400">${isEn ? 'none' : 'لا شيء'}</li>`}</ul></div>`,
-          `<div class="col-span-2 bg-stone-50 dark:bg-stone-800 rounded-2xl p-3 border border-stone-200 dark:border-stone-700"><div class="text-[10px] font-bold text-stone-500 dark:text-stone-400 mb-1">${isEn ? 'Queues' : 'قوائم الانتظار'}: ${r.paymentsPending ?? 0} ${isEn ? 'payments' : 'دفعات'} · ${r.farmerUpdatesPending ?? 0} ${isEn ? 'reports' : 'تقارير'} · ${r.batchesPending ?? 0} ${isEn ? 'batches' : 'دفعات عصر'} · ${r.roleApplicationsPending ?? 0} ${isEn ? 'roles' : 'أدوار'}</div><ul class="space-y-0.5 text-[11px] text-stone-700 dark:text-stone-300">${top || `<li class="text-stone-400">${isEn ? 'No client errors in 24 h' : 'لا أخطاء خلال 24 ساعة'}</li>`}</ul>${o.lastError ? `<div class="mt-1 text-[10px] text-red-700 dark:text-red-300 truncate" title="${escapeHtml(o.lastError)}">${isEn ? 'Last mail error' : 'آخر خطأ بريد'}: ${escapeHtml(o.lastError)}</div>` : ''}</div>`
+          tile(tr3('رسائل قيد الإرسال', 'E-mails pending', 'E-Mails ausstehend'), o.pending ?? 0, (o.pending ?? 0) > 20 ? 'warn' : 'ok'),
+          tile(tr3('رسائل فاشلة', 'E-mails failed', 'E-Mails fehlgeschlagen'), o.failed ?? 0, (o.failed ?? 0) > 0 ? 'bad' : 'ok'),
+          tile(tr3('أخطاء العميل (24 س)', 'Client errors (24 h)', 'Client-Fehler (24 h)'), c.last24h ?? 0, (c.last24h ?? 0) > 20 ? 'bad' : (c.last24h ?? 0) > 0 ? 'warn' : 'ok'),
+          tile(tr3('مراجعات متأخرة', 'Overdue reviews', 'Überfällige Prüfungen'), r.paymentsOverdue ?? 0, (r.paymentsOverdue ?? 0) > 0 ? 'bad' : 'ok'),
+          `<div class="col-span-2 bg-stone-50 dark:bg-stone-800 rounded-2xl p-3 border border-stone-200 dark:border-stone-700"><div class="text-[10px] font-bold text-stone-500 dark:text-stone-400 mb-1">${tr3('المهام المجدولة', 'Scheduled jobs', 'Geplante Jobs')}</div><ul class="space-y-0.5 text-[11px]">${jobs || `<li class="text-stone-400">${tr3('لا شيء', 'none', 'keine')}</li>`}</ul></div>`,
+          `<div class="col-span-2 bg-stone-50 dark:bg-stone-800 rounded-2xl p-3 border border-stone-200 dark:border-stone-700"><div class="text-[10px] font-bold text-stone-500 dark:text-stone-400 mb-1">${tr3('قوائم الانتظار', 'Queues', 'Warteschlangen')}: ${r.paymentsPending ?? 0} ${tr3('دفعات', 'payments', 'Zahlungen')} · ${r.farmerUpdatesPending ?? 0} ${tr3('تقارير', 'reports', 'Berichte')} · ${r.batchesPending ?? 0} ${tr3('دفعات عصر', 'batches', 'Chargen')} · ${r.roleApplicationsPending ?? 0} ${tr3('أدوار', 'roles', 'Rollen')}</div><ul class="space-y-0.5 text-[11px] text-stone-700 dark:text-stone-300">${top || `<li class="text-stone-400">${tr3('لا أخطاء خلال 24 ساعة', 'No client errors in 24 h', 'Keine Client-Fehler in 24 h')}</li>`}</ul>${o.lastError ? `<div class="mt-1 text-[10px] text-red-700 dark:text-red-300 truncate" title="${escapeHtml(o.lastError)}">${tr3('آخر خطأ بريد', 'Last mail error', 'Letzter Mail-Fehler')}: ${escapeHtml(o.lastError)}</div>` : ''}</div>`
         ].join('');
       } catch (error) {
-        body.innerHTML = `<p class="col-span-full text-red-700 dark:text-red-300">${isEn ? 'Status unavailable' : 'الحالة غير متاحة'}: ${escapeHtml(error.message)}</p>`;
+        body.innerHTML = `<p class="col-span-full text-red-700 dark:text-red-300">${tr3('الحالة غير متاحة', 'Status unavailable', 'Status nicht verfügbar')}: ${escapeHtml(error.message)}</p>`;
       }
     }
 
@@ -19507,24 +19550,24 @@ function setMarketplaceViewMode(mode) {
         const rawName = isEn ? (u.name_en || u.name) : u.name;
         const name = escapeHtml(rawName);
         const role = escapeHtml(isEn ? (u.roleName_en || u.roleName) : u.roleName);
-        const region = escapeHtml(u.governorate || u.region || (u.role === 'farmer' ? (isEn ? 'Tartus (Dreikish)' : 'طرطوس (الدريكيش)') : (u.role === 'mill_owner' ? (isEn ? 'Tartus (Sheikh Badr)' : 'طرطوس (الشيخ بدر)') : (isEn ? 'Damascus / Diaspora' : 'دمشق / المهجر'))));
+        const region = escapeHtml(u.governorate || u.region || (u.role === 'farmer' ? (tr3('طرطوس (الدريكيش)', 'Tartus (Dreikish)', 'Tartus (Dreikish)')) : (u.role === 'mill_owner' ? (tr3('طرطوس (الشيخ بدر)', 'Tartus (Sheikh Badr)', 'Tartus (Scheich Badr)')) : (tr3('دمشق / المهجر', 'Damascus / Diaspora', 'Damaskus / Diaspora')))));
         const did = escapeHtml(u.did || `DID: SYR-AGR-2026-${u.id.substring(4).toUpperCase()}`);
 
         let statusBadge = '';
         if (isSuspended) {
           statusBadge = `<span class="bg-rose-100 dark:bg-rose-950 text-rose-800 dark:text-rose-300 text-[10px] font-black px-2 py-0.5 rounded-full inline-flex items-center gap-1">
             <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
-            <span>${isEn ? 'Suspended' : 'مجمد وموقوف'}</span>
+            <span>${tr3('مجمد وموقوف', 'Suspended', 'Gesperrt')}</span>
           </span>`;
         } else if (isVerified) {
           statusBadge = `<span class="bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 text-[10px] font-black px-2 py-0.5 rounded-full inline-flex items-center gap-1">
             <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-            <span>${isEn ? 'Verified & Active' : 'موثق ومعتمد'}</span>
+            <span>${tr3('موثق ومعتمد', 'Verified & Active', 'Verifiziert & aktiv')}</span>
           </span>`;
         } else {
           statusBadge = `<span class="bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 text-[10px] font-black px-2 py-0.5 rounded-full inline-flex items-center gap-1">
             <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
-            <span>${isEn ? 'Pending Review' : 'قيد المراجعة'}</span>
+            <span>${tr3('قيد المراجعة', 'Pending Review', 'Prüfung ausstehend')}</span>
           </span>`;
         }
 
@@ -19561,29 +19604,29 @@ function setMarketplaceViewMode(mode) {
             <td class="py-3 px-3.5 text-center">
               <div class="flex items-center justify-center gap-1">
                 <!-- 0. Dossier Inspector Button -->
-                <button data-click="openFounderUserDossierModal('${u.id}')" class="bg-purple-50 dark:bg-purple-950/80 hover:bg-purple-100 text-purple-800 dark:text-purple-300 p-1.5 rounded-lg text-[10px] font-bold transition-all cursor-pointer border border-purple-200 dark:border-purple-800" title="${isEn ? 'Inspect Full Dossier & Assets' : 'استعراض الملف السيادي الشامل والأصول'}">
+                <button data-click="openFounderUserDossierModal('${u.id}')" class="bg-purple-50 dark:bg-purple-950/80 hover:bg-purple-100 text-purple-800 dark:text-purple-300 p-1.5 rounded-lg text-[10px] font-bold transition-all cursor-pointer border border-purple-200 dark:border-purple-800" title="${tr3('استعراض الملف السيادي الشامل والأصول', 'Inspect Full Dossier & Assets', 'Vollständiges Dossier & Anteile ansehen')}">
                   <i data-lucide="file-text" class="w-3.5 h-3.5 text-purple-600"></i>
                 </button>
                 <!-- 1. Manage & Edit Button -->
-                <button data-click="openFounderManageUserModal('${u.id}')" class="bg-stone-100 dark:bg-stone-800 hover:bg-purple-100 dark:hover:bg-purple-950 text-purple-800 dark:text-purple-300 p-1.5 rounded-lg text-[10px] font-bold transition-all cursor-pointer" title="${isEn ? 'Manage & Edit User' : 'تعديل وإدارة الحساب'}">
+                <button data-click="openFounderManageUserModal('${u.id}')" class="bg-stone-100 dark:bg-stone-800 hover:bg-purple-100 dark:hover:bg-purple-950 text-purple-800 dark:text-purple-300 p-1.5 rounded-lg text-[10px] font-bold transition-all cursor-pointer" title="${tr3('تعديل وإدارة الحساب', 'Manage & Edit User', 'Nutzer verwalten & bearbeiten')}">
                   <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
                 </button>
                 <!-- 2. Impersonate / Login As -->
-                <button data-click="founderImpersonateUser('${u.id}')" class="bg-stone-100 dark:bg-stone-800 hover:bg-indigo-100 dark:hover:bg-indigo-950 text-indigo-700 dark:text-indigo-300 p-1.5 rounded-lg text-[10px] font-bold transition-all cursor-pointer" title="${isEn ? 'Preview as User (Login As)' : 'تصفح كالمستخدم (معاينة)'}">
+                <button data-click="founderImpersonateUser('${u.id}')" class="bg-stone-100 dark:bg-stone-800 hover:bg-indigo-100 dark:hover:bg-indigo-950 text-indigo-700 dark:text-indigo-300 p-1.5 rounded-lg text-[10px] font-bold transition-all cursor-pointer" title="${tr3('تصفح كالمستخدم (معاينة)', 'Preview as User (Login As)', 'Als Nutzer ansehen (Vorschau)')}">
                   <i data-lucide="eye" class="w-3.5 h-3.5"></i>
                 </button>
                 ${state.serverMode ? '' : `
                 <!-- 3. Toggle Verification -->
-                <button data-click="toggleUserVerification('${u.id}')" class="bg-stone-100 dark:bg-stone-800 hover:bg-emerald-100 dark:hover:bg-emerald-950 text-emerald-700 dark:text-emerald-300 p-1.5 rounded-lg text-[10px] font-bold transition-all cursor-pointer" title="${isEn ? 'Toggle Verification' : 'تبديل التوثيق'}">
+                <button data-click="toggleUserVerification('${u.id}')" class="bg-stone-100 dark:bg-stone-800 hover:bg-emerald-100 dark:hover:bg-emerald-950 text-emerald-700 dark:text-emerald-300 p-1.5 rounded-lg text-[10px] font-bold transition-all cursor-pointer" title="${tr3('تبديل التوثيق', 'Toggle Verification', 'Verifizierung umschalten')}">
                   <i data-lucide="${isVerified ? 'shield-check' : 'shield-alert'}" class="w-3.5 h-3.5"></i>
                 </button>
                 <!-- 4. Direct Alert -->
-                <button data-click="openFounderDirectAlertModal('${u.id}')" class="bg-stone-100 dark:bg-stone-800 hover:bg-amber-100 dark:hover:bg-amber-950 text-amber-700 dark:text-amber-300 p-1.5 rounded-lg text-[10px] font-bold transition-all cursor-pointer" title="${isEn ? 'Send Direct Alert' : 'إرسال إشعار مباشر'}">
+                <button data-click="openFounderDirectAlertModal('${u.id}')" class="bg-stone-100 dark:bg-stone-800 hover:bg-amber-100 dark:hover:bg-amber-950 text-amber-700 dark:text-amber-300 p-1.5 rounded-lg text-[10px] font-bold transition-all cursor-pointer" title="${tr3('إرسال إشعار مباشر', 'Send Direct Alert', 'Direkte Benachrichtigung senden')}">
                   <i data-lucide="bell-ring" class="w-3.5 h-3.5"></i>
                 </button>
                 <!-- 5. Delete User (Disabled for Founder) -->
                 ${!isSelf ? `
-                <button data-click="founderDeleteUser('${u.id}')" class="bg-stone-100 dark:bg-stone-800 hover:bg-rose-100 dark:hover:bg-rose-950 text-rose-700 dark:text-rose-400 p-1.5 rounded-lg text-[10px] font-bold transition-all cursor-pointer" title="${isEn ? 'Delete Account' : 'حذف الحساب'}">
+                <button data-click="founderDeleteUser('${u.id}')" class="bg-stone-100 dark:bg-stone-800 hover:bg-rose-100 dark:hover:bg-rose-950 text-rose-700 dark:text-rose-400 p-1.5 rounded-lg text-[10px] font-bold transition-all cursor-pointer" title="${tr3('حذف الحساب', 'Delete Account', 'Konto löschen')}">
                   <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                 </button>
                 ` : ''}
@@ -19603,7 +19646,7 @@ function setMarketplaceViewMode(mode) {
     // ================= FOUNDER SOVEREIGN USER DOSSIER INSPECTOR =================
     function openFounderUserDossierModal(userId) {
       if (!state.currentUser || (state.currentUser.role !== 'admin')) {
-        showToast(state.currentLang !== 'ar' ? 'Unauthorized: Founder root clearance required' : 'غير مصرح: يتطلب صلاحيات المدير العام والمؤسس');
+        showToast(tr3('غير مصرح: يتطلب صلاحيات المدير العام والمؤسس', 'Unauthorized: Founder root clearance required', 'Nicht autorisiert: Gründer-Berechtigung erforderlich'));
         return;
       }
 
@@ -19629,10 +19672,10 @@ function setMarketplaceViewMode(mode) {
       if (didEl) didEl.innerText = u.did || `DID: SYR-AGR-2026-${u.id.substring(4).toUpperCase()}`;
       if (emailEl) emailEl.innerText = u.email || '—';
       if (phoneEl) phoneEl.innerText = u.phone || '—';
-      if (regionEl) regionEl.innerText = u.governorate || u.region || (isEn ? 'Syrian Arab Republic' : 'الجمهورية العربية السورية');
+      if (regionEl) regionEl.innerText = u.governorate || u.region || (tr3('الجمهورية العربية السورية', 'Syrian Arab Republic', 'Syrische Arabische Republik'));
       if (statusEl) {
         const isSuspended = u.status === 'suspended';
-        statusEl.innerText = isSuspended ? (isEn ? 'Suspended' : 'مجمد وموقوف') : (isEn ? 'Active & Verified' : 'نشط وموثق رسمياً');
+        statusEl.innerText = isSuspended ? (tr3('مجمد وموقوف', 'Suspended', 'Gesperrt')) : (tr3('نشط وموثق رسمياً', 'Active & Verified', 'Aktiv & verifiziert'));
         statusEl.className = isSuspended ? 'font-bold text-rose-600 dark:text-rose-400 block' : 'font-bold text-emerald-600 dark:text-emerald-400 block';
       }
 
@@ -19642,20 +19685,20 @@ function setMarketplaceViewMode(mode) {
       const userShares = (state.userShares || []).filter(s => s.user_id === u.id);
 
       if (sharesCountEl) {
-        sharesCountEl.innerText = isEn ? `${userShares.length} Shares` : `${userShares.length} حصص مقيدة`;
+        sharesCountEl.innerText = tr3(`${userShares.length} حصص مقيدة`, `${userShares.length} Shares`, `${userShares.length} Anteile`);
       }
 
       if (sharesListEl) {
         if (userShares.length === 0) {
           sharesListEl.innerHTML = `
             <div class="p-3 rounded-2xl bg-stone-50 dark:bg-stone-850 border border-stone-200 dark:border-stone-800 text-stone-400 text-center text-xs">
-              ${isEn ? 'No direct agricultural shares registered for this account.' : 'لا توجد حصص زراعية مسجلة مباشرة باسم هذا المستخدم حتى الآن.'}
+              ${tr3('لا توجد حصص زراعية مسجلة مباشرة باسم هذا المستخدم حتى الآن.', 'No direct agricultural shares registered for this account.', 'Für dieses Konto sind keine direkten Anteile registriert.')}
             </div>
           `;
         } else {
           sharesListEl.innerHTML = userShares.map(s => {
             const tree = (state.trees || []).find(t => t.id === s.tree_id);
-            const title = s.is_bundle ? (isEn ? 'Diversified Agroforestry Bundle' : 'باقة التنوع الزراعي ال (4 حصص)') : (tree ? (isEn ? (tree.tree_name_en || tree.tree_name) : tree.tree_name) : (s.tree_name || 'حصة زراعية'));
+            const title = s.is_bundle ? (tr3('باقة التنوع الزراعي ال (4 حصص)', 'Diversified Agroforestry Bundle', 'Diversifiziertes Agroforst-Paket')) : (tree ? (isEn ? (tree.tree_name_en || tree.tree_name) : tree.tree_name) : (s.tree_name || 'حصة زراعية'));
             const plot = s.land_plot_area_sqm || 5;
             const deed = s.land_deed_serial || (state.serverMode ? '—' : 'SYR-DEED-2026-VERIFIED');
 
@@ -19666,7 +19709,7 @@ function setMarketplaceViewMode(mode) {
                   <span class="text-[10.5px] text-stone-500 font-mono">${escapeHtml(deed)} • ${escapeHtml(plot)} م² طابو زراعي</span>
                 </div>
                 <span class="text-[10px] font-bold bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 px-2 py-0.5 rounded-full">
-                  ${isEn ? 'Tabo Certified' : 'صك مقيد'}
+                  ${tr3('صك مقيد', 'Tabo Certified', 'Registriert')}
                 </span>
               </div>
             `;
@@ -19687,7 +19730,7 @@ function setMarketplaceViewMode(mode) {
         if (userTx.length === 0) {
           txListEl.innerHTML = `
             <div class="p-2.5 rounded-xl bg-stone-50 dark:bg-stone-850 border border-stone-200 dark:border-stone-800 text-stone-400 text-center text-[11px]">
-              ${isEn ? 'No ledger transactions recorded for this user.' : 'لا توجد حركات مالية مسجلة في دفتر الأستاذ لهذا الحساب.'}
+              ${tr3('لا توجد حركات مالية مسجلة في دفتر الأستاذ لهذا الحساب.', 'No ledger transactions recorded for this user.', 'Für diesen Nutzer sind keine Buchungen im Journal erfasst.')}
             </div>
           `;
         } else {
@@ -19739,8 +19782,8 @@ function setMarketplaceViewMode(mode) {
       const suspendBtnText = document.getElementById('fndr-suspend-btn-text');
       if (suspendBtnText) {
         suspendBtnText.innerText = u.status === 'suspended' 
-          ? (isEn ? 'Activate Account' : 'فك التجميد والتنشيط')
-          : (isEn ? 'Suspend Account' : 'تجميد الحساب');
+          ? (tr3('فك التجميد والتنشيط', 'Activate Account', 'Konto aktivieren'))
+          : (tr3('تجميد الحساب', 'Suspend Account', 'Konto sperren'));
       }
 
       // Server mode: profile fields belong to the user (read-only here); role, status and
@@ -19782,13 +19825,13 @@ function setMarketplaceViewMode(mode) {
       const millsEl = document.getElementById('fndr-assign-mills');
       if (!treesEl || !millsEl || !window.FaseelaFirebase?.adminListAssignments) return;
       const isEn = state.currentLang !== 'ar';
-      const chip = (kind, id) => `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-700 text-[11px] font-mono text-stone-800 dark:text-stone-200">${escapeHtml(id)}<button type="button" data-click="founderRemoveAssignment('${kind}', '${escapeHtml(id)}')" class="text-stone-400 hover:text-red-600" aria-label="${isEn ? 'Remove' : 'إزالة'} ${escapeHtml(id)}">×</button></span>`;
+      const chip = (kind, id) => `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-700 text-[11px] font-mono text-stone-800 dark:text-stone-200">${escapeHtml(id)}<button type="button" data-click="founderRemoveAssignment('${kind}', '${escapeHtml(id)}')" class="text-stone-400 hover:text-red-600" aria-label="${tr3('إزالة', 'Remove', 'Entfernen')} ${escapeHtml(id)}">×</button></span>`;
       try {
         const { trees, mills } = await window.FaseelaFirebase.adminListAssignments(userId);
-        treesEl.innerHTML = trees.length ? trees.map(id => chip('farmer_tree', id)).join('') : `<span class="text-[11px] text-stone-400">${isEn ? 'No trees assigned' : 'لا توجد أشجار مسندة'}</span>`;
-        millsEl.innerHTML = mills.length ? mills.map(id => chip('mill', id)).join('') : `<span class="text-[11px] text-stone-400">${isEn ? 'No mills assigned' : 'لا توجد معاصر مسندة'}</span>`;
+        treesEl.innerHTML = trees.length ? trees.map(id => chip('farmer_tree', id)).join('') : `<span class="text-[11px] text-stone-400">${tr3('لا توجد أشجار مسندة', 'No trees assigned', 'Keine Bäume zugewiesen')}</span>`;
+        millsEl.innerHTML = mills.length ? mills.map(id => chip('mill', id)).join('') : `<span class="text-[11px] text-stone-400">${tr3('لا توجد معاصر مسندة', 'No mills assigned', 'Keine Ölmühlen zugewiesen')}</span>`;
       } catch (error) {
-        treesEl.innerHTML = millsEl.innerHTML = `<span class="text-[11px] text-red-600">${isEn ? 'Could not load assignments.' : 'تعذر تحميل الإسنادات.'}</span>`;
+        treesEl.innerHTML = millsEl.innerHTML = `<span class="text-[11px] text-red-600">${tr3('تعذر تحميل الإسنادات.', 'Could not load assignments.', 'Zuweisungen konnten nicht geladen werden.')}</span>`;
         console.warn('Assignments load failed:', error.code || error.message);
       }
     }
@@ -19798,7 +19841,7 @@ function setMarketplaceViewMode(mode) {
       const userId = currentFounderManagingUserId;
       if (!userId || !window.FaseelaFirebase?.adminAssign) return;
       if (!/^[A-Za-z0-9_-]{1,80}$/.test(targetId || '')) {
-        showToast(isEn ? 'Enter a valid ID (letters, digits, - _).' : 'أدخل معرّفاً صالحاً (حروف لاتينية وأرقام و - _).');
+        showToast(tr3('أدخل معرّفاً صالحاً (حروف لاتينية وأرقام و - _).', 'Enter a valid ID (letters, digits, - _).', 'Geben Sie eine gültige ID ein (Buchstaben, Ziffern, - _).'));
         return;
       }
       try {
@@ -19806,7 +19849,7 @@ function setMarketplaceViewMode(mode) {
         playAcousticChime(action === 'add' ? 640 : 480, 0.15);
         await renderFounderAssignments(userId);
       } catch (error) {
-        showToast(isEn ? `Assignment failed: ${error.message}` : `فشل الإسناد: ${error.message}`);
+        showToast(tr3(`فشل الإسناد: ${error.message}`, `Assignment failed: ${error.message}`, `Zuweisung fehlgeschlagen: ${error.message}`));
       }
     }
 
@@ -19827,7 +19870,7 @@ function setMarketplaceViewMode(mode) {
       const pwdInput = document.getElementById('fndr-edit-password');
       if (pwdInput) {
         pwdInput.value = pwd;
-        showToast(state.currentLang !== 'ar' ? `Generated Password: ${pwd}` : `تم توليد كلمة المرور: ${pwd}`);
+        showToast(tr3(`تم توليد كلمة المرور: ${pwd}`, `Generated Password: ${pwd}`, `Generiertes Passwort: ${pwd}`));
         playAcousticChime(640, 0.15);
       }
     }
@@ -19847,9 +19890,9 @@ function setMarketplaceViewMode(mode) {
       if (e && e.preventDefault) e.preventDefault();
       const isEn = state.currentLang !== 'ar';
       if (!state.serverMode || !window.FaseelaFirebase?.adminSetUserRole) {
-        showToast(isEn
-          ? 'Account and role administration is available only with a server session.'
-          : 'إدارة الحسابات والأدوار متاحة فقط مع جلسة خادم.');
+        showToast(tr3('إدارة الحسابات والأدوار متاحة فقط مع جلسة خادم.',
+          'Account and role administration is available only with a server session.',
+          'Die Verwaltung von Konten und Rollen ist nur mit einer Serversitzung verfügbar.'));
         return;
       }
       const userId = document.getElementById('fndr-edit-user-id')?.value;
@@ -19868,11 +19911,11 @@ function setMarketplaceViewMode(mode) {
         await loadServerUsersDirectory();
         closeModal('modal-fndr-manage-user');
         playAcousticChime(700, 0.2);
-        showToast(isEn
-          ? `Saved: ${u.name} is now ${role.replace('_', ' ')} (${status}).`
-          : `تم الحفظ: ${u.name} — الدور ${role}، الحالة ${status === 'suspended' ? 'موقوف' : 'نشط'}.`);
+        showToast(tr3(`تم الحفظ: ${u.name} — الدور ${role}، الحالة ${status === 'suspended' ? 'موقوف' : 'نشط'}.`,
+          `Saved: ${u.name} is now ${role.replace('_', ' ')} (${status}).`,
+          `Gespeichert: ${u.name} hat jetzt die Rolle ${role.replace('_', ' ')} (${status === 'suspended' ? 'gesperrt' : 'aktiv'}).`));
       } catch (error) {
-        showToast(isEn ? `Could not save: ${error.message}` : `تعذر الحفظ: ${error.message}`);
+        showToast(tr3(`تعذر الحفظ: ${error.message}`, `Could not save: ${error.message}`, `Speichern nicht möglich: ${error.message}`));
       } finally {
         if (submitBtn) submitBtn.disabled = false;
       }
@@ -19896,11 +19939,11 @@ function setMarketplaceViewMode(mode) {
           await window.FaseelaFirebase.adminSetUserStatus({ userId: u.id, status });
           await loadServerUsersDirectory();
           showToast(status === 'suspended'
-            ? (isEn ? `Account suspended for ${u.name}` : `تم تجميد وإيقاف الحساب: ${u.name}`)
-            : (isEn ? `Account reactivated for ${u.name}` : `تم فك التجميد وتنشيط الحساب: ${u.name}`));
+            ? tr3(`تم تجميد وإيقاف الحساب: ${u.name}`, `Account suspended for ${u.name}`, `Konto von ${u.name} gesperrt`)
+            : tr3(`تم فك التجميد وتنشيط الحساب: ${u.name}`, `Account reactivated for ${u.name}`, `Konto von ${u.name} wieder aktiviert`));
           openFounderManageUserModal(u.id);
         } catch (error) {
-          showToast(isEn ? `Could not change status: ${error.message}` : `تعذر تغيير الحالة: ${error.message}`);
+          showToast(tr3(`تعذر تغيير الحالة: ${error.message}`, `Could not change status: ${error.message}`, `Status konnte nicht geändert werden: ${error.message}`));
         }
         return;
       }
@@ -19909,16 +19952,16 @@ function setMarketplaceViewMode(mode) {
     }
 
     function openFounderAddUserModal() {
-      showToast(state.currentLang !== 'ar'
-        ? 'User provisioning is not available until the secured identity workflow is deployed.'
-        : 'إنشاء المستخدمين غير متاح حتى نشر سير عمل الهوية الآمن.');
+      showToast(tr3('إنشاء المستخدمين غير متاح حتى نشر سير عمل الهوية الآمن.',
+        'User provisioning is not available until the secured identity workflow is deployed.',
+        'Das Anlegen von Nutzern ist erst verfügbar, wenn der gesicherte Identitäts-Workflow bereitgestellt ist.'));
     }
 
     function submitFounderAddUser(e) {
       if (e && e.preventDefault) e.preventDefault();
-      showToast(state.currentLang !== 'ar'
-        ? 'User provisioning is not available until the secured identity workflow is deployed.'
-        : 'إنشاء المستخدمين غير متاح حتى نشر سير عمل الهوية الآمن.');
+      showToast(tr3('إنشاء المستخدمين غير متاح حتى نشر سير عمل الهوية الآمن.',
+        'User provisioning is not available until the secured identity workflow is deployed.',
+        'Das Anlegen von Nutzern ist erst verfügbar, wenn der gesicherte Identitäts-Workflow bereitgestellt ist.'));
     }
 
     function openFounderDirectAlertModal(userId) {
@@ -19930,8 +19973,8 @@ function setMarketplaceViewMode(mode) {
       const u = (state.users || []).find(x => x.id === userId);
       if (!u) return;
       document.getElementById('fndr-alert-target-user-id').value = u.id;
-      document.getElementById('fndr-alert-target-label').innerText = `${state.currentLang !== 'ar' ? 'Recipient:' : 'المستلم:'} ${u.name} (${u.email})`;
-      document.getElementById('fndr-alert-title').value = state.currentLang !== 'ar' ? 'Official Executive Notice from Management' : 'تعميم رسمي من إدارة المنظومة';
+      document.getElementById('fndr-alert-target-label').innerText = `${tr3('المستلم:', 'Recipient:', 'Empfänger:')} ${u.name} (${u.email})`;
+      document.getElementById('fndr-alert-title').value = tr3('تعميم رسمي من إدارة المنظومة', 'Official Executive Notice from Management', 'Offizielle Mitteilung der Geschäftsleitung');
       document.getElementById('fndr-alert-message').value = '';
 
       openModal('modal-fndr-direct-alert');
@@ -19943,7 +19986,7 @@ function setMarketplaceViewMode(mode) {
       if (e && e.preventDefault) e.preventDefault();
       if (state.serverMode) return;
       if (!state.currentUser || state.currentUser.role !== 'admin') {
-        showToast(state.currentLang !== 'ar' ? 'Unauthorized: Founder root clearance required' : 'غير مصرح: يتطلب صلاحيات المدير العام');
+        showToast(tr3('غير مصرح: يتطلب صلاحيات المدير العام', 'Unauthorized: Founder root clearance required', 'Keine Berechtigung: Administratorrechte des Gründers erforderlich'));
         return;
       }
       const userId = document.getElementById('fndr-alert-target-user-id').value;
@@ -19955,7 +19998,7 @@ function setMarketplaceViewMode(mode) {
       const priority = document.getElementById('fndr-alert-priority').value;
 
       if (!title || !msg) {
-        showToast(state.currentLang !== 'ar' ? 'Please enter title and message' : 'يرجى إدخال عنوان ونص الإشعار');
+        showToast(tr3('يرجى إدخال عنوان ونص الإشعار', 'Please enter title and message', 'Bitte geben Sie Titel und Nachricht ein'));
         return;
       }
 
@@ -19982,30 +20025,30 @@ function setMarketplaceViewMode(mode) {
 
       closeModal('modal-fndr-direct-alert');
       playAcousticChime(660, 0.2);
-      showToast(state.currentLang !== 'ar' 
-        ? `Executive alert dispatched directly to ${u.name}` 
-        : `تم إرسال التعميم التنفيذي مباشرة إلى مركز إشعارات: ${u.name}`);
+      showToast(tr3(`تم إرسال التعميم التنفيذي مباشرة إلى مركز إشعارات: ${u.name}`,
+        `Executive alert dispatched directly to ${u.name}`,
+        `Mitteilung direkt an ${u.name} gesendet`));
     }
 
     function founderImpersonateUser(userId) {
-      showToast(state.currentLang !== 'ar'
-        ? 'Account impersonation is disabled. Use an authorized test account.'
-        : 'تم تعطيل انتحال الحسابات. استخدم حساب اختبار مخولاً.');
+      showToast(tr3('تم تعطيل انتحال الحسابات. استخدم حساب اختبار مخولاً.',
+        'Account impersonation is disabled. Use an authorized test account.',
+        'Das Anmelden als anderer Nutzer ist deaktiviert. Verwenden Sie ein autorisiertes Testkonto.'));
     }
 
     function founderStopImpersonation() {
-      showToast(state.currentLang !== 'ar'
-        ? 'Account impersonation is disabled. Sign in to the intended account instead.'
-        : 'انتحال الحسابات معطل. سجّل الدخول إلى الحساب المطلوب بدلاً من ذلك.');
+      showToast(tr3('انتحال الحسابات معطل. سجّل الدخول إلى الحساب المطلوب بدلاً من ذلك.',
+        'Account impersonation is disabled. Sign in to the intended account instead.',
+        'Das Anmelden als anderer Nutzer ist deaktiviert. Melden Sie sich stattdessen mit dem gewünschten Konto an.'));
     }
 
     function toggleUserSuspend(userId) {
       if (!state.currentUser || state.currentUser.role !== 'admin') {
-        showToast(state.currentLang !== 'ar' ? 'Unauthorized: Founder root clearance required' : 'غير مصرح: يتطلب صلاحيات المدير العام');
+        showToast(tr3('غير مصرح: يتطلب صلاحيات المدير العام', 'Unauthorized: Founder root clearance required', 'Keine Berechtigung: Administratorrechte des Gründers erforderlich'));
         return;
       }
       if (false) {
-        showToast(state.currentLang !== 'ar' ? 'Cannot suspend the Primary Founder account.' : 'لا يمكن تجميد الحساب السيادي لمؤسس المنصة.');
+        showToast(tr3('لا يمكن تجميد الحساب السيادي لمؤسس المنصة.', 'Cannot suspend the Primary Founder account.', 'Das Hauptkonto des Gründers kann nicht gesperrt werden.'));
         return;
       }
       const u = (state.users || []).find(x => x.id === userId);
@@ -20014,11 +20057,11 @@ function setMarketplaceViewMode(mode) {
       if (u.status === 'suspended') {
         u.status = 'active';
         u.verified = true;
-        showToast(state.currentLang !== 'ar' ? `Account reactivated for ${u.name}` : `تم فك التجميد وتنشيط الحساب: ${u.name}`);
+        showToast(tr3(`تم فك التجميد وتنشيط الحساب: ${u.name}`, `Account reactivated for ${u.name}`, `Konto von ${u.name} wieder aktiviert`));
       } else {
         u.status = 'suspended';
         u.verified = false;
-        showToast(state.currentLang !== 'ar' ? `Account suspended for ${u.name}` : `تم تجميد وإيقاف الحساب: ${u.name}`);
+        showToast(tr3(`تم تجميد وإيقاف الحساب: ${u.name}`, `Account suspended for ${u.name}`, `Konto von ${u.name} gesperrt`));
       }
       savePlatformState();
       playAcousticChime(480, 0.2);
@@ -20027,34 +20070,34 @@ function setMarketplaceViewMode(mode) {
 
     function founderDeleteUser(userId) {
       if (!state.currentUser || state.currentUser.role !== 'admin') {
-        showToast(state.currentLang !== 'ar' ? 'Unauthorized: Founder root clearance required' : 'غير مصرح: يتطلب صلاحيات المدير العام');
+        showToast(tr3('غير مصرح: يتطلب صلاحيات المدير العام', 'Unauthorized: Founder root clearance required', 'Keine Berechtigung: Administratorrechte des Gründers erforderlich'));
         return;
       }
 
       if (false) {
-        showToast(state.currentLang !== 'ar' ? 'Cannot delete the Primary Founder account.' : 'لا يمكن حذف حساب المالك والمؤسس الرئيسي.');
+        showToast(tr3('لا يمكن حذف حساب المالك والمؤسس الرئيسي.', 'Cannot delete the Primary Founder account.', 'Das Hauptkonto des Gründers kann nicht gelöscht werden.'));
         return;
       }
       const u = (state.users || []).find(x => x.id === userId);
       if (!u) return;
 
       const isEn = state.currentLang !== 'ar';
-      const confirmed = confirm(isEn 
-        ? `Are you sure you want to delete user account: ${u.name} (${u.email})?` 
-        : `هل أنت متأكد من رغبتك في حذف حساب المستخدم نهائياً: ${u.name} (${u.email})؟`);
+      const confirmed = confirm(tr3(`هل أنت متأكد من رغبتك في حذف حساب المستخدم نهائياً: ${u.name} (${u.email})؟`,
+        `Are you sure you want to delete user account: ${u.name} (${u.email})?`,
+        `Möchten Sie das Nutzerkonto ${u.name} (${u.email}) wirklich löschen?`));
 
       if (confirmed) {
         state.users = state.users.filter(x => x.id !== userId);
         savePlatformState();
         renderFounderUsers();
         playAcousticChime(420, 0.2);
-        showToast(isEn ? `Account deleted: ${u.name}` : `تم حذف حساب المستخدم: ${u.name}`);
+        showToast(tr3(`تم حذف حساب المستخدم: ${u.name}`, `Account deleted: ${u.name}`, `Konto gelöscht: ${u.name}`));
       }
     }
 
     function bulkVerifyPendingUsers() {
       if (!state.currentUser || state.currentUser.role !== 'admin') {
-        showToast(state.currentLang !== 'ar' ? 'Unauthorized: Founder root clearance required' : 'غير مصرح: يتطلب صلاحيات المدير العام');
+        showToast(tr3('غير مصرح: يتطلب صلاحيات المدير العام', 'Unauthorized: Founder root clearance required', 'Keine Berechtigung: Administratorrechte des Gründers erforderlich'));
         return;
       }
       let count = 0;
@@ -20068,14 +20111,14 @@ function setMarketplaceViewMode(mode) {
       savePlatformState();
       renderFounderUsers();
       playAcousticChime(640, 0.2);
-      showToast(state.currentLang !== 'ar' 
-        ? `Verified ${count} pending accounts successfully` 
-        : `تم توثيق وتنشيط ${count} حساباً معلقاً بنجاح`);
+      showToast(tr3(`تم توثيق وتنشيط ${count} حساباً معلقاً بنجاح`,
+        `Verified ${count} pending accounts successfully`,
+        `${count} ausstehende Konten erfolgreich verifiziert`));
     }
 
     function exportUsersDirectoryJson() {
       if (!state.currentUser || state.currentUser.role !== 'admin') {
-        showToast(state.currentLang !== 'ar' ? 'Unauthorized: Founder root clearance required' : 'غير مصرح: يتطلب صلاحيات المدير العام');
+        showToast(tr3('غير مصرح: يتطلب صلاحيات المدير العام', 'Unauthorized: Founder root clearance required', 'Keine Berechtigung: Administratorrechte des Gründers erforderlich'));
         return;
       }
       const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state.users, null, 2));
@@ -20086,7 +20129,7 @@ function setMarketplaceViewMode(mode) {
       downloadAnchor.click();
       downloadAnchor.remove();
       playAcousticChime(600, 0.15);
-      showToast(state.currentLang !== 'ar' ? 'Users directory exported successfully' : 'تم تصدير دليل المستخدمين بنجاح بصيغة JSON');
+      showToast(tr3('تم تصدير دليل المستخدمين بنجاح بصيغة JSON', 'Users directory exported successfully', 'Nutzerverzeichnis erfolgreich exportiert'));
     }
 
     function filterFounderUsers() {
@@ -20097,7 +20140,7 @@ function setMarketplaceViewMode(mode) {
 
     function toggleUserVerification(userId) {
       if (!state.currentUser || state.currentUser.role !== 'admin') {
-        showToast(state.currentLang !== 'ar' ? 'Unauthorized: Founder root clearance required' : 'غير مصرح: يتطلب صلاحيات المدير العام');
+        showToast(tr3('غير مصرح: يتطلب صلاحيات المدير العام', 'Unauthorized: Founder root clearance required', 'Keine Berechtigung: Administratorrechte des Gründers erforderlich'));
         return;
       }
       const u = (state.users || []).find(x => x.id === userId);
@@ -20107,9 +20150,9 @@ function setMarketplaceViewMode(mode) {
       playAcousticChime(650, 0.2);
       const isEn = state.currentLang !== 'ar';
       savePlatformState();
-      showToast(isEn 
-        ? `User verification status updated for ${u.name_en || u.name}` 
-        : `تم تحديث حالة التوثيق الرقمي للمستخدم: ${u.name}`);
+      showToast(tr3(`تم تحديث حالة التوثيق الرقمي للمستخدم: ${u.name}`,
+        `User verification status updated for ${u.name_en || u.name}`,
+        `Verifizierungsstatus für ${u.name_en || u.name} aktualisiert`));
       renderFounderUsers();
     }
 
@@ -20157,7 +20200,7 @@ function setMarketplaceViewMode(mode) {
                   <div class="flex items-center justify-between">
                     <h5 class="font-black text-stone-900 dark:text-white">${name}</h5>
                     <span class="text-[10px] font-black px-2 py-0.5 rounded-full ${pct === 100 ? 'bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300' : 'bg-olive-100 dark:bg-olive-950 text-olive-800 dark:text-olive-300'}">
-                      ${pct === 100 ? (isEn ? '100% Sold Out' : 'اكتمل 100%') : `${pct}% ${isEn ? 'Subscribed' : 'مكتتب'}`}
+                      ${pct === 100 ? tr3('اكتمل 100%', '100% Sold Out', 'Vollständig vergeben') : `${pct}% ${tr3('مكتتب', 'Subscribed', 'vergeben')}`}
                     </span>
                   </div>
                   <p class="text-[11px] text-stone-500 dark:text-stone-400">${region}${tree.age_years != null ? ` • ${tree.age_years} ${t('year_unit')}` : ''}</p>
@@ -20171,18 +20214,18 @@ function setMarketplaceViewMode(mode) {
 
               <div class="grid grid-cols-3 gap-2 pt-2 border-t border-stone-200/60 dark:border-stone-800 text-[10px]">
                 <div>
-                  <span class="text-stone-400 block">${isEn ? 'Share Price' : 'سعر الحصة:'}</span>
+                  <span class="text-stone-400 block">${tr3('سعر الحصة:', 'Share Price', 'Anteilspreis')}</span>
                   <strong class="text-stone-900 dark:text-white font-mono">$${tree.price_per_share.toFixed(2)}</strong>
                 </div>
                 <div>
-                  <span class="text-stone-400 block">${isEn ? 'Harvest' : 'المحصول:'}</span>
+                  <span class="text-stone-400 block">${tr3('المحصول:', 'Harvest', 'Ernte')}</span>
                   <strong class="${isReady ? 'text-emerald-700 dark:text-emerald-400' : 'text-stone-700 dark:text-stone-300'} font-bold">
-                    ${isReady ? (isEn ? 'Ready (Cold Pressed)' : 'جاهز ومعصور') : (isEn ? 'Maturing' : 'قيد النمو')}
+                    ${isReady ? tr3('جاهز ومعصور', 'Ready (Cold Pressed)', 'Bereit (kaltgepresst)') : tr3('قيد النمو', 'Maturing', 'Im Wachstum')}
                   </strong>
                 </div>
                 <div>
-                  <span class="text-stone-400 block">${isEn ? 'Deeds' : 'صكوك الحيازة:'}</span>
-                  <strong class="text-stone-900 dark:text-white font-mono">${sold}/${totalShares} ${isEn ? 'Shares' : 'حصة'}</strong>
+                  <span class="text-stone-400 block">${tr3('صكوك الحيازة:', 'Deeds', 'Patenschaften')}</span>
+                  <strong class="text-stone-900 dark:text-white font-mono">${sold}/${totalShares} ${tr3('حصة', 'Shares', 'Anteile')}</strong>
                 </div>
               </div>
 
@@ -20191,25 +20234,25 @@ function setMarketplaceViewMode(mode) {
                   ${state.featuredSeasonTreeId === tree.id ? `
                     <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-500 text-stone-950 font-black text-[10px] shadow-xs border border-amber-400/80">
                       <i data-lucide="flame" class="w-3 h-3 text-red-700"></i>
-                      <span>${isEn ? '⭐ Active Hero Featured' : '⭐ شجرة الموسم المميزة'}</span>
+                      <span>${tr3('⭐ شجرة الموسم المميزة', '⭐ Active Hero Featured', '⭐ Aktueller Baum der Saison')}</span>
                     </span>
                   ` : `
                     <button type="button" data-click="setFeaturedSeasonTree('${tree.id}')" class="bg-stone-100 dark:bg-stone-800 hover:bg-amber-100 dark:hover:bg-amber-950/60 text-stone-700 dark:text-stone-300 hover:text-amber-900 dark:hover:text-amber-300 border border-stone-200 dark:border-stone-700 px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all cursor-pointer flex items-center gap-1 shadow-2xs">
                       <i data-lucide="star" class="w-3 h-3 text-amber-500"></i>
-                      <span>${isEn ? 'Set as Featured Tree' : 'تعيين كشجرة الموسم'}</span>
+                      <span>${tr3('تعيين كشجرة الموسم', 'Set as Featured Tree', 'Als Baum der Saison festlegen')}</span>
                     </button>
                   `}
                 </div>
                 <div class="flex items-center gap-1.5 ms-auto">
                   <button data-click="openFounderEditTreeModal('${tree.id}')" class="bg-purple-700 hover:bg-purple-800 text-white px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all cursor-pointer flex items-center gap-1 shadow-2xs">
                     <i data-lucide="edit-3" class="w-3 h-3"></i>
-                    <span>${isEn ? 'Edit' : 'تعديل'}</span>
+                    <span>${tr3('تعديل', 'Edit', 'Bearbeiten')}</span>
                   </button>
                   <button data-click="quickUpdateTreeStatus('${tree.id}')" class="bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-800 dark:text-stone-200 px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all cursor-pointer">
-                    ${isEn ? 'Toggle Harvest State' : 'تبديل حالة الحصاد'}
+                    ${tr3('تبديل حالة الحصاد', 'Toggle Harvest State', 'Erntestatus umschalten')}
                   </button>
                   <button data-click="viewTreeDetails('${tree.id}')" class="bg-white hover:bg-stone-100 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-700 dark:text-stone-200 border border-stone-200 dark:border-stone-700 px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all cursor-pointer">
-                    ${isEn ? 'Inspect Dossier' : 'معاينة الملف'}
+                    ${tr3('معاينة الملف', 'Inspect Dossier', 'Details ansehen')}
                   </button>
                 </div>
               </div>
@@ -20234,35 +20277,35 @@ function setMarketplaceViewMode(mode) {
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/10 pb-2.5">
               <div class="flex items-center gap-2">
                 <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                <h4 class="font-black text-sm sm:text-base text-emerald-200">${isEn ? 'Executive Greenfield Groves & Cadastral Land Command Center' : 'مركز الرقابة التنفيذية لبساتين الغراس البكر والأراضي الكاداسترية'}</h4>
+                <h4 class="font-black text-sm sm:text-base text-emerald-200">${tr3('مركز الرقابة التنفيذية لبساتين الغراس البكر والأراضي الكاداسترية', 'Executive Greenfield Groves & Cadastral Land Command Center', 'Steuerungszentrale für Neupflanzungshaine & Flächen')}</h4>
               </div>
               <div class="flex items-center gap-2">
                 <button type="button" data-click="exportVirginGrovesCSV()" class="bg-white/10 hover:bg-white/20 text-white px-3 py-1 rounded-xl text-[11px] font-bold transition-all flex items-center gap-1 cursor-pointer">
                   <i data-lucide="download" class="w-3.5 h-3.5"></i>
-                  <span>${isEn ? 'Export Land Registry (CSV)' : 'تصدير سجل الأراضي (CSV)'}</span>
+                  <span>${tr3('تصدير سجل الأراضي (CSV)', 'Export Land Registry (CSV)', 'Flächenverzeichnis exportieren (CSV)')}</span>
                 </button>
                 <button type="button" data-click="openFounderAddVirginGroveModal()" class="bg-emerald-500 hover:bg-emerald-400 text-stone-950 px-3 py-1 rounded-xl text-[11px] font-black transition-all flex items-center gap-1 cursor-pointer shadow-xs">
                   <i data-lucide="plus" class="w-3.5 h-3.5"></i>
-                  <span>${isEn ? '+ Launch Project' : '+ طرح مشروع جديد'}</span>
+                  <span>${tr3('+ طرح مشروع جديد', '+ Launch Project', '+ Projekt starten')}</span>
                 </button>
               </div>
             </div>
 
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
               <div class="bg-black/20 p-2.5 rounded-2xl border border-white/5">
-                <span class="text-[10px] text-emerald-300/80 block mb-0.5">${isEn ? 'Total Cadastral Acreage' : 'إجمالي المساحة الكاداسترية'}</span>
+                <span class="text-[10px] text-emerald-300/80 block mb-0.5">${tr3('إجمالي المساحة الكاداسترية', 'Total Cadastral Acreage', 'Gesamtfläche')}</span>
                 <strong class="text-base sm:text-lg font-black font-mono text-white">${totalLandSqm.toLocaleString()} م² <span class="text-[10px] text-emerald-400 font-bold">(${totalLandDunums} دونم)</span></strong>
               </div>
               <div class="bg-black/20 p-2.5 rounded-2xl border border-white/5">
-                <span class="text-[10px] text-emerald-300/80 block mb-0.5">${isEn ? 'Certified Saplings' : 'إجمالي الغراس المؤصلة'}</span>
+                <span class="text-[10px] text-emerald-300/80 block mb-0.5">${tr3('إجمالي الغراس المؤصلة', 'Certified Saplings', 'Zertifizierte Setzlinge')}</span>
                 <strong class="text-base sm:text-lg font-black font-mono text-white">${totalSaplings.toLocaleString()} غرسة</strong>
               </div>
               <div class="bg-black/20 p-2.5 rounded-2xl border border-white/5">
-                <span class="text-[10px] text-emerald-300/80 block mb-0.5">${isEn ? 'Subscriptions' : 'نسبة الاكتتاب العام'}</span>
+                <span class="text-[10px] text-emerald-300/80 block mb-0.5">${tr3('نسبة الاكتتاب العام', 'Subscriptions', 'Patenschaftsquote')}</span>
                 <strong class="text-base sm:text-lg font-black font-mono text-amber-300">${subRatePct}% <span class="text-[10px] text-stone-300 font-normal">(${subscribedSaplings}/${totalSaplings})</span></strong>
               </div>
               <div class="bg-black/20 p-2.5 rounded-2xl border border-white/5">
-                <span class="text-[10px] text-emerald-300/80 block mb-0.5">${isEn ? 'Portfolio Capital' : 'القيمة الرأسمالية'}</span>
+                <span class="text-[10px] text-emerald-300/80 block mb-0.5">${tr3('القيمة الرأسمالية', 'Portfolio Capital', 'Gesamtwert')}</span>
                 <strong class="text-base sm:text-lg font-black font-mono text-emerald-300">${formatMoney(totalValuationUsd)}</strong>
               </div>
             </div>
@@ -20305,8 +20348,8 @@ function setMarketplaceViewMode(mode) {
                   <!-- Subscription Progress -->
                   <div class="space-y-1 pt-1">
                     <div class="flex items-center justify-between text-[10px]">
-                      <span class="text-stone-400">${isEn ? 'Subscribed Units:' : 'المكتتب:'} <strong>${sold}/${total} (${subPct}%)</strong></span>
-                      <span class="text-emerald-700 dark:text-emerald-400 font-bold font-mono">${avail} ${isEn ? 'Available' : 'متاح'}</span>
+                      <span class="text-stone-400">${tr3('المكتتب:', 'Subscribed Units:', 'Vergebene Einheiten:')} <strong>${sold}/${total} (${subPct}%)</strong></span>
+                      <span class="text-emerald-700 dark:text-emerald-400 font-bold font-mono">${avail} ${tr3('متاح', 'Available', 'verfügbar')}</span>
                     </div>
                     <div class="w-full bg-stone-200 dark:bg-stone-700 h-1.5 rounded-full overflow-hidden">
                       <div class="bg-emerald-600 dark:bg-emerald-500 h-full rounded-full transition-all" style="width: ${subPct}%"></div>
@@ -20318,15 +20361,15 @@ function setMarketplaceViewMode(mode) {
               <!-- Phase & Key Financials Strip -->
               <div class="grid grid-cols-3 gap-2 p-2.5 bg-stone-50 dark:bg-stone-800/60 rounded-2xl border border-stone-100 dark:border-stone-700/60 text-[10px]">
                 <div>
-                  <span class="text-stone-400 block">${isEn ? 'Unit Price:' : 'سعر الوحدة مع الأرض:'}</span>
+                  <span class="text-stone-400 block">${tr3('سعر الوحدة مع الأرض:', 'Unit Price:', 'Preis pro Einheit:')}</span>
                   <strong class="text-stone-900 dark:text-white font-mono text-xs text-emerald-700 dark:text-emerald-400">$${price.toFixed(2)}</strong>
                 </div>
                 <div class="col-span-2">
                   <div class="flex items-center justify-between mb-0.5">
-                    <span class="text-stone-400">${isEn ? 'Field Phase:' : 'مرحلة التنفيذ:'}</span>
-                    <button type="button" data-click="quickAdvanceVirginPhase('${vg.id}')" title="${isEn ? 'Click to advance phase' : 'اضغط لترقية مرحلة المشروع فورياً'}" class="text-[9px] text-emerald-700 dark:text-emerald-400 hover:underline font-bold flex items-center gap-0.5 cursor-pointer">
+                    <span class="text-stone-400">${tr3('مرحلة التنفيذ:', 'Field Phase:', 'Projektphase:')}</span>
+                    <button type="button" data-click="quickAdvanceVirginPhase('${vg.id}')" title="${tr3('اضغط لترقية مرحلة المشروع فورياً', 'Click to advance phase', 'Klicken, um zur nächsten Phase zu wechseln')}" class="text-[9px] text-emerald-700 dark:text-emerald-400 hover:underline font-bold flex items-center gap-0.5 cursor-pointer">
                       <i data-lucide="refresh-cw" class="w-2.5 h-2.5"></i>
-                      <span>${isEn ? 'Advance' : 'ترقية'}</span>
+                      <span>${tr3('ترقية', 'Advance', 'Nächste Phase')}</span>
                     </button>
                   </div>
                   <span class="inline-block font-black text-stone-800 dark:text-stone-200 bg-white dark:bg-stone-900 px-2 py-0.5 rounded-md border border-stone-200 dark:border-stone-700 truncate w-full text-center">
@@ -20340,19 +20383,19 @@ function setMarketplaceViewMode(mode) {
                 <div class="flex items-center gap-1.5">
                   <button type="button" data-click="openFounderEditVirginGroveModal('${vg.id}')" class="bg-teal-700 hover:bg-teal-800 text-white px-2.5 py-1.5 rounded-xl text-[10.5px] font-bold transition-all cursor-pointer flex items-center gap-1 shadow-2xs">
                     <i data-lucide="edit-3" class="w-3 h-3"></i>
-                    <span>${isEn ? 'Edit Project' : 'تعديل المشروع'}</span>
+                    <span>${tr3('تعديل المشروع', 'Edit Project', 'Projekt bearbeiten')}</span>
                   </button>
                   <button type="button" data-click="openCertificateModal('${vg.id}')" class="bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-800 dark:text-stone-200 px-2.5 py-1.5 rounded-xl text-[10.5px] font-bold transition-all cursor-pointer flex items-center gap-1">
                     <i data-lucide="file-text" class="w-3 h-3 text-emerald-600"></i>
-                    <span>${isEn ? 'Cadastre Deed' : 'صك الطابو'}</span>
+                    <span>${tr3('صك الطابو', 'Cadastre Deed', 'Flächennachweis')}</span>
                   </button>
                 </div>
                 <div class="flex items-center gap-1.5">
                   <button type="button" data-click="navigateTo('marketplace'); switchMarketplaceTrack('virgin');" class="bg-emerald-700 hover:bg-emerald-800 text-white px-2.5 py-1.5 rounded-xl text-[10.5px] font-bold transition-all cursor-pointer flex items-center gap-1">
                     <i data-lucide="external-link" class="w-3 h-3 text-amber-300"></i>
-                    <span>${isEn ? 'Market Preview' : 'معاينة بالسوق'}</span>
+                    <span>${tr3('معاينة بالسوق', 'Market Preview', 'Vorschau im Marktplatz')}</span>
                   </button>
-                  <button type="button" data-click="founderDeleteVirginGrove('${vg.id}')" title="${isEn ? 'Archive Project' : 'أرشفة وحذف المشروع'}" class="text-stone-400 hover:text-red-600 dark:hover:text-red-400 p-1.5 rounded-lg transition-colors cursor-pointer">
+                  <button type="button" data-click="founderDeleteVirginGrove('${vg.id}')" title="${tr3('أرشفة وحذف المشروع', 'Archive Project', 'Projekt archivieren')}" class="text-stone-400 hover:text-red-600 dark:hover:text-red-400 p-1.5 rounded-lg transition-colors cursor-pointer">
                     <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                   </button>
                 </div>
@@ -20368,11 +20411,11 @@ function setMarketplaceViewMode(mode) {
       const matureBadge = document.getElementById('fndr-fleet-mature-count-lbl');
       const virginBadge = document.getElementById('fndr-fleet-virgin-count-lbl');
       if (matureBadge) {
-        matureBadge.innerText = isEn ? `Mature Trees (${catalogTrees().length})` : `الأشجار المعمرة المنتجة (${catalogTrees().length} شجرة)`;
+        matureBadge.innerText = tr3(`الأشجار المعمرة المنتجة (${catalogTrees().length} شجرة)`, `Mature Trees (${catalogTrees().length})`, `Ertragsbäume (${catalogTrees().length})`);
       }
       if (virginBadge) {
         const vCount = (state.virginGroves || []).length;
-        virginBadge.innerText = isEn ? `Greenfield Groves (${vCount} Projects)` : `بساتين الغراس البكر مع الأرض (${vCount} مشاريع)`;
+        virginBadge.innerText = tr3(`بساتين الغراس البكر مع الأرض (${vCount} مشاريع)`, `Greenfield Groves (${vCount} Projects)`, `Neupflanzungshaine (${vCount} Projekte)`);
       }
 
       if (window.lucide && typeof window.lucide.createIcons === 'function') {
@@ -20388,7 +20431,7 @@ function setMarketplaceViewMode(mode) {
       playAcousticChime(600, 0.2);
       const isEn = state.currentLang !== 'ar';
       savePlatformState();
-      showToast(isEn ? `Harvest state updated for ${tree.tree_name_en || tree.tree_name}` : `تم تحديث حالة المحصول للشجرة: ${tree.tree_name}`);
+      showToast(tr3(`تم تحديث حالة المحصول للشجرة: ${tree.tree_name}`, `Harvest state updated for ${tree.tree_name_en || tree.tree_name}`, `Erntestatus aktualisiert für ${tree.tree_name_en || tree.tree_name}`));
       renderFounderFleet(currentFleetTrack);
     }
 
@@ -20409,39 +20452,39 @@ function setMarketplaceViewMode(mode) {
               </div>
               <span class="bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 text-[10px] font-black px-2.5 py-0.5 rounded-full flex items-center gap-1">
                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                <span>${isEn ? '100% Signal • Online' : 'إشارة ممتازة • متصل'}</span>
+                <span>${tr3('إشارة ممتازة • متصل', '100% Signal • Online', '100 % Signal • Online')}</span>
               </span>
             </div>
 
             <div class="grid grid-cols-2 gap-3">
               <div class="bg-white dark:bg-stone-900 p-3 rounded-xl border border-stone-200/60 dark:border-stone-800">
-                <span class="text-[10px] text-stone-400 block">${isEn ? 'Soil Moisture' : 'رطوبة التربة الحقلية:'}</span>
+                <span class="text-[10px] text-stone-400 block">${tr3('رطوبة التربة الحقلية:', 'Soil Moisture', 'Bodenfeuchte')}</span>
                 <div class="text-base font-black text-blue-600 dark:text-blue-400 font-mono">${st.soil_moisture}%</div>
-                <span class="text-[9px] text-emerald-600 font-bold block">${isEn ? 'Optimal Moisture' : 'مثالية للزيتون'}</span>
+                <span class="text-[9px] text-emerald-600 font-bold block">${tr3('مثالية للزيتون', 'Optimal Moisture', 'Optimale Feuchte')}</span>
               </div>
 
               <div class="bg-white dark:bg-stone-900 p-3 rounded-xl border border-stone-200/60 dark:border-stone-800">
-                <span class="text-[10px] text-stone-400 block">${isEn ? 'Air Temperature' : 'حرارة الهواء:'}</span>
+                <span class="text-[10px] text-stone-400 block">${tr3('حرارة الهواء:', 'Air Temperature', 'Lufttemperatur')}</span>
                 <div class="text-base font-black text-amber-600 dark:text-amber-400 font-mono">${st.air_temp}°C</div>
-                <span class="text-[9px] text-stone-400 block">${isEn ? 'Moderate Climate' : 'طقس معتدل ومناسب'}</span>
+                <span class="text-[9px] text-stone-400 block">${tr3('طقس معتدل ومناسب', 'Moderate Climate', 'Gemäßigtes Klima')}</span>
               </div>
 
               <div class="bg-white dark:bg-stone-900 p-3 rounded-xl border border-stone-200/60 dark:border-stone-800">
-                <span class="text-[10px] text-stone-400 block">${isEn ? 'Leaf Wetness' : 'رطوبة الأوراق:'}</span>
+                <span class="text-[10px] text-stone-400 block">${tr3('رطوبة الأوراق:', 'Leaf Wetness', 'Blattnässe')}</span>
                 <div class="text-base font-black text-stone-800 dark:text-stone-200 font-mono">${st.leaf_wetness}%</div>
-                <span class="text-[9px] text-emerald-600 font-bold block">${isEn ? 'No fungal risk' : 'لا يوجد خطر فطري'}</span>
+                <span class="text-[9px] text-emerald-600 font-bold block">${tr3('لا يوجد خطر فطري', 'No fungal risk', 'Kein Pilzrisiko')}</span>
               </div>
 
               <div class="bg-white dark:bg-stone-900 p-3 rounded-xl border border-stone-200/60 dark:border-stone-800">
-                <span class="text-[10px] text-stone-400 block">${isEn ? 'Solar Battery' : 'بطارية الطاقة الشمسية:'}</span>
+                <span class="text-[10px] text-stone-400 block">${tr3('بطارية الطاقة الشمسية:', 'Solar Battery', 'Solarbatterie')}</span>
                 <div class="text-base font-black text-emerald-600 dark:text-emerald-400 font-mono">${st.battery_pct}%</div>
-                <span class="text-[9px] text-emerald-600 font-bold block">${isEn ? 'Fully Charged' : 'مشحونة بالكامل'}</span>
+                <span class="text-[9px] text-emerald-600 font-bold block">${tr3('مشحونة بالكامل', 'Fully Charged', 'Voll geladen')}</span>
               </div>
             </div>
 
             <div class="flex items-center justify-between pt-1 text-[10px] text-stone-500 dark:text-stone-400">
-              <span>${isEn ? 'Last Ping: 2 min ago' : 'آخر تحديث: منذ دقيقتين'}</span>
-              <span class="text-emerald-700 dark:text-emerald-400 font-bold">✓ ${isEn ? 'Zero Frost Risk' : 'آمن - لا يوجد خطر صقيع'}</span>
+              <span>${tr3('آخر تحديث: منذ دقيقتين', 'Last Ping: 2 min ago', 'Letzte Meldung: vor 2 Min.')}</span>
+              <span class="text-emerald-700 dark:text-emerald-400 font-bold">✓ ${tr3('آمن - لا يوجد خطر صقيع', 'Zero Frost Risk', 'Kein Frostrisiko')}</span>
             </div>
           </div>
         `;
@@ -20457,7 +20500,7 @@ function setMarketplaceViewMode(mode) {
       });
       renderFounderTelemetry();
       const isEn = state.currentLang !== 'ar';
-      showToast(isEn ? "🛰️ Agro-IoT stations pinged: All 4 telemetry stations active and verified." : "🛰️ تم الاتصال بكافة محطات الاستشعار الـ 4: القراءات محدثة وتعمل بكفاءة 100%.");
+      showToast(tr3("🛰️ تم الاتصال بكافة محطات الاستشعار الـ 4: القراءات محدثة وتعمل بكفاءة 100%.", "🛰️ Agro-IoT stations pinged: All 4 telemetry stations active and verified.", "🛰️ Agrar-IoT-Stationen abgefragt: Alle 4 Messstationen sind aktiv und geprüft."));
     }
 
     function dispatchIrrigationNotice() {
@@ -20480,12 +20523,12 @@ function setMarketplaceViewMode(mode) {
         });
         if (typeof updateNotificationsBadge === 'function') updateNotificationsBadge();
       }
-      showToast(isEn ? "📢 Irrigation notice dispatched to all partner farmers across Syria!" : "📢 تم بث تعميم الري الميداني لجميع المزارعين الشركاء بنجاح!");
+      showToast(tr3("📢 تم بث تعميم الري الميداني لجميع المزارعين الشركاء بنجاح!", "📢 Irrigation notice dispatched to all partner farmers across Syria!", "📢 Bewässerungshinweis an alle Partnerhöfe in Syrien versendet!"));
     }
 
     function savePlatformFeePolicy() {
       if (!state.currentUser || state.currentUser.role !== 'admin') {
-        showToast(state.currentLang !== 'ar' ? 'Unauthorized: Founder root clearance required' : 'غير مصرح: يتطلب صلاحيات المدير العام');
+        showToast(tr3('غير مصرح: يتطلب صلاحيات المدير العام', 'Unauthorized: Founder root clearance required', 'Keine Berechtigung: Gründer-Freigabe erforderlich'));
         return;
       }
       const input = document.getElementById('fndr-input-escrow-rate');
@@ -20494,25 +20537,28 @@ function setMarketplaceViewMode(mode) {
       savePlatformState();
       playAcousticChime(700, 0.25);
       const isEn = state.currentLang !== 'ar';
-      showToast(isEn ? `✅ Platform fee policy updated to ${val}% successfully!` : `✅ تم حفظ وتطبيق نسبة رسوم معالجة الدفعات بنجاح: ${val}%!`);
+      showToast(tr3(`✅ تم حفظ وتطبيق نسبة رسوم معالجة الدفعات بنجاح: ${val}%!`, `✅ Platform fee policy updated to ${val}% successfully!`, `✅ Plattformgebühr erfolgreich auf ${val} % aktualisiert!`));
     }
 
     function runSolvencyAudit() {
       playAcousticChime(850, 0.3);
       const isEn = state.currentLang !== 'ar';
-      const msg = isEn 
-        ? `🛡️ Solvency Audit Report:
-- Payments: confirmed per reviewed bank receipt
-- Farmer Liabilities: $12,600
-- Sponsor Harvest Allocations: $18,400
-- Emergency Relief Fund: $8,000
-- Platform Solvency: 100% (Certified Safe)`
-        : `🛡️ تقرير الملاءة المالية ومراجعة الدفعات:
+      const msg = tr3(`🛡️ تقرير الملاءة المالية ومراجعة الدفعات:
 - إجمالي أصول الضمان: $280,000 (محمي بنكياً 100%)
 - التزامات أجور المزارعين: $12,600
 - مخصصات تسييل الكافلين: $18,400
 - صندوق طوارئ المناخ: $8,000
-- نسبة الملاءة والأمان: 100% (معتمد ومطابق)`;
+- نسبة الملاءة والأمان: 100% (معتمد ومطابق)`, `🛡️ Solvency Audit Report:
+- Payments: confirmed per reviewed bank receipt
+- Farmer Liabilities: $12,600
+- Sponsor Harvest Allocations: $18,400
+- Emergency Relief Fund: $8,000
+- Platform Solvency: 100% (Certified Safe)`, `🛡️ Prüfbericht Zahlungsfähigkeit:
+- Zahlungen: bestätigt anhand geprüfter Überweisungsbelege
+- Verbindlichkeiten gegenüber Partnerhöfen: 12.600 $
+- Ernteanteile der Baumpaten: 18.400 $
+- Notfonds: 8.000 $
+- Zahlungsfähigkeit der Plattform: 100 % (geprüft)`);
       showToast(msg);
     }
 
@@ -20541,61 +20587,61 @@ function setMarketplaceViewMode(mode) {
           id: "EVT-2026-9041",
           time: "2026-09-11 01:25",
           category: "financial",
-          badge: isEn ? "Usufruct Purchase" : "شراء حصة وسند",
+          badge: tr3("شراء حصة وسند", "Usufruct Purchase", "Patenschaftsanteil erworben"),
           badge_color: "bg-olive-100 dark:bg-olive-950 text-olive-900 dark:text-olive-300",
-          actor: isEn ? "Tariq The Syrian (Investor)" : "طارق السوري (كافل)",
-          details: isEn ? "Acquired 50% shares in Mountain Guardian + 5m² deed" : "اكتتاب 50% بحارسة الجبل وسند حيازة 5 م²",
+          actor: tr3("طارق السوري (كافل)", "Tariq The Syrian (Investor)", "Tariq der Syrer (Baumpate)"),
+          details: tr3("اكتتاب 50% بحارسة الجبل وسند حيازة 5 م²", "Acquired 50% shares in Mountain Guardian + 5m² deed", "50 % Patenschaftsanteil an „Hüterin des Berges“ + Patenschaftsnachweis für 5 m²"),
           amount: "$70.00 (Syriatel Cash)",
           ref_hash: "0x8f4b...1a9e",
-          status: isEn ? "Confirmed" : "معتمد وموثق"
+          status: tr3("معتمد وموثق", "Confirmed", "Bestätigt")
         },
         {
           id: "EVT-2026-9040",
           time: "2026-09-11 01:10",
           category: "field",
-          badge: isEn ? "Field Audio Log" : "تقرير صوتي ميداني",
+          badge: tr3("تقرير صوتي ميداني", "Field Audio Log", "Sprachbericht vom Feld"),
           badge_color: "bg-emerald-100 dark:bg-emerald-950 text-emerald-950 dark:text-emerald-300",
-          actor: isEn ? "Abu Ahmad Al-Tartousi (Partner Farmer)" : "أبو أحمد الطرطوسي (مزارع شريك)",
-          details: isEn ? "Recorded pruning & supplemental irrigation report" : "تسجيل صوتي لأعمال التقليم والري من نبع الدريكيش",
+          actor: tr3("أبو أحمد الطرطوسي (مزارع شريك)", "Abu Ahmad Al-Tartousi (Partner Farmer)", "Abu Ahmad Al-Tartousi (Partnerhof)"),
+          details: tr3("تسجيل صوتي لأعمال التقليم والري من نبع الدريكيش", "Recorded pruning & supplemental irrigation report", "Bericht zu Baumschnitt und Zusatzbewässerung aufgenommen"),
           amount: "0:18 min audio",
           ref_hash: "0x3c1a...7f40",
-          status: isEn ? "Dispatched" : "موزع للكافلين"
+          status: tr3("موزع للكافلين", "Dispatched", "An Baumpaten versendet")
         },
         {
           id: "EVT-2026-9039",
           time: "2026-09-11 00:52",
           category: "mill",
-          badge: isEn ? "EVOO Cold Pressing" : "عصر بارد وشهادة مخبرية",
+          badge: tr3("عصر بارد وشهادة مخبرية", "EVOO Cold Pressing", "Kaltpressung Natives Olivenöl extra"),
           badge_color: "bg-amber-100 dark:bg-amber-950 text-amber-950 dark:text-amber-300",
-          actor: isEn ? "Eng. Samir (Dreikish Italian Mill)" : "م. سمير (معصرة الدريكيش)",
-          details: isEn ? "Batch SYR-MILL-2025-0981 (Acidity 0.24% • Polyphenols 420)" : "دفعة SYR-MILL-2025-0981 (حموضة 0.24% وبوليفينول 420)",
+          actor: tr3("م. سمير (معصرة الدريكيش)", "Eng. Samir (Dreikish Italian Mill)", "Ing. Samir (Ölmühle Dreikish)"),
+          details: tr3("دفعة SYR-MILL-2025-0981 (حموضة 0.24% وبوليفينول 420)", "Batch SYR-MILL-2025-0981 (Acidity 0.24% • Polyphenols 420)", "Charge SYR-MILL-2025-0981 (Säuregehalt 0,24 % • Polyphenole 420)"),
           amount: "14.8 L EVOO",
           ref_hash: "0xaa91...6c28",
-          status: isEn ? "Certified" : "شهادة فحص معتمدة"
+          status: tr3("شهادة فحص معتمدة", "Certified", "Laborprüfung bestanden")
         },
         {
           id: "EVT-2026-9038",
           time: "2026-09-11 00:40",
           category: "financial",
-          badge: isEn ? "Labor Subsidy Payout" : "صرف أتعاب رعاية",
+          badge: tr3("صرف أتعاب رعاية", "Labor Subsidy Payout", "Auszahlung Pflegevergütung"),
           badge_color: "bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300",
-          actor: isEn ? "Abu Ahmad Al-Tartousi (Farmer)" : "أبو أحمد الطرطوسي (مزارع)",
-          details: isEn ? "Disbursement voucher SYR-CASH-98214 via Syriatel" : "حوالة أتعاب ميدانية إيصال SYR-CASH-98214",
+          actor: tr3("أبو أحمد الطرطوسي (مزارع)", "Abu Ahmad Al-Tartousi (Farmer)", "Abu Ahmad Al-Tartousi (Landwirt)"),
+          details: tr3("حوالة أتعاب ميدانية إيصال SYR-CASH-98214", "Disbursement voucher SYR-CASH-98214 via Syriatel", "Auszahlungsbeleg SYR-CASH-98214 über Syriatel"),
           amount: "630,000 SYP ($42)",
           ref_hash: "0x51ef...39b1",
-          status: isEn ? "Transferred" : "تم التحويل بنجاح"
+          status: tr3("تم التحويل بنجاح", "Transferred", "Überwiesen")
         },
         {
           id: "EVT-2026-9037",
           time: "2026-09-11 00:15",
           category: "security",
-          badge: isEn ? "Two-Step Auth" : "مصادقة هوية OTP",
+          badge: tr3("مصادقة هوية OTP", "Two-Step Auth", "Zwei-Faktor-Anmeldung"),
           badge_color: "bg-purple-100 dark:bg-purple-950 text-purple-950 dark:text-purple-300",
-          actor: isEn ? "Eng. Wissam (Founder & CEO)" : "م. وسام (المؤسس والرئيس التنفيذي)",
-          details: isEn ? "Admin session initiated from Damascus Edge Node" : "جلسة رقابة تنفيذية من عقدة دمشق المعتمدة",
+          actor: tr3("م. وسام (المؤسس والرئيس التنفيذي)", "Eng. Wissam (Founder & CEO)", "Ing. Wissam (Gründer & CEO)"),
+          details: tr3("جلسة رقابة تنفيذية من عقدة دمشق المعتمدة", "Admin session initiated from Damascus Edge Node", "Admin-Sitzung über Edge-Knoten Damaskus gestartet"),
           amount: "AES-256 TLS",
           ref_hash: "0x110e...84d9",
-          status: isEn ? "Authorized" : "جلسة مصادق عليها"
+          status: tr3("جلسة مصادق عليها", "Authorized", "Freigegeben")
         }
       ];
 
@@ -20627,17 +20673,18 @@ function setMarketplaceViewMode(mode) {
 
     function broadcastSystemAnnouncement() {
       if (!state.currentUser || state.currentUser.role !== 'admin') {
-        showToast(state.currentLang !== 'ar' ? 'Unauthorized: Founder root clearance required' : 'غير مصرح: يتطلب صلاحيات المدير العام');
+        showToast(tr3('غير مصرح: يتطلب صلاحيات المدير العام', 'Unauthorized: Founder root clearance required', 'Keine Berechtigung: Gründer-Freigabe erforderlich'));
         return;
       }
       const isEn = state.currentLang !== 'ar';
-      const defaultMsg = isEn 
-        ? "Official Notice from Platform Leadership: Autumn olive pressing has begun across Tartus mills under certified cold-press standards."
-        : "بلاغ رسمي من إدارة المنصة: انطلاق موسم عصر زيتون الخريف بمعاصر طرطوس وفق أعلى معايير العصر البارد الإيطالي.";
+      const defaultMsg = tr3(
+        "بلاغ رسمي من إدارة المنصة: انطلاق موسم عصر زيتون الخريف بمعاصر طرطوس وفق أعلى معايير العصر البارد الإيطالي.",
+        "Official Notice from Platform Leadership: Autumn olive pressing has begun across Tartus mills under certified cold-press standards.",
+        "Offizieller Hinweis der Plattformleitung: In den Ölmühlen von Tartus hat die Herbstpressung nach zertifizierten Kaltpress-Standards begonnen.");
       
       const titleInput = document.getElementById('fndr-broadcast-title');
       const msgInput = document.getElementById('fndr-broadcast-message');
-      if (titleInput) titleInput.value = isEn ? "Official Platform Executive Broadcast" : "تعميم رسمي من إدارة المنظومة";
+      if (titleInput) titleInput.value = tr3("تعميم رسمي من إدارة المنظومة", "Official Platform Executive Broadcast", "Offizielle Mitteilung der Plattformleitung");
       if (msgInput) msgInput.value = defaultMsg;
 
       openModal('modal-fndr-broadcast');
@@ -20647,7 +20694,7 @@ function setMarketplaceViewMode(mode) {
     function submitSystemBroadcast(e) {
       if (e && e.preventDefault) e.preventDefault();
       if (!state.currentUser || state.currentUser.role !== 'admin') {
-        showToast(state.currentLang !== 'ar' ? 'Unauthorized: Founder root clearance required' : 'غير مصرح: يتطلب صلاحيات المدير العام');
+        showToast(tr3('غير مصرح: يتطلب صلاحيات المدير العام', 'Unauthorized: Founder root clearance required', 'Keine Berechtigung: Gründer-Freigabe erforderlich'));
         return;
       }
       const isEn = state.currentLang !== 'ar';
@@ -20657,7 +20704,7 @@ function setMarketplaceViewMode(mode) {
       const priority = document.getElementById('fndr-broadcast-priority')?.value || 'high';
 
       if (!msg) {
-        showToast(isEn ? 'Please enter broadcast message' : 'يرجى كتابة نص التعميم');
+        showToast(tr3('يرجى كتابة نص التعميم', 'Please enter broadcast message', 'Bitte geben Sie den Text der Mitteilung ein'));
         return;
       }
 
@@ -20684,13 +20731,13 @@ function setMarketplaceViewMode(mode) {
       savePlatformState();
       closeModal('modal-fndr-broadcast');
       playAcousticChime(850, 0.3);
-      showToast(isEn ? `📢 Executive broadcast dispatched to ${targetRole}: "${msg.substring(0, 45)}..."` : `📢 تم بث التعميم الرسمي بنجاح للفئة (${targetRole}): "${msg.substring(0, 45)}..."`);
+      showToast(tr3(`📢 تم بث التعميم الرسمي بنجاح للفئة (${targetRole}): "${msg.substring(0, 45)}..."`, `📢 Executive broadcast dispatched to ${targetRole}: "${msg.substring(0, 45)}..."`, `📢 Mitteilung an ${targetRole} versendet: "${msg.substring(0, 45)}..."`));
     }
 
     let isMaintenanceActive = false;
     function toggleMaintenanceMode() {
       if (!state.currentUser || state.currentUser.role !== 'admin') {
-        showToast(state.currentLang !== 'ar' ? 'Unauthorized: Founder root clearance required' : 'غير مصرح: يتطلب صلاحيات المدير العام');
+        showToast(tr3('غير مصرح: يتطلب صلاحيات المدير العام', 'Unauthorized: Founder root clearance required', 'Keine Berechtigung: Gründer-Freigabe erforderlich'));
         return;
       }
       const isEn = state.currentLang !== 'ar';
@@ -20699,33 +20746,33 @@ function setMarketplaceViewMode(mode) {
       
       if (isMaintenanceActive) {
         playAcousticChime(350, 0.4);
-        if (titleEl) titleEl.innerText = isEn ? "🚨 Security Freeze ACTIVE (Click to Unlock)" : "🚨 التجميد الأمني نشط (اضغط لإلغاء القفل)";
-        showToast(isEn ? "⚠️ Security freeze activated. Sensitive mutations temporarily locked." : "⚠️ تم تفعيل التجميد الأمني المؤقت وحظر التعديلات الحساسة لحماية المنصة.");
+        if (titleEl) titleEl.innerText = tr3("🚨 التجميد الأمني نشط (اضغط لإلغاء القفل)", "🚨 Security Freeze ACTIVE (Click to Unlock)", "🚨 Sicherheitssperre AKTIV (zum Aufheben klicken)");
+        showToast(tr3("⚠️ تم تفعيل التجميد الأمني المؤقت وحظر التعديلات الحساسة لحماية المنصة.", "⚠️ Security freeze activated. Sensitive mutations temporarily locked.", "⚠️ Sicherheitssperre aktiviert. Sensible Änderungen sind vorübergehend gesperrt."));
       } else {
         playAcousticChime(750, 0.2);
-        if (titleEl) titleEl.innerText = isEn ? "Temporary Security Freeze" : "تجميد أمني مؤقت (Security Freeze)";
-        showToast(isEn ? "✅ Security freeze lifted. Normal operations restored." : "✅ تم إلغاء التجميد الأمني واستعادة العمليات الطبيعية بالكامل.");
+        if (titleEl) titleEl.innerText = tr3("تجميد أمني مؤقت (Security Freeze)", "Temporary Security Freeze", "Vorübergehende Sicherheitssperre");
+        showToast(tr3("✅ تم إلغاء التجميد الأمني واستعادة العمليات الطبيعية بالكامل.", "✅ Security freeze lifted. Normal operations restored.", "✅ Sicherheitssperre aufgehoben. Normalbetrieb wiederhergestellt."));
       }
     }
 
     function emergencyDisburseRelief() {
       if (!state.currentUser || state.currentUser.role !== 'admin') {
-        showToast(state.currentLang !== 'ar' ? 'Unauthorized: Founder root clearance required' : 'غير مصرح: يتطلب صلاحيات المدير العام');
+        showToast(tr3('غير مصرح: يتطلب صلاحيات المدير العام', 'Unauthorized: Founder root clearance required', 'Keine Berechtigung: Gründer-Freigabe erforderlich'));
         return;
       }
       const isEn = state.currentLang !== 'ar';
-      if (confirm(isEn ? "Authorize emergency release of 1,000,000 SYP from the Climate Relief Fund to Tartus partner groves?" : "هل تؤكد صرف إعانة طارئة فورية بقيمة 1,000,000 ل.س من صندوق الإغاثة لمزارعي كروم طرطوس؟")) {
+      if (confirm(tr3("هل تؤكد صرف إعانة طارئة فورية بقيمة 1,000,000 ل.س من صندوق الإغاثة لمزارعي كروم طرطوس؟", "Authorize emergency release of 1,000,000 SYP from the Climate Relief Fund to Tartus partner groves?", "Soforthilfe von 1.000.000 SYP aus dem Klima-Hilfsfonds an die Partnerhöfe in Tartus freigeben?"))) {
         playAcousticChime(850, 0.25);
         if (state.farmerWallet) {
           state.farmerWallet.readySyp = (state.farmerWallet.readySyp || 0) + 1000000;
         }
-        showToast(isEn ? "🎉 1,000,000 SYP climate relief disbursed immediately to partner farmers!" : "🎉 تم تحويل 1,000,000 ل.س إعانة مناخية عاجلة للمزارعين وإيداع الإشعار في سجل العمليات!");
+        showToast(tr3("🎉 تم تحويل 1,000,000 ل.س إعانة مناخية عاجلة للمزارعين وإيداع الإشعار في سجل العمليات!", "🎉 1,000,000 SYP climate relief disbursed immediately to partner farmers!", "🎉 1.000.000 SYP Klimahilfe sofort an die Partnerhöfe ausgezahlt!"));
       }
     }
 
     function exportExecutiveAuditDossier() {
       if (!state.currentUser || state.currentUser.role !== 'admin') {
-        showToast(state.currentLang !== 'ar' ? 'Unauthorized: Founder root clearance required' : 'غير مصرح: يتطلب صلاحيات المدير العام');
+        showToast(tr3('غير مصرح: يتطلب صلاحيات المدير العام', 'Unauthorized: Founder root clearance required', 'Keine Berechtigung: Gründer-Freigabe erforderlich'));
         return;
       }
       const isEn = state.currentLang !== 'ar';
@@ -20753,7 +20800,7 @@ function setMarketplaceViewMode(mode) {
       downloadAnchor.remove();
 
       playAcousticChime(700, 0.2);
-      showToast(isEn ? "📥 Executive Audit Dossier exported successfully (JSON)!" : "📥 تم تصدير الملف الرقابي الشامل بنجاح بصيغة (JSON)!");
+      showToast(tr3("📥 تم تصدير الملف الرقابي الشامل بنجاح بصيغة (JSON)!", "📥 Executive Audit Dossier exported successfully (JSON)!", "📥 Prüfdossier erfolgreich exportiert (JSON)!"));
     }
 
 
@@ -20807,7 +20854,7 @@ function setMarketplaceViewMode(mode) {
       const ioc = document.getElementById('reg-mill-chk-ioc')?.checked ?? true;
 
       if (!name || !owner || !cr || !phone || !email) {
-        showToast(isEn ? '⚠️ Please complete all required fields.' : '⚠️ يرجى استكمال كافة الحقول المطلوبة لطلب الاعتماد.');
+        showToast(tr3('⚠️ يرجى استكمال كافة الحقول المطلوبة لطلب الاعتماد.', '⚠️ Please complete all required fields.', '⚠️ Bitte füllen Sie alle Pflichtfelder aus.'));
         return;
       }
 
@@ -20895,7 +20942,7 @@ function setMarketplaceViewMode(mode) {
 
       // Record in Audit Stream
       if (typeof recordAuditEvent === 'function') {
-        recordAuditEvent('mill', isEn ? `Partner mill application submitted: ${name}` : `تقديم طلب اعتماد معصرة شريكة: ${name}`, owner, `$0`, 'success');
+        recordAuditEvent('mill', tr3(`تقديم طلب اعتماد معصرة شريكة: ${name}`, `Partner mill application submitted: ${name}`, `Antrag als Partner-Ölmühle eingereicht: ${name}`), owner, `$0`, 'success');
       }
 
       // Dispatch notification to founder
@@ -20915,9 +20962,10 @@ function setMarketplaceViewMode(mode) {
       closeModal('modal-partner-mill-register');
       playAcousticChime(750, 0.25);
 
-      showToast(isEn 
-        ? `✅ Partner mill application submitted successfully! Under founder audit.` 
-        : `✅ تم تقديم طلب انضمام المعصرة (${name}) بنجاح! تم رفعه إلى مكتب المؤسس للتدقيق والاعتماد.`);
+      showToast(tr3(
+        `✅ تم تقديم طلب انضمام المعصرة (${name}) بنجاح! تم رفعه إلى مكتب المؤسس للتدقيق والاعتماد.`,
+        `✅ Partner mill application submitted successfully! Under founder audit.`,
+        `✅ Ihr Antrag als Partner-Ölmühle wurde eingereicht und wird nun geprüft.`));
 
       if (typeof renderFounderMillsGovernance === 'function') {
         renderFounderMillsGovernance();
@@ -20937,21 +20985,21 @@ function setMarketplaceViewMode(mode) {
 
       const countBadge = document.getElementById('fndr-mills-count-badge');
       if (countBadge) {
-        countBadge.innerText = isEn ? `${mills.length} Mills` : `${mills.length} معاصر`;
+        countBadge.innerText = tr3(`${mills.length} معاصر`, `${mills.length} Mills`, `${mills.length} Ölmühlen`);
       }
 
       // Update policy summary labels
       const inkindLbl = document.getElementById('fndr-lbl-milling-inkind');
       if (inkindLbl && state.millingPolicy) {
-        inkindLbl.innerHTML = `${state.millingPolicy.in_kind_rate.toFixed(1)}% <span class="text-[10px] text-stone-400 font-normal">${isEn ? 'of produced oil' : 'من الزيت الناتج'}</span>`;
+        inkindLbl.innerHTML = `${state.millingPolicy.in_kind_rate.toFixed(1)}% <span class="text-[10px] text-stone-400 font-normal">${tr3('من الزيت الناتج', 'of produced oil', 'des erzeugten Öls')}</span>`;
       }
       const cashLbl = document.getElementById('fndr-lbl-milling-cash');
       if (cashLbl && state.millingPolicy) {
-        cashLbl.innerHTML = `${state.millingPolicy.cash_rate_syp_per_kg.toLocaleString()} ${isEn ? 'SYP / kg' : 'ل.س / كغ زيتون'}`;
+        cashLbl.innerHTML = `${state.millingPolicy.cash_rate_syp_per_kg.toLocaleString()} ${tr3('ل.س / كغ زيتون', 'SYP / kg', 'SYP / kg Oliven')}`;
       }
       const iocLbl = document.getElementById('fndr-lbl-milling-ioc');
       if (iocLbl && state.millingPolicy) {
-        iocLbl.innerHTML = `&lt; ${state.millingPolicy.enforce_ioc_minimum_acidity.toFixed(1)}% <span class="text-[10px] text-stone-400 font-normal">${isEn ? 'max acidity' : 'حموضة قصوى'}</span>`;
+        iocLbl.innerHTML = `&lt; ${state.millingPolicy.enforce_ioc_minimum_acidity.toFixed(1)}% <span class="text-[10px] text-stone-400 font-normal">${tr3('حموضة قصوى', 'max acidity', 'max. Säuregehalt')}</span>`;
       }
 
       tbody.innerHTML = mills.map(m => {
@@ -20978,7 +21026,7 @@ function setMarketplaceViewMode(mode) {
             </td>
             <td class="py-3 px-3.5">
               <span class="font-mono font-bold text-purple-900 dark:text-purple-300 block">${m.tanks_capacity_l.toLocaleString()} L (${m.tanks_count} Inox)</span>
-              <span class="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold">${m.nitrogen_inert ? '✓ معزول بالنيتروجين' : 'تقليدي'}</span>
+              <span class="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold">${m.nitrogen_inert ? tr3('✓ معزول بالنيتروجين', '✓ Nitrogen-blanketed', '✓ Mit Stickstoffschutz') : tr3('تقليدي', 'Conventional', 'Konventionell')}</span>
             </td>
             <td class="py-3 px-3.5">
               <span class="text-[10px] font-black px-2.5 py-0.5 rounded-full ${isApproved ? 'bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300' : isPending ? 'bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300' : 'bg-red-100 dark:bg-red-950 text-red-800 dark:text-red-300'}">
@@ -20989,15 +21037,15 @@ function setMarketplaceViewMode(mode) {
               <div class="flex items-center justify-center gap-1.5">
                 ${isApproved ? `
                   <button type="button" data-click="freezePartnerMill('${m.id}')" class="bg-stone-100 dark:bg-stone-800 hover:bg-stone-200 text-stone-700 dark:text-stone-300 px-2.5 py-1 rounded-xl text-[11px] font-bold transition-all cursor-pointer">
-                    ${isEn ? 'Suspend' : 'تجميد مؤقت'}
+                    ${tr3('تجميد مؤقت', 'Suspend', 'Aussetzen')}
                   </button>
                 ` : `
                   <button type="button" data-click="approvePartnerMill('${m.id}')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-2.5 py-1 rounded-xl text-[11px] font-bold transition-all cursor-pointer flex items-center gap-1 shadow-2xs">
                     <i data-lucide="check" class="w-3 h-3"></i>
-                    <span>${isEn ? 'Approve' : 'اعتماد وترخيص'}</span>
+                    <span>${tr3('اعتماد وترخيص', 'Approve', 'Zulassen')}</span>
                   </button>
                   <button type="button" data-click="rejectPartnerMill('${m.id}')" class="bg-red-50 hover:bg-red-100 text-red-700 dark:bg-red-950/50 dark:hover:bg-red-900/50 px-2 py-1 rounded-xl text-[11px] font-bold transition-all cursor-pointer">
-                    ${isEn ? 'Reject' : 'رفض'}
+                    ${tr3('رفض', 'Reject', 'Ablehnen')}
                   </button>
                 `}
               </div>
@@ -21013,7 +21061,7 @@ function setMarketplaceViewMode(mode) {
 
     function approvePartnerMill(millId) {
       if (!state.currentUser || state.currentUser.role !== 'admin') {
-        showToast(state.currentLang !== 'ar' ? 'Unauthorized: Founder clearance required' : 'غير مصرح: يتطلب صلاحيات المدير العام والمؤسس');
+        showToast(tr3('غير مصرح: يتطلب صلاحيات المدير العام والمؤسس', 'Unauthorized: Founder clearance required', 'Nicht berechtigt: Gründer-Freigabe erforderlich'));
         return;
       }
       const isEn = state.currentLang !== 'ar';
@@ -21025,18 +21073,18 @@ function setMarketplaceViewMode(mode) {
       mill.status_en = 'Accredited & Active';
 
       if (typeof recordAuditEvent === 'function') {
-        recordAuditEvent('mill', isEn ? `Partner mill accredited: ${mill.name_en || mill.name_ar}` : `اعتماد وترخيص معصرة شريكة: ${mill.name_ar}`, 'Founder (Admin)', '$0', 'success');
+        recordAuditEvent('mill', tr3(`اعتماد وترخيص معصرة شريكة: ${mill.name_ar}`, `Partner mill accredited: ${mill.name_en || mill.name_ar}`, `Partner-Ölmühle zugelassen: ${mill.name_en || mill.name_ar}`), 'Founder (Admin)', '$0', 'success');
       }
 
       savePlatformState();
       playAcousticChime(750, 0.2);
-      showToast(isEn ? `✅ Mill "${mill.name_en || mill.name_ar}" accredited successfully!` : `✅ تم اعتماد وترخيص المعصرة الشريكة (${mill.name_ar}) رسمياً!`);
+      showToast(tr3(`✅ تم اعتماد وترخيص المعصرة الشريكة (${mill.name_ar}) رسمياً!`, `✅ Mill "${mill.name_en || mill.name_ar}" accredited successfully!`, `✅ Ölmühle „${mill.name_en || mill.name_ar}“ erfolgreich zugelassen!`));
       renderFounderMillsGovernance();
     }
 
     function rejectPartnerMill(millId) {
       if (!state.currentUser || state.currentUser.role !== 'admin') {
-        showToast(state.currentLang !== 'ar' ? 'Unauthorized: Founder clearance required' : 'غير مصرح: يتطلب صلاحيات المدير العام والمؤسس');
+        showToast(tr3('غير مصرح: يتطلب صلاحيات المدير العام والمؤسس', 'Unauthorized: Founder clearance required', 'Nicht berechtigt: Gründer-Freigabe erforderlich'));
         return;
       }
       const isEn = state.currentLang !== 'ar';
@@ -21048,18 +21096,18 @@ function setMarketplaceViewMode(mode) {
       mill.status_en = 'Rejected';
 
       if (typeof recordAuditEvent === 'function') {
-        recordAuditEvent('mill', isEn ? `Partner mill rejected: ${mill.name_en || mill.name_ar}` : `رفض طلب معصرة شريكة: ${mill.name_ar}`, 'Founder (Admin)', '$0', 'warning');
+        recordAuditEvent('mill', tr3(`رفض طلب معصرة شريكة: ${mill.name_ar}`, `Partner mill rejected: ${mill.name_en || mill.name_ar}`, `Partner-Ölmühle abgelehnt: ${mill.name_en || mill.name_ar}`), 'Founder (Admin)', '$0', 'warning');
       }
 
       savePlatformState();
       playAcousticChime(450, 0.2);
-      showToast(isEn ? `❌ Mill application rejected.` : `❌ تم رفض طلب انضمام المعصرة.`);
+      showToast(tr3(`❌ تم رفض طلب انضمام المعصرة.`, `❌ Mill application rejected.`, `❌ Antrag der Ölmühle abgelehnt.`));
       renderFounderMillsGovernance();
     }
 
     function freezePartnerMill(millId) {
       if (!state.currentUser || state.currentUser.role !== 'admin') {
-        showToast(state.currentLang !== 'ar' ? 'Unauthorized: Founder clearance required' : 'غير مصرح: يتطلب صلاحيات المدير العام والمؤسس');
+        showToast(tr3('غير مصرح: يتطلب صلاحيات المدير العام والمؤسس', 'Unauthorized: Founder clearance required', 'Nicht berechtigt: Gründer-Freigabe erforderlich'));
         return;
       }
       const isEn = state.currentLang !== 'ar';
@@ -21071,18 +21119,18 @@ function setMarketplaceViewMode(mode) {
       mill.status_en = 'Suspended';
 
       if (typeof recordAuditEvent === 'function') {
-        recordAuditEvent('mill', isEn ? `Partner mill suspended: ${mill.name_en || mill.name_ar}` : `تجميد ترخيص معصرة شريكة: ${mill.name_ar}`, 'Founder (Admin)', '$0', 'warning');
+        recordAuditEvent('mill', tr3(`تجميد ترخيص معصرة شريكة: ${mill.name_ar}`, `Partner mill suspended: ${mill.name_en || mill.name_ar}`, `Partner-Ölmühle ausgesetzt: ${mill.name_en || mill.name_ar}`), 'Founder (Admin)', '$0', 'warning');
       }
 
       savePlatformState();
       playAcousticChime(500, 0.2);
-      showToast(isEn ? `⚠️ Mill suspended.` : `⚠️ تم تجميد نشاط المعصرة مؤقتاً لحين إعادة الفحص.`);
+      showToast(tr3(`⚠️ تم تجميد نشاط المعصرة مؤقتاً لحين إعادة الفحص.`, `⚠️ Mill suspended.`, `⚠️ Ölmühle bis zur erneuten Prüfung ausgesetzt.`));
       renderFounderMillsGovernance();
     }
 
     function openMillPolicySettingsModal() {
       if (!state.currentUser || state.currentUser.role !== 'admin') {
-        showToast(state.currentLang !== 'ar' ? 'Unauthorized: Founder clearance required' : 'غير مصرح: يتطلب صلاحيات المدير العام والمؤسس');
+        showToast(tr3('غير مصرح: يتطلب صلاحيات المدير العام والمؤسس', 'Unauthorized: Founder clearance required', 'Nicht berechtigt: Gründer-Freigabe erforderlich'));
         return;
       }
       if (state.millingPolicy) {
@@ -21103,7 +21151,7 @@ function setMarketplaceViewMode(mode) {
     function saveMillingPolicySettings(e) {
       if (e) e.preventDefault();
       if (!state.currentUser || state.currentUser.role !== 'admin') {
-        showToast(state.currentLang !== 'ar' ? 'Unauthorized: Founder clearance required' : 'غير مصرح: يتطلب صلاحيات المدير العام والمؤسس');
+        showToast(tr3('غير مصرح: يتطلب صلاحيات المدير العام والمؤسس', 'Unauthorized: Founder clearance required', 'Nicht berechtigt: Gründer-Freigabe erforderlich'));
         return;
       }
       const isEn = state.currentLang !== 'ar';
@@ -21121,13 +21169,13 @@ function setMarketplaceViewMode(mode) {
       state.millFeeSettings.cash_rate_syp_per_kg = cash;
 
       if (typeof recordAuditEvent === 'function') {
-        recordAuditEvent('mill', isEn ? `Milling fee policy updated: In-kind ${inkind}%, Cash ${cash} SYP/kg` : `تحديث سياسة أجور العصر: رد ${inkind}% ونقدي ${cash} ل.س/كغ`, 'Founder (Admin)', '$0', 'success');
+        recordAuditEvent('mill', tr3(`تحديث سياسة أجور العصر: رد ${inkind}% ونقدي ${cash} ل.س/كغ`, `Milling fee policy updated: In-kind ${inkind}%, Cash ${cash} SYP/kg`, `Mahlgebühren-Regelung aktualisiert: Naturalleistung ${inkind}%, Barzahlung ${cash} SYP/kg`), 'Founder (Admin)', '$0', 'success');
       }
 
       savePlatformState();
       closeModal('modal-mill-policy-settings');
       playAcousticChime(750, 0.2);
-      showToast(isEn ? '✅ Milling policies updated and broadcasted across all partner mills.' : '✅ تم حفظ وتعميم سياسة أجور العصر على كافة المعاصر الشريكة بنجاح!');
+      showToast(tr3('✅ تم حفظ وتعميم سياسة أجور العصر على كافة المعاصر الشريكة بنجاح!', '✅ Milling policies updated and broadcasted across all partner mills.', '✅ Mahlgebühren-Regelung aktualisiert und an alle Partner-Ölmühlen übermittelt.'));
 
       renderFounderMillsGovernance();
       if (typeof renderMillPortal === 'function') renderMillPortal();
@@ -21181,11 +21229,11 @@ function setMarketplaceViewMode(mode) {
                 <div class="flex items-center justify-center gap-1.5">
                   <button data-click="openLabQrPassportModal('${b.serial}')" class="bg-amber-600 hover:bg-amber-700 text-white px-2.5 py-1.5 rounded-xl text-[11px] font-bold transition-all cursor-pointer flex items-center gap-1 shadow-2xs">
                     <i data-lucide="qr-code" class="w-3.5 h-3.5 text-amber-200"></i>
-                    <span>${isEn ? 'QR Passport' : 'جواز QR'}</span>
+                    <span>${tr3('جواز QR', 'QR Passport', 'QR-Pass')}</span>
                   </button>
                   <button data-click="openLabCertificateModal('${b.serial}')" class="bg-stone-100 dark:bg-stone-800 hover:bg-stone-200 dark:hover:bg-stone-700 text-stone-800 dark:text-stone-200 px-2 py-1.5 rounded-xl text-[11px] font-bold transition-all cursor-pointer flex items-center gap-1">
                     <i data-lucide="file-text" class="w-3 h-3 text-stone-400"></i>
-                    <span>${isEn ? 'Cert' : 'شهادة'}</span>
+                    <span>${tr3('شهادة', 'Cert', 'Zertifikat')}</span>
                   </button>
                 </div>
               </td>
@@ -21232,11 +21280,11 @@ function setMarketplaceViewMode(mode) {
               <!-- Telemetry Strip -->
               <div class="grid grid-cols-2 gap-2 pt-2 border-t border-stone-100 dark:border-stone-800 text-[11px]">
                 <div class="bg-stone-50 dark:bg-stone-800/60 p-2 rounded-xl">
-                  <span class="text-[9px] text-stone-400 block">${isEn ? 'Temp' : 'الحرارة'}</span>
+                  <span class="text-[9px] text-stone-400 block">${tr3('الحرارة', 'Temp', 'Temp.')}</span>
                   <strong class="font-mono text-stone-800 dark:text-stone-200">${tank.temp_c}° C</strong>
                 </div>
                 <div class="bg-stone-50 dark:bg-stone-800/60 p-2 rounded-xl">
-                  <span class="text-[9px] text-stone-400 block">${isEn ? 'N2 Pressure' : 'ضغط N2'}</span>
+                  <span class="text-[9px] text-stone-400 block">${tr3('ضغط N2', 'N2 Pressure', 'N2-Druck')}</span>
                   <strong class="font-mono text-purple-700 dark:text-purple-400">${tank.nitrogen_bar} bar</strong>
                 </div>
               </div>
@@ -21246,11 +21294,11 @@ function setMarketplaceViewMode(mode) {
                 ${isReady ? `
                   <div class="w-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 text-[11px] font-bold py-2 rounded-xl text-center border border-emerald-200 dark:border-emerald-800">
                     <i data-lucide="check" class="w-3.5 h-3.5 inline-block -mt-0.5 me-1"></i>
-                    ${isEn ? 'Ready for Bottling' : 'جاهز للتعبئة الفورية'}
+                    ${tr3('جاهز للتعبئة الفورية', 'Ready for Bottling', 'Bereit zur Abfüllung')}
                   </div>
                 ` : `
                   <button type="button" data-click="decantTank('${tank.id}')" class="w-full bg-stone-100 dark:bg-stone-800 hover:bg-stone-200 dark:hover:bg-stone-700 text-stone-800 dark:text-stone-200 text-[11px] font-bold py-2 rounded-xl transition-all cursor-pointer">
-                    ${isEn ? 'Decant & Siphon (' + tank.settling_days_left + 'd left)' : 'ترويق وتفريغ السيفون (باقٍ ' + tank.settling_days_left + ' يوم)'}
+                    ${tr3('ترويق وتفريغ السيفون (باقٍ ' + tank.settling_days_left + ' يوم)', 'Decant & Siphon (' + tank.settling_days_left + 'd left)', 'Dekantieren & Absaugen (noch ' + tank.settling_days_left + (tank.settling_days_left === 1 ? ' Tag)' : ' Tage)'))}
                   </button>
                 `}
               </div>
@@ -21288,11 +21336,11 @@ function setMarketplaceViewMode(mode) {
               </td>
               <td class="py-3 px-4 text-center">
                 ${isDispatched ? `
-                  <span class="text-[10px] text-stone-400 font-mono">Completed</span>
+                  <span class="text-[10px] text-stone-400 font-mono">${tr3('مكتمل', 'Completed', 'Abgeschlossen')}</span>
                 ` : `
                   <button type="button" data-click="confirmBottlingDispatch('${ord.id}')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-xl text-[11px] font-bold transition-all cursor-pointer flex items-center gap-1 shadow-2xs mx-auto">
                     <i data-lucide="truck" class="w-3.5 h-3.5"></i>
-                    <span>${isEn ? 'Dispatch' : 'تسليم للشحن'}</span>
+                    <span>${tr3('تسليم للشحن', 'Dispatch', 'Versenden')}</span>
                   </button>
                 `}
               </td>
@@ -21308,7 +21356,7 @@ function setMarketplaceViewMode(mode) {
         ledgerOil.innerText = `${state.millFeeSettings.earned_oil_liters.toFixed(1)} L`;
       }
       if (ledgerCash && state.millFeeSettings) {
-        ledgerCash.innerHTML = `${state.millFeeSettings.earned_cash_syp.toLocaleString()} ${isEn ? "SYP" : "ل.س"} <span class="text-[10px] text-stone-500 font-normal">($${state.millFeeSettings.earned_cash_usd.toFixed(0)})</span>`;
+        ledgerCash.innerHTML = `${state.millFeeSettings.earned_cash_syp.toLocaleString()} ${tr3("ل.س", "SYP", "SYP")} <span class="text-[10px] text-stone-500 font-normal">($${state.millFeeSettings.earned_cash_usd.toFixed(0)})</span>`;
       }
 
       calculateMillingFee();
@@ -21334,14 +21382,14 @@ function setMarketplaceViewMode(mode) {
         const equivSYP = equivUSD * (state.exchangeRate || 15000);
 
         primaryEl.innerText = `${earnedOil.toFixed(2)} L EVOO`;
-        secondaryEl.innerText = isEn ? `(Equivalent to $${equivUSD.toFixed(2)} • ${Math.round(equivSYP).toLocaleString()} SYP)` : `(يعادل $${equivUSD.toFixed(2)} • ${Math.round(equivSYP).toLocaleString()} ل.س)`;
+        secondaryEl.innerText = tr3(`(يعادل $${equivUSD.toFixed(2)} • ${Math.round(equivSYP).toLocaleString()} ل.س)`, `(Equivalent to $${equivUSD.toFixed(2)} • ${Math.round(equivSYP).toLocaleString()} SYP)`, `(Entspricht $${equivUSD.toFixed(2)} • ${Math.round(equivSYP).toLocaleString()} SYP)`);
       } else {
         const rateSYP = state.millFeeSettings?.cash_rate_syp_per_kg || 1500;
         const totalSYP = weight * rateSYP;
         const totalUSD = totalSYP / (state.exchangeRate || 15000);
 
         primaryEl.innerText = `${Math.round(totalSYP).toLocaleString()} SYP`;
-        secondaryEl.innerText = isEn ? `(Equivalent to $${totalUSD.toFixed(2)} USD)` : `(يعادل $${totalUSD.toFixed(2)} دولار أمريكي)`;
+        secondaryEl.innerText = tr3(`(يعادل $${totalUSD.toFixed(2)} دولار أمريكي)`, `(Equivalent to $${totalUSD.toFixed(2)} USD)`, `(Entspricht $${totalUSD.toFixed(2)} USD)`);
       }
     }
 
@@ -21352,8 +21400,8 @@ function setMarketplaceViewMode(mode) {
       const isEn = state.currentLang !== 'ar';
 
       if (!state.currentUser || (state.currentUser.role !== 'mill_owner' && state.currentUser.role !== 'admin')) {
-        const reqRole = isEn ? 'Certified Mill Operator' : 'صاحب معصرة معتمد';
-        const msg = isEn ? 'Milling fee settlement is restricted to accredited mill operators.' : 'تسوية أتعاب العصر مقتصرة حصرياً على أصحاب المعاصر المعتمدين.';
+        const reqRole = tr3('صاحب معصرة معتمد', 'Certified Mill Operator', 'Zertifizierter Ölmühlenbetreiber');
+        const msg = tr3('تسوية أتعاب العصر مقتصرة حصرياً على أصحاب المعاصر المعتمدين.', 'Milling fee settlement is restricted to accredited mill operators.', 'Die Abrechnung der Mahlgebühren ist zugelassenen Ölmühlenbetreibern vorbehalten.');
         showAccessDenied(t('mill_fee_calc_title'), reqRole, msg);
         return;
       }
@@ -21362,14 +21410,14 @@ function setMarketplaceViewMode(mode) {
         const rate = (state.millFeeSettings?.in_kind_rate || 7) / 100;
         const earned = oil * rate;
         state.millFeeSettings.earned_oil_liters += earned;
-        showToast(isEn ? `✅ Succeeded! ${earned.toFixed(2)} L EVOO credited to mill reserves.` : `✅ تم بنجاح! قيد ${earned.toFixed(2)} لتر زيت بكر ممتاز في رصيد المعصرة.`);
+        showToast(tr3(`✅ تم بنجاح! قيد ${earned.toFixed(2)} لتر زيت بكر ممتاز في رصيد المعصرة.`, `✅ Succeeded! ${earned.toFixed(2)} L EVOO credited to mill reserves.`, `✅ Erfolgreich! ${earned.toFixed(2)} L natives Olivenöl extra dem Bestand der Ölmühle gutgeschrieben.`));
       } else {
         const rateSYP = state.millFeeSettings?.cash_rate_syp_per_kg || 1500;
         const totalSYP = weight * rateSYP;
         const totalUSD = totalSYP / (state.exchangeRate || 15000);
         state.millFeeSettings.earned_cash_syp += totalSYP;
         state.millFeeSettings.earned_cash_usd += totalUSD;
-        showToast(isEn ? `✅ Succeeded! ${Math.round(totalSYP).toLocaleString()} SYP recorded in cash ledger.` : `✅ تم بنجاح! تسجيل ${Math.round(totalSYP).toLocaleString()} ل.س في سجل المقبوضات.`);
+        showToast(tr3(`✅ تم بنجاح! تسجيل ${Math.round(totalSYP).toLocaleString()} ل.س في سجل المقبوضات.`, `✅ Succeeded! ${Math.round(totalSYP).toLocaleString()} SYP recorded in cash ledger.`, `✅ Erfolgreich! ${Math.round(totalSYP).toLocaleString()} SYP im Kassenbuch erfasst.`));
       }
 
       playAcousticChime(600, 0.15);
@@ -21386,14 +21434,14 @@ function setMarketplaceViewMode(mode) {
       tank.status_ar = "مكتمل الترويق • جاهز للتعبئة";
       tank.status_en = "Decanted • Ready for Bottling";
 
-      showToast(isEn ? `🫒 Tank ${tank.code} bottom decanted successfully. Oil is crystal clear!` : `🫒 تم ترويق وتصفية سيفون الخزان ${tank.code} بنجاح. الزيت الآن فائق النقاء!`);
+      showToast(tr3(`🫒 تم ترويق وتصفية سيفون الخزان ${tank.code} بنجاح. الزيت الآن فائق النقاء!`, `🫒 Tank ${tank.code} bottom decanted successfully. Oil is crystal clear!`, `🫒 Tank ${tank.code} erfolgreich dekantiert. Das Öl ist jetzt kristallklar!`));
       playAcousticChime(520, 0.15);
       renderMillPortal();
     }
 
     function inspectAllTanksTelemetry() {
       const isEn = state.currentLang !== 'ar';
-      showToast(isEn ? "📡 Telemetry updated: All 4 Inox 316 silos operating under 0.25 bar inert N2 blanket." : "📡 تم تحديث التليمترية: جميع الخزانات الأربعة تعمل تحت ضغط نيتروجين خامل 0.25 بار وحرارة 16.2° C.");
+      showToast(tr3("📡 تم تحديث التليمترية: جميع الخزانات الأربعة تعمل تحت ضغط نيتروجين خامل 0.25 بار وحرارة 16.2° C.", "📡 Telemetry updated: All 4 Inox 316 silos operating under 0.25 bar inert N2 blanket.", "📡 Telemetrie aktualisiert: Alle 4 Silos aus Inox 316 stehen unter einer inerten N2-Schutzatmosphäre von 0,25 bar."));
       playAcousticChime(800, 0.1);
     }
 
@@ -21406,7 +21454,7 @@ function setMarketplaceViewMode(mode) {
       ord.status_ar = 'تم الشحن والتسليم للكافل';
       ord.status_en = 'Dispatched to Investor';
 
-      showToast(isEn ? `🚚 Order ${ord.ref} handed over to ${ord.courier_en || ord.courier}. Tracking activated!` : `🚚 تم تسليم الشحنة ${ord.ref} إلى ناقل التبريد وتفعيل كود التتبع بنجاح!`);
+      showToast(tr3(`🚚 تم تسليم الشحنة ${ord.ref} إلى ناقل التبريد وتفعيل كود التتبع بنجاح!`, `🚚 Order ${ord.ref} handed over to ${ord.courier_en || ord.courier}. Tracking activated!`, `🚚 Auftrag ${ord.ref} an ${ord.courier_en || ord.courier} übergeben. Sendungsverfolgung aktiviert!`));
       playAcousticChime(750, 0.2);
       renderMillPortal();
     }
@@ -21414,8 +21462,8 @@ function setMarketplaceViewMode(mode) {
     function logPomaceDispatch() {
       const isEn = state.currentLang !== 'ar';
       if (!state.currentUser || (state.currentUser.role !== 'mill_owner' && state.currentUser.role !== 'admin')) {
-        const reqRole = isEn ? 'Certified Mill Operator' : 'صاحب معصرة معتمد';
-        const msg = isEn ? 'Logging circular economy distribution is restricted to mill operators.' : 'تسجيل دفعات توزيع الجفت والسماد مقتصر على أصحاب المعاصر المعتمدين.';
+        const reqRole = tr3('صاحب معصرة معتمد', 'Certified Mill Operator', 'Zertifizierter Ölmühlenbetreiber');
+        const msg = tr3('تسجيل دفعات توزيع الجفت والسماد مقتصر على أصحاب المعاصر المعتمدين.', 'Logging circular economy distribution is restricted to mill operators.', 'Das Erfassen von Trester- und Kompostlieferungen für die Kreislaufwirtschaft ist Ölmühlenbetreibern vorbehalten.');
         showAccessDenied(t('mill_circ_title'), reqRole, msg);
         return;
       }
@@ -21467,13 +21515,13 @@ function setMarketplaceViewMode(mode) {
     async function submitMillBatch(e) {
       e.preventDefault();
       if (!state.currentUser || (state.currentUser.role !== 'mill_owner' && state.currentUser.role !== 'admin')) {
-        const reqRole = state.currentLang !== 'ar' ? 'Certified Mill Operator' : 'صاحب معصرة معتمد';
-        const msg = state.currentLang !== 'ar' ? 'Recording pressing batches is restricted to licensed mill operators.' : 'تسجيل وجبات عصر الزيتون مقتصر حصرياً على أصحاب المعاصر المعتمدين بشهادات فحص مخبري.';
+        const reqRole = tr3('صاحب معصرة معتمد', 'Certified Mill Operator', 'Zertifizierter Ölmühlen-Betreiber');
+        const msg = tr3('تسجيل وجبات عصر الزيتون مقتصر حصرياً على أصحاب المعاصر المعتمدين بشهادات فحص مخبري.', 'Recording pressing batches is restricted to licensed mill operators.', 'Das Erfassen von Pressdurchgängen ist lizenzierten Ölmühlen-Betreibern vorbehalten.');
         showAccessDenied(t('mill_btn_new_batch'), reqRole, msg);
         return;
       }
       if (!rateLimiter.checkLimit('mill_batch_' + state.currentUser.id, 6, 60000)) {
-        showToast(state.currentLang !== 'ar' ? '⚠️ Rate limit exceeded (6 batches per minute).' : '⚠️ تم تجاوز الحد المسموح لتسجيل الدفعات (6 دفعات في الدقيقة).');
+        showToast(tr3('⚠️ تم تجاوز الحد المسموح لتسجيل الدفعات (6 دفعات في الدقيقة).', '⚠️ Rate limit exceeded (6 batches per minute).', '⚠️ Limit überschritten (6 Chargen pro Minute).'));
         return;
       }
 
@@ -21487,7 +21535,7 @@ function setMarketplaceViewMode(mode) {
       if (!millId || !treeId || !Number.isFinite(weight) || weight <= 0
         || !Number.isFinite(oil) || oil < 0 || !Number.isFinite(acidity)
         || !Number.isFinite(temp) || !Number.isFinite(peroxide)) {
-        showToast(state.currentLang !== 'ar' ? 'Enter a mill, tree, and valid measurements.' : 'يرجى اختيار المعصرة والشجرة وإدخال قياسات صحيحة.');
+        showToast(tr3('يرجى اختيار المعصرة والشجرة وإدخال قياسات صحيحة.', 'Enter a mill, tree, and valid measurements.', 'Bitte wählen Sie eine Ölmühle und einen Baum und geben Sie gültige Messwerte ein.'));
         return;
       }
       const submitButton = e.currentTarget.querySelector('button[type="submit"]');
@@ -21510,14 +21558,14 @@ function setMarketplaceViewMode(mode) {
           throw new Error('The server did not confirm that this batch entered review.');
         }
         closeModal('modal-mill-batch');
-        showToast(state.currentLang !== 'ar'
-          ? 'Batch submitted for quality review. It will not be published until approved.'
-          : 'أُرسلت الدفعة لمراجعة الجودة. لن تُنشر قبل اعتمادها.');
+        showToast(tr3('أُرسلت الدفعة لمراجعة الجودة. لن تُنشر قبل اعتمادها.',
+          'Batch submitted for quality review. It will not be published until approved.',
+          'Die Charge wurde zur Qualitätsprüfung eingereicht. Sie wird erst nach der Freigabe veröffentlicht.'));
       } catch (error) {
         console.error('Pressing batch submission failed:', error);
-        showToast(state.currentLang !== 'ar'
-          ? 'Batch submission failed. Verify your mill assignment and try again.'
-          : 'تعذر إرسال الدفعة. تحقق من تكليف المعصرة ثم أعد المحاولة.');
+        showToast(tr3('تعذر إرسال الدفعة. تحقق من تكليف المعصرة ثم أعد المحاولة.',
+          'Batch submission failed. Verify your mill assignment and try again.',
+          'Die Charge konnte nicht eingereicht werden. Bitte prüfen Sie Ihre Ölmühlen-Zuordnung und versuchen Sie es erneut.'));
       } finally {
         if (submitButton) submitButton.disabled = false;
       }
@@ -21622,7 +21670,7 @@ function setMarketplaceViewMode(mode) {
                 <span class="text-[9px] text-olive-300 block text-start font-mono">${msg.time || ''}</span>
               </div>
               <div class="w-7 h-7 rounded-full bg-stone-800 text-white flex-shrink-0 flex items-center justify-center text-[10px] font-black mt-0.5 shadow-xs">
-                ${isEn ? 'You' : 'أنت'}
+                ${tr3('أنت', 'You', 'Sie')}
               </div>
             </div>
           `);
@@ -21635,11 +21683,11 @@ function setMarketplaceViewMode(mode) {
               <div class="chat-bubble-faseela p-3.5 max-w-[85%] text-stone-800 dark:text-stone-100 space-y-2.5 shadow-xs text-start">
                 <div class="flex items-center justify-between border-b border-olive-200/50 dark:border-olive-800/50 pb-1">
                   <span class="font-black text-olive-950 dark:text-olive-300 text-xs flex items-center gap-1">
-                    <span>${isEn ? 'Faseela' : 'فسيلة'}</span>
+                    <span>${tr3('فسيلة', 'Faseela', 'Faseela')}</span>
                     <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block"></span>
                   </span>
                   <div class="flex items-center gap-1.5">
-                    <button type="button" data-click="speakFaseelaResponse(this)" data-i18n-title="chat_listen_answer" title="${isEn ? 'Listen to answer' : 'استمع للإجابة'}" class="faseela-tts-btn text-stone-400 hover:text-olive-700 dark:hover:text-olive-300 p-0.5 rounded transition-all cursor-pointer">
+                    <button type="button" data-click="speakFaseelaResponse(this)" data-i18n-title="chat_listen_answer" title="${tr3('استمع للإجابة', 'Listen to answer', 'Antwort anhören')}" class="faseela-tts-btn text-stone-400 hover:text-olive-700 dark:hover:text-olive-300 p-0.5 rounded transition-all cursor-pointer">
                       <i data-lucide="volume-2" class="w-3.5 h-3.5"></i>
                     </button>
                     <span class="text-[9px] text-stone-400 font-mono">${escapeHtml(msg.time || '')}</span>
@@ -21687,7 +21735,7 @@ function setMarketplaceViewMode(mode) {
                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block animate-pulse"></span>
               </span>
               <div class="flex items-center gap-1.5">
-                <button type="button" data-click="speakFaseelaResponse(this)" data-i18n-title="chat_listen_answer" title="${isEn ? 'Listen to Faseela' : 'استمع لصوت فسيلة'}" class="faseela-tts-btn text-stone-400 hover:text-olive-700 dark:hover:text-olive-300 p-0.5 rounded transition-all cursor-pointer">
+                <button type="button" data-click="speakFaseelaResponse(this)" data-i18n-title="chat_listen_answer" title="${tr3('استمع لصوت فسيلة', 'Listen to Faseela', 'Faseela anhören')}" class="faseela-tts-btn text-stone-400 hover:text-olive-700 dark:hover:text-olive-300 p-0.5 rounded transition-all cursor-pointer">
                   <i data-lucide="volume-2" class="w-3.5 h-3.5"></i>
                 </button>
               </div>
@@ -21831,7 +21879,7 @@ function setMarketplaceViewMode(mode) {
             errorMsg = t('voice_error_no_speech');
             break;
           case 'network':
-            errorMsg = isEn ? 'Network error. Check your connection.' : 'خطأ في الشبكة. تحقق من اتصالك بالإنترنت.';
+            errorMsg = tr3('خطأ في الشبكة. تحقق من اتصالك بالإنترنت.', 'Network error. Check your connection.', 'Netzwerkfehler. Bitte prüfen Sie Ihre Verbindung.');
             break;
           case 'aborted':
             // User cancelled — no toast needed
@@ -21871,7 +21919,7 @@ function setMarketplaceViewMode(mode) {
 
     function toggleFaseelaVoiceReplyMode() {
       if (!isSpeechSynthesisSupported()) {
-        showToast(state.currentLang !== 'ar' ? 'Audio playback is not supported in this browser' : 'تشغيل الصوت غير مدعوم في هذا المتصفح');
+        showToast(tr3('تشغيل الصوت غير مدعوم في هذا المتصفح', 'Audio playback is not supported in this browser', 'Die Audiowiedergabe wird in diesem Browser nicht unterstützt'));
         return;
       }
       state.faseelaVoiceReplyEnabled = !state.faseelaVoiceReplyEnabled;
@@ -21879,10 +21927,10 @@ function setMarketplaceViewMode(mode) {
       updateVoiceReplyButtonUI();
       const isEn = state.currentLang !== 'ar';
       if (state.faseelaVoiceReplyEnabled) {
-        showToast(isEn ? '🔊 Voice response enabled: Faseela will speak answers out loud.' : '🔊 تم تفعيل الرد الصوتي: ستتحدث فسيلة بصوتها للإجابة عن أسئلتك.');
+        showToast(tr3('🔊 تم تفعيل الرد الصوتي: ستتحدث فسيلة بصوتها للإجابة عن أسئلتك.', '🔊 Voice response enabled: Faseela will speak answers out loud.', '🔊 Sprachantwort aktiviert: Faseela liest die Antworten laut vor.'));
       } else {
         if (window.speechSynthesis) window.speechSynthesis.cancel();
-        showToast(isEn ? '🔇 Voice response turned off.' : '🔇 تم إيقاف الرد الصوتي التلقائي.');
+        showToast(tr3('🔇 تم إيقاف الرد الصوتي التلقائي.', '🔇 Voice response turned off.', '🔇 Sprachantwort ausgeschaltet.'));
       }
     }
 
@@ -21924,7 +21972,7 @@ function setMarketplaceViewMode(mode) {
 
     function speakFaseelaResponse(btn) {
       if (!isSpeechSynthesisSupported()) {
-        showToast(state.currentLang !== 'ar' ? 'Audio playback is not supported in this browser' : 'تشغيل الصوت غير مدعوم في هذا المتصفح');
+        showToast(tr3('تشغيل الصوت غير مدعوم في هذا المتصفح', 'Audio playback is not supported in this browser', 'Die Audiowiedergabe wird in diesem Browser nicht unterstützt'));
         return;
       }
 
@@ -22028,7 +22076,7 @@ function setMarketplaceViewMode(mode) {
 
       const userKey = state.currentUser ? state.currentUser.id : 'guest';
       if (!rateLimiter.checkLimit('chat_' + userKey, 8, 20000)) {
-        showToast(state.currentLang !== 'ar' ? '⚠️ Please slow down between questions.' : '⚠️ يرجى التمهل قليلاً بين الأسئلة لمنع الضغط وحماية سرعة الاستجابة.');
+        showToast(tr3('⚠️ يرجى التمهل قليلاً بين الأسئلة لمنع الضغط وحماية سرعة الاستجابة.', '⚠️ Please slow down between questions.', '⚠️ Bitte lassen Sie zwischen den Fragen etwas Zeit.'));
         return;
       }
 
@@ -22044,7 +22092,7 @@ function setMarketplaceViewMode(mode) {
             <span class="text-[9px] text-olive-300 block text-start font-mono">${timeStr}</span>
           </div>
           <div class="w-7 h-7 rounded-full bg-stone-800 text-white flex-shrink-0 flex items-center justify-center text-[10px] font-black mt-0.5 shadow-xs">
-            ${state.currentLang !== 'ar' ? 'You' : 'أنت'}
+            ${tr3('أنت', 'You', 'Sie')}
           </div>
         </div>
       `);
@@ -22085,11 +22133,11 @@ function setMarketplaceViewMode(mode) {
             <div class="chat-bubble-faseela p-3.5 max-w-[85%] text-stone-800 dark:text-stone-100 space-y-2.5 shadow-xs text-start">
               <div class="flex items-center justify-between border-b border-olive-200/50 dark:border-olive-800/50 pb-1">
                 <span class="font-black text-olive-950 dark:text-olive-300 text-xs flex items-center gap-1">
-                  <span>${state.currentLang !== 'ar' ? 'Faseela' : 'فسيلة'}</span>
+                  <span>${tr3('فسيلة', 'Faseela', 'Faseela')}</span>
                   <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block"></span>
                 </span>
                 <div class="flex items-center gap-1.5">
-                  <button type="button" data-click="speakFaseelaResponse(this)" data-i18n-title="chat_listen_answer" title="${state.currentLang !== 'ar' ? 'Listen to answer' : 'استمع للإجابة'}" class="faseela-tts-btn text-stone-400 hover:text-olive-700 dark:hover:text-olive-300 p-0.5 rounded transition-all cursor-pointer">
+                  <button type="button" data-click="speakFaseelaResponse(this)" data-i18n-title="chat_listen_answer" title="${tr3('استمع للإجابة', 'Listen to answer', 'Antwort anhören')}" class="faseela-tts-btn text-stone-400 hover:text-olive-700 dark:hover:text-olive-300 p-0.5 rounded transition-all cursor-pointer">
                     <i data-lucide="volume-2" class="w-3.5 h-3.5"></i>
                   </button>
                   <span class="text-[9px] text-stone-400 font-mono">${replyTimeStr}</span>
@@ -22246,7 +22294,7 @@ function setMarketplaceViewMode(mode) {
       if (!doc) return;
 
       document.getElementById('contract-editor-doc-id').innerText = `DOC: ${doc.id}`;
-      document.getElementById('contract-editor-status').innerText = isEn ? `Document Status: ${doc.status_en || 'Active & Standard'}` : `حالة الوثيقة: ${doc.status}`;
+      document.getElementById('contract-editor-status').innerText = tr3(`حالة الوثيقة: ${doc.status}`, `Document Status: ${doc.status_en || 'Active & Standard'}`, `Dokumentstatus: ${doc.status_en || 'Aktiv (Standard)'}`);
 
       document.getElementById('contract-edit-title-ar').value = doc.title_ar;
       document.getElementById('contract-edit-title-en').value = doc.title_en;
@@ -22305,8 +22353,8 @@ function setMarketplaceViewMode(mode) {
           </div>
 
           <div class="bg-stone-50 dark:bg-stone-900/60 p-2.5 rounded-xl border border-stone-200 dark:border-stone-800 text-[11px] grid grid-cols-2 gap-2">
-            <div><span class="text-stone-500">${isEn ? 'Jurisdiction:' : 'المرجعية:'}</span> <strong class="text-stone-800 dark:text-stone-200">${escapeHtml(jurisdiction)}</strong></div>
-            <div><span class="text-stone-500">${isEn ? 'Payment Review:' : 'الضمان:'}</span> <strong class="text-emerald-700 dark:text-emerald-400">${escapeHtml(escrow)}</strong></div>
+            <div><span class="text-stone-500">${tr3('المرجعية:', 'Jurisdiction:', 'Gerichtsstand:')}</span> <strong class="text-stone-800 dark:text-stone-200">${escapeHtml(jurisdiction)}</strong></div>
+            <div><span class="text-stone-500">${tr3('الضمان:', 'Payment Review:', 'Zahlungsprüfung:')}</span> <strong class="text-emerald-700 dark:text-emerald-400">${escapeHtml(escrow)}</strong></div>
           </div>
 
           <div class="text-xs text-stone-700 dark:text-stone-200 leading-relaxed space-y-2 py-2">
@@ -22315,12 +22363,12 @@ function setMarketplaceViewMode(mode) {
 
           <div class="pt-4 border-t-2 border-dashed border-stone-200 dark:border-stone-800 flex items-end justify-between">
             <div class="space-y-1">
-              <span class="text-[9px] text-stone-400 font-mono block">${isEn ? 'Official Signature & Seal:' : 'التوقيع والختم السيادي المعتمد:'}</span>
+              <span class="text-[9px] text-stone-400 font-mono block">${tr3('التوقيع والختم السيادي المعتمد:', 'Official Signature & Seal:', 'Offizielle Unterschrift & Siegel:')}</span>
               <div class="text-xs font-black text-purple-900 dark:text-purple-300 flex items-center gap-1.5">
                 <i data-lucide="check-check" class="w-4 h-4 text-emerald-600"></i>
-                <span>${isEn ? 'Eng. Wissam Al-Hamdoli' : 'م. وسام الحمدولي'}</span>
+                <span>${tr3('م. وسام الحمدولي', 'Eng. Wissam Al-Hamdoli', 'Ing. Wissam Al-Hamdoli')}</span>
               </div>
-              <span class="text-[9px] text-stone-500">${isEn ? 'Founder & CEO of Faseela Platform' : 'المؤسس والرئيس التنفيذي لمنصة فسيلة'}</span>
+              <span class="text-[9px] text-stone-500">${tr3('المؤسس والرئيس التنفيذي لمنصة فسيلة', 'Founder & CEO of Faseela Platform', 'Gründer & CEO der Plattform Faseela')}</span>
             </div>
             <div class="w-14 h-14 bg-white dark:bg-stone-800 p-1 rounded-xl shadow-xs border border-stone-200 dark:border-stone-700 flex items-center justify-center">
               <i data-lucide="qr-code" class="w-10 h-10 text-stone-800 dark:text-stone-200" aria-hidden="true"></i>
@@ -22361,28 +22409,28 @@ function setMarketplaceViewMode(mode) {
       } catch(e) {}
 
       playAcousticChime(750, 0.2);
-      showToast(state.currentLang !== 'ar' ? '✓ Contract and deed clauses saved and activated across the platform!' : '✓ تم اعتماد وحفظ بنود الوثيقة وتطبيقها فورياً عبر كامل المنصة!');
+      showToast(tr3('✓ تم اعتماد وحفظ بنود الوثيقة وتطبيقها فورياً عبر كامل المنصة!', '✓ Contract and deed clauses saved and activated across the platform!', '✓ Vertrags- und Dokumentklauseln gespeichert und plattformweit aktiviert!'));
       syncContractLivePreview();
     }
 
     function resetActiveContractToDefaults() {
-      showToast(state.currentLang !== 'ar' ? 'Resetting clauses to baseline sovereign defaults...' : 'جاري استعادة النص التأسيسي الافتراضي للوثيقة...');
+      showToast(tr3('جاري استعادة النص التأسيسي الافتراضي للوثيقة...', 'Resetting clauses to baseline sovereign defaults...', 'Klauseln werden auf die Standardfassung zurückgesetzt...'));
       loadSelectedContractForEditing(activeEditingContractKey);
     }
 
     function testCurrentContractLive() {
       syncContractLivePreview();
       playAcousticChime(650, 0.15);
-      showToast(state.currentLang !== 'ar' ? '✓ Live preview rendered with verified specimen signature and seal!' : '✓ تمت المعاينة الحية للوثيقة بنجاح مع مطابقة الأختام والتوقيع الرقمي!');
+      showToast(tr3('✓ تمت المعاينة الحية للوثيقة بنجاح مع مطابقة الأختام والتوقيع الرقمي!', '✓ Live preview rendered with verified specimen signature and seal!', '✓ Live-Vorschau mit Muster-Unterschrift und -Siegel erstellt!'));
     }
 
     function verifyContractDeedHash() {
       playAcousticChime(600, 0.15);
-      showToast(state.currentLang !== 'ar' ? '🔒 Cryptographic Hash: SHA-256 Validated. Integrity 100%.' : '🔒 البصمة الرقمية: تم التحقق من سلامة النص والتشفير SHA-256 بنسبة 100%.');
+      showToast(tr3('🔒 البصمة الرقمية: تم التحقق من سلامة النص والتشفير SHA-256 بنسبة 100%.', '🔒 Cryptographic Hash: SHA-256 Validated. Integrity 100%.', '🔒 Kryptografischer Hash: SHA-256 geprüft. Integrität 100%.'));
     }
 
     function printContractPreview() {
-      showToast(state.currentLang !== 'ar' ? '🖨️ Opening print dialogue for official legal document...' : '🖨️ جاري تجهيز الوثيقة الرسمية للطباعة والمراجعة الورقية...');
+      showToast(tr3('🖨️ جاري تجهيز الوثيقة الرسمية للطباعة والمراجعة الورقية...', '🖨️ Opening print dialogue for official legal document...', '🖨️ Druckdialog für das offizielle Dokument wird geöffnet...'));
       prepareAndPrint('contract-live-preview-paper');
     }
 
@@ -22404,9 +22452,9 @@ function setMarketplaceViewMode(mode) {
       // Synchronize in-memory contract definitions for live user modals
       renderLegalContractsContent();
       playAcousticChime(800, 0.25);
-      showToast(state.currentLang !== 'ar' 
-        ? '✓ Edits applied and synchronized across all investor & farmer contracts!' 
-        : '✓ تم تطبيق واعتماد التعديل بنجاح وتحديث كافة عقود الكافلين والمزارعين فورياً!');
+      showToast(tr3('✓ تم تطبيق واعتماد التعديل بنجاح وتحديث كافة عقود الكافلين والمزارعين فورياً!',
+        '✓ Edits applied and synchronized across all investor & farmer contracts!',
+        '✓ Änderungen übernommen und in allen Verträgen von Baumpaten und Landwirten synchronisiert!'));
     }
 
     function openAddNewClauseModal() {
@@ -22421,7 +22469,7 @@ function setMarketplaceViewMode(mode) {
       const title = document.getElementById('new-clause-title')?.value.trim();
       const text = document.getElementById('new-clause-text')?.value.trim();
       if (!title || !text) {
-        showToast(state.currentLang !== 'ar' ? '⚠️ Please enter both clause title and body text.' : '⚠️ يرجى إدخال عنوان المادة ونصها القانوني.');
+        showToast(tr3('⚠️ يرجى إدخال عنوان المادة ونصها القانوني.', '⚠️ Please enter both clause title and body text.', '⚠️ Bitte geben Sie Titel und Text der Klausel ein.'));
         return;
       }
       const textarea = document.getElementById('contract-edit-body-ar');
@@ -22431,7 +22479,7 @@ function setMarketplaceViewMode(mode) {
       }
       closeModal('modal-add-new-clause');
       playAcousticChime(700, 0.2);
-      showToast(state.currentLang !== 'ar' ? '✓ New clause appended to active document!' : '✓ تم إدراج المادة الجديدة بنجاح في الوثيقة وتحديث المعاينة!');
+      showToast(tr3('✓ تم إدراج المادة الجديدة بنجاح في الوثيقة وتحديث المعاينة!', '✓ New clause appended to active document!', '✓ Neue Klausel an das aktive Dokument angefügt!'));
     }
 
     function openClauseLibraryModal() {
@@ -22459,7 +22507,7 @@ function setMarketplaceViewMode(mode) {
         }
         closeModal('modal-clause-library');
         playAcousticChime(700, 0.2);
-        showToast(state.currentLang !== 'ar' ? '✓ Standard clause imported from library!' : '✓ تم استيراد وإدراج البند النموذجي من المكتبة بنجاح!');
+        showToast(tr3('✓ تم استيراد وإدراج البند النموذجي من المكتبة بنجاح!', '✓ Standard clause imported from library!', '✓ Standardklausel aus der Bibliothek übernommen!'));
       }
     }
 
@@ -22482,7 +22530,7 @@ function setMarketplaceViewMode(mode) {
       const bodyAr = document.getElementById('new-doc-body-ar')?.value.trim();
 
       if (!rawKey || !titleAr || !bodyAr) {
-        showToast(state.currentLang !== 'ar' ? '⚠️ Please fill in all required document details.' : '⚠️ يرجى ملء كافة تفاصيل وبيانات الوثيقة الجديدة.');
+        showToast(tr3('⚠️ يرجى ملء كافة تفاصيل وبيانات الوثيقة الجديدة.', '⚠️ Please fill in all required document details.', '⚠️ Bitte füllen Sie alle erforderlichen Dokumentangaben aus.'));
         return;
       }
 
@@ -22511,7 +22559,7 @@ function setMarketplaceViewMode(mode) {
       closeModal('modal-create-new-document');
       loadSelectedContractForEditing(key);
       playAcousticChime(850, 0.25);
-      showToast(state.currentLang !== 'ar' ? '✓ New sovereign document registered and active!' : '✓ تم تسجيل الوثيقة ال الجديدة واعتمادها بنجاح في المنظومة!');
+      showToast(tr3('✓ تم تسجيل الوثيقة ال الجديدة واعتمادها بنجاح في المنظومة!', '✓ New sovereign document registered and active!', '✓ Neues Dokument registriert und aktiv!'));
     }
 
     function openContractSpecimenSelectorModal() {
@@ -22528,7 +22576,7 @@ function setMarketplaceViewMode(mode) {
       closeModal('modal-specimen-selector');
       syncContractLivePreview();
       playAcousticChime(700, 0.2);
-      showToast(state.currentLang !== 'ar' ? '✓ Specimen data applied to live render!' : '✓ تم تطبيق بيانات عينة الاختبار على المعاينة الحية فورياً!');
+      showToast(tr3('✓ تم تطبيق بيانات عينة الاختبار على المعاينة الحية فورياً!', '✓ Specimen data applied to live render!', '✓ Musterdaten auf die Live-Vorschau angewendet!'));
     }
 
     function openClimateInsuranceModal() {
@@ -22539,14 +22587,14 @@ function setMarketplaceViewMode(mode) {
 
     function handleClimateInsuranceToggle(isChecked) {
       if (isChecked) {
-        showToast(state.currentLang !== 'ar' ? '🛡️ Interest in the planned climate solidarity reserve recorded (not insurance).' : '🛡️ تم تسجيل اهتمامك بصندوق التكافل المناخي (قيد الإعداد، ليس تأميناً).');
+        showToast(tr3('🛡️ تم تسجيل اهتمامك بصندوق التكافل المناخي (قيد الإعداد، ليس تأميناً).', '🛡️ Interest in the planned climate solidarity reserve recorded (not insurance).', '🛡️ Ihr Interesse an der geplanten Klima-Solidaritätsreserve wurde vermerkt (keine Versicherung).'));
       }
     }
 
     function confirmClimateInsurancePolicy() {
       closeModal('modal-climate-insurance');
       playAcousticChime(750, 0.2);
-      showToast(state.currentLang !== 'ar' ? '✓ Climate Insurance Policy issued and bound to your cadastral deeds!' : '✓ تم تسجيل اهتمامك بصندوق التكافل المناخي (قيد الإعداد).');
+      showToast(tr3('✓ تم تسجيل اهتمامك بصندوق التكافل المناخي (قيد الإعداد).', '✓ Climate Insurance Policy issued and bound to your cadastral deeds!', '✓ Ihr Interesse an der Klima-Solidaritätsreserve wurde vermerkt (in Vorbereitung).'));
     }
 
     function openCompoundingYieldModal() {
@@ -22562,7 +22610,7 @@ function setMarketplaceViewMode(mode) {
       const target = document.getElementById('select-compounding-target')?.value || 'mature_trees';
       closeModal('modal-compounding-yield');
       playAcousticChime(750, 0.2);
-      showToast(state.currentLang !== 'ar' ? '✓ Auto-Compounding Yield Engine activated successfully!' : '✓ تم تفعيل محرك إعادة الكفالة التلقائية للمحاصيل بنجاح!');
+      showToast(tr3('✓ تم تفعيل محرك إعادة الكفالة التلقائية للمحاصيل بنجاح!', '✓ Auto-Compounding Yield Engine activated successfully!', '✓ Automatische Verwendung der Ernte für neue Patenschaften aktiviert!'));
     }
 
     function openOilPassportModal(batchId) {
@@ -22572,7 +22620,7 @@ function setMarketplaceViewMode(mode) {
     }
 
     function printOilPassport() {
-      showToast(state.currentLang !== 'ar' ? '🖨️ Preparing high-resolution export label for printing...' : '🖨️ جاري تجهيز ملصق جواز السفر عالي الدقة لطباعته على عبوات التصدير...');
+      showToast(tr3('🖨️ جاري تجهيز ملصق جواز السفر عالي الدقة لطباعته على عبوات التصدير...', '🖨️ Preparing high-resolution export label for printing...', '🖨️ Hochauflösendes Export-Etikett wird für den Druck vorbereitet...'));
       prepareAndPrint('modal-oil-passport');
     }
 
@@ -22585,17 +22633,17 @@ function setMarketplaceViewMode(mode) {
     function submitInputsCreditRequest() {
       const selected = Array.from(document.querySelectorAll('input[name="farm_input_item"]:checked')).map(el => el.value);
       if (selected.length === 0) {
-        showToast(state.currentLang !== 'ar' ? '⚠️ Please select at least one agricultural input item.' : '⚠️ يرجى تحديد مادة زراعية واحدة على الأقل لطلب التوريد.');
+        showToast(tr3('⚠️ يرجى تحديد مادة زراعية واحدة على الأقل لطلب التوريد.', '⚠️ Please select at least one agricultural input item.', '⚠️ Bitte wählen Sie mindestens ein landwirtschaftliches Betriebsmittel aus.'));
         return;
       }
       closeModal('modal-inputs-credit');
       playAcousticChime(700, 0.2);
-      showToast(state.currentLang !== 'ar' ? '✓ Pre-harvest input order registered! Nearest depot will dispatch materials.' : '✓ تم تسجيل طلب توريد المستلزمات بنجاح! سيتم التواصل للتسليم من أقرب نقطة تعاونية.');
+      showToast(tr3('✓ تم تسجيل طلب توريد المستلزمات بنجاح! سيتم التواصل للتسليم من أقرب نقطة تعاونية.', '✓ Pre-harvest input order registered! Nearest depot will dispatch materials.', '✓ Bestellung der Betriebsmittel vor der Ernte erfasst! Das nächstgelegene Lager versendet die Materialien.'));
     }
 
     function openGeospatialRadarModal() {
       if (state.currentUser && state.currentUser.role !== 'admin') {
-        showToast(state.currentLang !== 'ar' ? '🔒 Radar access is restricted to Founder Office.' : '🔒 الوصول إلى الرادار الجيومكاني محصور بمكتب المؤسس والإشراف العام.');
+        showToast(tr3('🔒 الوصول إلى الرادار الجيومكاني محصور بمكتب المؤسس والإشراف العام.', '🔒 Radar access is restricted to Founder Office.', '🔒 Der Radar-Zugriff ist dem Gründerbüro vorbehalten.'));
         return;
       }
       if (typeof openModal === 'function') openModal('modal-geospatial-radar');
@@ -22744,17 +22792,17 @@ function setMarketplaceViewMode(mode) {
       if (eligibility.status === 'unauthenticated') {
         playAcousticChime(400, 0.2);
         openAuthModal();
-        showToast(isEn 
-          ? '🔒 Verification required: Please log in to view and claim your verified harvest.' 
-          : '🔒 توثيق الهوية مطلوب: يرجى تسجيل الدخول للتحقق من ملكية الحصص واستلام المحصول.');
+        showToast(tr3('🔒 توثيق الهوية مطلوب: يرجى تسجيل الدخول للتحقق من ملكية الحصص واستلام المحصول.',
+          '🔒 Verification required: Please log in to view and claim your verified harvest.',
+          '🔒 Anmeldung erforderlich: Bitte melden Sie sich an, um Ihre geprüfte Ernte anzusehen und anzufordern.'));
         return;
       }
 
       if (eligibility.status === 'no_shares' || eligibility.status === 'tree_not_owned') {
         playAcousticChime(400, 0.2);
-        showToast(isEn
-          ? '🔒 Ownership Required: Oil delivery and cashout are reserved for verified tree share owners.'
-          : '🔒 إثبات الملكية مطلوب: خيارات استلام الزيت والتسييل النقدي مخصصة فقط لمالكي الحصص الزراعية.');
+        showToast(tr3('🔒 إثبات الملكية مطلوب: خيارات استلام الزيت والتسييل النقدي مخصصة فقط لمالكي الحصص الزراعية.',
+          '🔒 Ownership Required: Oil delivery and cashout are reserved for verified tree share owners.',
+          '🔒 Patenschaft erforderlich: Ölversand und Verkaufsoption stehen nur Baumpaten mit bestätigtem Anteil zur Verfügung.'));
         navigateTo('marketplace');
         return;
       }
@@ -22773,8 +22821,8 @@ function setMarketplaceViewMode(mode) {
     function showHarvestMaturingNotice(targetTreeId = null) {
       const isEn = state.currentLang !== 'ar';
       const tree = targetTreeId ? state.trees.find(t => t.id === targetTreeId) : null;
-      const treeName = tree ? (isEn ? (tree.tree_name_en || tree.tree_name) : tree.tree_name) : (isEn ? 'Your Olive Grove' : 'أشجارك في فسيلة');
-      const season = tree ? (isEn ? (tree.harvest_season_name_en || 'October 2026') : (tree.harvest_season_name || 'تشرين الأول 2026')) : (isEn ? 'October 2026' : 'تشرين الأول 2026');
+      const treeName = tree ? (isEn ? (tree.tree_name_en || tree.tree_name) : tree.tree_name) : (tr3('أشجارك في فسيلة', 'Your Olive Grove', 'Ihre Olivenbäume'));
+      const season = tree ? (isEn ? (tree.harvest_season_name_en || tr3('تشرين الأول 2026', 'October 2026', 'Oktober 2026')) : (tree.harvest_season_name || 'تشرين الأول 2026')) : tr3('تشرين الأول 2026', 'October 2026', 'Oktober 2026');
 
       const modalHtml = `
         <div id="modal-harvest-maturing-notice" role="dialog" aria-modal="true" class="fixed inset-0 z-50 bg-stone-950/70 backdrop-blur-xs flex items-center justify-center p-4">
@@ -22785,7 +22833,7 @@ function setMarketplaceViewMode(mode) {
                   <i data-lucide="sprout" class="w-5 h-5"></i>
                 </div>
                 <div>
-                  <h3 class="text-sm font-black text-stone-900">${isEn ? 'Harvest In Active Care' : 'المحصول قيد النمو والرعاية الميدانية'}</h3>
+                  <h3 class="text-sm font-black text-stone-900">${tr3('المحصول قيد النمو والرعاية الميدانية', 'Harvest In Active Care', 'Ernte in aktiver Pflege')}</h3>
                   <p class="text-[11px] text-stone-500">${treeName}</p>
                 </div>
               </div>
@@ -22797,29 +22845,29 @@ function setMarketplaceViewMode(mode) {
             <div class="bg-amber-50/80 border border-amber-200/80 p-4 rounded-2xl text-xs space-y-2 text-amber-950">
               <div class="flex items-center gap-2 font-bold text-amber-900">
                 <i data-lucide="calendar" class="w-4 h-4 text-amber-700"></i>
-                <span>${isEn ? 'Expected Harvesting & Pressing Slot:' : 'موعد القطاف والعصر البارد المعتمد:'}</span>
+                <span>${tr3('موعد القطاف والعصر البارد المعتمد:', 'Expected Harvesting & Pressing Slot:', 'Voraussichtlicher Ernte- und Presstermin:')}</span>
               </div>
               <p class="text-[11px] text-stone-700 leading-relaxed">
-                ${isEn 
-                  ? `This olive tree is currently thriving under attentive farmer stewardship and natural irrigation. Harvesting and modern cold milling (&lt; 25°C) are scheduled for <strong>${season}</strong>.`
-                  : `هذه الشجرة تنمو حالياً ببركة الله وتخضع لبرنامج رعاية وسقاية دقيق من المزارع. موعد القطاف والعصر البارد في المعصرة المعتمدة مجدول في <strong>${season}</strong>.`}
+                ${tr3(`هذه الشجرة تنمو حالياً ببركة الله وتخضع لبرنامج رعاية وسقاية دقيق من المزارع. موعد القطاف والعصر البارد في المعصرة المعتمدة مجدول في <strong>${season}</strong>.`,
+                  `This olive tree is currently thriving under attentive farmer stewardship and natural irrigation. Harvesting and modern cold milling (&lt; 25°C) are scheduled for <strong>${season}</strong>.`,
+                  `Dieser Olivenbaum gedeiht derzeit unter sorgfältiger Pflege durch den Landwirt und mit natürlicher Bewässerung. Ernte und moderne Kaltpressung (&lt; 25°C) sind für <strong>${season}</strong> geplant.`)}
               </p>
             </div>
 
             <div class="bg-stone-50 p-3 rounded-xl border border-stone-200 text-[11px] space-y-1 text-stone-600">
-              <span class="font-bold block text-stone-800">${isEn ? 'What happens when harvest is pressed?' : 'ماذا يحدث فور اكتمال العصر؟'}</span>
-              <p>${isEn 
-                ? '1. Certified lab analysis issued (Acidity &lt; 0.35% Extra Virgin).' 
-                : '1. صدور شهادة الفحص المخبري الرسمي (حموضة أقل من 0.35% بكر ممتاز).'}</p>
-              <p>${isEn 
-                ? '2. International Delivery & Export Cashout buttons unlock automatically in your Portfolio and Chat.' 
-                : '2. تفعيل خيارات الشحن الدولي والتسييل النقدي الفوري تلقائياً في ملف كفالاتك والمحادثة.'}</p>
+              <span class="font-bold block text-stone-800">${tr3('ماذا يحدث فور اكتمال العصر؟', 'What happens when harvest is pressed?', 'Was passiert, sobald die Ernte gepresst ist?')}</span>
+              <p>${tr3('1. صدور شهادة الفحص المخبري الرسمي (حموضة أقل من 0.35% بكر ممتاز).',
+                '1. Certified lab analysis issued (Acidity &lt; 0.35% Extra Virgin).',
+                '1. Ein zertifizierter Laborbefund wird ausgestellt (Säuregehalt &lt; 0,35 %, Extra Vergine).')}</p>
+              <p>${tr3('2. تفعيل خيارات الشحن الدولي والتسييل النقدي الفوري تلقائياً في ملف كفالاتك والمحادثة.',
+                '2. International Delivery & Export Cashout buttons unlock automatically in your Portfolio and Chat.',
+                '2. Die Schaltflächen für internationalen Versand und Exportverkauf werden in Ihrer Übersicht und im Chat automatisch freigeschaltet.')}</p>
             </div>
 
             <div class="pt-2 flex justify-end gap-2">
               <button data-click="closeHarvestMaturingNotice(); navigateTo('dashboard');" class="w-full bg-olive-800 hover:bg-olive-900 text-white py-2.5 rounded-xl font-bold text-xs shadow-sm transition-all flex items-center justify-center gap-1.5 cursor-pointer">
                 <i data-lucide="layout-dashboard" class="w-3.5 h-3.5"></i>
-                <span>${isEn ? 'View Grove in Portfolio' : 'متابعة الشجرة في لوحة التحكم'}</span>
+                <span>${tr3('متابعة الشجرة في لوحة التحكم', 'View Grove in Portfolio', 'Baum in Ihrer Übersicht ansehen')}</span>
               </button>
             </div>
           </div>
@@ -22848,7 +22896,7 @@ function setMarketplaceViewMode(mode) {
       const investorName = state.currentUser ? (isEn ? (state.currentUser.name_en || state.currentUser.name) : state.currentUser.name) : '';
       const userEl = document.getElementById('harvest-verified-user-name');
       if (userEl) {
-        userEl.innerText = isEn ? `Verified Sponsor: ${investorName}` : `الكافل المعتمد: ${investorName}`;
+        userEl.innerText = tr3(`الكافل المعتمد: ${investorName}`, `Verified Sponsor: ${investorName}`, `Bestätigter Baumpate: ${investorName}`);
       }
 
       let primaryTree = null;
@@ -22869,13 +22917,13 @@ function setMarketplaceViewMode(mode) {
 
       const batchEl = document.getElementById('harvest-verified-batch-pill');
       if (batchEl) {
-        batchEl.innerText = `${isEn ? 'Batch:' : 'دفعة:'} ${batchSerial}`;
+        batchEl.innerText = `${tr3('دفعة:', 'Batch:', 'Charge:')} ${batchSerial}`;
       }
 
       const treeNameEl = document.getElementById('harvest-verified-tree-name');
       if (treeNameEl) {
         if (eligibility.readyShares.length > 1 && !targetTreeId) {
-          treeNameEl.innerText = isEn ? `${eligibility.readyShares.length} Trees (Certified Pool)` : `${eligibility.readyShares.length} أشجار (محصول مجمع)`;
+          treeNameEl.innerText = tr3(`${eligibility.readyShares.length} أشجار (محصول مجمع)`, `${eligibility.readyShares.length} Trees (Certified Pool)`, `${eligibility.readyShares.length} Bäume (zertifizierte Sammelernte)`);
         } else if (primaryTree) {
           treeNameEl.innerText = isEn ? (primaryTree.tree_name_en || primaryTree.tree_name) : primaryTree.tree_name;
         }
@@ -22883,21 +22931,21 @@ function setMarketplaceViewMode(mode) {
 
       const litersEl = document.getElementById('harvest-verified-liters-text');
       if (litersEl) {
-        litersEl.innerText = isEn ? `~ ${totalLiters.toFixed(1)} Liters EVOO` : `~ ${totalLiters.toFixed(1)} لتر زيت صافي`;
+        litersEl.innerText = tr3(`~ ${totalLiters.toFixed(1)} لتر زيت صافي`, `~ ${totalLiters.toFixed(1)} Liters EVOO`, `~ ${totalLiters.toFixed(1)} Liter natives Olivenöl extra`);
       }
 
       const qualityEl = document.getElementById('harvest-verified-quality-text');
       if (qualityEl) {
-        qualityEl.innerText = isEn ? `Acidity ${acidity} (Super Extra Virgin)` : `حموضة ${acidity} بكر ممتاز`;
+        qualityEl.innerText = tr3(`حموضة ${acidity} بكر ممتاز`, `Acidity ${acidity} (Super Extra Virgin)`, `Säuregehalt ${acidity} (Extra Vergine, Spitzenqualität)`);
       }
 
       const cashDescEl = document.getElementById('harvest-cash-calc-desc');
       if (cashDescEl) {
         const netUsd = (totalLiters * 9.50).toFixed(2);
         const netSyp = Math.round(netUsd * 15000).toLocaleString();
-        cashDescEl.innerHTML = isEn
-          ? `On request, Faseela can offer your full ready allocation (<strong>${totalLiters.toFixed(1)} Liters</strong>) to certified olive oil exporters at wholesale export price of <strong>$9.50/L</strong>, totaling <strong>$${netUsd}</strong> (~ ${netSyp} SYP) deposited directly.`
-          : `يمكن للمنصة، بناءً على طلبك، عرض كامل حصتك المعصورة الجاهزة (<strong>${totalLiters.toFixed(1)} لتر</strong>) لشركات التصدير المعتمدة بسعر <strong>$9.50 للتر</strong> بإجمالي صافي <strong>$${netUsd}</strong> (ما يعادل ~ <strong>${netSyp} ليرة سورية</strong>) مع إيداع مباشر.`;
+        cashDescEl.innerHTML = tr3(`يمكن للمنصة، بناءً على طلبك، عرض كامل حصتك المعصورة الجاهزة (<strong>${totalLiters.toFixed(1)} لتر</strong>) لشركات التصدير المعتمدة بسعر <strong>$9.50 للتر</strong> بإجمالي صافي <strong>$${netUsd}</strong> (ما يعادل ~ <strong>${netSyp} ليرة سورية</strong>) مع إيداع مباشر.`,
+          `On request, Faseela can offer your full ready allocation (<strong>${totalLiters.toFixed(1)} Liters</strong>) to certified olive oil exporters at wholesale export price of <strong>$9.50/L</strong>, totaling <strong>$${netUsd}</strong> (~ ${netSyp} SYP) deposited directly.`,
+          `Auf Wunsch kann Faseela Ihre gesamte verfügbare Zuteilung (<strong>${totalLiters.toFixed(1)} Liter</strong>) zertifizierten Olivenöl-Exporteuren zum Großhandels-Exportpreis von <strong>$9.50/L</strong> anbieten; der Gesamtbetrag von <strong>$${netUsd}</strong> (~ ${netSyp} SYP) wird Ihnen direkt überwiesen.`);
       }
 
       lucide.createIcons();
@@ -22961,7 +23009,7 @@ function setMarketplaceViewMode(mode) {
     function submitHarvestOption() {
       const eligibility = getHarvestEligibility();
       if (!eligibility.canClaim) {
-        showToast(state.currentLang !== 'ar' ? 'Unauthorized: No ready harvest available to claim.' : 'غير مصرح: لا يوجد محصول معصور جاهز للاستلام حالياً.');
+        showToast(tr3('غير مصرح: لا يوجد محصول معصور جاهز للاستلام حالياً.', 'Unauthorized: No ready harvest available to claim.', 'Nicht berechtigt: Derzeit ist keine abholbereite Ernte verfügbar.'));
         closeModal('modal-order-oil');
         return;
       }
@@ -23023,9 +23071,9 @@ function setMarketplaceViewMode(mode) {
       renderDashboard();
       if (state.currentPage === 'mill-portal') renderMillPortal();
 
-      const msg = isEn
-        ? (isCash ? `Export cash liquidation of ${liters}L confirmed! Net payout will be disbursed to your account upon bank verification.` : `EVOO delivery order for ${liters}L scheduled! Tracking code FAS-SYR-2026-8891 assigned.`)
-        : (isCash ? `تم تأكيد تسييل ${liters} لتر كاش بسعر التصدير! سيتم تحويل المردود الصافي لحسابك بعد المطابقة المصرفية.` : `تم تأكيد طلب شحن ${liters} لتر زيت بكر ممتاز! رقم بوليصة التتبع المعتمدة: FAS-SYR-2026-8891`);
+      const msg = isCash
+        ? tr3(`تم تأكيد تسييل ${liters} لتر كاش بسعر التصدير! سيتم تحويل المردود الصافي لحسابك بعد المطابقة المصرفية.`, `Export cash liquidation of ${liters}L confirmed! Net payout will be disbursed to your account upon bank verification.`, `Auszahlung für ${liters} L zum Exportpreis bestätigt! Der Nettobetrag wird nach Prüfung durch die Bank auf Ihr Konto überwiesen.`)
+        : tr3(`تم تأكيد طلب شحن ${liters} لتر زيت بكر ممتاز! رقم بوليصة التتبع المعتمدة: FAS-SYR-2026-8891`, `EVOO delivery order for ${liters}L scheduled! Tracking code FAS-SYR-2026-8891 assigned.`, `Lieferung von ${liters} L nativem Olivenöl extra eingeplant! Sendungsnummer FAS-SYR-2026-8891 zugewiesen.`);
       showToast(msg);
     }
 
@@ -23124,7 +23172,7 @@ function setMarketplaceViewMode(mode) {
         if (playbackBar) playbackBar.classList.remove('hidden');
 
         const durEl = document.getElementById('voice-recorded-duration');
-        if (durEl) durEl.innerText = `${timerDisp ? timerDisp.innerText : '0:18'} ${state.currentLang !== 'ar' ? 'sec' : 'ثانية'}`;
+        if (durEl) durEl.innerText = `${timerDisp ? timerDisp.innerText : '0:18'} ${tr3('ثانية', 'sec', 'Sek.')}`;
 
       } else {
         // Start recording
@@ -23204,12 +23252,12 @@ function setMarketplaceViewMode(mode) {
 
       if (playbackBar) playbackBar.classList.add('hidden');
       if (timerDisp) timerDisp.innerText = '00:00';
-      if (statusTxt) statusTxt.innerText = state.currentLang !== 'ar' ? 'Tap the microphone and speak naturally' : 'اضغط على الميكروفون وتحدث بحرية';
+      if (statusTxt) statusTxt.innerText = tr3('اضغط على الميكروفون وتحدث بحرية', 'Tap the microphone and speak naturally', 'Tippen Sie auf das Mikrofon und sprechen Sie ganz natürlich');
       if (badge) badge.classList.add('hidden');
       if (notesEl) notesEl.value = '';
       recordedAudioBlobUrl = null;
       realAudioChunks = [];
-      showToast(state.currentLang !== 'ar' ? 'Ready to record again' : 'جاهز لإعادة التسجيل الصوتي');
+      showToast(tr3('جاهز لإعادة التسجيل الصوتي', 'Ready to record again', 'Bereit für eine neue Aufnahme'));
     }
 
   
@@ -23511,18 +23559,18 @@ function setMarketplaceViewMode(mode) {
       const data = syrianGrovesData[regionKey] || syrianGrovesData['tartus'];
       const isEn = state.currentLang !== 'ar';
 
-      const name = isEn ? data.name_en : data.name;
-      const badge = isEn ? data.badge_en : data.badge;
-      const cultivar = isEn ? data.cultivar_en : data.cultivar;
-      const rainfall = isEn ? data.rainfall_en : data.rainfall;
-      const soil = isEn ? data.soil_en : data.soil;
-      const altitude = isEn ? data.altitude_en : data.altitude;
+      const name = loc(data, 'name');
+      const badge = loc(data, 'badge');
+      const cultivar = loc(data, 'cultivar');
+      const rainfall = loc(data, 'rainfall');
+      const soil = loc(data, 'soil');
+      const altitude = loc(data, 'altitude');
       // Count of trees really listed for sponsorship in this governorate (no invented counts, acidity or mill).
       const listedCount = state.catalogState === 'ready'
         ? catalogTrees().filter(tr => mapRegionCatalogNames(regionKey).includes(tr.region)).length
         : '–';
       const L3 = (ar, en, de) => state.currentLang === 'ar' ? ar : (state.currentLang === 'de' ? de : en);
-      const desc = isEn ? data.description_en : data.description;
+      const desc = loc(data, 'description');
 
       container.innerHTML = `
         <div class="space-y-6">
@@ -23548,15 +23596,15 @@ function setMarketplaceViewMode(mode) {
             </div>
 
             <div class="bg-stone-50 p-3.5 rounded-2xl border border-stone-200 text-start">
-              <span class="text-[10px] font-bold text-stone-500 block">${isEn ? 'Rainfall' : 'الهطول السنوي'}</span>
+              <span class="text-[10px] font-bold text-stone-500 block">${tr3('الهطول السنوي', 'Rainfall', 'Niederschlag')}</span>
               <span class="text-base font-black text-stone-900 mt-0.5 block">${rainfall.split('/')[0].trim()}</span>
-              <span class="text-[10px] text-stone-500">${isEn ? 'Natural Irrigation' : 'ري طبيعي موسمي'}</span>
+              <span class="text-[10px] text-stone-500">${tr3('ري طبيعي موسمي', 'Natural Irrigation', 'Natürliche Bewässerung')}</span>
             </div>
 
             <div class="bg-stone-50 p-3.5 rounded-2xl border border-stone-200 text-start">
-              <span class="text-[10px] font-bold text-stone-500 block">${isEn ? 'Cultivar' : 'الصنف السائد'}</span>
+              <span class="text-[10px] font-bold text-stone-500 block">${tr3('الصنف السائد', 'Cultivar', 'Sorte')}</span>
               <span class="text-xs font-black text-olive-900 mt-1 block truncate">${cultivar.split('•')[0].trim()}</span>
-              <span class="text-[10px] text-stone-500">${isEn ? 'Heritage Origin' : 'أصل تاريخي أصيل'}</span>
+              <span class="text-[10px] text-stone-500">${tr3('أصل تاريخي أصيل', 'Heritage Origin', 'Traditionelle Herkunft')}</span>
             </div>
           </div>
 
@@ -23564,7 +23612,7 @@ function setMarketplaceViewMode(mode) {
           <div class="bg-amber-50/60 p-4 rounded-2xl border border-amber-200/80 text-start space-y-1.5">
             <div class="flex items-center gap-2 text-xs font-black text-amber-950">
               <i data-lucide="layers" class="w-4 h-4 text-amber-700"></i>
-              <span>${isEn ? 'Soil Geology & Micro-Climate:' : 'جيولوجيا التربة والمناخ المصغر:'}</span>
+              <span>${tr3('جيولوجيا التربة والمناخ المصغر:', 'Soil Geology & Micro-Climate:', 'Bodengeologie & Mikroklima:')}</span>
               <span class="font-normal text-stone-700">${soil}</span>
             </div>
             <p class="text-xs text-stone-600 leading-relaxed">${desc}</p>
@@ -23577,7 +23625,7 @@ function setMarketplaceViewMode(mode) {
               <span>${L3('كفالة حصة من المحصول، وتصدر الشهادة بعد تأكيد التحويل البنكي', 'Sponsor a harvest share; your certificate is issued once your bank transfer is confirmed', 'Patenschaft für einen Ernteanteil; das Zertifikat wird nach Bestätigung Ihrer Überweisung ausgestellt')}</span>
             </div>
             <button data-click="filterMarketplaceByRegion('${regionKey}')" class="bg-olive-800 hover:bg-olive-900 text-white px-5 py-2.5 rounded-xl font-black text-xs flex items-center gap-2 shadow-sm transition-all">
-              <span>${isEn ? 'Browse Trees in this Region' : 'عرض أشجار هذه المحافظة في السوق'}</span>
+              <span>${tr3('عرض أشجار هذه المحافظة في السوق', 'Browse Trees in this Region', 'Bäume dieser Region ansehen')}</span>
               <i data-lucide="arrow-left" class="w-4 h-4 rtl:rotate-0 ltr:rotate-180"></i>
             </button>
           </div>
@@ -23840,7 +23888,7 @@ function setMarketplaceViewMode(mode) {
     // Enterprise Snapshot Export & Restore Suite
     function exportPlatformFullSnapshot() {
       if (!state.currentUser || state.currentUser.role !== 'admin') {
-        showToast(state.currentLang !== 'ar' ? 'Unauthorized: Founder root clearance required' : 'غير مصرح: يتطلب صلاحيات المدير العام');
+        showToast(tr3('غير مصرح: يتطلب صلاحيات المدير العام', 'Unauthorized: Founder root clearance required', 'Nicht berechtigt: Gründer-Berechtigung erforderlich'));
         return;
       }
 
@@ -23879,12 +23927,12 @@ function setMarketplaceViewMode(mode) {
       downloadAnchor.remove();
 
       playAcousticChime(720, 0.2);
-      showToast(state.currentLang !== 'ar' ? 'Full platform state snapshot exported successfully' : 'تم تصدير اللقطة الاحتياطية الكاملة للمنظومة بنجاح');
+      showToast(tr3('تم تصدير اللقطة الاحتياطية الكاملة للمنظومة بنجاح', 'Full platform state snapshot exported successfully', 'Vollständiger Plattform-Snapshot erfolgreich exportiert'));
     }
 
     function openPlatformRestoreModal() {
       if (!state.currentUser || state.currentUser.role !== 'admin') {
-        showToast(state.currentLang !== 'ar' ? 'Unauthorized: Founder root clearance required' : 'غير مصرح: يتطلب صلاحيات المدير العام');
+        showToast(tr3('غير مصرح: يتطلب صلاحيات المدير العام', 'Unauthorized: Founder root clearance required', 'Nicht berechtigt: Gründer-Berechtigung erforderlich'));
         return;
       }
 
@@ -23897,7 +23945,7 @@ function setMarketplaceViewMode(mode) {
     function submitPlatformRestore(e) {
       if (e && e.preventDefault) e.preventDefault();
       if (!state.currentUser || state.currentUser.role !== 'admin') {
-        showToast(state.currentLang !== 'ar' ? 'Unauthorized: Founder root clearance required' : 'غير مصرح: يتطلب صلاحيات المدير العام');
+        showToast(tr3('غير مصرح: يتطلب صلاحيات المدير العام', 'Unauthorized: Founder root clearance required', 'Nicht berechtigt: Gründer-Berechtigung erforderlich'));
         return;
       }
       const input = document.getElementById('fndr-restore-json-input');
@@ -23952,11 +24000,12 @@ function setMarketplaceViewMode(mode) {
         if (typeof renderFounderFleet === 'function') renderFounderFleet();
 
         playAcousticChime(760, 0.25);
-        showToast(state.currentLang !== 'ar' 
-          ? 'Platform state snapshot restored and verified successfully' 
-          : 'تمت استعادة اللقطة الاحتياطية للمنظومة والتحقق من صحتها بنجاح');
+        showToast(tr3(
+          'تمت استعادة اللقطة الاحتياطية للمنظومة والتحقق من صحتها بنجاح',
+          'Platform state snapshot restored and verified successfully',
+          'Plattform-Snapshot erfolgreich wiederhergestellt und geprüft'));
       } catch(err) {
-        showToast(state.currentLang !== 'ar' ? `Failed to restore snapshot: ${err.message}` : `فشلت استعادة اللقطة: ${err.message}`);
+        showToast(tr3(`فشلت استعادة اللقطة: ${err.message}`, `Failed to restore snapshot: ${err.message}`, `Wiederherstellung des Snapshots fehlgeschlagen: ${err.message}`));
       }
     }
 
@@ -23966,10 +24015,10 @@ function setMarketplaceViewMode(mode) {
 
     function resetPlatformDemoData() {
       if (!state.currentUser || state.currentUser.role !== 'admin') {
-        showToast(state.currentLang !== 'ar' ? 'Unauthorized: Founder root clearance required' : 'غير مصرح: يتطلب صلاحيات المدير العام');
+        showToast(tr3('غير مصرح: يتطلب صلاحيات المدير العام', 'Unauthorized: Founder root clearance required', 'Nicht berechtigt: Gründer-Berechtigung erforderlich'));
         return;
       }
-      if (confirm(state.currentLang !== 'ar' ? 'Reset all demo data to initial seed state?' : 'هل تود استعادة البيانات التجريبية الأولية وإعادة ضبط التغييرات؟')) {
+      if (confirm(tr3('هل تود استعادة البيانات التجريبية الأولية وإعادة ضبط التغييرات؟', 'Reset all demo data to initial seed state?', 'Alle Demodaten auf den Ausgangszustand zurücksetzen?'))) {
         const keys = [
           'faseela_trees_data', 'faseela_featured_season_tree_id', 'faseela_user_shares', 'faseela_mill_batches', 'faseela_transactions',
           'faseela_farmer_wallet', 'faseela_farmer_payouts', 'faseela_emergency_alerts', 'faseela_users',
@@ -24195,12 +24244,12 @@ function setMarketplaceViewMode(mode) {
       if (!file) return;
 
       if (!file.type.startsWith('image/')) {
-        showToast(state.currentLang !== 'ar' ? '⚠️ Please select a valid image file (JPG, PNG, WebP).' : '⚠️ يرجى اختيار ملف صورة صالح (JPG, PNG, WebP).');
+        showToast(tr3('⚠️ يرجى اختيار ملف صورة صالح (JPG, PNG, WebP).', '⚠️ Please select a valid image file (JPG, PNG, WebP).', '⚠️ Bitte wählen Sie eine gültige Bilddatei (JPG, PNG, WebP).'));
         return;
       }
 
       if (file.size > 5 * 1024 * 1024) {
-        showToast(state.currentLang !== 'ar' ? '⚠️ Image file size exceeds 5MB limit.' : '⚠️ حجم الصورة يتجاوز الحد المسموح (5 ميغابايت).');
+        showToast(tr3('⚠️ حجم الصورة يتجاوز الحد المسموح (5 ميغابايت).', '⚠️ Image file size exceeds 5MB limit.', '⚠️ Die Bilddatei ist größer als 5 MB.'));
         return;
       }
 
@@ -24208,7 +24257,7 @@ function setMarketplaceViewMode(mode) {
       reader.onload = function(e) {
         const dataUrl = e.target.result;
         setTreeActiveImage(dataUrl, mode);
-        showToast(state.currentLang !== 'ar' ? '📸 Image uploaded and preview updated!' : '📸 تم رفع الصورة بنجاح وتحديث المعاينة اللحظية!');
+        showToast(tr3('📸 تم رفع الصورة بنجاح وتحديث المعاينة اللحظية!', '📸 Image uploaded and preview updated!', '📸 Bild hochgeladen und Vorschau aktualisiert!'));
         playAcousticChime(700, 0.2);
       };
       reader.readAsDataURL(file);
@@ -24318,12 +24367,12 @@ function setMarketplaceViewMode(mode) {
 
       const landTitle = document.getElementById('hero-feat-land-title');
       if (landTitle) {
-        landTitle.textContent = isEn ? `Tree + ${landSqm} m² Cadastral Land Package` : `باقة الشجرة + ${landSqm} م² أرض طابو زراعي`;
+        landTitle.textContent = tr3(`باقة الشجرة + ${landSqm} م² أرض طابو زراعي`, `Tree + ${landSqm} m² Cadastral Land Package`, `Paket: Baum + ${landSqm} m² Agrarfläche`);
       }
 
       const landBadge = document.getElementById('hero-feat-land-badge');
       if (landBadge) {
-        landBadge.textContent = isEn ? `+$${landPrice} only` : `+$${landPrice} فقط`;
+        landBadge.textContent = tr3(`+$${landPrice} فقط`, `+$${landPrice} only`, `nur +$${landPrice}`);
       }
 
       const btnView = document.getElementById('hero-feat-btn-view');
@@ -24344,19 +24393,19 @@ function setMarketplaceViewMode(mode) {
       // STRICT ZERO-BACKDOOR RBAC VALIDATION
       if (!state.currentUser || state.currentUser.role !== 'admin') {
         const isEn = state.currentLang !== 'ar';
-        showToast(isEn ? '⛔ Unauthorized: Founder root clearance required to change featured season tree' : '⛔ غير مصرح: يتطلب صلاحيات المؤسس والمدير العام التنفيذي لتعيين شجرة الموسم');
+        showToast(tr3('⛔ غير مصرح: يتطلب صلاحيات المؤسس والمدير العام التنفيذي لتعيين شجرة الموسم', '⛔ Unauthorized: Founder root clearance required to change featured season tree', '⛔ Nicht berechtigt: Zum Ändern des Saisonbaums ist eine Gründer-Berechtigung erforderlich'));
         return;
       }
 
       // Input Sanitization & Tree Existence Verification
       if (!treeId || typeof treeId !== 'string' || !/^[a-zA-Z0-9_-]{1,64}$/.test(treeId)) {
-        showToast(state.currentLang !== 'ar' ? '⚠️ Invalid tree identifier specified' : '⚠️ معرف الشجرة غير صالح');
+        showToast(tr3('⚠️ معرف الشجرة غير صالح', '⚠️ Invalid tree identifier specified', '⚠️ Ungültige Baumkennung angegeben'));
         return;
       }
 
       const targetTree = state.trees.find(t => t.id === treeId);
       if (!targetTree) {
-        showToast(state.currentLang !== 'ar' ? '⚠️ Target tree not found in registry' : '⚠️ لم يتم العثور على الشجرة المطلوبة في السجل');
+        showToast(tr3('⚠️ لم يتم العثور على الشجرة المطلوبة في السجل', '⚠️ Target tree not found in registry', '⚠️ Gesuchter Baum nicht im Verzeichnis gefunden'));
         return;
       }
 
@@ -24368,13 +24417,13 @@ function setMarketplaceViewMode(mode) {
 
       const isEn = state.currentLang !== 'ar';
       const treeName = isEn ? (targetTree.tree_name_en || targetTree.tree_name) : targetTree.tree_name;
-      showToast(isEn ? `⭐ "${treeName}" is now the Featured Season Tree on the Home Page!` : `⭐ تم تعيين "${treeName}" بنجاح كشجرة الموسم المميزة في الصفحة الرئيسية!`);
+      showToast(tr3(`⭐ تم تعيين "${treeName}" بنجاح كشجرة الموسم المميزة في الصفحة الرئيسية!`, `⭐ "${treeName}" is now the Featured Season Tree on the Home Page!`, `⭐ „${treeName}“ ist jetzt der Saisonbaum auf der Startseite!`));
       playAcousticChime(850, 0.25);
     }
 
     function openFounderEditTreeModal(treeId) {
       if (!state.currentUser || state.currentUser.role !== 'admin') {
-        showToast(state.currentLang !== 'ar' ? 'Unauthorized: Founder root clearance required' : 'غير مصرح: يتطلب صلاحيات المدير العام');
+        showToast(tr3('غير مصرح: يتطلب صلاحيات المدير العام', 'Unauthorized: Founder root clearance required', 'Nicht berechtigt: Gründer-Berechtigung erforderlich'));
         return;
       }
 
@@ -24406,7 +24455,7 @@ function setMarketplaceViewMode(mode) {
 
     function saveFounderTreeEdits() {
       if (!state.currentUser || state.currentUser.role !== 'admin') {
-        showToast(state.currentLang !== 'ar' ? 'Unauthorized: Founder root clearance required' : 'غير مصرح: يتطلب صلاحيات المدير العام');
+        showToast(tr3('غير مصرح: يتطلب صلاحيات المدير العام', 'Unauthorized: Founder root clearance required', 'Nicht berechtigt: Gründer-Berechtigung erforderlich'));
         return;
       }
 
@@ -24465,7 +24514,7 @@ function setMarketplaceViewMode(mode) {
 
       savePlatformState();
       closeModal('modal-fndr-edit-tree');
-      showToast(isEn ? "✅ Tree metadata, pricing & photo updated successfully across all views." : "✅ تم تحديث بيانات وتسعير وصورة الشجرة بنجاح في كافة واجهات المنصة.");
+      showToast(tr3("✅ تم تحديث بيانات وتسعير وصورة الشجرة بنجاح في كافة واجهات المنصة.", "✅ Tree metadata, pricing & photo updated successfully across all views.", "✅ Baumdaten, Preise und Foto in allen Ansichten erfolgreich aktualisiert."));
       playAcousticChime(750, 0.2);
 
       renderFounderFleet('mature');
@@ -24478,7 +24527,7 @@ function setMarketplaceViewMode(mode) {
 
     function openFounderAddTreeModal() {
       if (!state.currentUser || state.currentUser.role !== 'admin') {
-        showToast(state.currentLang !== 'ar' ? 'Unauthorized: Founder root clearance required' : 'غير مصرح: يتطلب صلاحيات المدير العام');
+        showToast(tr3('غير مصرح: يتطلب صلاحيات المدير العام', 'Unauthorized: Founder root clearance required', 'Nicht berechtigt: Gründer-Berechtigung erforderlich'));
         return;
       }
 
@@ -24513,7 +24562,7 @@ function setMarketplaceViewMode(mode) {
 
     function submitFounderNewTree() {
       if (!state.currentUser || state.currentUser.role !== 'admin') {
-        showToast(state.currentLang !== 'ar' ? 'Unauthorized: Founder root clearance required' : 'غير مصرح: يتطلب صلاحيات المدير العام');
+        showToast(tr3('غير مصرح: يتطلب صلاحيات المدير العام', 'Unauthorized: Founder root clearance required', 'Nicht berechtigt: Gründer-Berechtigung erforderlich'));
         return;
       }
 
@@ -24521,7 +24570,7 @@ function setMarketplaceViewMode(mode) {
       const nameAr = document.getElementById('fndr-add-tree-name-ar').value.trim();
       const nameEn = document.getElementById('fndr-add-tree-name-en').value.trim() || nameAr;
       if (!nameAr) {
-        showToast(isEn ? "⚠️ Please enter tree name" : "⚠️ يرجى إدخال اسم الشجرة");
+        showToast(tr3("⚠️ يرجى إدخال اسم الشجرة", "⚠️ Please enter tree name", "⚠️ Bitte geben Sie einen Baumnamen ein"));
         return;
       }
 
@@ -24601,7 +24650,7 @@ function setMarketplaceViewMode(mode) {
       state.trees.push(newTree);
       savePlatformState();
       closeModal('modal-fndr-add-tree');
-      showToast(isEn ? `🎉 New tree "${nameEn}" with photo added to fleet and marketplace!` : `🎉 تم إدراج الشجرة "${nameAr}" بصورتها في الأسطول والسوق الزراعي بنجاح!`);
+      showToast(tr3(`🎉 تم إدراج الشجرة "${nameAr}" بصورتها في الأسطول والسوق الزراعي بنجاح!`, `🎉 New tree "${nameEn}" with photo added to fleet and marketplace!`, `🎉 Neuer Baum „${nameEn}“ mit Foto zum Baumbestand und Marktplatz hinzugefügt!`));
       playAcousticChime(850, 0.25);
 
       renderFounderFleet('mature');
@@ -24639,8 +24688,8 @@ function setMarketplaceViewMode(mode) {
       const statPendingCnt = document.getElementById('fndr-fin-stat-pending-count');
       const statApprovedAmt = document.getElementById('fndr-fin-stat-approved-amount');
 
-      if (statPendingAmt) statPendingAmt.innerText = `${pendingSumSyp.toLocaleString()} ${isEn ? 'SYP' : 'ل.س'}`;
-      if (statPendingCnt) statPendingCnt.innerText = `${pendingCount} ${isEn ? 'requests pending clearance' : 'طلبات بانتظار الاعتماد'}`;
+      if (statPendingAmt) statPendingAmt.innerText = `${pendingSumSyp.toLocaleString()} ${tr3('ل.س', 'SYP', 'SYP')}`;
+      if (statPendingCnt) statPendingCnt.innerText = `${pendingCount} ${tr3('طلبات بانتظار الاعتماد', 'requests pending clearance', 'Anfragen warten auf Freigabe')}`;
       if (statApprovedAmt) statApprovedAmt.innerText = `$${approvedSumUsd.toFixed(2)}`;
 
       if (badgeEl) {
@@ -24673,7 +24722,7 @@ function setMarketplaceViewMode(mode) {
         tbody.innerHTML = `
           <tr>
             <td colspan="7" class="py-8 text-center text-stone-400 font-bold">
-              ${isEn ? 'No requests matching current criteria' : 'لا توجد معاملات مطابقة للمعايير المحددة'}
+              ${tr3('لا توجد معاملات مطابقة للمعايير المحددة', 'No requests matching current criteria', 'Keine Anfragen entsprechen den aktuellen Kriterien')}
             </td>
           </tr>
         `;
@@ -24702,7 +24751,7 @@ function setMarketplaceViewMode(mode) {
               <span class="px-2 py-0.5 rounded-md bg-stone-100 dark:bg-stone-800 text-[10.5px]">${escapeHtml(typeLbl)}</span>
             </td>
             <td class="py-3 px-4 font-mono font-black text-emerald-600 dark:text-emerald-400">
-              ${item.amount_syp.toLocaleString()} ${isEn ? 'SYP' : 'ل.س'}
+              ${item.amount_syp.toLocaleString()} ${tr3('ل.س', 'SYP', 'SYP')}
               <span class="block text-[10px] text-stone-400 font-normal">($${item.amount_usd.toFixed(2)})</span>
             </td>
             <td class="py-3 px-4 text-[11px] font-medium text-stone-600 dark:text-stone-400">${escapeHtml(item.channel)}</td>
@@ -24711,19 +24760,19 @@ function setMarketplaceViewMode(mode) {
               ${isPending ? `
                 <div class="flex items-center justify-center gap-1.5">
                   <button type="button" data-click="approveFinancialRequest('${item.id}')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-2.5 py-1 rounded-lg text-[11px] font-black transition-all cursor-pointer shadow-2xs">
-                    ${isEn ? 'Approve' : 'اعتماد وصرف'}
+                    ${tr3('اعتماد وصرف', 'Approve', 'Freigeben')}
                   </button>
                   <button type="button" data-click="rejectFinancialRequest('${item.id}')" class="bg-red-100 dark:bg-red-950 text-red-700 dark:text-red-300 hover:bg-red-200 px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all cursor-pointer">
-                    ${isEn ? 'Reject' : 'رفض'}
+                    ${tr3('رفض', 'Reject', 'Ablehnen')}
                   </button>
-                  <button type="button" data-click="inspectFinancialRequest('${item.id}')" class="bg-stone-100 dark:bg-stone-800 hover:bg-stone-200 text-stone-600 dark:text-stone-300 p-1 rounded-lg text-[11px] font-bold transition-all cursor-pointer" title="معاينة الملف التدقيقي">
+                  <button type="button" data-click="inspectFinancialRequest('${item.id}')" class="bg-stone-100 dark:bg-stone-800 hover:bg-stone-200 text-stone-600 dark:text-stone-300 p-1 rounded-lg text-[11px] font-bold transition-all cursor-pointer" title="${tr3('معاينة الملف التدقيقي', 'Inspect audit file', 'Prüfakte ansehen')}">
                     <i data-lucide="eye" class="w-3.5 h-3.5"></i>
                   </button>
                 </div>
               ` : `
                 <span class="inline-flex items-center gap-1 text-[10px] font-black px-2.5 py-1 rounded-full ${isApproved ? 'bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300' : 'bg-red-100 dark:bg-red-950 text-red-800 dark:text-red-300'}">
                   <i data-lucide="${isApproved ? 'check-circle' : 'x-circle'}" class="w-3 h-3"></i>
-                  <span>${isApproved ? (isEn ? 'Disbursed' : 'تم الصرف والاعتماد') : (isEn ? 'Rejected' : 'مرفوض')}</span>
+                  <span>${isApproved ? tr3('تم الصرف والاعتماد', 'Disbursed', 'Ausgezahlt') : tr3('مرفوض', 'Rejected', 'Abgelehnt')}</span>
                 </span>
               `}
             </td>
@@ -24743,7 +24792,7 @@ function setMarketplaceViewMode(mode) {
 
     function toggleP2PCircuitBreaker() {
       if (!state.currentUser || state.currentUser.role !== 'admin') {
-        showToast(state.currentLang !== 'ar' ? 'Unauthorized: Founder root clearance required' : 'غير مصرح: يتطلب صلاحيات المدير العام');
+        showToast(tr3('غير مصرح: يتطلب صلاحيات المدير العام', 'Unauthorized: Founder root clearance required', 'Nicht autorisiert: Gründer-Administratorrechte erforderlich'));
         return;
       }
       state.p2pCircuitLocked = !state.p2pCircuitLocked;
@@ -24757,37 +24806,37 @@ function setMarketplaceViewMode(mode) {
       if (state.p2pCircuitLocked) {
         playAcousticChime(350, 0.3);
         if (badge) {
-          badge.innerText = isEn ? 'Trading Suspended' : 'التداول موقوف';
+          badge.innerText = tr3('التداول موقوف', 'Trading Suspended', 'Handel ausgesetzt');
           badge.className = 'text-[9px] bg-red-500/20 text-red-300 border border-red-500/40 px-2 py-0.5 rounded-md font-bold';
         }
-        if (title) title.innerText = isEn ? 'P2P Circuit: LOCKED' : 'قاطع التداول: مغلق وموقوف';
+        if (title) title.innerText = tr3('قاطع التداول: مغلق وموقوف', 'P2P Circuit: LOCKED', 'P2P-Schutzschalter: GESPERRT');
         if (statusLbl) {
-          statusLbl.innerText = isEn ? 'P2P Circuit Active (Locked)' : 'قاطع P2P نشط (موقوف)';
+          statusLbl.innerText = tr3('قاطع P2P نشط (موقوف)', 'P2P Circuit Active (Locked)', 'P2P-Schutzschalter aktiv (gesperrt)');
           statusLbl.className = 'text-red-400 font-bold';
         }
-        showToast(isEn ? '🔒 Secondary P2P share marketplace temporarily locked.' : '🔒 تم تفعيل قاطع الدائرة ووقف التداول الثانوي لحماية أسعار الحصص.');
+        showToast(tr3('🔒 تم تفعيل قاطع الدائرة ووقف التداول الثانوي لحماية أسعار الحصص.', '🔒 Secondary P2P share marketplace temporarily locked.', '🔒 P2P-Zweitmarkt für Anteile vorübergehend gesperrt.'));
       } else {
         playAcousticChime(750, 0.2);
         if (badge) {
-          badge.innerText = isEn ? 'Trading Open' : 'التداول متاح';
+          badge.innerText = tr3('التداول متاح', 'Trading Open', 'Handel freigegeben');
           badge.className = 'text-[9px] bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 px-2 py-0.5 rounded-md font-bold';
         }
-        if (title) title.innerText = isEn ? 'P2P Circuit Breaker' : 'قاطع تداول الحصص P2P';
+        if (title) title.innerText = tr3('قاطع تداول الحصص P2P', 'P2P Circuit Breaker', 'P2P-Schutzschalter');
         if (statusLbl) {
-          statusLbl.innerText = isEn ? 'Armed & Ready' : 'جاهز ويعمل طبيعياً';
+          statusLbl.innerText = tr3('جاهز ويعمل طبيعياً', 'Armed & Ready', 'Betriebsbereit');
           statusLbl.className = 'text-emerald-300 font-bold';
         }
-        showToast(isEn ? '✅ Secondary marketplace unlocked for normal investor trading.' : '✅ تم إلغاء القفل واستئناف التداول الطبيعي في سوق الحصص.');
+        showToast(tr3('✅ تم إلغاء القفل واستئناف التداول الطبيعي في سوق الحصص.', '✅ Secondary marketplace unlocked for normal investor trading.', '✅ Zweitmarkt für den normalen Handel wieder freigegeben.'));
       }
     }
 
     function announceHarvestSeasonKickoff() {
       if (!state.currentUser || state.currentUser.role !== 'admin') {
-        showToast(state.currentLang !== 'ar' ? 'Unauthorized: Founder root clearance required' : 'غير مصرح: يتطلب صلاحيات المدير العام');
+        showToast(tr3('غير مصرح: يتطلب صلاحيات المدير العام', 'Unauthorized: Founder root clearance required', 'Nicht autorisiert: Gründer-Administratorrechte erforderlich'));
         return;
       }
       const isEn = state.currentLang !== 'ar';
-      if (confirm(isEn ? 'Broadcast official Harvest Season Kickoff notice to all mills and partner groves?' : 'هل تؤكد إطلاق تعميم افتتاح موسم القطاف والعصر البارد لجميع المعاصر والمزارعين الشركاء؟')) {
+      if (confirm(tr3('هل تؤكد إطلاق تعميم افتتاح موسم القطاف والعصر البارد لجميع المعاصر والمزارعين الشركاء؟', 'Broadcast official Harvest Season Kickoff notice to all mills and partner groves?', 'Offizielle Mitteilung zum Start der Erntesaison an alle Ölmühlen und Partnerhöfe senden?'))) {
         playAcousticChime(880, 0.35);
         if (!state.notifications) state.notifications = [];
         state.notifications.unshift({
@@ -24806,13 +24855,13 @@ function setMarketplaceViewMode(mode) {
         });
         savePlatformState();
         if (typeof updateNotificationsBadge === 'function') updateNotificationsBadge();
-        showToast(isEn ? '🎉 2026/2027 Harvest Season officially proclaimed across platform!' : '🎉 تم إعلان بدء موسم القطاف والعصر رسمياً وإشعار جميع الشركاء والمعاصر بنجاح!');
+        showToast(tr3('🎉 تم إعلان بدء موسم القطاف والعصر رسمياً وإشعار جميع الشركاء والمعاصر بنجاح!', '🎉 2026/2027 Harvest Season officially proclaimed across platform!', '🎉 Erntesaison 2026/2027 offiziell auf der Plattform eröffnet!'));
       }
     }
 
     function toggleMandatoryIocAudit() {
       if (!state.currentUser || state.currentUser.role !== 'admin') {
-        showToast(state.currentLang !== 'ar' ? 'Unauthorized: Founder root clearance required' : 'غير مصرح: يتطلب صلاحيات المدير العام');
+        showToast(tr3('غير مصرح: يتطلب صلاحيات المدير العام', 'Unauthorized: Founder root clearance required', 'Nicht autorisiert: Gründer-Administratorrechte erforderlich'));
         return;
       }
       state.mandatoryIocAuditActive = (state.mandatoryIocAuditActive === false) ? true : false;
@@ -24825,19 +24874,19 @@ function setMarketplaceViewMode(mode) {
       if (state.mandatoryIocAuditActive) {
         playAcousticChime(750, 0.2);
         if (badge) {
-          badge.innerText = isEn ? 'Enforced' : 'مُفعل إلزامياً';
+          badge.innerText = tr3('مُفعل إلزامياً', 'Enforced', 'Verpflichtend');
           badge.className = 'text-[9px] bg-lime-500/20 text-lime-300 border border-lime-500/40 px-2 py-0.5 rounded-md font-bold';
         }
-        if (title) title.innerText = isEn ? 'IOC Lab Protocol: ENFORCED' : 'بروتوكول IOC: إلزامي صارم';
-        showToast(isEn ? '✅ Mandatory IOC chemical audit enforced for all mill batches.' : '✅ تم فرض الفحص المخبري الإلزامي: لن يتم تسليم أي زيت بدون شهادة IOC.');
+        if (title) title.innerText = tr3('بروتوكول IOC: إلزامي صارم', 'IOC Lab Protocol: ENFORCED', 'IOC-Laborprotokoll: VERPFLICHTEND');
+        showToast(tr3('✅ تم فرض الفحص المخبري الإلزامي: لن يتم تسليم أي زيت بدون شهادة IOC.', '✅ Mandatory IOC chemical audit enforced for all mill batches.', '✅ Verpflichtende chemische IOC-Prüfung für alle Chargen der Ölmühlen aktiviert.'));
       } else {
         playAcousticChime(600, 0.2);
         if (badge) {
-          badge.innerText = isEn ? 'Standard' : 'قياسي اختياري';
+          badge.innerText = tr3('قياسي اختياري', 'Standard', 'Standard');
           badge.className = 'text-[9px] bg-stone-500/20 text-stone-300 border border-stone-500/40 px-2 py-0.5 rounded-md font-bold';
         }
-        if (title) title.innerText = isEn ? 'IOC Lab Protocol' : 'بروتوكول IOC المخبري';
-        showToast(isEn ? '⚠️ IOC audit protocol relaxed to standard.' : '⚠️ تم تحويل الفحص المخبري إلى المستوى القياسي.');
+        if (title) title.innerText = tr3('بروتوكول IOC المخبري', 'IOC Lab Protocol', 'IOC-Laborprotokoll');
+        showToast(tr3('⚠️ تم تحويل الفحص المخبري إلى المستوى القياسي.', '⚠️ IOC audit protocol relaxed to standard.', '⚠️ IOC-Prüfprotokoll auf Standard zurückgesetzt.'));
       }
     }
 
@@ -24878,7 +24927,7 @@ function setMarketplaceViewMode(mode) {
 
     function bulkApprovePendingFinances() {
       if (!state.currentUser || state.currentUser.role !== 'admin') {
-        showToast(state.currentLang !== 'ar' ? 'Unauthorized: Founder root clearance required' : 'غير مصرح: يتطلب صلاحيات المدير العام');
+        showToast(tr3('غير مصرح: يتطلب صلاحيات المدير العام', 'Unauthorized: Founder root clearance required', 'Nicht autorisiert: Gründer-Administratorrechte erforderlich'));
         return;
       }
       const isEn = state.currentLang !== 'ar';
@@ -24886,17 +24935,17 @@ function setMarketplaceViewMode(mode) {
       const pendingList = queue.filter(q => q.status === 'pending');
 
       if (pendingList.length === 0) {
-        showToast(isEn ? 'No pending requests to approve.' : 'لا توجد طلبات معلقة للاعتماد.');
+        showToast(tr3('لا توجد طلبات معلقة للاعتماد.', 'No pending requests to approve.', 'Keine offenen Anträge zur Freigabe.'));
         return;
       }
 
-      if (confirm(isEn ? `Authorize bulk clearance and disbursement of ${pendingList.length} pending requests?` : `هل تؤكد الاعتماد المالي والصرف الفوري لجميع الطلبات المعلقة (${pendingList.length} طلبات)؟`)) {
+      if (confirm(tr3(`هل تؤكد الاعتماد المالي والصرف الفوري لجميع الطلبات المعلقة (${pendingList.length} طلبات)؟`, `Authorize bulk clearance and disbursement of ${pendingList.length} pending requests?`, `Sammelfreigabe und Auszahlung von ${pendingList.length} offenen Anträgen bestätigen?`))) {
         pendingList.forEach(item => {
           item.status = 'approved';
         });
         savePlatformState();
         playAcousticChime(850, 0.3);
-        showToast(isEn ? `✅ Successfully approved and disbursed all ${pendingList.length} requests!` : `✅ تم اعتماد وصرف كافة الطلبات المعلقة (${pendingList.length}) بنجاح!`);
+        showToast(tr3(`✅ تم اعتماد وصرف كافة الطلبات المعلقة (${pendingList.length}) بنجاح!`, `✅ Successfully approved and disbursed all ${pendingList.length} requests!`, `✅ Alle ${pendingList.length} Anträge erfolgreich freigegeben und ausgezahlt!`));
         renderFounderApprovalsQueue();
       }
     }
@@ -24919,7 +24968,7 @@ function setMarketplaceViewMode(mode) {
         else console.warn(`Could not load review queue ${queues[index]}:`, result.reason?.message || result.reason);
       });
       if (results.every(r => r.status === 'rejected')) {
-        showToast(isEn ? 'Review queues could not be loaded.' : 'تعذر تحميل قوائم المراجعة.');
+        showToast(tr3('تعذر تحميل قوائم المراجعة.', 'Review queues could not be loaded.', 'Prüfwarteschlangen konnten nicht geladen werden.'));
         return;
       }
       state.financialApprovalsQueue = items;
@@ -24931,7 +24980,7 @@ function setMarketplaceViewMode(mode) {
       const F = window.FaseelaFirebase;
       let note = '';
       if (!approve) {
-        note = (prompt(isEn ? 'Reason for rejection (shown in the audit log):' : 'سبب الرفض (يُسجَّل في سجل التدقيق):') || '').trim();
+        note = (prompt(tr3('سبب الرفض (يُسجَّل في سجل التدقيق):', 'Reason for rejection (shown in the audit log):', 'Grund der Ablehnung (wird im Prüfprotokoll vermerkt):')) || '').trim();
         if (!note) return false;
       }
       if (item.serverQueue === 'payments' && approve && F.recordPaymentScreening) {
@@ -24948,9 +24997,9 @@ function setMarketplaceViewMode(mode) {
         if (approve) {
           certificateSerial = (prompt(item.isHarvest
             ? (state.currentLang === 'ar' ? 'الرقم المرجعي لمحضر الوزن (حروف لاتينية وأرقام):' : state.currentLang === 'de' ? 'Referenznummer des Wiegeprotokolls (A-Z, 0-9, - _):' : 'Reference number of the weighing record (A-Z, 0-9, - _):')
-            : isEn ? 'Lab certificate serial (A-Z, 0-9, - _):' : 'رقم شهادة المختبر (حروف لاتينية وأرقام):') || '').trim();
+            : tr3('رقم شهادة المختبر (حروف لاتينية وأرقام):', 'Lab certificate serial (A-Z, 0-9, - _):', 'Seriennummer des Laborzertifikats (A-Z, 0-9, - _):')) || '').trim();
           if (!/^[A-Za-z0-9_-]{1,120}$/.test(certificateSerial)) {
-            showToast(isEn ? 'A valid certificate serial is required.' : 'رقم شهادة صالح مطلوب.');
+            showToast(tr3('رقم شهادة صالح مطلوب.', 'A valid certificate serial is required.', 'Eine gültige Zertifikatsnummer ist erforderlich.'));
             return false;
           }
         }
@@ -25088,19 +25137,19 @@ function setMarketplaceViewMode(mode) {
     async function viewPaymentProofReceipt(reqId) {
       const isEn = state.currentLang !== 'ar';
       if (!window.FaseelaFirebase?.getPaymentProofUrl) {
-        showToast(isEn ? 'Payment receipt service unavailable.' : 'خدمة معاينة الإشعار غير متاحة حالياً.');
+        showToast(tr3('خدمة معاينة الإشعار غير متاحة حالياً.', 'Payment receipt service unavailable.', 'Der Dienst für Zahlungsbelege ist derzeit nicht verfügbar.'));
         return;
       }
       try {
-        showToast(isEn ? 'Generating secure signed receipt URL...' : 'جاري توليد رابط آمن ومعتمد للإشعار...');
+        showToast(tr3('جاري توليد رابط آمن ومعتمد للإشعار...', 'Generating secure signed receipt URL...', 'Sicherer, signierter Beleg-Link wird erstellt...'));
         const res = await window.FaseelaFirebase.getPaymentProofUrl({ requestId: reqId });
         if (res && res.data && res.data.url) {
           window.open(res.data.url, '_blank', 'noopener,noreferrer');
         } else {
-          showToast(isEn ? 'No payment receipt found for this request.' : 'لا يوجد إشعار دفع مرفق لهذا الطلب.');
+          showToast(tr3('لا يوجد إشعار دفع مرفق لهذا الطلب.', 'No payment receipt found for this request.', 'Für diesen Antrag wurde kein Zahlungsbeleg gefunden.'));
         }
       } catch (err) {
-        showToast(isEn ? `Could not open receipt: ${err.message}` : `تعذر فتح إشعار الدفع: ${err.message}`);
+        showToast(tr3(`تعذر فتح إشعار الدفع: ${err.message}`, `Could not open receipt: ${err.message}`, `Beleg konnte nicht geöffnet werden: ${err.message}`));
       }
     }
 
@@ -25118,10 +25167,10 @@ function setMarketplaceViewMode(mode) {
       const metaEl = document.getElementById('fndr-fin-modal-content-meta');
       const noteEl = document.getElementById('fndr-fin-modal-media-note');
       const paths = Array.isArray(item.mediaPaths) ? item.mediaPaths : [];
-      if (notesEl) notesEl.textContent = (state.currentLang === 'ar' ? item.notes_ar : state.currentLang === 'de' ? item.notes_de : '') || item.notes || (isEn ? '(no text)' : '(بدون نص)');
+      if (notesEl) notesEl.textContent = (state.currentLang === 'ar' ? item.notes_ar : state.currentLang === 'de' ? item.notes_de : '') || item.notes || (tr3('(بدون نص)', '(no text)', '(kein Text)'));
       if (metaEl) {
         const gps = Number.isFinite(item.gpsLat) && Number.isFinite(item.gpsLng) ? ` • GPS ${item.gpsLat}, ${item.gpsLng}` : '';
-        metaEl.textContent = `${item.treeId || ''} • ${item.channel || ''} • ${paths.length} ${isEn ? 'photo(s)' : 'صورة'}${gps}`;
+        metaEl.textContent = `${item.treeId || ''} • ${item.channel || ''} • ${paths.length} ${tr3('صورة', 'photo(s)', 'Foto(s)')}${gps}`;
       }
       if (noteEl) noteEl.classList.add('hidden');
       reviewedContent.add(item.id);
@@ -25131,12 +25180,12 @@ function setMarketplaceViewMode(mode) {
       window.FaseelaFirebase.signFieldMedia(paths).then((signed) => {
         const missing = signed.filter(x => !x.url).length;
         mediaEl.innerHTML = signed.map((x) => x.url && /^https:\/\/[a-z0-9-]+\.supabase\.co\//i.test(x.url)
-          ? `<a href="${escapeHtml(x.url)}" target="_blank" rel="noopener" class="block aspect-square rounded-xl overflow-hidden border border-stone-200 dark:border-stone-700"><img src="${escapeHtml(x.url)}" alt="${escapeHtml(isEn ? 'Field photo' : 'صورة ميدانية')}" loading="lazy" width="96" height="96" class="w-full h-full object-cover"></a>`
-          : `<div class="aspect-square rounded-xl bg-amber-50 dark:bg-amber-950 border border-amber-300 dark:border-amber-700 flex items-center justify-center text-[10px] font-bold text-amber-800 dark:text-amber-300">${escapeHtml(isEn ? 'missing' : 'مفقودة')}</div>`).join('');
+          ? `<a href="${escapeHtml(x.url)}" target="_blank" rel="noopener" class="block aspect-square rounded-xl overflow-hidden border border-stone-200 dark:border-stone-700"><img src="${escapeHtml(x.url)}" alt="${escapeHtml(tr3('صورة ميدانية', 'Field photo', 'Feldfoto'))}" loading="lazy" width="96" height="96" class="w-full h-full object-cover"></a>`
+          : `<div class="aspect-square rounded-xl bg-amber-50 dark:bg-amber-950 border border-amber-300 dark:border-amber-700 flex items-center justify-center text-[10px] font-bold text-amber-800 dark:text-amber-300">${escapeHtml(tr3('مفقودة', 'missing', 'fehlt'))}</div>`).join('');
         if (noteEl) noteEl.classList.toggle('hidden', missing === 0);
       }).catch((error) => {
         console.warn('Field media preview failed:', error);
-        mediaEl.innerHTML = `<p class="col-span-full text-[11px] text-red-700 dark:text-red-300">${escapeHtml(isEn ? 'Photos could not be loaded.' : 'تعذر تحميل الصور.')}</p>`;
+        mediaEl.innerHTML = `<p class="col-span-full text-[11px] text-red-700 dark:text-red-300">${escapeHtml(tr3('تعذر تحميل الصور.', 'Photos could not be loaded.', 'Fotos konnten nicht geladen werden.'))}</p>`;
       });
     }
 
@@ -25158,7 +25207,7 @@ function setMarketplaceViewMode(mode) {
       if (txEl) txEl.innerText = `${item.id} • ${item.date}`;
       if (uEl) uEl.innerText = isEn ? (item.user_name_en || item.user_name) : item.user_name;
       if (rEl) rEl.innerText = item.role;
-      if (aEl) aEl.innerText = `${item.amount_syp.toLocaleString()} ${isEn ? 'SYP' : 'ل.س'} ($${item.amount_usd.toFixed(2)})`;
+      if (aEl) aEl.innerText = `${item.amount_syp.toLocaleString()} ${tr3('ل.س', 'SYP', 'SYP')} ($${item.amount_usd.toFixed(2)})`;
       if (cEl) cEl.innerText = item.channel;
 
       if (receiptContainer) {
@@ -25196,7 +25245,7 @@ function setMarketplaceViewMode(mode) {
     async function approveFinancialRequest(reqId) {
       // Server-side role checks per queue are authoritative; quality auditors review field reports and batches here.
       if (!state.currentUser || !['admin', 'finance_admin', 'quality_auditor'].includes(state.currentUser.role)) {
-        showToast(state.currentLang !== 'ar' ? 'Unauthorized: reviewer clearance required' : 'غير مصرح: يتطلب صلاحيات المراجعة');
+        showToast(tr3('غير مصرح: يتطلب صلاحيات المراجعة', 'Unauthorized: reviewer clearance required', 'Nicht autorisiert: Prüferrechte erforderlich'));
         return;
       }
 
@@ -25204,7 +25253,7 @@ function setMarketplaceViewMode(mode) {
       const item = (state.financialApprovalsQueue || []).find(r => r.id === reqId);
       if (!item) return;
       if (item.isServerItem && item.type === 'farmer_update' && !reviewedContent.has(item.id)) {
-        showToast(isEn ? 'Open the report first: approving publishes its text and photos.' : 'افتح التقرير أولاً: الاعتماد ينشر نصه وصوره للعامة.');
+        showToast(tr3('افتح التقرير أولاً: الاعتماد ينشر نصه وصوره للعامة.', 'Open the report first: approving publishes its text and photos.', 'Öffnen Sie zuerst den Bericht: Mit der Freigabe werden Text und Fotos veröffentlicht.'));
         inspectFinancialRequest(item.id);
         return;
       }
@@ -25212,21 +25261,21 @@ function setMarketplaceViewMode(mode) {
       if (item.isServerItem) {
         try {
           if (!(await decideServerReviewItem(item, true))) return;
-          showToast(isEn ? `Decision recorded for ${reqId}.` : `تم تسجيل القرار للطلب ${reqId}.`);
+          showToast(tr3(`تم تسجيل القرار للطلب ${reqId}.`, `Decision recorded for ${reqId}.`, `Entscheidung für ${reqId} gespeichert.`));
           await loadServerReviewQueues();
         } catch (err) {
-          showToast(isEn ? `Approval failed: ${err.message}` : `فشل الاعتماد: ${err.message}`);
+          showToast(tr3(`فشل الاعتماد: ${err.message}`, `Approval failed: ${err.message}`, `Freigabe fehlgeschlagen: ${err.message}`));
         }
         return;
       }
       if (state.serverMode) {
-        showToast(isEn ? 'Preview entries cannot be approved.' : 'لا يمكن اعتماد بيانات العرض التوضيحي.');
+        showToast(tr3('لا يمكن اعتماد بيانات العرض التوضيحي.', 'Preview entries cannot be approved.', 'Vorschaueinträge können nicht freigegeben werden.'));
         return;
       }
 
       if (item.isServerInvestment && window.FaseelaFirebase?.reviewInvestmentRequest) {
         try {
-          showToast(isEn ? 'Issuing shares and recording approval in audit log...' : 'جاري اعتماد المعاملة وإصدار الحصص وسجل التدقيق...');
+          showToast(tr3('جاري اعتماد المعاملة وإصدار الحصص وسجل التدقيق...', 'Issuing shares and recording approval in audit log...', 'Anteile werden ausgegeben und die Freigabe im Prüfprotokoll vermerkt...'));
           await window.FaseelaFirebase.reviewInvestmentRequest({
             requestId: reqId,
             decision: 'approve',
@@ -25234,26 +25283,26 @@ function setMarketplaceViewMode(mode) {
           });
           item.status = 'approved';
           savePlatformState();
-          showToast(isEn ? `✅ Sponsorship ${reqId} approved & shares issued successfully!` : `✅ تم اعتماد المعاملة ${reqId} وإصدار الحصص وسند الملكية بنجاح!`);
+          showToast(tr3(`✅ تم اعتماد المعاملة ${reqId} وإصدار الحصص وسند الملكية بنجاح!`, `✅ Sponsorship ${reqId} approved & shares issued successfully!`, `✅ Patenschaft ${reqId} freigegeben und Anteile erfolgreich ausgegeben!`));
           playAcousticChime(800, 0.2);
           renderFounderApprovalsQueue();
           return;
         } catch (err) {
-          showToast(isEn ? `Approval failed: ${err.message}` : `فشل الاعتماد: ${err.message}`);
+          showToast(tr3(`فشل الاعتماد: ${err.message}`, `Approval failed: ${err.message}`, `Freigabe fehlgeschlagen: ${err.message}`));
           return;
         }
       }
 
       item.status = 'approved';
       savePlatformState();
-      showToast(isEn ? `✅ Request ${reqId} approved & disbursed successfully via ${item.channel}.` : `✅ تم اعتماد المعاملة ${reqId} وصرف ${item.amount_syp.toLocaleString()} ل.س بنجاح.`);
+      showToast(tr3(`✅ تم اعتماد المعاملة ${reqId} وصرف ${item.amount_syp.toLocaleString()} ل.س بنجاح.`, `✅ Request ${reqId} approved & disbursed successfully via ${item.channel}.`, `✅ Antrag ${reqId} freigegeben und erfolgreich über ${item.channel} ausgezahlt.`));
       playAcousticChime(800, 0.2);
 
       // Trigger user notification
       if (typeof addSystemNotification === 'function') {
         addSystemNotification({
-          title: isEn ? "Funds Disbursed" : "تم صرف المستحقات المالية",
-          desc: isEn ? `Your withdrawal of $${item.amount_usd} has been approved and sent.` : `تمت الموافقة وصرف مبلغ ${item.amount_syp.toLocaleString()} ل.س لحسابك بنجاح.`,
+          title: tr3("تم صرف المستحقات المالية", "Funds Disbursed", "Auszahlung erfolgt"),
+          desc: tr3(`تمت الموافقة وصرف مبلغ ${item.amount_syp.toLocaleString()} ل.س لحسابك بنجاح.`, `Your withdrawal of $${item.amount_usd} has been approved and sent.`, `Ihre Auszahlung von $${item.amount_usd} wurde freigegeben und überwiesen.`),
           role: item.role
         });
       }
@@ -25264,7 +25313,7 @@ function setMarketplaceViewMode(mode) {
     async function rejectFinancialRequest(reqId) {
       // Server-side role checks per queue are authoritative; quality auditors review field reports and batches here.
       if (!state.currentUser || !['admin', 'finance_admin', 'quality_auditor'].includes(state.currentUser.role)) {
-        showToast(state.currentLang !== 'ar' ? 'Unauthorized: reviewer clearance required' : 'غير مصرح: يتطلب صلاحيات المراجعة');
+        showToast(tr3('غير مصرح: يتطلب صلاحيات المراجعة', 'Unauthorized: reviewer clearance required', 'Nicht autorisiert: Prüferrechte erforderlich'));
         return;
       }
 
@@ -25275,20 +25324,20 @@ function setMarketplaceViewMode(mode) {
       if (item.isServerItem) {
         try {
           if (!(await decideServerReviewItem(item, false))) return;
-          showToast(isEn ? `Request ${reqId} rejected.` : `تم رفض الطلب ${reqId}.`);
+          showToast(tr3(`تم رفض الطلب ${reqId}.`, `Request ${reqId} rejected.`, `Antrag ${reqId} abgelehnt.`));
           await loadServerReviewQueues();
         } catch (err) {
-          showToast(isEn ? `Rejection failed: ${err.message}` : `تعذر رفض الطلب: ${err.message}`);
+          showToast(tr3(`تعذر رفض الطلب: ${err.message}`, `Rejection failed: ${err.message}`, `Ablehnung fehlgeschlagen: ${err.message}`));
         }
         return;
       }
       if (state.serverMode) {
-        showToast(isEn ? 'Preview entries cannot be rejected.' : 'لا يمكن رفض بيانات العرض التوضيحي.');
+        showToast(tr3('لا يمكن رفض بيانات العرض التوضيحي.', 'Preview entries cannot be rejected.', 'Vorschaueinträge können nicht abgelehnt werden.'));
         return;
       }
 
       if (item.isServerInvestment && window.FaseelaFirebase?.reviewInvestmentRequest) {
-        const note = prompt(isEn ? 'Enter rejection reason note:' : 'أدخل سبب الرفض أو ملاحظة التدقيق:') || 'Incomplete payment proof';
+        const note = prompt(tr3('أدخل سبب الرفض أو ملاحظة التدقيق:', 'Enter rejection reason note:', 'Grund der Ablehnung eingeben:')) || 'Incomplete payment proof';
         try {
           await window.FaseelaFirebase.reviewInvestmentRequest({
             requestId: reqId,
@@ -25297,19 +25346,19 @@ function setMarketplaceViewMode(mode) {
           });
           item.status = 'rejected';
           savePlatformState();
-          showToast(isEn ? `❌ Sponsorship request ${reqId} rejected.` : `❌ تم رفض طلب الكفالة ${reqId}.`);
+          showToast(tr3(`❌ تم رفض طلب الكفالة ${reqId}.`, `❌ Sponsorship request ${reqId} rejected.`, `❌ Patenschaftsantrag ${reqId} abgelehnt.`));
           playAcousticChime(350, 0.2);
           renderFounderApprovalsQueue();
           return;
         } catch (err) {
-          showToast(isEn ? `Rejection failed: ${err.message}` : `تعذر رفض الطلب: ${err.message}`);
+          showToast(tr3(`تعذر رفض الطلب: ${err.message}`, `Rejection failed: ${err.message}`, `Ablehnung fehlgeschlagen: ${err.message}`));
           return;
         }
       }
 
       item.status = 'rejected';
       savePlatformState();
-      showToast(isEn ? `❌ Request ${reqId} rejected.` : `❌ تم رفض المعاملة ${reqId}.`);
+      showToast(tr3(`❌ تم رفض المعاملة ${reqId}.`, `❌ Request ${reqId} rejected.`, `❌ Antrag ${reqId} abgelehnt.`));
       playAcousticChime(350, 0.2);
       renderFounderApprovalsQueue();
     }
@@ -25332,7 +25381,7 @@ function setMarketplaceViewMode(mode) {
 
     function exportUsersCSV() {
       if (!state.currentUser || state.currentUser.role !== 'admin') {
-        showToast(state.currentLang !== 'ar' ? 'Unauthorized: Founder root clearance required' : 'غير مصرح: يتطلب صلاحيات المدير العام');
+        showToast(tr3('غير مصرح: يتطلب صلاحيات المدير العام', 'Unauthorized: Founder root clearance required', 'Nicht autorisiert: Gründer-Berechtigung erforderlich'));
         return;
       }
 
@@ -25342,12 +25391,12 @@ function setMarketplaceViewMode(mode) {
         return `"${u.id}","${u.name}","${u.email}","${u.phone || ''}","${u.role}","${u.region || ''}","${statusText}","${u.did || ''}"`;
       }).join("\n");
       downloadCSVFile("faseela_users_directory.csv", headers + rows);
-      showToast(state.currentLang !== 'ar' ? "📥 Users directory exported to CSV." : "📥 تم تصدير دليل المستخدمين كملف CSV بنجاح.");
+      showToast(tr3("📥 تم تصدير دليل المستخدمين كملف CSV بنجاح.", "📥 Users directory exported to CSV.", "📥 Benutzerverzeichnis als CSV exportiert."));
     }
 
     function exportFinancialLedgerCSV() {
       if (!state.currentUser || state.currentUser.role !== 'admin') {
-        showToast(state.currentLang !== 'ar' ? 'Unauthorized: Founder root clearance required' : 'غير مصرح: يتطلب صلاحيات المدير العام');
+        showToast(tr3('غير مصرح: يتطلب صلاحيات المدير العام', 'Unauthorized: Founder root clearance required', 'Nicht autorisiert: Gründer-Berechtigung erforderlich'));
         return;
       }
 
@@ -25356,7 +25405,7 @@ function setMarketplaceViewMode(mode) {
         `"${tx.id}","${tx.user_id}","${tx.type}","${tx.amount_syp}","${tx.amount_usd}","${tx.channel}","${tx.date}","${tx.status}"`
       ).join("\n");
       downloadCSVFile("faseela_financial_ledger.csv", headers + rows);
-      showToast(state.currentLang !== 'ar' ? "📥 Financial ledger exported to CSV." : "📥 تم تصدير دفتر الأستاذ المالي كملف CSV بنجاح.");
+      showToast(tr3("📥 تم تصدير دفتر الأستاذ المالي كملف CSV بنجاح.", "📥 Financial ledger exported to CSV.", "📥 Finanz-Hauptbuch als CSV exportiert."));
     }
 
 
@@ -25381,7 +25430,7 @@ function setMarketplaceViewMode(mode) {
 
     function openFounderAddVirginGroveModal() {
       if (!state.currentUser || state.currentUser.role !== 'admin') {
-        showToast(state.currentLang !== 'ar' ? 'Unauthorized: Founder root clearance required' : 'غير مصرح: يتطلب صلاحيات المدير العام');
+        showToast(tr3('غير مصرح: يتطلب صلاحيات المدير العام', 'Unauthorized: Founder root clearance required', 'Nicht autorisiert: Gründer-Berechtigung erforderlich'));
         return;
       }
 
@@ -25400,7 +25449,7 @@ function setMarketplaceViewMode(mode) {
 
     function submitFounderNewVirginGrove() {
       if (!state.currentUser || state.currentUser.role !== 'admin') {
-        showToast(state.currentLang !== 'ar' ? 'Unauthorized: Founder root clearance required' : 'غير مصرح: يتطلب صلاحيات المدير العام');
+        showToast(tr3('غير مصرح: يتطلب صلاحيات المدير العام', 'Unauthorized: Founder root clearance required', 'Nicht autorisiert: Gründer-Berechtigung erforderlich'));
         return;
       }
 
@@ -25409,7 +25458,7 @@ function setMarketplaceViewMode(mode) {
       const titleEn = (document.getElementById('fndr-add-vg-title-en').value || '').trim() || titleAr;
 
       if (!titleAr) {
-        showToast(isEn ? '⚠️ Please enter project name in Arabic' : '⚠️ يرجى إدخال اسم المشروع باللغة العربية');
+        showToast(tr3('⚠️ يرجى إدخال اسم المشروع باللغة العربية', '⚠️ Please enter project name in Arabic', '⚠️ Bitte geben Sie den Projektnamen auf Arabisch ein'));
         return;
       }
 
@@ -25470,7 +25519,7 @@ function setMarketplaceViewMode(mode) {
 
       savePlatformState();
       closeModal('modal-fndr-add-virgin-grove');
-      showToast(isEn ? `🎉 Greenfield project "${titleEn}" launched successfully with cadastral land!` : `🎉 تم إدراج وطرح مشروع "${titleAr}" مع الأرض الكاداسترية في المنظومة والسوق بنجاح!`);
+      showToast(tr3(`🎉 تم إدراج وطرح مشروع "${titleAr}" مع الأرض الكاداسترية في المنظومة والسوق بنجاح!`, `🎉 Greenfield project "${titleEn}" launched successfully with cadastral land!`, `🎉 Neuanlage-Projekt "${titleEn}" mit Katasterfläche erfolgreich gestartet!`));
       playAcousticChime(850, 0.25);
 
       renderFounderFleet('virgin');
@@ -25480,7 +25529,7 @@ function setMarketplaceViewMode(mode) {
 
     function openFounderEditVirginGroveModal(groveId) {
       if (!state.currentUser || state.currentUser.role !== 'admin') {
-        showToast(state.currentLang !== 'ar' ? 'Unauthorized: Founder root clearance required' : 'غير مصرح: يتطلب صلاحيات المدير العام');
+        showToast(tr3('غير مصرح: يتطلب صلاحيات المدير العام', 'Unauthorized: Founder root clearance required', 'Nicht autorisiert: Gründer-Berechtigung erforderlich'));
         return;
       }
 
@@ -25511,7 +25560,7 @@ function setMarketplaceViewMode(mode) {
 
     function saveFounderVirginGroveEdits() {
       if (!state.currentUser || state.currentUser.role !== 'admin') {
-        showToast(state.currentLang !== 'ar' ? 'Unauthorized: Founder root clearance required' : 'غير مصرح: يتطلب صلاحيات المدير العام');
+        showToast(tr3('غير مصرح: يتطلب صلاحيات المدير العام', 'Unauthorized: Founder root clearance required', 'Nicht autorisiert: Gründer-Berechtigung erforderlich'));
         return;
       }
 
@@ -25567,7 +25616,7 @@ function setMarketplaceViewMode(mode) {
 
       savePlatformState();
       closeModal('modal-fndr-edit-virgin-grove');
-      showToast(isEn ? '✅ Virgin grove project and cadastral land specifications saved.' : '✅ تم حفظ تعديلات مشروع البستان البكر والأرض الكاداسترية بنجاح.');
+      showToast(tr3('✅ تم حفظ تعديلات مشروع البستان البكر والأرض الكاداسترية بنجاح.', '✅ Virgin grove project and cadastral land specifications saved.', '✅ Neuanlage-Projekt und Katasterangaben der Fläche gespeichert.'));
       playAcousticChime(750, 0.2);
 
       renderFounderFleet('virgin');
@@ -25576,7 +25625,7 @@ function setMarketplaceViewMode(mode) {
 
     function quickAdvanceVirginPhase(groveId) {
       if (!state.currentUser || state.currentUser.role !== 'admin') {
-        showToast(state.currentLang !== 'ar' ? 'Unauthorized: Founder root clearance required' : 'غير مصرح: يتطلب صلاحيات المدير العام');
+        showToast(tr3('غير مصرح: يتطلب صلاحيات المدير العام', 'Unauthorized: Founder root clearance required', 'Nicht autorisiert: Gründer-Berechtigung erforderlich'));
         return;
       }
 
@@ -25594,9 +25643,7 @@ function setMarketplaceViewMode(mode) {
 
       savePlatformState();
       playAcousticChime(800, 0.25);
-      showToast(isEn 
-        ? `🚀 Project phase advanced to: "${nextPhase}"` 
-        : `🚀 تم ترقية مرحلة المشروع الميدانية إلى: "${nextPhase}" بنجاح!`);
+      showToast(tr3(`🚀 تم ترقية مرحلة المشروع الميدانية إلى: "${nextPhase}" بنجاح!`, `🚀 Project phase advanced to: "${nextPhase}"`, `🚀 Projektphase aktualisiert auf: "${nextPhase}"`));
 
       renderFounderFleet('virgin');
       if (typeof renderVirginGroves === 'function') renderVirginGroves();
@@ -25604,7 +25651,7 @@ function setMarketplaceViewMode(mode) {
 
     function founderDeleteVirginGrove(groveId) {
       if (!state.currentUser || state.currentUser.role !== 'admin') {
-        showToast(state.currentLang !== 'ar' ? 'Unauthorized: Founder root clearance required' : 'غير مصرح: يتطلب صلاحيات المدير العام');
+        showToast(tr3('غير مصرح: يتطلب صلاحيات المدير العام', 'Unauthorized: Founder root clearance required', 'Nicht autorisiert: Gründer-Berechtigung erforderlich'));
         return;
       }
 
@@ -25612,15 +25659,13 @@ function setMarketplaceViewMode(mode) {
       if (!vg) return;
 
       const isEn = state.currentLang !== 'ar';
-      const promptText = isEn 
-        ? `Are you sure you want to archive and remove project "${vg.title_en || vg.title}"?`
-        : `هل أنت متأكد من رغبتك في أرشفة وحذف مشروع "${vg.title}" نهائياً من الأسطول؟`;
+      const promptText = tr3(`هل أنت متأكد من رغبتك في أرشفة وحذف مشروع "${vg.title}" نهائياً من الأسطول؟`, `Are you sure you want to archive and remove project "${vg.title_en || vg.title}"?`, `Möchten Sie das Projekt "${vg.title_en || vg.title}" wirklich archivieren und entfernen?`);
 
       if (confirm(promptText)) {
         state.virginGroves = state.virginGroves.filter(g => g.id !== groveId);
         savePlatformState();
         playAcousticChime(400, 0.3);
-        showToast(isEn ? '🗑️ Greenfield grove project archived.' : '🗑️ تم أرشفة وحذف مشروع البستان البكر بنجاح.');
+        showToast(tr3('🗑️ تم أرشفة وحذف مشروع البستان البكر بنجاح.', '🗑️ Greenfield grove project archived.', '🗑️ Neuanlage-Projekt archiviert.'));
         renderFounderFleet('virgin');
         if (typeof renderVirginGroves === 'function') renderVirginGroves();
       }
@@ -25628,7 +25673,7 @@ function setMarketplaceViewMode(mode) {
 
     function exportVirginGrovesCSV() {
       if (!state.currentUser || state.currentUser.role !== 'admin') {
-        showToast(state.currentLang !== 'ar' ? 'Unauthorized: Founder root clearance required' : 'غير مصرح: يتطلب صلاحيات المدير العام');
+        showToast(tr3('غير مصرح: يتطلب صلاحيات المدير العام', 'Unauthorized: Founder root clearance required', 'Nicht autorisiert: Gründer-Berechtigung erforderlich'));
         return;
       }
 
@@ -25638,7 +25683,7 @@ function setMarketplaceViewMode(mode) {
       ).join("\n");
 
       downloadCSVFile("faseela_virgin_groves_cadastre.csv", headers + rows);
-      showToast(state.currentLang !== 'ar' ? '📥 Virgin Groves Cadastre Matrix exported to CSV.' : '📥 تم تصدير سجل الأراضي الكاداسترية والبساتين البكر كملف CSV بنجاح.');
+      showToast(tr3('📥 تم تصدير سجل الأراضي الكاداسترية والبساتين البكر كملف CSV بنجاح.', '📥 Virgin Groves Cadastre Matrix exported to CSV.', '📥 Katasterübersicht der Neuanlagen als CSV exportiert.'));
     }
 
     // Virgin Grove Image Helpers
@@ -25662,12 +25707,12 @@ function setMarketplaceViewMode(mode) {
       if (!file) return;
 
       if (!file.type.startsWith('image/')) {
-        showToast(state.currentLang !== 'ar' ? '⚠️ Please select a valid image file (JPG, PNG, WebP).' : '⚠️ يرجى اختيار ملف صورة صالح (JPG, PNG, WebP).');
+        showToast(tr3('⚠️ يرجى اختيار ملف صورة صالح (JPG, PNG, WebP).', '⚠️ Please select a valid image file (JPG, PNG, WebP).', '⚠️ Bitte wählen Sie eine gültige Bilddatei (JPG, PNG, WebP).'));
         return;
       }
 
       if (file.size > 5 * 1024 * 1024) {
-        showToast(state.currentLang !== 'ar' ? '⚠️ Image file size exceeds 5MB limit.' : '⚠️ حجم الصورة يتجاوز الحد المسموح (5 ميغابايت).');
+        showToast(tr3('⚠️ حجم الصورة يتجاوز الحد المسموح (5 ميغابايت).', '⚠️ Image file size exceeds 5MB limit.', '⚠️ Die Bilddatei überschreitet das Limit von 5 MB.'));
         return;
       }
 
@@ -25675,7 +25720,7 @@ function setMarketplaceViewMode(mode) {
       reader.onload = function(e) {
         const dataUrl = e.target.result;
         setVirginGroveActiveImage(dataUrl, mode);
-        showToast(state.currentLang !== 'ar' ? '📸 Project image uploaded and preview updated!' : '📸 تم رفع صورة المشروع بنجاح وتحديث المعاينة اللحظية!');
+        showToast(tr3('📸 تم رفع صورة المشروع بنجاح وتحديث المعاينة اللحظية!', '📸 Project image uploaded and preview updated!', '📸 Projektbild hochgeladen und Vorschau aktualisiert!'));
         playAcousticChime(700, 0.2);
       };
       reader.readAsDataURL(file);
@@ -25707,7 +25752,7 @@ function setMarketplaceViewMode(mode) {
 
     function exportFleetCSV() {
       if (!state.currentUser || state.currentUser.role !== 'admin') {
-        showToast(state.currentLang !== 'ar' ? 'Unauthorized: Founder root clearance required' : 'غير مصرح: يتطلب صلاحيات المدير العام');
+        showToast(tr3('غير مصرح: يتطلب صلاحيات المدير العام', 'Unauthorized: Founder root clearance required', 'Nicht autorisiert: Gründer-Berechtigung erforderlich'));
         return;
       }
 
@@ -25716,13 +25761,13 @@ function setMarketplaceViewMode(mode) {
         `"${t.id}","${t.name}","${t.crop_type || 'olive'}","${t.cultivar}","${t.region}","${t.age}","${t.price_per_share || t.share_price}","${t.land_share_price || 0}","${t.expected_yield}","${t.soil_moisture}%","${t.status}"`
       ).join("\n");
       downloadCSVFile("faseela_fleet_inventory.csv", headers + rows);
-      showToast(state.currentLang !== 'ar' ? "📥 Fleet inventory exported to CSV." : "📥 تم تصدير جرد الأسطول والكاداستر كملف CSV بنجاح.");
+      showToast(tr3("📥 تم تصدير جرد الأسطول والكاداستر كملف CSV بنجاح.", "📥 Fleet inventory exported to CSV.", "📥 Bestandsliste als CSV exportiert."));
     }
 
     // 4. Agricultural Commodity Pricing
     function saveAgriculturalPricing() {
       if (!state.currentUser || state.currentUser.role !== 'admin') {
-        showToast(state.currentLang !== 'ar' ? 'Unauthorized: Founder root clearance required' : 'غير مصرح: يتطلب صلاحيات المدير العام');
+        showToast(tr3('غير مصرح: يتطلب صلاحيات المدير العام', 'Unauthorized: Founder root clearance required', 'Nicht autorisiert: Gründer-Berechtigung erforderlich'));
         return;
       }
 
@@ -25736,7 +25781,7 @@ function setMarketplaceViewMode(mode) {
       state.cropPricing.syp_usd_rate = parseFloat(document.getElementById('fndr-price-syp-rate')?.value) || 15000;
 
       savePlatformState();
-      showToast(isEn ? "✅ Commodity prices and exchange rates saved globally." : "✅ تم حفظ أسعار المحاصيل وسعر الصرف وتطبيقها عبر كامل المنصة.");
+      showToast(tr3("✅ تم حفظ أسعار المحاصيل وسعر الصرف وتطبيقها عبر كامل المنصة.", "✅ Commodity prices and exchange rates saved globally.", "✅ Erzeugerpreise und Wechselkurse plattformweit gespeichert."));
       playAcousticChime(700, 0.2);
     }
 
@@ -25785,7 +25830,7 @@ function setMarketplaceViewMode(mode) {
       if (filtered.length === 0) {
         list.innerHTML = `
           <div class="p-6 text-center text-stone-400 font-bold bg-stone-50 dark:bg-stone-850 rounded-2xl border border-stone-200 dark:border-stone-700">
-            ${isEn ? 'No disputes or support tickets matching filter' : 'لا توجد نزاعات أو تذاكر مطابقة للتصنيف المحدد'}
+            ${tr3('لا توجد نزاعات أو تذاكر مطابقة للتصنيف المحدد', 'No disputes or support tickets matching filter', 'Keine Streitfälle oder Support-Tickets für diesen Filter')}
           </div>
         `;
         return;
@@ -25811,7 +25856,7 @@ function setMarketplaceViewMode(mode) {
                 <div class="bg-purple-50/80 dark:bg-purple-950/40 p-2.5 rounded-xl border border-purple-200 dark:border-purple-800/50 mt-2 text-[11px] text-purple-950 dark:text-purple-200">
                   <span class="font-bold flex items-center gap-1 mb-0.5 text-purple-800 dark:text-purple-300">
                     <i data-lucide="check-check" class="w-3.5 h-3.5"></i>
-                    <span>${isEn ? 'Official Founder Resolution:' : 'قرار وتوجيه المؤسس التنفيذي:'}</span>
+                    <span>${tr3('قرار وتوجيه المؤسس التنفيذي:', 'Official Founder Resolution:', 'Offizielle Entscheidung des Gründers:')}</span>
                   </span>
                   <p class="leading-relaxed font-medium">${escapeHtml(tkt.reply)}</p>
                 </div>
@@ -25819,16 +25864,16 @@ function setMarketplaceViewMode(mode) {
             </div>
             <div class="flex items-center gap-2 self-end sm:self-center flex-shrink-0">
               <span class="text-[10px] font-black px-2.5 py-1 rounded-full ${isResolved ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300' : 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300'}">
-                ${isResolved ? (isEn ? 'Resolved' : 'تم التحكيم والحل') : (isEn ? 'Pending Review' : 'بانتظار التحكيم')}
+                ${isResolved ? tr3('تم التحكيم والحل', 'Resolved', 'Gelöst') : tr3('بانتظار التحكيم', 'Pending Review', 'Prüfung ausstehend')}
               </span>
               ${!isResolved ? `
                 <button type="button" data-click="openSupportTicketReplyModal('${tkt.id}')" class="bg-purple-700 hover:bg-purple-800 text-white px-3 py-1.5 rounded-xl text-[11px] font-bold cursor-pointer transition-all shadow-xs flex items-center gap-1">
                   <i data-lucide="gavel" class="w-3.5 h-3.5 text-amber-300"></i>
-                  <span>${isEn ? 'Arbitrate' : 'تحكيم وإصدار القرار'}</span>
+                  <span>${tr3('تحكيم وإصدار القرار', 'Arbitrate', 'Entscheiden')}</span>
                 </button>
               ` : `
                 <button type="button" data-click="openSupportTicketReplyModal('${tkt.id}')" class="bg-stone-200 dark:bg-stone-700 hover:bg-stone-300 text-stone-700 dark:text-stone-200 px-2.5 py-1.5 rounded-xl text-[10.5px] font-bold cursor-pointer transition-all">
-                  ${isEn ? 'Edit Ruling' : 'تعديل التوجيه'}
+                  ${tr3('تعديل التوجيه', 'Edit Ruling', 'Entscheidung bearbeiten')}
                 </button>
               `}
             </div>
@@ -25843,7 +25888,7 @@ function setMarketplaceViewMode(mode) {
 
     function openSupportTicketReplyModal(tktId) {
       if (!state.currentUser || state.currentUser.role !== 'admin') {
-        showToast(state.currentLang !== 'ar' ? 'Unauthorized: Founder root clearance required' : 'غير مصرح: يتطلب صلاحيات المدير العام');
+        showToast(tr3('غير مصرح: يتطلب صلاحيات المدير العام', 'Unauthorized: Founder root clearance required', 'Nicht autorisiert: Gründer-Berechtigung erforderlich'));
         return;
       }
 
@@ -25857,12 +25902,10 @@ function setMarketplaceViewMode(mode) {
       const replyEl = document.getElementById('fndr-ticket-reply-text');
 
       if (idEl) idEl.value = tkt.id;
-      if (senderEl) senderEl.innerText = `${state.currentLang !== 'ar' ? 'Sender:' : 'المُرسل:'} ${tkt.sender}`;
+      if (senderEl) senderEl.innerText = `${tr3('المُرسل:', 'Sender:', 'Absender:')} ${tkt.sender}`;
       if (dateEl) dateEl.innerText = tkt.date;
       if (subjEl) subjEl.innerText = tkt.subject;
-      if (replyEl) replyEl.value = state.currentLang !== 'ar' 
-        ? "Official Resolution: Reviewed and approved according to agricultural registry protocol." 
-        : "توجيه إداري رسمي: تمت المراجعة والاعتماد وفق بروتوكول السجل الزراعي ومراجعة الدفعات.";
+      if (replyEl) replyEl.value = tr3("توجيه إداري رسمي: تمت المراجعة والاعتماد وفق بروتوكول السجل الزراعي ومراجعة الدفعات.", "Official Resolution: Reviewed and approved according to agricultural registry protocol.", "Offizielle Entscheidung: Gemäß Protokoll des Agrarregisters geprüft und freigegeben.");
 
       openModal('modal-fndr-reply-ticket');
       playAcousticChime(600, 0.15);
@@ -25871,7 +25914,7 @@ function setMarketplaceViewMode(mode) {
     function submitSupportTicketReply(e) {
       if (e && e.preventDefault) e.preventDefault();
       if (!state.currentUser || state.currentUser.role !== 'admin') {
-        showToast(state.currentLang !== 'ar' ? 'Unauthorized: Founder root clearance required' : 'غير مصرح: يتطلب صلاحيات المدير العام');
+        showToast(tr3('غير مصرح: يتطلب صلاحيات المدير العام', 'Unauthorized: Founder root clearance required', 'Nicht autorisiert: Gründer-Berechtigung erforderlich'));
         return;
       }
       const isEn = state.currentLang !== 'ar';
@@ -25887,7 +25930,7 @@ function setMarketplaceViewMode(mode) {
 
       closeModal('modal-fndr-reply-ticket');
       playAcousticChime(650, 0.2);
-      showToast(isEn ? "✅ Ticket resolved and official reply dispatched." : "✅ تم اعتماد حل التذكرة وإرسال التوجيه الرسمي بنجاح.");
+      showToast(tr3("✅ تم اعتماد حل التذكرة وإرسال التوجيه الرسمي بنجاح.", "✅ Ticket resolved and official reply dispatched.", "✅ Ticket gelöst und offizielle Antwort versendet."));
       renderFounderDisputesDesk();
     }
 
@@ -25900,7 +25943,7 @@ function setMarketplaceViewMode(mode) {
       const isEn = state.currentLang !== 'ar';
       if (state.currentUser) {
         const nameEl = document.getElementById('esg-investor-name');
-        if (nameEl) nameEl.innerText = (isEn ? (state.currentUser.name_en || state.currentUser.name) : state.currentUser.name) || (isEn ? "Eng. Wissam Al-Hamdoli" : "م. وسام الحمدولي");
+        if (nameEl) nameEl.innerText = (isEn ? (state.currentUser.name_en || state.currentUser.name) : state.currentUser.name) || tr3("م. وسام الحمدولي", "Eng. Wissam Al-Hamdoli", "Ing. Wissam Al-Hamdoli");
       }
       openModal('modal-esg-certificate');
       playAcousticChime(650, 0.2);
@@ -25925,7 +25968,7 @@ function setMarketplaceViewMode(mode) {
       const driver = document.getElementById('mill-pomace-driver').value.trim() || 'جرار زراعي 4410';
 
       if (!recipient) {
-        showToast(isEn ? "⚠️ Please enter recipient name" : "⚠️ يرجى إدخال اسم الجهة المستلمة");
+        showToast(tr3("⚠️ يرجى إدخال اسم الجهة المستلمة", "⚠️ Please enter recipient name", "⚠️ Bitte geben Sie den Namen des Empfängers ein"));
         return;
       }
 
@@ -25937,11 +25980,11 @@ function setMarketplaceViewMode(mode) {
         qty_kg: qty,
         driver: driver,
         date: new Date().toISOString().split('T')[0],
-        status: isEn ? 'Delivered' : 'تم التسليم'
+        status: tr3('تم التسليم', 'Delivered', 'Geliefert')
       });
 
       closeModal('modal-log-pomace-dispatch');
-      showToast(isEn ? `🌱 Logged dispatch of ${qty} kg to ${recipient}.` : `🌱 تم توثيق تسليم ${qty} كغ إلى ${recipient} بنجاح.`);
+      showToast(tr3(`🌱 تم توثيق تسليم ${qty} كغ إلى ${recipient} بنجاح.`, `🌱 Logged dispatch of ${qty} kg to ${recipient}.`, `🌱 Lieferung von ${qty} kg an ${recipient} erfasst.`));
       playAcousticChime(700, 0.2);
       renderPomaceDispatchHistory();
     }
@@ -25977,12 +26020,12 @@ function setMarketplaceViewMode(mode) {
       if (srcSel && dstSel && tanks.length > 0) {
         srcSel.innerHTML = tanks.map((t, idx) => {
           const name = isEn ? t.name_en : t.name;
-          return `<option value="${t.id}" ${idx === 0 ? 'selected' : ''}>${t.code} • ${name} (${t.current_liters}L متاح)</option>`;
+          return `<option value="${t.id}" ${idx === 0 ? 'selected' : ''}>${t.code} • ${name} (${t.current_liters}L ${tr3('متاح', 'available', 'verfügbar')})</option>`;
         }).join('');
 
         dstSel.innerHTML = tanks.map((t, idx) => {
           const name = isEn ? t.name_en : t.name;
-          return `<option value="${t.id}" ${idx === 1 ? 'selected' : ''}>${t.code} • ${name} (سعة ${t.capacity_liters}L)</option>`;
+          return `<option value="${t.id}" ${idx === 1 ? 'selected' : ''}>${t.code} • ${name} (${tr3('سعة', 'capacity', 'Kapazität')} ${t.capacity_liters}L)</option>`;
         }).join('');
       }
 
@@ -26000,7 +26043,7 @@ function setMarketplaceViewMode(mode) {
       const liters = parseFloat(document.getElementById('tank-transfer-liters').value) || 100;
 
       if (src === dst) {
-        showToast(isEn ? "⚠️ Source and destination tanks must be different." : "⚠️ يجب اختيار خزانين مختلفين لإتمام عملية المناقلة.");
+        showToast(tr3("⚠️ يجب اختيار خزانين مختلفين لإتمام عملية المناقلة.", "⚠️ Source and destination tanks must be different.", "⚠️ Quell- und Zieltank müssen unterschiedlich sein."));
         return;
       }
 
@@ -26009,11 +26052,11 @@ function setMarketplaceViewMode(mode) {
 
       if (sTank && dTank) {
         if (sTank.current_liters < liters) {
-          showToast(isEn ? `⚠️ Insufficient volume in ${sTank.name_en || sTank.name} (${sTank.current_liters}L available).` : `⚠️ الكمية المطلوبة تتجاوز المتاح في ${sTank.name} (${sTank.current_liters} لتر متاح).`);
+          showToast(tr3(`⚠️ الكمية المطلوبة تتجاوز المتاح في ${sTank.name} (${sTank.current_liters} لتر متاح).`, `⚠️ Insufficient volume in ${sTank.name_en || sTank.name} (${sTank.current_liters}L available).`, `⚠️ Unzureichende Menge in ${sTank.name_en || sTank.name} (${sTank.current_liters}L verfügbar).`));
           return;
         }
         if (dTank.current_liters + liters > dTank.capacity_liters) {
-          showToast(isEn ? `⚠️ Target ${dTank.name_en || dTank.name} exceeds max capacity (${dTank.capacity_liters}L).` : `⚠️ الخزان الوجهة ${dTank.name} سيتجاوز سعته القصوى (${dTank.capacity_liters} لتر).`);
+          showToast(tr3(`⚠️ الخزان الوجهة ${dTank.name} سيتجاوز سعته القصوى (${dTank.capacity_liters} لتر).`, `⚠️ Target ${dTank.name_en || dTank.name} exceeds max capacity (${dTank.capacity_liters}L).`, `⚠️ Zieltank ${dTank.name_en || dTank.name} überschreitet die maximale Kapazität (${dTank.capacity_liters}L).`));
           return;
         }
 
@@ -26024,7 +26067,7 @@ function setMarketplaceViewMode(mode) {
       }
 
       closeModal('modal-tank-transfer');
-      showToast(isEn ? `🔄 Successfully transferred ${liters}L EVOO from ${sTank ? (sTank.name_en || sTank.name) : src} to ${dTank ? (dTank.name_en || dTank.name) : dst}.` : `🔄 تمت مناقلة ${liters} لتر زيت بكر بنجاح بين الخزانات مع ضبط غاز النيتروجين الخامل.`);
+      showToast(tr3(`🔄 تمت مناقلة ${liters} لتر زيت بكر بنجاح بين الخزانات مع ضبط غاز النيتروجين الخامل.`, `🔄 Successfully transferred ${liters}L EVOO from ${sTank ? (sTank.name_en || sTank.name) : src} to ${dTank ? (dTank.name_en || dTank.name) : dst}.`, `🔄 ${liters}L natives Olivenöl extra erfolgreich von ${sTank ? (sTank.name_en || sTank.name) : src} nach ${dTank ? (dTank.name_en || dTank.name) : dst} umgefüllt.`));
       playAcousticChime(600, 0.2);
     }
 
@@ -26034,7 +26077,7 @@ function setMarketplaceViewMode(mode) {
       const weight = parseInt(document.getElementById('farmer-book-weight').value, 10) || 750;
       const date = document.getElementById('farmer-book-date').value || "2026-09-18";
       const shift = document.getElementById('farmer-book-shift').value;
-      const shiftStr = shift === 'morning' ? (isEn ? '08:00 AM (Morning)' : '08:00 صباحاً (وردية الصباح)') : (isEn ? '02:00 PM (Evening)' : '02:00 ظهراً (وردية المساء)');
+      const shiftStr = shift === 'morning' ? tr3('08:00 صباحاً (وردية الصباح)', '08:00 AM (Morning)', '08:00 Uhr (Frühschicht)') : tr3('02:00 ظهراً (وردية المساء)', '02:00 PM (Evening)', '14:00 Uhr (Spätschicht)');
 
       if (!state.millBatches) state.millBatches = [];
       const newBatch = {
@@ -26058,7 +26101,7 @@ function setMarketplaceViewMode(mode) {
       savePlatformState();
 
       closeModal('modal-farmer-book-mill');
-      showToast(isEn ? `📅 Cold-press milling reserved for ${weight} kg on ${date} (${shiftStr}).` : `📅 تم تأكيد حجز دور العصر البارد لـ ${weight} كغ بتاريخ ${date} (${shiftStr}) بنجاح مع معصرة الدريكيش.`);
+      showToast(tr3(`📅 تم تأكيد حجز دور العصر البارد لـ ${weight} كغ بتاريخ ${date} (${shiftStr}) بنجاح مع معصرة الدريكيش.`, `📅 Cold-press milling reserved for ${weight} kg on ${date} (${shiftStr}).`, `📅 Termin für die Kaltpressung von ${weight} kg am ${date} (${shiftStr}) reserviert.`));
       playAcousticChime(750, 0.2);
 
       const slotEl = document.querySelector('[data-i18n="farmer_mill_slot_time"]');
@@ -26075,13 +26118,13 @@ function setMarketplaceViewMode(mode) {
       const date = document.getElementById('farmer-req-date').value || new Date().toISOString().split('T')[0];
 
       const itemLabels = {
-        crates_50: { ar: 'صناديق قطاف مهواة', en: 'Ventilated Harvest Crates' },
-        nets_4: { ar: 'شباك قطاف إيطالية ناعمة', en: 'Italian Soft Harvest Nets' },
-        pruning_kit: { ar: 'طقم مقصات ومنشار تقليم هوائي', en: 'Pneumatic Pruning Shears & Saw Kit' },
-        compost_bag: { ar: 'أكياس سماد عضوي مخمر ومعالج حرارياً', en: 'Organic Fermented Compost Bags' }
+        crates_50: { ar: 'صناديق قطاف مهواة', en: 'Ventilated Harvest Crates', de: 'Belüftete Erntekisten' },
+        nets_4: { ar: 'شباك قطاف إيطالية ناعمة', en: 'Italian Soft Harvest Nets', de: 'Weiche italienische Erntenetze' },
+        pruning_kit: { ar: 'طقم مقصات ومنشار تقليم هوائي', en: 'Pneumatic Pruning Shears & Saw Kit', de: 'Pneumatisches Astscheren- und Sägen-Set' },
+        compost_bag: { ar: 'أكياس سماد عضوي مخمر ومعالج حرارياً', en: 'Organic Fermented Compost Bags', de: 'Bio-Kompostsäcke, fermentiert' }
       };
 
-      const meta = itemLabels[item] || { ar: 'مستلزمات زراعية', en: 'Agricultural Equipment' };
+      const meta = itemLabels[item] || { ar: 'مستلزمات زراعية', en: 'Agricultural Equipment', de: 'Landwirtschaftlicher Bedarf' };
 
       if (!state.farmerRequisitions) state.farmerRequisitions = [];
       state.farmerRequisitions.unshift({
@@ -26096,7 +26139,7 @@ function setMarketplaceViewMode(mode) {
 
       savePlatformState();
       closeModal('modal-farmer-request-inputs');
-      showToast(isEn ? `📦 Requisition confirmed: ${qty} units of ${meta.en} scheduled for delivery on ${date}.` : `📦 تم تأكيد طلب ${qty} من ${meta.ar} بنجاح: التسليم مجدول بتاريخ ${date}.`);
+      showToast(tr3(`📦 تم تأكيد طلب ${qty} من ${meta.ar} بنجاح: التسليم مجدول بتاريخ ${date}.`, `📦 Requisition confirmed: ${qty} units of ${meta.en} scheduled for delivery on ${date}.`, `📦 Bestellung bestätigt: ${qty} × ${meta.de || meta.en}, Lieferung geplant am ${date}.`));
       playAcousticChime(650, 0.2);
       renderFarmerPortal();
     }
@@ -26111,7 +26154,7 @@ function setMarketplaceViewMode(mode) {
       const wage = parseInt(document.getElementById('farmer-task-wage-input').value, 10) || 350000;
 
       if (!title) {
-        showToast(isEn ? "⚠️ Please enter task title" : "⚠️ يرجى إدخال عنوان المهمة");
+        showToast(tr3("⚠️ يرجى إدخال عنوان المهمة", "⚠️ Please enter task title", "⚠️ Bitte geben Sie einen Aufgabentitel ein"));
         return;
       }
 
@@ -26129,7 +26172,7 @@ function setMarketplaceViewMode(mode) {
       }
 
       closeModal('modal-farmer-add-task');
-      showToast(isEn ? `✅ Custom agricultural task logged with wage credit of ${wage.toLocaleString()} SYP.` : `✅ تم قيد المهمة الميدانية برصيد ${wage.toLocaleString()} ل.س بنجاح.`);
+      showToast(tr3(`✅ تم قيد المهمة الميدانية برصيد ${wage.toLocaleString()} ل.س بنجاح.`, `✅ Custom agricultural task logged with wage credit of ${wage.toLocaleString()} SYP.`, `✅ Individuelle Feldaufgabe mit Lohngutschrift von ${wage.toLocaleString()} SYP erfasst.`));
       playAcousticChime(800, 0.2);
 
       if (typeof renderFarmerPortal === 'function') renderFarmerPortal();
@@ -26142,8 +26185,8 @@ function setMarketplaceViewMode(mode) {
     window.logPomaceDispatch = function() {
       const isEn = state.currentLang !== 'ar';
       if (!state.currentUser || (state.currentUser.role !== 'mill_owner' && state.currentUser.role !== 'admin')) {
-        const reqRole = isEn ? 'Certified Mill Operator' : 'صاحب معصرة معتمد';
-        const msg = isEn ? 'Logging circular economy distribution is restricted to mill operators.' : 'تسجيل دفعات توزيع الجفت والسماد مقتصر على أصحاب المعاصر المعتمدين.';
+        const reqRole = tr3('صاحب معصرة معتمد', 'Certified Mill Operator', 'Zertifizierter Ölmühlenbetreiber');
+        const msg = tr3('تسجيل دفعات توزيع الجفت والسماد مقتصر على أصحاب المعاصر المعتمدين.', 'Logging circular economy distribution is restricted to mill operators.', 'Das Erfassen von Trester- und Kompostlieferungen (Kreislaufwirtschaft) ist Ölmühlenbetreibern vorbehalten.');
         showAccessDenied(t('mill_circ_title'), reqRole, msg);
         return;
       }
@@ -26154,8 +26197,8 @@ function setMarketplaceViewMode(mode) {
     window.bookFarmerMillDelivery = function() {
       const isEn = state.currentLang !== 'ar';
       if (!state.currentUser || (state.currentUser.role !== 'farmer' && state.currentUser.role !== 'admin')) {
-        const reqRole = isEn ? 'Certified Field Farmer' : 'مزارع ميداني معتمد';
-        const msg = isEn ? 'Mill slot booking is restricted to certified farmers.' : 'حجز دور المعصرة مقتصر على المزارعين المعتمدين.';
+        const reqRole = tr3('مزارع ميداني معتمد', 'Certified Field Farmer', 'Zertifizierter Landwirt');
+        const msg = tr3('حجز دور المعصرة مقتصر على المزارعين المعتمدين.', 'Mill slot booking is restricted to certified farmers.', 'Die Buchung von Ölmühlen-Terminen ist zertifizierten Landwirten vorbehalten.');
         showAccessDenied(t('farmer_mill_booking_title'), reqRole, msg);
         return;
       }
