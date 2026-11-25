@@ -123,6 +123,8 @@ Hinweise zur Liste: „angewendet“ heißt: im Live-Projekt angewendet. Die Num
 | 10 | `20261121000100_country_model_unified.sql` | enthält `drop table private.countries`; blockiert der MCP-Weg das, im SQL-Editor ausführen |
 | 11 | `20261121000200_consent_version_reservation.sql` | Fassung `sponsorship` = `2026-11-22` |
 | 12 | `20261121000300_harvest_unique.sql` | vorher prüfen: `select tree_id, season_year, count(*) from public.pressing_batches where mill_id = 'farm' and status in ('pending_review','certified') group by 1, 2 having count(*) > 1;` muss leer sein |
+| 13 | `20261121000400_payment_instructions_by_country.sql` | neue Funktion `payment_instructions_for(country)`; die Web-App nutzt sie, sonst die alte Funktion |
+| 14 | `20261121000500_harvest_units.sql` | `oil_allocations.unit` (l/kg) wird aus der Kultur des Baums befüllt und danach Pflicht |
 
 **Direkt danach, im selben Fenster**
 
