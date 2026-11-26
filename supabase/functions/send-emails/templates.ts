@@ -21,6 +21,11 @@ function liters(ml: unknown): string {
   return Number.isFinite(n) ? `${(n / 1000).toFixed(2).replace(/\.?0+$/, "")} L` : "";
 }
 
+/** Amount with its unit: 'kg' = weighed harvest (the value holds grams), otherwise olive oil (the value holds millilitres). */
+function quantity(milli: unknown, unit: unknown): string {
+  return unit === "kg" ? liters(milli).replace(/ L$/, " kg") : liters(milli);
+}
+
 function kindAr(kind: unknown): string {
   return ({ delivery: "تسليم إلى العنوان", pickup: "استلام من المعصرة", donate: "تبرع" } as Record<string, string>)[String(kind)] ?? escapeHtml(kind);
 }
@@ -35,11 +40,81 @@ function shortId(id: unknown): string {
 
 export type Rendered = { subject: string; ar: string; en: string; cta?: { label_ar: string; label_en: string; href: string } };
 
+type Cta = NonNullable<Rendered["cta"]>;
+
+/**
+ * Mails about a weighed harvest (non-olive crops): the database sends unit 'kg' and the amount in grams.
+ * Returns null for every other template, so render() continues with the common texts.
+ */
+function renderHarvest(template: string, p: Record<string, unknown>, tree: string, note: string, dash: Cta): Rendered | null {
+  const qty = quantity(p.litersMl, "kg");
+  const id = shortId(p.requestId);
+  // A harvest row has no mill behind it, so "pickup" names no place here.
+  const kAr = ({ delivery: "تسليم إلى العنوان", pickup: "استلام", donate: "تبرع" } as Record<string, string>)[String(p.kind)] ?? escapeHtml(p.kind);
+  const kEn = ({ delivery: "home delivery", pickup: "pickup", donate: "donation" } as Record<string, string>)[String(p.kind)] ?? escapeHtml(p.kind);
+  switch (template) {
+    case "oil_allocated":
+      return {
+        subject: "حصتك من المحصول جاهزة · Your harvest share has been allocated",
+        ar: `اعتُمد المحصول الموزون للشجرة ${tree} (موسم ${escapeHtml(p.seasonYear)}، شهادة ${escapeHtml(p.certificateSerial)}). نصيبك: <strong>${qty}</strong>. يمكنك الآن طلب التسليم أو الاستلام أو التبرع من لوحة التحكم.`,
+        en: `The weighed harvest of tree ${tree} was certified (season ${escapeHtml(p.seasonYear)}, certificate ${escapeHtml(p.certificateSerial)}). Your share: <strong>${qty}</strong>. You can now request delivery, pickup or a donation from your dashboard.`,
+        cta: dash,
+      };
+    case "oil_request_received":
+      return {
+        subject: "استلمنا طلب المحصول · We received your harvest request",
+        ar: `استلمنا طلبك ${id}: ${kAr} · ${qty} من المحصول الموزون. سيراجعه فريق المالية وتصلك رسالة عند كل خطوة.`,
+        en: `We received your request ${id}: ${kEn} · ${qty} of weighed harvest. Finance will review it and you get an e-mail at every step.`,
+        cta: dash,
+      };
+    case "oil_request_approved":
+      return {
+        subject: "تم اعتماد طلب المحصول · Your harvest request was approved",
+        ar: `اعتُمد طلبك ${id} (${kAr} · ${qty} من المحصول الموزون) وهو الآن قيد التنفيذ.${note}`,
+        en: `Your request ${id} (${kEn} · ${qty} of weighed harvest) was approved and is being fulfilled.${note}`,
+        cta: dash,
+      };
+    case "oil_request_fulfilled":
+      return {
+        subject: "تم تنفيذ طلب المحصول · Your harvest request is complete",
+        ar: `نُفّذ طلبك ${id} (${kAr} · ${qty} من المحصول الموزون).${note}`,
+        en: `Your request ${id} (${kEn} · ${qty} of weighed harvest) has been fulfilled.${note}`,
+        cta: dash,
+      };
+    case "oil_request_rejected":
+      return {
+        subject: "طلب المحصول · Your harvest request",
+        ar: `لم نتمكن من تنفيذ طلبك ${id} (${qty} من المحصول الموزون). أُعيدت الكمية إلى رصيدك ويمكنك إرسال طلب جديد.${note}`,
+        en: `We could not fulfil your request ${id} (${qty} of weighed harvest). The amount is back in your balance and you can send a new request.${note}`,
+        cta: dash,
+      };
+    // Sent to whoever recorded the harvest (mill_id 'farm'); the serial is the weighing record, not a lab certificate.
+    case "batch_certified":
+      return {
+        subject: "اعتُمد المحصول الموزون · Weighed harvest approved",
+        ar: `اعتُمد المحصول الموزون للشجرة ${tree}. رقم سجل الحصاد (محضر الوزن): <strong>${escapeHtml(p.certificateSerial)}</strong>.${note}`,
+        en: `The weighed harvest of tree ${tree} was approved. Harvest record (weighing record): <strong>${escapeHtml(p.certificateSerial)}</strong>.${note}`,
+      };
+    case "batch_rejected":
+      return {
+        subject: "المحصول الموزون لم يُعتمد · Weighed harvest not approved",
+        ar: `لم يُعتمد المحصول الموزون للشجرة ${tree}.${note}`,
+        en: `The weighed harvest of tree ${tree} was not approved.${note}`,
+      };
+    default:
+      return null;
+  }
+}
+
 export function render(template: string, p: Record<string, unknown>): Rendered {
   const tree = escapeHtml(p.treeId);
   const amount = money(p.amountMinor, p.currency);
   const note = p.note ? `<br><em>${escapeHtml(p.note)}</em>` : "";
   const dash = { label_ar: "فتح لوحة التحكم", label_en: "Open dashboard", href: `${APP_URL}/` };
+  if (p.unit === "kg") {
+    const harvest = renderHarvest(template, p, tree, note, dash);
+    if (harvest) return harvest;
+  }
   switch (template) {
     case "reservation_created":
       return {
@@ -137,8 +212,8 @@ export function render(template: string, p: Record<string, unknown>): Rendered {
     case "onboarding_three":
       return {
         subject: "ماذا يحدث بعد الحجز · What happens after you reserve",
-        ar: `الحجز يحتفظ بالحصة لمدة 30 دقيقة حتى ترفع إشعار التحويل، ثم تبقى قيد المراجعة حتى يعتمدها فريق المالية. كل خطوة تصلك برسالة. لا رسوم خفية، والسعر الذي تراه في السوق هو السعر النهائي.`,
-        en: `A reservation holds the share for 30 minutes until you upload the transfer receipt; it then stays under review until Finance confirms it. You get an e-mail at every step. No hidden fees — the marketplace price is the final price.`,
+        ar: `الحجز يحتفظ بالحصة لمدة 48 ساعة حتى ترفع إشعار التحويل، ثم تبقى قيد المراجعة حتى يعتمدها فريق المالية. كل خطوة تصلك برسالة. لا رسوم خفية، والسعر الذي تراه في السوق هو السعر النهائي.`,
+        en: `A reservation holds the share for 48 hours until you upload the transfer receipt; it then stays under review until Finance confirms it. You get an e-mail at every step. No hidden fees — the marketplace price is the final price.`,
         cta: { label_ar: "تصفّح الأشجار", label_en: "Browse trees", href: `${APP_URL}/#marketplace` },
       };
     case "onboarding_seven":
@@ -239,6 +314,14 @@ export function render(template: string, p: Record<string, unknown>): Rendered {
         subject: "تنبيه تشغيلي · Faseela ops alert",
         ar: `رسائل فاشلة خلال 24 ساعة: ${escapeHtml(p.failedEmails)} · أخطاء العميل خلال ساعة: ${escapeHtml(p.clientErrorsLastHour)}. افتح حالة النظام في لوحة الإدارة.`,
         en: `Failed e-mails in 24 h: ${escapeHtml(p.failedEmails)} · client errors in the last hour: ${escapeHtml(p.clientErrorsLastHour)}. Open the system status in the admin panel.`,
+        cta: dash,
+      };
+    case "admin_digest":
+      // Weekly figures from private.run_housekeeping (rule weekly_digest). "owners" = accounts with an active share.
+      return {
+        subject: "ملخص الأسبوع · Faseela weekly summary",
+        ar: `الحسابات: ${escapeHtml(p.users)} (+${escapeHtml(p.newUsers)} خلال 7 أيام) · الكفلاء أصحاب حصص فعّالة: ${escapeHtml(p.owners)} · دفعات معتمدة خلال 7 أيام: <strong>${money(p.approvedMinor, p.currency)}</strong> · دفعات بانتظار المراجعة: ${escapeHtml(p.openReviews)} · رسائل فاشلة خلال 7 أيام: ${escapeHtml(p.failedMails)}.`,
+        en: `Accounts: ${escapeHtml(p.users)} (+${escapeHtml(p.newUsers)} in the last 7 days) · sponsors with an active share: ${escapeHtml(p.owners)} · payments approved in the last 7 days: <strong>${money(p.approvedMinor, p.currency)}</strong> · payments waiting for review: ${escapeHtml(p.openReviews)} · failed e-mails in the last 7 days: ${escapeHtml(p.failedMails)}.`,
         cta: dash,
       };
     case "order_placed":

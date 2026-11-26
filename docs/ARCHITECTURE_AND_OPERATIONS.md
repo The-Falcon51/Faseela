@@ -455,13 +455,39 @@ Das Admin-Panel hat jetzt 18 Bereiche. Neu sind vier Werkzeuge, mit denen sich d
 - Ausgeblendete Bäume liefert die Datenbank an Besucher gar nicht aus (RLS); die App zeigt sie nicht.
 - Grenze: Beschreibungstexte, Parzellendaten und Pflegeprotokolle neuer Bäume kommen noch nicht aus der Datenbank; ein nur dort angelegter Baum zeigt diese Bereiche leer.
 
-**Schwesterkulturen (Migration 44):** `tree_12` Pistazie, `tree_14` Mandel, `tree_15` Granatapfel, `tree_16` Walnuss – je 4 Anteile, ausgeblendet, ohne Parzelle, Landwirt und Mühle. Die Ernte-Abrechnung (Pressung → Öl in Litern) ist olivenspezifisch; für diese Kulturen gibt es noch keinen Ablauf.
+**Schwesterkulturen (Migration 44):** `tree_12` Pistazie, `tree_14` Mandel, `tree_15` Granatapfel, `tree_16` Walnuss – je 4 Anteile, ausgeblendet, ohne Parzelle, Landwirt und Mühle. Die Ernte-Abrechnung (Pressung → Öl in Litern) ist olivenspezifisch; für diese Kulturen gilt seit Migration `20261116000140` die gewogene Ernte in kg (§2za).
 
 **Beispielwerte:** Der Abschnitt „Klima und Boden" auf der Startseite zeigt feste Zahlen. Er ist jetzt in allen drei Sprachen als Beispiel gekennzeichnet statt als Live-Messung.
 
-**Vorbereitet, nicht angewendet (Migration 43 `launch_hardening`):** Reservierungsfrist 48 Stunden, zweiter Faktor für Konten mit eingerichtetem Authenticator, Regeln „unbestätigte Konten löschen" und „Wochenbericht". Die Datenbank verlangt dafür eine Bestätigung des Kontoinhabers, die zweimal ausblieb. Die Datei liegt deshalb nicht im Migrationsordner.
+**Migration 43 `launch_hardening`:** im Live-Projekt angewendet und seit dem 22.11.2026 im Migrationsordner (`20261116000120_launch_hardening.sql`). Den heutigen Stand beschreibt §2za.
 
 **Tests:** `npm run test:catalog` (`tests/e2e/catalog.e2e.mjs`), `tests/data-mappers.test.mjs` (11).
+
+## 2za. Gewogene Ernte, ein Ländermodell, 48 Stunden Reservierung (Stand 2026-11-22)
+
+Dieser Abschnitt beschreibt den Stand der Datenbank nach den Migrationen `20261116000120` bis `20261121000200`. Welche davon im Live-Projekt noch fehlen, steht in `docs/SUPABASE_MIGRATION.md`, Abschnitt „Live-Rollout“.
+
+**Gewogene Ernte (kg).** Oliven werden in Litern Öl abgerechnet, alle anderen Kulturen (`pistachio`, `almond`, `pomegranate`, `walnut`, `date`) nach Gewicht. Der Weg ist derselbe wie beim Öl: erfassen → prüfen → nach Anteilen zuteilen → Lieferung, Abholung oder Spende.
+
+- Erfassen: `public.submit_harvest_batch({treeId, harvestKg, netKg})`, erlaubt für den zugewiesenen Landwirt oder einen Admin, höchstens 20 Aufrufe je Stunde. `harvestKg` (brutto) 0,1 bis 5000, `netKg` 0 bis 5000 und nicht größer als brutto; beide als JSON-Zahl. Fehlercodes: `invalid-argument`, `not-found` (Olivenbaum oder unbekannter Baum), `permission-denied` (Baum nicht zugewiesen), `already-exists` (für Baum und Saison liegt schon eine Ernte vor). Umgekehrt lehnt `submit_pressing_batch` Nicht-Oliven ab.
+- Speicherung: eine Zeile in `pressing_batches` mit `mill_id = 'farm'`; `olives_weight_kg` = Bruttogewicht, `oil_yield_liters` = Nettogewicht in kg, die Laborwerte stehen auf 0. Die Prüfung läuft über die vorhandene Warteschlange `pressing_batches` (`certify_pressing_batch`), die Zuteilung über `allocate_oil`.
+- **Einheit:** Für diese Bäume enthält `oil_allocations.liters_ml` **Gramm**. Die Tabelle hat keine Einheiten-Spalte; die Einheit folgt aus `trees_public.crop_category`. Weil Besucher und Kunden nur eingeblendete Bäume lesen dürfen (RLS), kann der Client die Einheit einer Zuteilung auf einem ausgeblendeten Baum nicht bestimmen und zeigt die Menge dann ohne Einheit.
+- Anfragen: `oil_requests.unit` ist `l` oder `kg`. Eine Anfrage enthält entweder Öl oder Erntegut; `request_oil` lehnt gemischte Anfragen ab. Empfehlungs-Gutschriften sind Öl und hängen nur an Ölanfragen.
+- Mails: `oil_allocated` und `oil_request_*` tragen `params.unit`. Bei `kg` verwendet `supabase/functions/send-emails/templates.ts` eigene Texte („weighed harvest“ / „المحصول الموزون“) und zeigt kg; ohne Einheit oder mit `l` bleiben die Öl-Texte. Die Push-Texte (`send-push/messages.ts`) nennen keine Mengen und sprechen auch bei Erntegut noch von Öl.
+- Mühlen-Pflicht in Aufgabenliste und Go-Live-Checkliste (`admin_tasks`, `admin_readiness`) gilt nur noch für Olivenbäume.
+- Tests: `supabase/tests/harvest_kg.test.sql`, `tests/data-mappers.test.mjs`.
+
+**Wochenbericht.** `private.run_housekeeping()` läuft stündlich im Job `faseela-automations` mit. Ist die Regel `weekly_digest` eingeschaltet (Standard: aus), geht montags ab 6 Uhr (Datenbankzeit, UTC) einmal je Kalenderwoche die Vorlage `admin_digest` an alle Admins: Konten, neue Konten der letzten 7 Tage, Konten mit aktivem Anteil, in 7 Tagen freigegebene Beträge, Zahlungen in Prüfung, fehlgeschlagene Mails der letzten 7 Tage. Die Regel `purge_unconfirmed` („unbestätigte Konten löschen“) existiert nur als Eintrag; sie hat keinen Ausführer und bewirkt nichts.
+
+**Ein Ländermodell.** `public.countries` (Code, Name in AR/EN/DE, Währung, Status `active` oder `planned`) ist das einzige Länderregister; Besucher sehen nur aktive Länder (RLS). `SY` ist aktiv, `ES`, `IT`, `GR`, `TN`, `TR`, `MA` sind geplant.
+
+- Jeder Baum trägt `trees_public.country_code` (Fremdschlüssel). Ein Baum lässt sich nur in einem aktiven Land einblenden: Der Trigger `trees_public_country_gate` lehnt es sonst auf jedem Schreibweg mit `failed-precondition` ab („This country is not open for sales yet.“).
+- `admin_set_country_status({code, status})` aktiviert ein Land nur, wenn mindestens ein Empfangskonto es abdeckt, sonst `failed-precondition` „Add a receiving account for this country before activating it.“. Ein Land mit eingeblendeten Bäumen lässt sich nicht auf `planned` zurücksetzen. Die rechtliche Prüfung eines Landes hat keinen eigenen Schalter; sie ist die Entscheidung des Admins, der aktiviert.
+- Empfangskonten: Ein Kanal kann `countries: ["SY", …]` tragen (höchstens 40 Codes, jeder muss in `public.countries` stehen). Ein Kanal ohne Angabe gilt für alle Länder.
+- Entfallen sind `private.countries` mit dem Schalter `open`/`closed`, `admin_list_countries`, `admin_set_country`, `admin_set_tree_class` und `admin_get_tree_class`. An ihrer Stelle stehen `admin_list_master_data`, `admin_set_country_status`, `admin_set_tree_crop` und `admin_set_tree_origin`.
+- Tests: `supabase/tests/master_data.test.sql`, `supabase/tests/admin_control_center.test.sql`.
+
+**Reservierung 48 Stunden.** Eine Reservierung wartet 48 Stunden auf den Überweisungsbeleg (vorher 30 Minuten); danach gibt der vorhandene Job die Anteile wieder frei. Dieselbe Frist nennen die Onboarding-Mail `onboarding_three` und die Leistungsbeschreibung `public/legal/patenschaft.html`. Weil sich damit der Text ändert, dem Kunden zustimmen, trägt die Leistungsbeschreibung die Fassung `2026-11-22`. Dieselbe Fassung steht an drei Stellen und muss dort gleich sein: `data-version` in `patenschaft.html`, `CONSENT_VERSIONS.sponsorship` in `public/app.js` und `private.app_settings('consent_versions')` (Migration `20261121000200`). Jedes Konto stimmt vor der nächsten Patenschaft der neuen Fassung zu; frühere Zustimmungen bleiben als Nachweis in `private.consent_records`.
 
 ## 3. Server-Modus im Frontend
 

@@ -3,7 +3,9 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
   toMillis, normalizeDoc, minorToMajor, statusLabel, mapPublicTree, mapCountry, mapFarm, mapShare,
-  mapTransaction, mapInvestment, portfolioTotals, mapReviewItem, investmentTimeline, REVIEW_SLA_MS
+  mapTransaction, mapInvestment, portfolioTotals, mapReviewItem, investmentTimeline, REVIEW_SLA_MS,
+  HARVEST_MILL_ID, quantityUnit, quantityUnitLabel, milliToMajor, formatQuantity, isHarvestBatch, mapPressingBatch,
+  mapOilRequest, mapOilAllocation, allocationTotals, parseWeightKg, validateHarvestInput
 } from '../public/data-mappers.mjs';
 
 const ts = (ms) => ({ toMillis: () => ms });
@@ -102,6 +104,131 @@ test('mapReviewItem routes each queue to its review action', () => {
   assert.equal(oil.channel, 'delivery');
   assert.match(oil.notes, /^2\.5 L • Ab Cd • \+49 1 • Musterweg 1, Berlin, DE$/);
   assert.equal(mapReviewItem('oil_fulfilment', { id: 'o2', userId: 'u6', kind: 'donate', litersMl: 1000 }).notes, '1 L');
+});
+
+test('mapReviewItem shows a weighed harvest in kilograms and keeps mill pressings unchanged', () => {
+  const harvest = mapReviewItem('pressing_batches', { id: 'h1', submittedByUid: 'u7', treeId: 'tree_12', millId: 'farm', olivesWeightKg: 120.5, oilYieldLiters: 96, acidityPct: 0, submitter: { displayName: 'Sami' } });
+  assert.equal(harvest.type, 'pressing_batch'); // same review action as a pressing
+  assert.equal(harvest.serverQueue, 'pressing_batches');
+  assert.equal(harvest.isHarvest, true);
+  assert.equal(harvest.role, 'farmer');
+  assert.equal(harvest.channel, HARVEST_MILL_ID);
+  assert.equal(harvest.unit, 'kg');
+  assert.equal(harvest.harvestKg, 120.5);
+  assert.equal(harvest.netKg, 96);
+  assert.equal(harvest.type_label_en, 'Weighed harvest');
+  assert.equal(harvest.type_label_de, 'Gewogene Ernte');
+  assert.equal(harvest.type_label, 'حصاد موزون');
+  assert.equal(harvest.notes, 'tree_12 • Harvest 120.5 kg gross → 96 kg net');
+  assert.equal(harvest.notes_de, 'tree_12 • Ernte 120.5 kg brutto → 96 kg netto');
+  assert.match(harvest.notes_ar, /120\.5 كغ/);
+  assert.doesNotMatch(harvest.notes, / L|%/); // no litres, no acidity on a harvest row
+  assert.equal(mapReviewItem('pressing_batches', { id: 'h2', millId: 'farm' }).notes, ' • Harvest ? kg gross → ? kg net');
+  assert.equal(mapReviewItem('pressing_batches', { id: 'h2', millId: 'farm' }).harvestKg, null);
+
+  const pressing = mapReviewItem('pressing_batches', { id: 'b2', submittedByUid: 'u3', treeId: 'tree_01', millId: 'mill_01', olivesWeightKg: 100, oilYieldLiters: 18, acidityPct: 0.4 });
+  assert.equal(pressing.isHarvest, false);
+  assert.equal(pressing.role, 'mill_owner');
+  assert.equal(pressing.type_label_en, 'Pressing batch');
+  assert.equal(pressing.notes, 'tree_01 • 100 kg → 18 L • 0.4%');
+});
+
+test('mapReviewItem carries the unit of an oil or harvest request', () => {
+  const kg = mapReviewItem('oil_requests', { id: 'o3', userId: 'u8', kind: 'pickup', litersMl: 12500, unit: 'kg', contact: { name: 'Ab Cd' } });
+  assert.equal(kg.type, 'oil_request');
+  assert.equal(kg.unit, 'kg');
+  assert.equal(kg.quantity, 12.5);
+  assert.equal(kg.litersMl, 12500);
+  assert.equal(kg.notes, '12.5 kg • Ab Cd');
+  assert.equal(kg.type_label_en, 'Harvest request');
+  assert.equal(kg.type_label_de, 'Ernteanfrage');
+  assert.equal(mapReviewItem('oil_fulfilment', { id: 'o4', kind: 'donate', litersMl: 1234, unit: 'kg' }).notes, '1.23 kg');
+  assert.equal(mapReviewItem('oil_fulfilment', { id: 'o4', kind: 'donate', litersMl: 1234, unit: 'kg' }).type_label_en, 'Harvest fulfilment');
+  const oil = mapReviewItem('oil_requests', { id: 'o5', kind: 'donate', litersMl: 2500, unit: 'l' });
+  assert.equal(oil.unit, 'l');
+  assert.equal(oil.type_label_en, 'Oil request');
+  assert.equal(oil.type_label_de, 'Ölanfrage');
+  assert.equal(oil.notes, '2.5 L');
+  // Rows from before the unit column, or with an unexpected value, are olive oil.
+  assert.equal(mapReviewItem('oil_requests', { id: 'o6', litersMl: 1000, unit: 'lb' }).unit, 'l');
+});
+
+test('quantities: millilitres and grams are converted, labelled and never mixed', () => {
+  assert.equal(quantityUnit('kg'), 'kg');
+  assert.equal(quantityUnit(undefined), 'l');
+  assert.equal(quantityUnitLabel('kg', 'ar'), 'كغ');
+  assert.equal(quantityUnitLabel('l', 'de'), 'L');
+  assert.equal(quantityUnitLabel('l', 'xx'), 'L');
+  assert.equal(milliToMajor(2500), 2.5);
+  assert.equal(milliToMajor('abc'), 0);
+  assert.equal(milliToMajor(-5), 0);
+  assert.equal(formatQuantity(2500, 'l'), '2.5 L');
+  assert.equal(formatQuantity(10000, 'kg'), '10 kg');
+  assert.equal(formatQuantity(1999, 'kg'), '2 kg');
+  assert.equal(formatQuantity(5, 'kg'), '0.005 kg'); // a few grams are not shown as zero
+  assert.equal(formatQuantity(0, 'kg'), '0 kg');
+  assert.equal(formatQuantity(null, 'l', 'ar'), '0 لتر');
+
+  assert.deepEqual(mapOilRequest({ id: 'r1', litersMl: 750, unit: 'kg', createdAt: ts(5) }), { id: 'r1', litersMl: 750, unit: 'kg', createdAt: 5, quantity: 0.75 });
+  assert.equal(mapOilRequest({ id: 'r2', litersMl: 750 }).unit, 'l');
+  assert.equal(mapOilRequest(null).quantity, 0);
+
+  const crops = new Map([['tree_01', 'olive'], ['tree_12', 'pistachio']]);
+  const olive = mapOilAllocation({ id: 'a1', treeId: 'tree_01', litersMl: 3700, status: 'available' }, crops);
+  const nuts = mapOilAllocation({ id: 'a2', treeId: 'tree_12', litersMl: 4200, status: 'available' }, crops);
+  const unknown = mapOilAllocation({ id: 'a3', treeId: 'tree_99', litersMl: 900, status: 'available' }, crops);
+  assert.deepEqual([olive.unit, olive.quantity], ['l', 3.7]);
+  assert.deepEqual([nuts.unit, nuts.quantity], ['kg', 4.2]);
+  assert.deepEqual([unknown.unit, unknown.quantity], [null, null]);
+  assert.equal(mapOilAllocation({ id: 'a4', treeId: 'tree_12', litersMl: 1000 }, { tree_12: 'almond' }).unit, 'kg');
+  assert.equal(mapOilAllocation({ id: 'a5', treeId: 'tree_12', litersMl: 1000 }).unit, null);
+  assert.equal(mapOilAllocation({ id: 'a6', treeId: 'toString', litersMl: 1000 }, {}).unit, null);
+  // The server unit wins and needs no catalogue entry (sold-out / unlisted tree).
+  assert.deepEqual((({ unit, quantity }) => [unit, quantity])(mapOilAllocation({ id: 'a7', treeId: 'tree_77', litersMl: 6000, unit: 'kg' })), ['kg', 6]);
+  assert.equal(mapOilAllocation({ id: 'a8', treeId: 'tree_12', litersMl: 1000, unit: 'l' }, crops).unit, 'l');
+  assert.equal(mapOilAllocation({ id: 'a9', treeId: 'tree_12', litersMl: 1000, unit: 'gallon' }, crops).unit, 'kg');
+  assert.deepEqual(allocationTotals([olive, nuts, unknown, null]), { l: 3700, kg: 4200, unknown: 900 });
+  assert.deepEqual(allocationTotals(undefined), { l: 0, kg: 0, unknown: 0 });
+});
+
+test('pressing batch rows: a farm row is a weighed harvest', () => {
+  assert.equal(isHarvestBatch({ millId: 'farm' }), true);
+  assert.equal(isHarvestBatch({ millId: 'mill_01' }), false);
+  assert.equal(isHarvestBatch(null), false);
+  const harvest = mapPressingBatch({ id: 'h1', treeId: 'tree_12', millId: 'farm', olivesWeightKg: 120.5, oilYieldLiters: 96.1234, status: 'pending_review', createdAt: ts(9) });
+  assert.equal(harvest.isHarvest, true);
+  assert.equal(harvest.harvestKg, 120.5);
+  assert.equal(harvest.netKg, 96.123);
+  assert.equal(harvest.createdAt, 9);
+  assert.equal(harvest.status, 'pending_review');
+  const pressing = mapPressingBatch({ id: 'b1', millId: 'mill_01', olivesWeightKg: 100, oilYieldLiters: 18 });
+  assert.equal(pressing.isHarvest, false);
+  assert.equal(pressing.oilYieldLiters, 18);
+  assert.equal('harvestKg' in pressing, false);
+});
+
+test('harvest form input is checked before the round trip', () => {
+  assert.equal(parseWeightKg('12,5'), 12.5);
+  assert.equal(parseWeightKg(' 12.345 '), 12.345);
+  assert.equal(parseWeightKg('١٢٫٥'), 12.5);
+  assert.equal(parseWeightKg('۱۲'), 12);
+  assert.equal(parseWeightKg(7.00049), 7);
+  assert.equal(parseWeightKg(''), null);
+  assert.equal(parseWeightKg('1e3'), null);
+  assert.equal(parseWeightKg('-4'), null);
+  assert.equal(parseWeightKg('12.3456'), null);
+  assert.equal(parseWeightKg(NaN), null);
+  assert.equal(parseWeightKg(undefined), null);
+
+  assert.deepEqual(validateHarvestInput({ treeId: ' tree_12 ', harvestKg: '120,5', netKg: '96' }), { ok: true, payload: { treeId: 'tree_12', harvestKg: 120.5, netKg: 96 } });
+  assert.deepEqual(validateHarvestInput({ treeId: 'tree_12', harvestKg: 5000, netKg: 0 }), { ok: true, payload: { treeId: 'tree_12', harvestKg: 5000, netKg: 0 } });
+  assert.deepEqual(validateHarvestInput({ treeId: '', harvestKg: 10, netKg: 5 }), { ok: false, error: 'tree' });
+  assert.deepEqual(validateHarvestInput({ treeId: 'tree 12', harvestKg: 10, netKg: 5 }), { ok: false, error: 'tree' });
+  assert.deepEqual(validateHarvestInput({ treeId: 'tree_12', harvestKg: '0.05', netKg: 0 }), { ok: false, error: 'gross' });
+  assert.deepEqual(validateHarvestInput({ treeId: 'tree_12', harvestKg: 5000.5, netKg: 5 }), { ok: false, error: 'gross' });
+  assert.deepEqual(validateHarvestInput({ treeId: 'tree_12', harvestKg: 10, netKg: '' }), { ok: false, error: 'net' });
+  assert.deepEqual(validateHarvestInput({ treeId: 'tree_12', harvestKg: 10, netKg: 10.5 }), { ok: false, error: 'net_exceeds_gross' });
+  assert.deepEqual(validateHarvestInput(null), { ok: false, error: 'tree' });
 });
 
 test('mapDirectoryUser maps admin directory rows to the legacy users shape', async () => {

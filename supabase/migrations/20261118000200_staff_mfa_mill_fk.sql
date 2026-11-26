@@ -4,7 +4,8 @@
 --    private.require_role is the gate of every staff function; while private.app_settings('staff_mfa_required')
 --    holds JSON true it also demands a session that was verified with a second factor (JWT claim aal = aal2)
 --    from every account with a staff role (admin, finance_admin, quality_auditor). Sponsors, farmers and mill
---    operators are not affected.
+--    operators are not affected by the switch. The rule of 20261116000120_launch_hardening.sql stays: any account
+--    that has a verified factor must present it (aal2), switch on or off.
 --    The switch is OFF by default. An admin can only turn it on from a session that already is aal2, so the
 --    switch cannot lock out the person who flips it. Other staff accounts must enrol a factor before they can
 --    work again; the panel leads them there.
@@ -36,6 +37,12 @@ declare
 begin
   if not private.has_any_role(roles) then
     perform private.fail('permission-denied', 'This operation is not permitted for this account.');
+  end if;
+  -- An account that has enrolled a verified factor must always present it (20261116000120_launch_hardening.sql,
+  -- applied on live). Kept here because this function replaces that definition.
+  if coalesce((select auth.jwt()) ->> 'aal', 'aal1') <> 'aal2'
+     and exists (select 1 from auth.mfa_factors f where f.user_id = v_uid and f.status = 'verified') then
+    perform private.fail('mfa-required', 'Confirm the second factor to continue.');
   end if;
   -- Staff accounts need a second factor once the switch is on (see header).
   if private.staff_mfa_required()

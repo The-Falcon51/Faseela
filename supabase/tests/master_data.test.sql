@@ -102,10 +102,18 @@ begin
     and pg_temp.call_as(c_a, $q$select public.admin_set_tree_mill('{"treeId":"tree_md_test","millId":"mill_md_es"}')$q$) = 'OK');
 
   -- A listed tree in a planned country stays invisible in the country list until the country is activated.
-  perform pg_temp.chk('admin lists the tree', pg_temp.call_as(c_a, $q$select public.admin_set_tree_status('{"treeId":"tree_md_test","status":"listed"}')$q$) = 'OK');
+  perform pg_temp.chk('a tree cannot be listed in a planned country', pg_temp.call_as(c_a, $q$select public.admin_set_tree_status('{"treeId":"tree_md_test","status":"listed"}')$q$) = 'failed-precondition');
   perform pg_temp.as_anon();
   perform pg_temp.chk('planned country not public yet', pg_temp.cnt($q$select count(*) from public.countries where code = 'ES'$q$) = 0);
+  -- Activation needs a receiving account that covers the country.
+  perform pg_temp.as_pg();
+  delete from private.app_settings where key = 'payment_instructions';
+  perform pg_temp.chk('no activation without a receiving account', pg_temp.call_as(c_a, $q$select public.admin_set_country_status('{"code":"ES","status":"active"}')$q$) = 'failed-precondition');
+  perform pg_temp.as_pg();
+  insert into private.app_settings (key, value) values ('payment_instructions',
+    '{"channels":[{"id":"bank_iban","titleAr":"بنك","titleEn":"Bank","account":"ES00 TEST 0001","countries":["ES"]}]}'::jsonb);
   perform pg_temp.chk('admin activates Spain', pg_temp.call_as(c_a, $q$select public.admin_set_country_status('{"code":"ES","status":"active"}')$q$) = 'OK');
+  perform pg_temp.chk('admin lists the tree', pg_temp.call_as(c_a, $q$select public.admin_set_tree_status('{"treeId":"tree_md_test","status":"listed"}')$q$) = 'OK');
   perform pg_temp.as_anon();
   perform pg_temp.chk('active country and its listed farm are public', pg_temp.cnt($q$select count(*) from public.countries where code = 'ES'$q$) = 1
     and pg_temp.cnt($q$select count(*) from public.farms where farm_id = 'farm_md_es'$q$) = 1

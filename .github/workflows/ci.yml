@@ -1,4 +1,4 @@
-# Faseela CI/CD (S9): typecheck/syntax → guards → unit tests → secret scan → (main) DB tests → deploy hosting.
+# Faseela CI/CD (S9): typecheck/syntax → guards → unit tests → secret scan → DB tests → (manual, main) deploy hosting.
 # Secrets (repository settings → Secrets):
 #   SUPABASE_DB_URL      Postgres connection string of a DEV/STAGING project (never production with real users)
 #   FIREBASE_SERVICE_ACCOUNT  JSON key of a service account with "Firebase Hosting Admin" on the hosting project
@@ -7,6 +7,14 @@ on:
   push:
     branches: [main]
   pull_request:
+  # Live deploys are started by hand (Actions -> ci -> Run workflow on main). A push to main only verifies; this keeps
+  # the web app from going live before the matching database migrations (docs/SUPABASE_MIGRATION.md, "Live-Rollout").
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Type DEPLOY to publish main to Firebase Hosting (live). Apply the open live migrations first.'
+        required: true
+        default: ''
 permissions:
   contents: read
   checks: write
@@ -120,7 +128,7 @@ jobs:
           expires: 7d
   deploy:
     needs: verify
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    if: github.ref == 'refs/heads/main' && github.event_name == 'workflow_dispatch' && github.event.inputs.confirm == 'DEPLOY'
     runs-on: ubuntu-latest
     environment: production
     steps:

@@ -28,6 +28,17 @@ const ERROR_TEXT = {
   'auth/invalid_credentials': 'E-Mail oder Passwort stimmt nicht.',
   'auth/email-not-verified': 'Die E-Mail-Adresse ist noch nicht bestätigt. Eine neue Bestätigungsmail wurde gesendet.'
 };
+// Refusals that need a concrete next step. Several rules share one code (failed-precondition, not-found), so these are
+// keyed by the server's English message; anything not listed here falls back to the text for its code.
+const MESSAGE_TEXT = {
+  'Add a receiving account for this country before activating it.': 'Aktivieren nicht möglich: Für dieses Land ist noch kein Empfangskonto hinterlegt. Bitte zuerst unter „Empfangskonten" ein Konto anlegen, das für dieses Land gilt, und das Land danach aktivieren.',
+  'A country with listed trees cannot be set back to planned.': 'Zurückstellen nicht möglich: In diesem Land steht noch ein Baum im Katalog. Bitte diese Bäume zuerst ausblenden.',
+  'This country is not open for sales yet.': 'Nicht möglich: Das Herkunftsland dieses Baums ist noch nicht aktiviert. Ein Baum kann nur in einem aktiven Land im Katalog stehen. Bitte das Land zuerst unter „Stammdaten" aktivieren.',
+  'A country code of a payment channel is not registered.': 'Ein Ländercode bei einem Empfangskonto ist nicht registriert. Bitte nur Codes aus den Stammdaten verwenden.',
+  'This tree has no weighed harvest.': 'Für diesen Baum gibt es keine gewogene Ernte: Die Kennung ist unbekannt oder es ist ein Olivenbaum. Olivenbäume laufen über die Pressung der Ölmühle.',
+  'A harvest for this tree and season is already recorded.': 'Für diesen Baum ist in dieser Saison bereits eine Ernte erfasst (in Prüfung oder freigegeben).',
+  'Harvest weights are missing or the net weight exceeds the gross weight.': 'Die Erntegewichte fehlen oder das Nettogewicht liegt über dem Erntegewicht.'
+};
 
 const TABS = [
   { id: 'tasks', label: 'Aufgaben', roles: ['admin', 'finance_admin'] },
@@ -57,7 +68,7 @@ const REVIEW_QUEUES = {
   admin: ['farmer_updates', 'pressing_batches', 'oil_requests', 'oil_fulfilment'],
   finance_admin: ['oil_requests', 'oil_fulfilment']
 };
-const QUEUE_LABEL = { farmer_updates: 'Feldberichte', pressing_batches: 'Pressungen', oil_requests: 'Ölanfragen', oil_fulfilment: 'Öl-Auslieferung' };
+const QUEUE_LABEL = { farmer_updates: 'Feldberichte', pressing_batches: 'Pressungen und Ernten', oil_requests: 'Öl- und Ernteanfragen', oil_fulfilment: 'Auslieferung von Öl und Ernte' };
 const SVG_NS = 'http://www.w3.org/2000/svg';
 
 const session = { user: null, tab: '', idleTimer: 0, loadToken: 0 };
@@ -85,6 +96,8 @@ const fmtDate = (ms) => Number.isFinite(ms) ? new Date(ms).toLocaleString('de-DE
 const fmtMoney = (major) => new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'USD' }).format(Number(major) || 0);
 function errorText(error) {
   const code = String((error && error.code) || '');
+  const message = String((error && error.message) || '');
+  if (Object.hasOwn(MESSAGE_TEXT, message)) return MESSAGE_TEXT[message];
   return ERROR_TEXT[code] || ERROR_TEXT[code.replace(/^auth\//, '')] || 'Das hat nicht funktioniert. Bitte erneut versuchen.';
 }
 function logError(where, error) {
@@ -165,6 +178,7 @@ function csvCell(value) {
 // ---------------------------------------------------------------- views
 const fmtInt = (value) => new Intl.NumberFormat('de-DE').format(Number(value) || 0);
 const fmtMinor = (minor) => fmtMoney((Number(minor) || 0) / 100);
+const fmtQty = (value) => new Intl.NumberFormat('de-DE', { maximumFractionDigits: 3 }).format(Number(value) || 0);
 const monthLabel = (ym) => { const [y, m] = String(ym).split('-').map(Number); return new Date(y, (m || 1) - 1, 1).toLocaleDateString('de-DE', { month: 'short', year: '2-digit' }); };
 function svg(tag, attrs = {}) {
   const node = document.createElementNS(SVG_NS, tag);
@@ -226,7 +240,7 @@ function buildHints(d) {
   else if (mail.failed7d > 0) add('warn', `${fmtInt(mail.failed7d)} E-Mail(s) sind in den letzten 7 Tagen fehlgeschlagen.`, 'system', 'System ansehen');
   if (queues.payments > 0 && !(req.overdue > 0)) add('warn', `${fmtInt(queues.payments)} Zahlung(en) warten auf Prüfung.`, 'payments', 'Zahlungen öffnen');
   if (queues.roleApplications > 0) add('warn', `${fmtInt(queues.roleApplications)} Rollenantrag/-anträge offen.`, 'roles', 'Anträge öffnen');
-  if ((queues.farmerUpdates || 0) + (queues.pressingBatches || 0) + (queues.oilRequests || 0) > 0) add('warn', `${fmtInt((queues.farmerUpdates || 0) + (queues.pressingBatches || 0) + (queues.oilRequests || 0))} weitere Prüfung(en) offen (Feldberichte, Pressungen, Öl).`, 'reviews', 'Prüfungen öffnen');
+  if ((queues.farmerUpdates || 0) + (queues.pressingBatches || 0) + (queues.oilRequests || 0) > 0) add('warn', `${fmtInt((queues.farmerUpdates || 0) + (queues.pressingBatches || 0) + (queues.oilRequests || 0))} weitere Prüfung(en) offen (Feldberichte, Pressungen, Ernten, Öl).`, 'reviews', 'Prüfungen öffnen');
   if (req.expiring24h > 0) add('info', `${fmtInt(req.expiring24h)} Reservierung(en) laufen in den nächsten 24 Stunden ab, falls kein Beleg eingeht.`, 'investments', 'Investitionen ansehen');
   if (ops.adminCount < 2) add('warn', 'Es gibt nur einen Admin. Das Vier-Augen-Prinzip für Empfangskonten ist damit nicht aktiv.', 'users', 'Nutzer öffnen');
   const free = (inv.totalShares || 0) - (inv.soldShares || 0) - (inv.reservedShares || 0);
@@ -266,8 +280,8 @@ function trendBlock(history) {
 }
 
 const TASK_TEXT = {
-  payments_overdue: 'Zahlung(en) über der Prüffrist von 72 Stunden', payments_review: 'Zahlung(en) warten auf Prüfung', oil_requests: 'Ölanfrage(n) offen',
-  role_applications: 'Rollenantrag/-anträge offen', farmer_updates: 'Feldbericht(e) warten auf Freigabe', pressing_batches: 'Pressung(en) warten auf Zertifizierung',
+  payments_overdue: 'Zahlung(en) über der Prüffrist von 72 Stunden', payments_review: 'Zahlung(en) warten auf Prüfung', oil_requests: 'Öl- oder Ernteanfrage(n) offen',
+  role_applications: 'Rollenantrag/-anträge offen', farmer_updates: 'Feldbericht(e) warten auf Freigabe', pressing_batches: 'Pressung(en) oder Ernte(n) warten auf Freigabe',
   mail_failed: 'E-Mail(s) in 7 Tagen fehlgeschlagen', client_errors: 'App-Fehler in den letzten 24 Stunden', trees_without_farmer: 'sichtbare(r) Baum/Bäume ohne Landwirt',
   trees_without_mill: 'sichtbare(r) Baum/Bäume ohne Ölmühle', trees_sold_out: 'Baum/Bäume ausverkauft', payment_accounts_missing: 'Es sind keine Empfangskonten hinterlegt – niemand kann bezahlen',
   single_admin: 'Es gibt nur ein Admin-Konto – das Vier-Augen-Prinzip greift nicht', jobs_failing: 'Hintergrundjob(s) in 24 Stunden fehlgeschlagen'
@@ -328,7 +342,8 @@ function searchBlock() {
 
 const RULE_TEXT = {
   review_reminder: ['Erinnerung an liegengebliebene Prüfungen', 'Liegt ein Rollenantrag, Feldbericht, eine Pressung oder Ölanfrage länger als die eingestellten Tage, bekommen die zuständigen Konten einmal täglich eine E-Mail.', 'Tage bis zur Erinnerung'],
-  sold_out_unlist: ['Ausverkaufte Bäume ausblenden', 'Ein Baum, der vollständig verkauft ist, verschwindet nach den eingestellten Tagen aus dem Katalog. Besitzer behalten alles und sehen ihren Baum weiter.', 'Tage nach dem Ausverkauf']
+  sold_out_unlist: ['Ausverkaufte Bäume ausblenden', 'Ein Baum, der vollständig verkauft ist, verschwindet nach den eingestellten Tagen aus dem Katalog. Besitzer behalten alles und sehen ihren Baum weiter.', 'Tage nach dem Ausverkauf'],
+  weekly_digest: ['Wochenbericht an die Admins', 'Jeden Montag ab 6 Uhr (UTC) geht eine E-Mail an alle Admins: Konten und neue Konten, Baumpaten, freigegebene Beträge der letzten sieben Tage, offene Zahlungsprüfungen und fehlgeschlagene E-Mails.', null]
 };
 const JOB_TEXT = {
   'faseela-expire-reservations': 'Abgelaufene Reservierungen freigeben', 'faseela-flag-overdue-reviews': 'Überfällige Zahlungsprüfungen markieren', 'faseela-onboarding': 'Begrüßungs-E-Mails',
@@ -339,29 +354,34 @@ const JOB_CRITICAL = { 'faseela-expire-reservations': 'Ohne diesen Job bleiben u
 
 async function viewAutomation(view) {
   const { data } = await api().adminAutomationState();
-  const rules = (data && data.rules) || []; const jobs = (data && data.jobs) || []; const log = (data && data.log) || [];
+  // Only rules this panel can describe are offered. The server also stores the rule 'purge_unconfirmed', but no job
+  // implements it yet: a switch here would promise a clean-up that never runs, so it stays hidden until it exists.
+  const rules = ((data && data.rules) || []).filter((rule) => Object.hasOwn(RULE_TEXT, rule.key));
+  const jobs = (data && data.jobs) || []; const log = (data && data.log) || [];
   view.append(el('h2', { text: 'Automationen' }),
     el('p', { class: 'muted', text: 'Regeln arbeiten nach festen Bedingungen und laufen stündlich. Es entscheidet kein KI-Modell. Jede Änderung steht im Audit-Log.' }),
     el('h3', { text: 'Regeln' }));
   view.append(el('div', { class: 'grid' }, rules.map((rule) => {
-    const [title, text, daysLabel] = RULE_TEXT[rule.key] || [rule.key, '', 'Tage'];
+    const [title, text, daysLabel] = RULE_TEXT[rule.key];
     const days = el('input', { type: 'text', inputmode: 'numeric', maxlength: 2, value: String(rule.days) });
     const result = rule.lastResult;
+    const mailNote = { review_reminder: ' Solange kein E-Mail-Anbieter verbunden ist, schlagen die Erinnerungen fehl.', weekly_digest: ' Solange kein E-Mail-Anbieter verbunden ist, kommt der Bericht nicht an.' }[rule.key] || '';
     const save = (enabled) => {
-      const value = Number(days.value.trim());
-      if (!Number.isInteger(value) || value < 1 || value > 90) { toast('Tage: eine ganze Zahl von 1 bis 90.', true); return; }
+      // A rule without a days setting (the weekly digest) is sent without one; the server then keeps its configuration.
+      const value = daysLabel ? Number(days.value.trim()) : null;
+      if (daysLabel && (!Number.isInteger(value) || value < 1 || value > 90)) { toast('Tage: eine ganze Zahl von 1 bis 90.', true); return; }
       openDialog({
         title: enabled ? (rule.enabled ? 'Regel speichern' : 'Regel einschalten') : 'Regel ausschalten',
-        text: `${title}: ${enabled ? `aktiv mit ${value} Tag(en).` : 'wird ausgeschaltet.'}${enabled && rule.key === 'review_reminder' ? ' Solange kein E-Mail-Anbieter verbunden ist, schlagen die Erinnerungen fehl.' : ''}`,
+        text: `${title}: ${enabled ? (daysLabel ? `aktiv mit ${value} Tag(en).` : 'wird eingeschaltet.') : 'wird ausgeschaltet.'}${enabled ? mailNote : ''}`,
         confirmLabel: enabled ? 'Speichern' : 'Ausschalten', danger: !enabled,
-        onConfirm: () => api().adminSetAutomationRule({ key: rule.key, enabled, days: value })
+        onConfirm: () => api().adminSetAutomationRule(daysLabel ? { key: rule.key, enabled, days: value } : { key: rule.key, enabled })
       }).then((ok) => { if (ok) { toast('Regel gespeichert.'); show('automation'); } });
     };
     return el('section', { class: 'item' }, [
       el('div', { class: 'row row-between' }, [el('h4', { text: title }), el('span', { class: `badge ${rule.enabled ? 'badge-ok' : ''}`, text: rule.enabled ? 'aktiv' : 'aus' })]),
       el('p', { class: 'muted', text }),
-      el('div', { class: 'row' }, [field(daysLabel, days),
-        el('button', { type: 'button', class: 'btn btn-sm btn-primary', text: rule.enabled ? 'Speichern' : 'Einschalten', 'aria-label': `${title}: ${rule.enabled ? 'speichern' : 'einschalten'}`, on: { click: () => save(true) } }),
+      el('div', { class: 'row' }, [daysLabel ? field(daysLabel, days) : null,
+        daysLabel || !rule.enabled ? el('button', { type: 'button', class: 'btn btn-sm btn-primary', text: rule.enabled ? 'Speichern' : 'Einschalten', 'aria-label': `${title}: ${rule.enabled ? 'speichern' : 'einschalten'}`, on: { click: () => save(true) } }) : null,
         rule.enabled ? el('button', { type: 'button', class: 'btn btn-sm btn-danger', text: 'Ausschalten', 'aria-label': `${title}: ausschalten`, on: { click: () => save(false) } }) : null]),
       el('p', { class: 'item-meta', text: rule.lastRunAt ? `Letzter Lauf: ${fmtDate(rule.lastRunAt)} · ${result && result.ok === false ? `Fehler: ${result.error || 'unbekannt'}` : `${fmtInt(((result && result.done) || []).length)} Aktion(en)`}` : 'Noch nicht gelaufen.' })
     ]);
@@ -706,7 +726,8 @@ async function openUserDetail(user) {
     ['Registriert', fmtDate(detail.createdAt)], ['E-Mail bestätigt', detail.emailConfirmedAt ? fmtDate(detail.emailConfirmedAt) : 'nein'],
     ['Letzte Anmeldung', detail.lastSignInAt ? fmtDate(detail.lastSignInAt) : 'nie'], ['Status', detail.suspended ? 'gesperrt' : 'aktiv'],
     ['Newsletter', detail.marketingOptIn ? 'eingewilligt' : 'nein'], ['Push-Geräte', fmtInt(detail.counts && detail.counts.pushDevices)],
-    ['Geworbene Personen', fmtInt(detail.counts && detail.counts.referralsMade)], ['Öl zugeteilt', `${fmtInt(Math.round((Number(detail.counts && detail.counts.oilAllocatedMl) || 0) / 1000))} l`]
+    ['Geworbene Personen', fmtInt(detail.counts && detail.counts.referralsMade)], ['Öl zugeteilt', `${fmtInt(Math.round((Number(detail.counts && detail.counts.oilAllocatedMl) || 0) / 1000))} l`],
+    ['Ernte zugeteilt', `${fmtInt(Math.round((Number(detail.counts && detail.counts.harvestAllocatedG) || 0) / 1000))} kg`]
   ];
   const requests = detail.requests || [];
   const shares = detail.shares || [];
@@ -732,7 +753,8 @@ async function openUserDetail(user) {
 
 function channelList(channels) {
   if (!channels || !channels.length) return el('p', { class: 'muted', text: 'Keine Konten hinterlegt.' });
-  return el('ul', {}, channels.map((ch) => el('li', {}, [el('strong', { text: `${CHANNEL_LABEL[ch.id] || ch.id}: ` }), el('span', { class: 'mono', text: ch.account || '' }), ` · ${ch.titleEn || ''} · ${ch.titleAr || ''}`])));
+  return el('ul', {}, channels.map((ch) => el('li', {}, [el('strong', { text: `${CHANNEL_LABEL[ch.id] || ch.id}: ` }), el('span', { class: 'mono', text: ch.account || '' }), ` · ${ch.titleEn || ''} · ${ch.titleAr || ''}`,
+    Array.isArray(ch.countries) && ch.countries.length ? ` · nur für ${ch.countries.join(', ')}` : ''])));
 }
 
 async function viewAccounts(view) {
@@ -768,16 +790,22 @@ async function viewAccounts(view) {
       type: el('select', {}, [el('option', { value: '', text: '— nicht verwendet —' })].concat(CHANNEL_TYPES.map((id) => el('option', { value: id, text: CHANNEL_LABEL[id], selected: current.id === id })))),
       titleEn: el('input', { type: 'text', maxlength: 80, value: current.titleEn || '' }), titleAr: el('input', { type: 'text', maxlength: 80, dir: 'rtl', lang: 'ar', value: current.titleAr || '' }),
       account: el('input', { type: 'text', maxlength: 60, class: 'mono', value: current.account || '', autocomplete: 'off' }),
-      hintEn: el('input', { type: 'text', maxlength: 200, value: current.hintEn || '' }), hintAr: el('input', { type: 'text', maxlength: 200, dir: 'rtl', lang: 'ar', value: current.hintAr || '' })
+      hintEn: el('input', { type: 'text', maxlength: 200, value: current.hintEn || '' }), hintAr: el('input', { type: 'text', maxlength: 200, dir: 'rtl', lang: 'ar', value: current.hintAr || '' }),
+      // Empty = the account covers every country. A country can only be activated once an account covers it.
+      countries: el('input', { type: 'text', maxlength: 160, value: Array.isArray(current.countries) ? current.countries.join(', ') : '', autocomplete: 'off', autocapitalize: 'characters', spellcheck: 'false' })
     };
   });
   const formError = el('p', { class: 'alert alert-error', role: 'alert', hidden: true });
   const save = el('button', { type: 'button', class: 'btn btn-primary', text: data && data.fourEyes ? 'Änderung vorschlagen' : 'Speichern' });
   save.addEventListener('click', () => {
-    const channels = rows.filter((r) => r.type.value).map((r) => ({ id: r.type.value, titleAr: r.titleAr.value.trim(), titleEn: r.titleEn.value.trim(), account: r.account.value.trim(), hintAr: r.hintAr.value.trim() || undefined, hintEn: r.hintEn.value.trim() || undefined }));
+    const countryCodes = (r) => [...new Set(r.countries.value.toUpperCase().split(/[\s,;]+/).filter(Boolean))];
+    const used = rows.filter((r) => r.type.value);
+    const channels = used.map((r) => ({ id: r.type.value, titleAr: r.titleAr.value.trim(), titleEn: r.titleEn.value.trim(), account: r.account.value.trim(), hintAr: r.hintAr.value.trim() || undefined, hintEn: r.hintEn.value.trim() || undefined, countries: countryCodes(r).length ? countryCodes(r) : undefined }));
     const invalid = channels.length === 0 || channels.some((ch) => ch.titleAr.length < 2 || ch.titleEn.length < 2 || !/^[A-Za-z0-9 +./-]{3,60}$/.test(ch.account));
-    formError.hidden = !invalid;
+    const badCountries = !invalid && used.some((r) => countryCodes(r).length > 40 || !countryCodes(r).every((code) => /^[A-Z]{2}$/.test(code)));
+    formError.hidden = !invalid && !badCountries;
     if (invalid) { formError.textContent = 'Mindestens ein Konto mit beiden Bezeichnungen und einer gültigen Kontonummer (3–60 Zeichen: Buchstaben, Ziffern, Leerzeichen, + . / -).'; return; }
+    if (badCountries) { formError.textContent = 'Länder: bitte zweibuchstabige Ländercodes mit Komma trennen, z. B. SY, TN. Ein leeres Feld bedeutet: Das Konto gilt für alle Länder.'; return; }
     openDialog({
       title: 'Empfangskonten ändern',
       text: 'An diese Konten überweisen Kunden ihr Geld. Bitte jede Nummer Zeichen für Zeichen prüfen.',
@@ -787,7 +815,7 @@ async function viewAccounts(view) {
     }).then((ok) => { if (ok) { toast('Gespeichert.'); show('accounts'); } });
   });
   view.append(el('section', { class: 'item stack' }, [el('h3', { text: 'Konten ändern' })].concat(rows.map((r, i) => el('fieldset', { class: 'grid cols-2' }, [
-    el('legend', { text: `Konto ${i + 1}` }), field('Art', r.type), field('Kontonummer / IBAN', r.account), field('Bezeichnung (Englisch)', r.titleEn), field('Bezeichnung (Arabisch)', r.titleAr), field('Hinweis (Englisch, optional)', r.hintEn), field('Hinweis (Arabisch, optional)', r.hintAr)
+    el('legend', { text: `Konto ${i + 1}` }), field('Art', r.type), field('Kontonummer / IBAN', r.account), field('Bezeichnung (Englisch)', r.titleEn), field('Bezeichnung (Arabisch)', r.titleAr), field('Hinweis (Englisch, optional)', r.hintEn), field('Hinweis (Arabisch, optional)', r.hintAr), field('Gilt für Länder (Codes mit Komma, leer = alle)', r.countries)
   ])), [formError, save])));
 }
 
@@ -879,31 +907,44 @@ function reviewCard(queue, item) {
       } catch (error) { logError('media', error); toast(errorText(error), true); }
     } } }));
   }
-  const verbs = { farmer_updates: ['Veröffentlichen', 'publish'], pressing_batches: ['Zertifizieren', 'certify'], oil_requests: ['Freigeben', 'approve'], oil_fulfilment: ['Als ausgeliefert markieren', 'fulfil'] }[queue];
+  // A weighed harvest (non-olive tree, recorded on the farm) waits in the pressing queue, but has no mill and no lab values.
+  const isHarvest = queue === 'pressing_batches' && item.isHarvest === true;
+  const isOil = queue === 'oil_requests' || queue === 'oil_fulfilment';
+  const kind = item.type_label_de || QUEUE_LABEL[queue];
+  const summary = isHarvest && Number.isFinite(item.harvestKg) && Number.isFinite(item.netKg)
+    ? `Ernte ${fmtQty(item.harvestKg)} kg brutto → ${fmtQty(item.netKg)} kg netto`
+    : String(item.notes_de || item.notes || '');
+  // One request carries either olive oil (litres) or weighed harvest (kg), never both; the unit comes from the server.
+  const amount = isOil && Number.isFinite(item.quantity) && item.quantity > 0 ? `Menge ${fmtQty(item.quantity)} ${item.unit === 'kg' ? 'kg' : 'L'} · ` : '';
+  const serialLabel = isHarvest ? 'Belegnummer (Wiegeschein oder Prüfprotokoll)' : 'Nummer des Laborzertifikats';
+  const verbs = isHarvest ? ['Ernte freigeben', 'certify'] : { farmer_updates: ['Veröffentlichen', 'publish'], pressing_batches: ['Zertifizieren', 'certify'], oil_requests: ['Freigeben', 'approve'], oil_fulfilment: ['Als ausgeliefert markieren', 'fulfil'] }[queue];
   const decide = (approve) => {
     const note = el('textarea', { maxlength: 500 });
     const serial = el('input', { type: 'text', maxlength: 60 });
     return openDialog({
       title: approve ? verbs[0] : 'Ablehnen',
-      text: `${QUEUE_LABEL[queue]} · ${item.user_name || 'Unbekannt'} · ${String(item.notes || '').slice(0, 200)}`,
+      text: `${kind} · ${item.user_name || 'Unbekannt'} · ${summary.slice(0, 200)}${isHarvest && approve ? '. Mit der Freigabe wird das Nettogewicht nach Anteilen den Baumpaten zugeteilt.' : ''}`,
       confirmLabel: approve ? verbs[0] : 'Ablehnen', danger: !approve,
-      build: (body) => { if (queue === 'pressing_batches' && approve) body.append(field('Nummer des Laborzertifikats', serial)); body.append(field(approve ? 'Notiz (optional)' : 'Begründung', note)); },
+      build: (body) => { if (queue === 'pressing_batches' && approve) body.append(field(serialLabel, serial)); body.append(field(approve ? 'Notiz (optional)' : 'Begründung', note)); },
       onConfirm: async () => {
         const text = note.value.trim();
         if (!approve && text.length < 3) throw userError('Bitte eine kurze Begründung angeben.');
         const decision = approve ? verbs[1] : 'reject';
         if (queue === 'farmer_updates') await api().reviewFarmerUpdate({ updateId: item.id, decision, note: text });
         else if (queue === 'pressing_batches') {
-          if (approve && serial.value.trim().length < 3) throw userError('Zum Zertifizieren wird die Nummer des Laborzertifikats benötigt.');
+          // The server stores the number with the batch and accepts letters, digits, _ and - only.
+          if (approve && !/^[A-Za-z0-9_-]{3,60}$/.test(serial.value.trim())) {
+            throw userError(isHarvest ? 'Zum Freigeben wird die Belegnummer benötigt (3 bis 60 Zeichen: Buchstaben, Ziffern, _ und -).' : 'Zum Zertifizieren wird die Nummer des Laborzertifikats benötigt (3 bis 60 Zeichen: Buchstaben, Ziffern, _ und -).');
+          }
           await api().certifyPressingBatch({ batchId: item.id, decision, certificateSerial: serial.value.trim() || undefined, note: text });
         } else await api().reviewOilRequest({ requestId: item.id, decision, note: text });
       }
     }).then((ok) => { if (ok) { toast('Entscheidung gespeichert.'); show('reviews'); } });
   };
   return el('article', { class: 'item' }, [
-    el('div', { class: 'row row-between' }, [el('h3', { text: item.user_name || 'Unbekannt' }), el('span', { class: 'badge', text: item.channel || QUEUE_LABEL[queue] })]),
-    el('p', { text: String(item.notes || '') }),
-    el('p', { class: 'item-meta', text: `${item.treeId ? `Baum ${item.treeId} · ` : ''}eingegangen ${item.date || '–'}${Number.isFinite(item.gpsLat) && Number.isFinite(item.gpsLng) ? ` · GPS ${item.gpsLat.toFixed(4)}, ${item.gpsLng.toFixed(4)}` : ''}` }),
+    el('div', { class: 'row row-between' }, [el('h3', { text: item.user_name || 'Unbekannt' }), el('span', { class: 'badge', text: isHarvest ? kind : (item.channel || QUEUE_LABEL[queue]) })]),
+    el('p', { text: summary }),
+    el('p', { class: 'item-meta', text: `${item.treeId ? `Baum ${item.treeId} · ` : ''}${amount}eingegangen ${item.date || '–'}${Number.isFinite(item.gpsLat) && Number.isFinite(item.gpsLng) ? ` · GPS ${item.gpsLat.toFixed(4)}, ${item.gpsLng.toFixed(4)}` : ''}` }),
     media,
     el('div', { class: 'row' }, [
       el('button', { type: 'button', class: 'btn btn-sm btn-primary', text: verbs[0], on: { click: () => decide(true) } }),
@@ -1347,7 +1388,9 @@ async function viewTrees(view) {
   const isAdmin = session.user.role === 'admin';
   view.append(el('div', { class: 'row row-between' }, [
     el('h2', { text: 'Bäume und Bestand' }),
-    isAdmin ? el('button', { type: 'button', class: 'btn btn-primary', text: 'Neuer Baum', on: { click: () => editTree(null) } }) : null
+    isAdmin ? el('div', { class: 'row' }, [
+      el('button', { type: 'button', class: 'btn btn-ghost', text: 'Ernte erfassen', on: { click: recordHarvest } }),
+      el('button', { type: 'button', class: 'btn btn-primary', text: 'Neuer Baum', on: { click: () => editTree(null) } })]) : null
   ]));
   if (!trees.length) { view.append(stateBlock('empty', 'Noch keine Bäume angelegt.')); return; }
   view.append(el('div', { class: 'table-wrap' }, [el('table', {}, [
@@ -1374,6 +1417,30 @@ async function viewTrees(view) {
     }))
   ])]));
   view.append(el('p', { class: 'muted', text: 'Ein neuer Baum startet ausgeblendet und wird erst nach Kontrolle eingeblendet. Ein neuer Preis gilt nur für künftige Anfragen; offene Anfragen behalten ihren Betrag. Die Anteilszahl kann nie unter „verkauft + reserviert" sinken.' }));
+}
+
+// Codes of FaseelaMappers.validateHarvestInput (the same check the app uses; the server repeats it and decides).
+const HARVEST_ERROR = {
+  tree: 'Bitte eine gültige Baum-Kennung eingeben (Buchstaben, Ziffern, _ und -).',
+  gross: 'Erntegewicht brutto: bitte eine Zahl von 0,1 bis 5000 kg eingeben, mit höchstens drei Nachkommastellen.',
+  net: 'Nettogewicht: bitte eine Zahl von 0 bis 5000 kg eingeben, mit höchstens drei Nachkommastellen.',
+  net_exceeds_gross: 'Das Nettogewicht darf nicht über dem Erntegewicht liegen.'
+};
+/** Weighed harvest of a non-olive tree, entered by an admin on behalf of the farm. It then waits under "Weitere Prüfungen". */
+function recordHarvest() {
+  const tree = el('input', { type: 'text', maxlength: 80, class: 'mono', autocomplete: 'off', autocapitalize: 'none', spellcheck: 'false' });
+  const gross = el('input', { type: 'text', inputmode: 'decimal', maxlength: 9, autocomplete: 'off' });
+  const net = el('input', { type: 'text', inputmode: 'decimal', maxlength: 9, autocomplete: 'off' });
+  openDialog({
+    title: 'Ernte erfassen', confirmLabel: 'Zur Prüfung einreichen',
+    text: 'Für Bäume mit gewogener Ernte: Pistazie, Mandel, Granatapfel, Dattelpalme und Walnuss. Olivenbäume laufen weiter über die Pressung der Ölmühle. Je Baum und Saison ist eine Ernte möglich. Sie wartet danach unter „Weitere Prüfungen"; freigeben muss sie ein anderes Konto (Vier-Augen-Prinzip). Mit der Freigabe wird das Nettogewicht nach Anteilen den Baumpaten zugeteilt.',
+    build: (body) => body.append(field('Baum-Kennung', tree), el('div', { class: 'form-grid' }, [field('Erntegewicht brutto (kg)', gross), field('Nettogewicht nach Sortierung (kg)', net)])),
+    onConfirm: async () => {
+      const checked = window.FaseelaMappers.validateHarvestInput({ treeId: tree.value, harvestKg: gross.value, netKg: net.value });
+      if (!checked.ok) throw userError(HARVEST_ERROR[checked.error] || ERROR_TEXT['invalid-argument']);
+      await api().submitHarvestBatch(checked.payload);
+    }
+  }).then((ok) => { if (ok) toast('Ernte eingereicht. Sie wartet jetzt unter „Weitere Prüfungen".'); });
 }
 
 const TREE_IMAGE = /^images\/[A-Za-z0-9_-]{1,80}\.(webp|png|jpg|jpeg)$/;

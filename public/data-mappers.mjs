@@ -7,18 +7,18 @@ const OIL_LITERS_PER_SHARE = 7.4; // non-binding estimate shown in the UI (see r
 const LAND_SQM_PER_TREE = 5;
 
 export const STATUS_LABELS = Object.freeze({
-  awaiting_payment: { ar: 'بانتظار الدفع', en: 'Awaiting payment' },
-  under_review: { ar: 'قيد المراجعة المالية', en: 'Under finance review' },
-  approved: { ar: 'معتمد', en: 'Approved' },
-  rejected: { ar: 'مرفوض', en: 'Rejected' },
-  cancelled: { ar: 'ملغى', en: 'Cancelled' },
-  expired: { ar: 'منتهي الصلاحية', en: 'Expired' },
-  pending: { ar: 'قيد الانتظار', en: 'Pending' },
-  settled: { ar: 'مُسوّى', en: 'Settled' },
-  active: { ar: 'فعّال', en: 'Active' },
-  pending_review: { ar: 'بانتظار التدقيق', en: 'Pending review' },
-  published: { ar: 'منشور', en: 'Published' },
-  certified: { ar: 'معتمد مخبرياً', en: 'Certified' }
+  awaiting_payment: { ar: 'بانتظار الدفع', en: 'Awaiting payment', de: 'Zahlung ausstehend' },
+  under_review: { ar: 'قيد المراجعة المالية', en: 'Under finance review', de: 'In Zahlungsprüfung' },
+  approved: { ar: 'معتمد', en: 'Approved', de: 'Genehmigt' },
+  rejected: { ar: 'مرفوض', en: 'Rejected', de: 'Abgelehnt' },
+  cancelled: { ar: 'ملغى', en: 'Cancelled', de: 'Storniert' },
+  expired: { ar: 'منتهي الصلاحية', en: 'Expired', de: 'Abgelaufen' },
+  pending: { ar: 'قيد الانتظار', en: 'Pending', de: 'Ausstehend' },
+  settled: { ar: 'مُسوّى', en: 'Settled', de: 'Abgerechnet' },
+  active: { ar: 'فعّال', en: 'Active', de: 'Aktiv' },
+  pending_review: { ar: 'بانتظار التدقيق', en: 'Pending review', de: 'Prüfung ausstehend' },
+  published: { ar: 'منشور', en: 'Published', de: 'Veröffentlicht' },
+  certified: { ar: 'معتمد مخبرياً', en: 'Certified', de: 'Laborzertifiziert' }
 });
 
 /** Firestore Timestamp | {seconds,nanoseconds} | Date | number | ISO string -> epoch ms (or null). */
@@ -62,7 +62,7 @@ function isoDay(ms) {
 export function statusLabel(status, lang = 'ar') {
   const entry = STATUS_LABELS[status];
   if (!entry) return String(status || '');
-  return lang === 'ar' ? entry.ar : entry.en;
+  return lang === 'ar' ? entry.ar : (entry[lang] || entry.en);
 }
 
 const CROP_CATEGORIES = ['olive', 'pistachio', 'almond', 'pomegranate', 'date', 'walnut'];
@@ -231,6 +231,144 @@ export function portfolioTotals(shares) {
   };
 }
 
+// ---------------------------------------------------------------------------
+// Weighed harvest (non-olive crops) and amounts with a unit
+// ---------------------------------------------------------------------------
+// The server keeps one amount column for both products: `litersMl` holds millilitres for olive oil and GRAMS for a
+// weighed harvest. A harvest row is a pressing batch whose mill is 'farm': `olivesWeightKg` is the gross weight and
+// `oilYieldLiters` the net weight, both in kilograms.
+
+/** Mill id the server stores on a weighed-harvest row. */
+export const HARVEST_MILL_ID = 'farm';
+/** Limits enforced by submit_harvest_batch; mirrored here so a form can answer before the round trip. */
+export const HARVEST_LIMITS = Object.freeze({ minGrossKg: 0.1, maxKg: 5000 });
+const QUANTITY_UNIT_LABELS = Object.freeze({
+  l: Object.freeze({ ar: 'لتر', en: 'L', de: 'L' }),
+  kg: Object.freeze({ ar: 'كغ', en: 'kg', de: 'kg' })
+});
+
+/** Any server value -> 'l' | 'kg'. Requests created before the unit existed are olive oil. */
+export function quantityUnit(unit) {
+  return unit === 'kg' ? 'kg' : 'l';
+}
+
+/** Unit label for a language ('ar' | 'en' | 'de'); the Latin label is the fallback. */
+export function quantityUnitLabel(unit, lang = 'en') {
+  const entry = QUANTITY_UNIT_LABELS[quantityUnit(unit)];
+  return entry[lang] || entry.en;
+}
+
+/** Millilitres or grams -> litres or kilograms as a number (0 for anything unusable). */
+export function milliToMajor(milli) {
+  const n = Number(milli);
+  return Number.isFinite(n) && n > 0 ? n / 1000 : 0;
+}
+
+/** Litres or kilograms as text: two decimals, three below 0.01 so a few grams never read as zero. */
+export function formatMajor(milli) {
+  const value = milliToMajor(milli);
+  return value.toFixed(value > 0 && value < 0.01 ? 3 : 2).replace(/\.?0+$/, '');
+}
+
+/** 2500, 'l' -> "2.5 L"; 2500, 'kg' -> "2.5 kg". */
+export function formatQuantity(milli, unit, lang = 'en') {
+  return `${formatMajor(milli)} ${quantityUnitLabel(unit, lang)}`;
+}
+
+/** Kilograms as stored on a batch (numeric, up to grams) -> text; '?' when the value is missing. */
+function kgText(value) {
+  if (value === null || value === undefined || value === '') return '?';
+  const n = Number(value);
+  return Number.isFinite(n) ? String(Math.round(n * 1000) / 1000) : '?';
+}
+
+function kgNumber(value) {
+  if (value === null || value === undefined || value === '') return null;
+  const n = Number(value);
+  return Number.isFinite(n) ? Math.round(n * 1000) / 1000 : null;
+}
+
+/** True for a pressing_batches row that records a weighed harvest instead of a mill pressing. */
+export function isHarvestBatch(doc) {
+  return Boolean(doc) && doc.millId === HARVEST_MILL_ID;
+}
+
+/**
+ * pressing_batches row -> the same row plus `isHarvest`; a harvest row also carries `harvestKg` (gross) and `netKg`,
+ * so no caller has to read weights out of the oil columns.
+ */
+export function mapPressingBatch(doc) {
+  const d = normalizeDoc(doc || {});
+  if (!isHarvestBatch(d)) return { ...d, isHarvest: false };
+  return { ...d, isHarvest: true, harvestKg: kgNumber(d.olivesWeightKg), netKg: kgNumber(d.oilYieldLiters) };
+}
+
+/** oil_requests row -> the same row with a guaranteed `unit` ('l' | 'kg') and `quantity` in that unit. */
+export function mapOilRequest(doc) {
+  const d = normalizeDoc(doc || {});
+  return { ...d, unit: quantityUnit(d.unit), quantity: milliToMajor(d.litersMl) };
+}
+
+/**
+ * oil_allocations row -> the same row plus `unit` and `quantity`. The server stores the unit on the row
+ * ('l' = millilitres of olive oil, 'kg' = grams of weighed harvest; migration 20261121000500), whether or not the
+ * tree is still listed. Only a row from an older server without that column falls back to the crop of its tree:
+ * `cropByTreeId` (Map or plain object: treeId -> crop category) decides; a tree that is not in it yields
+ * `unit: null` and `quantity: null`, because guessing would label grams as litres.
+ */
+export function mapOilAllocation(doc, cropByTreeId) {
+  const d = normalizeDoc(doc || {});
+  let unit = d.unit === 'l' || d.unit === 'kg' ? d.unit : null;
+  if (!unit) {
+    const lookup = cropByTreeId || {};
+    const crop = typeof lookup.get === 'function' ? lookup.get(d.treeId) : lookup[d.treeId];
+    unit = CROP_CATEGORIES.includes(crop) ? (crop === 'olive' ? 'l' : 'kg') : null;
+  }
+  return { ...d, unit, quantity: unit ? milliToMajor(d.litersMl) : null };
+}
+
+/**
+ * Sums of allocation amounts per unit: { l: <ml>, kg: <g>, unknown: <raw> }. Millilitres and grams are never added
+ * together; `unknown` collects rows whose tree crop could not be resolved.
+ */
+export function allocationTotals(allocations) {
+  const totals = { l: 0, kg: 0, unknown: 0 };
+  for (const a of Array.isArray(allocations) ? allocations : []) {
+    if (!a) continue;
+    const amount = Number(a.litersMl);
+    totals[a.unit === 'l' || a.unit === 'kg' ? a.unit : 'unknown'] += Number.isFinite(amount) ? amount : 0;
+  }
+  return totals;
+}
+
+/** Form text or number -> kilograms rounded to grams, or null. Accepts a decimal comma and Arabic digits. */
+export function parseWeightKg(value) {
+  if (typeof value === 'number') return Number.isFinite(value) ? Math.round(value * 1000) / 1000 : null;
+  if (typeof value !== 'string') return null;
+  const text = value.trim()
+    .replace(/[٠-٩]/g, (ch) => String(ch.charCodeAt(0) - 0x0660))
+    .replace(/[۰-۹]/g, (ch) => String(ch.charCodeAt(0) - 0x06f0))
+    .replace(/[,٫]/g, '.');
+  if (!/^[0-9]{1,4}(\.[0-9]{1,3})?$/.test(text)) return null;
+  return Number(text);
+}
+
+/**
+ * Harvest form values -> `{ ok: true, payload }` for submit_harvest_batch, or `{ ok: false, error }` with one of
+ * 'tree' | 'gross' | 'net' | 'net_exceeds_gross'. The server repeats every check and stays the authority.
+ */
+export function validateHarvestInput(input) {
+  const source = input || {};
+  const treeId = typeof source.treeId === 'string' ? source.treeId.trim() : '';
+  if (!SITE_ID.test(treeId)) return { ok: false, error: 'tree' };
+  const harvestKg = parseWeightKg(source.harvestKg);
+  if (harvestKg === null || harvestKg < HARVEST_LIMITS.minGrossKg || harvestKg > HARVEST_LIMITS.maxKg) return { ok: false, error: 'gross' };
+  const netKg = parseWeightKg(source.netKg);
+  if (netKg === null || netKg < 0 || netKg > HARVEST_LIMITS.maxKg) return { ok: false, error: 'net' };
+  if (netKg > harvestKg) return { ok: false, error: 'net_exceeds_gross' };
+  return { ok: true, payload: { treeId, harvestKg, netKg } };
+}
+
 /** listReviewQueue item -> approvals-desk row. `queue` selects the review action. */
 export function mapReviewItem(queue, item) {
   const d = normalizeDoc(item || {});
@@ -274,28 +412,63 @@ export function mapReviewItem(queue, item) {
     };
   }
   if (queue === 'pressing_batches') {
+    if (isHarvestBatch(d)) {
+      // Weighed harvest of a non-olive tree: recorded on the farm, no mill and no lab values.
+      const gross = kgText(d.olivesWeightKg);
+      const net = kgText(d.oilYieldLiters);
+      return {
+        ...base,
+        role: 'farmer',
+        type: 'pressing_batch',
+        type_label: 'حصاد موزون',
+        type_label_en: 'Weighed harvest',
+        type_label_de: 'Gewogene Ernte',
+        channel: HARVEST_MILL_ID,
+        isHarvest: true,
+        unit: 'kg',
+        treeId: d.treeId || '',
+        harvestKg: kgNumber(d.olivesWeightKg),
+        netKg: kgNumber(d.oilYieldLiters),
+        notes: `${d.treeId || ''} • Harvest ${gross} kg gross → ${net} kg net`,
+        notes_ar: `${d.treeId || ''} • الحصاد ${gross} كغ قائم ← ${net} كغ صافٍ`,
+        notes_de: `${d.treeId || ''} • Ernte ${gross} kg brutto → ${net} kg netto`
+      };
+    }
     return {
       ...base,
       role: 'mill_owner',
       type: 'pressing_batch',
       type_label: 'دفعة عصر',
       type_label_en: 'Pressing batch',
+      type_label_de: 'Pressung',
       channel: d.millId || '',
+      isHarvest: false,
+      unit: 'l',
+      treeId: d.treeId || '',
       notes: `${d.treeId || ''} • ${d.olivesWeightKg ?? '?'} kg → ${d.oilYieldLiters ?? '?'} L • ${d.acidityPct ?? '?'}%`
     };
   }
   if (queue === 'oil_requests' || queue === 'oil_fulfilment') {
     const c = d.contact || {};
-    const liters = `${(Number(d.litersMl || 0) / 1000).toFixed(2).replace(/\.?0+$/, '')} L`;
+    // One request carries either olive oil (millilitres) or weighed harvest (grams), never both.
+    const unit = quantityUnit(d.unit);
+    const isRequest = queue === 'oil_requests';
     const where = d.kind === 'delivery' ? [c.addressLine1, c.addressLine2, c.city, c.country].filter(Boolean).join(', ') : '';
+    const labels = unit === 'kg'
+      ? { ar: isRequest ? 'طلب محصول' : 'تنفيذ طلب محصول', en: isRequest ? 'Harvest request' : 'Harvest fulfilment', de: isRequest ? 'Ernteanfrage' : 'Ernte-Auslieferung' }
+      : { ar: isRequest ? 'طلب زيت' : 'تنفيذ طلب زيت', en: isRequest ? 'Oil request' : 'Oil fulfilment', de: isRequest ? 'Ölanfrage' : 'Öl-Auslieferung' };
     return {
       ...base,
       role: 'investor',
       type: 'oil_request',
-      type_label: queue === 'oil_requests' ? 'طلب زيت' : 'تنفيذ طلب زيت',
-      type_label_en: queue === 'oil_requests' ? 'Oil request' : 'Oil fulfilment',
+      type_label: labels.ar,
+      type_label_en: labels.en,
+      type_label_de: labels.de,
       channel: d.kind || '',
-      notes: [liters, c.name, c.phone, where, c.note].filter(Boolean).join(' • ').slice(0, 400)
+      unit,
+      litersMl: Number.isFinite(Number(d.litersMl)) ? Number(d.litersMl) : 0,
+      quantity: milliToMajor(d.litersMl),
+      notes: [formatQuantity(d.litersMl, unit), c.name, c.phone, where, c.note].filter(Boolean).join(' • ').slice(0, 400)
     };
   }
   if (queue === 'role_applications') {

@@ -71,6 +71,14 @@ window.FaseelaFirebase = window.FaseelaBackend = {
   // Payment instructions (server-managed): starts unconfigured; admin save fills it.
   payment: null,
   paymentInstructions: async () => ({ data: window.FaseelaBackend.payment }),
+  // Like public.payment_instructions_for: only accounts without a country list or with this country. payForMissing
+  // simulates a database that does not have the function yet (PostgREST PGRST202).
+  paymentInstructionsFor: async (c) => {
+    window.FaseelaBackend.calls.push(['paymentInstructionsFor', c]);
+    if (window.FaseelaBackend.payForMissing) throw Object.assign(new Error('Could not find the function'), { code: 'PGRST202' });
+    const p = window.FaseelaBackend.payment;
+    return { data: p && { ...p, country: c, channels: (p.channels || []).filter((ch) => !Array.isArray(ch.countries) || ch.countries.includes(c)) } };
+  },
   recordPaymentScreening: async (p) => { window.FaseelaBackend.calls.push(['recordPaymentScreening', p]); return { data: { requestId: p.requestId, result: p.result } }; },
   paymentScreeningState: async () => ({ data: null }),
   reviewInvestmentRequest: async (p) => { window.FaseelaBackend.calls.push(['reviewInvestmentRequest', p]); return { data: { requestId: p.requestId, status: 'approved' } }; },
@@ -406,10 +414,63 @@ try {
     assert.equal(parity.skip, 'Zum Hauptinhalt springen');
     assert.equal(parity.stored, 'de'); assert.equal(parity.locale, 'de-DE');
     assert.equal(parity.drawerPressed, 'true'); assert.equal(parity.cardPressed, 'true');
-    assert.equal(parity.nextLabel, 'عربي', 'quick toggle announces the next language');
+    assert.equal(parity.nextLabel, 'DE', 'the language button names the current language');
     assert.deepEqual(parity.arabicNodes, [], 'no Arabic leakage in data-i18n nodes');
     assert.equal(parity.fallbackToEnglish, 'english-probe', 'missing German key falls back to English');
     assert.equal(parity.unknownKey, '__no_such_key__');
+
+    // Language menu: opens, marks the current language, picks any language directly, closes on Escape and outside click.
+    const menu = await d.evaluate(async () => {
+      const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+      const out = {};
+      const btn = document.getElementById('btn-navbar-lang');
+      const box = document.getElementById('navbar-lang-menu');
+      const checked = () => ['ar', 'en', 'de'].filter((c) => document.getElementById('navbar-lang-opt-' + c).getAttribute('aria-checked') === 'true');
+      setLanguage('en'); await wait(50);
+      out.labelEn = [document.getElementById('active-lang-label').textContent, document.getElementById('quick-lang-label').textContent];
+      toggleLangMenu(); out.open = [!box.classList.contains('hidden'), btn.getAttribute('aria-expanded'), checked()];
+      document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' })); out.escClosed = [box.classList.contains('hidden'), btn.getAttribute('aria-expanded')];
+      toggleLangMenu(); document.body.click(); out.outsideClosed = box.classList.contains('hidden');
+      toggleLangMenu(); chooseLanguage('ar'); await wait(50);
+      out.direct = [state.currentLang, document.documentElement.dir, document.getElementById('active-lang-label').textContent, checked(), box.classList.contains('hidden')];
+      toggleLanguageQuick(); await wait(50); out.afterCycle = [state.currentLang, document.getElementById('quick-lang-label').textContent];
+      setLanguage('de'); // the following steps expect German to be the stored choice
+      return out;
+    });
+    assert.deepEqual(menu.labelEn, ['EN', 'EN'], 'both language controls show the current language');
+    assert.deepEqual(menu.open, [true, 'true', ['en']], 'menu opens and marks the current language');
+    assert.deepEqual(menu.escClosed, [true, 'false'], 'Escape closes the menu');
+    assert.equal(menu.outsideClosed, true, 'a click outside closes the menu');
+    assert.deepEqual(menu.direct, ['ar', 'rtl', 'عربي', ['ar'], true], 'English to Arabic in one step');
+    assert.deepEqual(menu.afterCycle, ['en', 'EN'], 'the quick button still cycles and shows the current language');
+
+    // German pages show German: no visible sentence on the visitor pages is identical to its English version.
+    // Names that come from the database (only Arabic and English exist there) are the expected exception.
+    const englishInGerman = await d.evaluate(async () => {
+      const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+      const grab = () => {
+        const res = {};
+        [...document.querySelectorAll('body *')].filter((el) => el.childElementCount === 0 && el.getClientRects().length > 0 && !el.closest('script,style,svg'))
+          .forEach((el, n) => { const tx = el.textContent.trim(); if (tx.length > 2) res[(el.getAttribute('data-i18n') || '') + '|' + (el.id || '') + '|' + n] = tx; });
+        return res;
+      };
+      const dbNames = new Set((state.trees || []).flatMap((tr) => [tr.name_en, tr.region_en, tr.tree_type_en, tr.farm_name_en]).filter(Boolean));
+      const found = [];
+      for (const pg of ['home', 'marketplace']) {
+        navigateTo(pg); await wait(300);
+        for (const region of pg === 'home' ? ['tartus', 'idlib', 'daraa'] : [null]) {
+          if (region && typeof renderMapRegionDetails === 'function') renderMapRegionDetails(region);
+          setLanguage('en'); await wait(400); const en = grab();
+          setLanguage('de'); await wait(400); const de = grab();
+          for (const [k, v] of Object.entries(de)) {
+            if (en[k] === v && /[A-Za-z]{3,}\s+[A-Za-z]{3,}/.test(v) && ![...dbNames].some((n) => v.includes(n))) found.push(pg + ': ' + v.slice(0, 70));
+          }
+        }
+      }
+      navigateTo('home');
+      return [...new Set(found)];
+    });
+    assert.deepEqual(englishInGerman, [], 'no English sentence left on the German visitor pages');
     assert.equal(dRequests.length, 1, 'dictionary fetched exactly once');
     // Persisted choice survives a reload and unknown stored values fall back to Arabic.
     await d.reload({ waitUntil: 'load' });
@@ -739,6 +800,26 @@ try {
         out.payRendered = document.getElementById('local-pay-accounts').textContent.includes('SY00 TEST 1234') && document.getElementById('local-pay-accounts').textContent.includes('Keep the receipt');
         out.payCopyBtn = !!document.querySelector('#local-pay-accounts button[data-account="SY00 TEST 1234"]');
         out.payReadyAfter = state.paymentReady;
+        // Receiving accounts by country: only accounts that cover the tree's country are shown and counted.
+        out.payForCalls = window.FaseelaBackend.calls.filter((c) => c[0] === 'paymentInstructionsFor').map((c) => c[1]);
+        const payBefore = window.FaseelaBackend.payment;
+        const payText = () => document.getElementById('local-pay-accounts').textContent;
+        window.FaseelaBackend.payment = { channels: [
+          { id: 'bank_iban', titleAr: 'بنك', titleEn: 'Bank', account: 'SY00 ONLY 0001', countries: ['SY'] },
+          { id: 'bank_iban', titleAr: 'بنك', titleEn: 'Bank Spain', account: 'ES00 ONLY 0002', countries: ['ES'] }], updatedAt: Date.now() };
+        await preparePaymentInstructions(true); await wait(50);
+        out.payCountrySy = { sy: payText().includes('SY00 ONLY 0001'), es: payText().includes('ES00 ONLY 0002'), ready: state.paymentReady };
+        window.FaseelaBackend.payForMissing = true; // fallback: unfiltered list, filtered in the app
+        state.paymentCountry = 'ES';
+        await preparePaymentInstructions(true); await wait(50);
+        out.payCountryEsFallback = { sy: payText().includes('SY00 ONLY 0001'), es: payText().includes('ES00 ONLY 0002'), ready: state.paymentReady };
+        window.FaseelaBackend.payment = { channels: [{ id: 'bank_iban', titleAr: 'بنك', titleEn: 'Bank', account: 'SY00 ONLY 0001', countries: ['SY'] }], updatedAt: Date.now() };
+        await preparePaymentInstructions(true); await wait(50);
+        out.payCountryEsNone = { alert: !!document.querySelector('#local-pay-accounts [role="alert"]'), sy: payText().includes('SY00 ONLY 0001'), ready: state.paymentReady };
+        window.FaseelaBackend.payForMissing = false;
+        window.FaseelaBackend.payment = payBefore;
+        state.paymentCountry = 'SY';
+        await preparePaymentInstructions(true); await wait(50);
         out.noDemoIban = !document.body.innerHTML.includes('SY98BBSF') && !document.body.innerHTML.includes('0944112233');
         // Consent: without the box nothing is sent; an outdated document stops before the reservation; then the
         // two documents are recorded (current versions) before the reservation is made.
@@ -977,10 +1058,14 @@ try {
       assert.equal(result.consentBoxRequired, true, 'no call without the consent box');
       assert.deepEqual(result.consentLinks, ['legal/patenschaft.html', 'legal/datenschutz.html'], 'the consent links real documents');
       assert.equal(result.outdatedStops, true, 'an outdated document stops before any reservation');
-      assert.deepEqual(result.consentOrder.slice(0, 3), ['recordConsent:sponsorship:2026-11-17', 'recordConsent:privacy:2026-11-17', 'createInvestmentRequest'], 'consent is recorded before the reservation');
+      assert.deepEqual(result.consentOrder.slice(0, 3), ['recordConsent:sponsorship:2026-11-22', 'recordConsent:privacy:2026-11-17', 'createInvestmentRequest'], 'consent is recorded before the reservation');
       assert.equal(result.payRendered, true, 'server-managed accounts rendered with note');
       assert.equal(result.payCopyBtn, true, 'copy button carries the account');
       assert.equal(result.payReadyAfter, true);
+      assert.ok(result.payForCalls.length > 0 && result.payForCalls.every((c) => c === 'SY'), `accounts are requested for the tree's country: ${result.payForCalls}`);
+      assert.deepEqual(result.payCountrySy, { sy: true, es: false, ready: true }, 'an account limited to ES is not shown for a tree in SY');
+      assert.deepEqual(result.payCountryEsFallback, { sy: false, es: true, ready: true }, 'without the server function the app filters the accounts itself');
+      assert.deepEqual(result.payCountryEsNone, { alert: true, sy: false, ready: false }, 'no account for the country: blocking notice, purchase gate closed');
       assert.equal(result.noDemoIban, true, 'no hard-coded demo account numbers in the DOM');
       assert.equal(result.tradeTabHidden, true, 'P2P tab hidden in server mode');
       assert.deepEqual(result.samplesHidden, [], 'no sample harvest, documents, carbon, land or certificate buttons in a real session');

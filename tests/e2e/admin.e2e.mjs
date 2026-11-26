@@ -18,10 +18,12 @@ await new Promise((resolve) => setTimeout(resolve, 800));
 
 const XSS = '<img src=x onerror="window.__xss=1">';
 const MOCK = `
+import * as mappers from '/data-mappers.mjs';
+window.FaseelaMappers = mappers; // the real client publishes the same module
 const q = new URLSearchParams(location.search);
 const role = q.get('mockRole') || 'admin';
 const calls = [];
-const fail = (code) => Object.assign(new Error(code), { code });
+const fail = (code, message) => Object.assign(new Error(message || code), { code });
 const state = { payments: [{ id: 'd'.repeat(64), user_name: ${JSON.stringify(XSS)} + ' Payer', amount_usd: 35, date: '2026-11-12', notes: 'tree_01 • 1 shares', paymentProofPath: 'u2/x/r.pdf' }], screening: null,
   pending: q.get('pending') ? { channels: [{ id: 'bank_iban', titleAr: 'بنك', titleEn: 'Bank', account: 'DE00 1234' }], proposedBySelf: q.get('pending') === 'self', proposedAt: Date.now() } : null };
 window.FaseelaBackend = window.FaseelaFirebase = {
@@ -34,7 +36,9 @@ window.FaseelaBackend = window.FaseelaFirebase = {
   listReviewQueueMapped: async (queue) => queue === 'payments' ? state.payments : (queue === 'role_applications' ? [{ id: 'u7', user_name: 'Applicant', role: 'farmer', date: '2026-11-11' }]
     : queue === 'farmer_updates' ? [{ id: 'fu1', user_name: 'Farmer', channel: 'pruning', notes: ${JSON.stringify(XSS)} + ' pruned', mediaPaths: ['u9/a.jpg', 'u9/b.jpg'], gpsLat: 34.8, gpsLng: 36.1, treeId: 'tree_01', date: '2026-11-11' }]
     : queue === 'pressing_batches' ? [{ id: 'pb1', user_name: 'Mill', channel: 'mill_1', notes: 'tree_01 • 60 kg → 7.4 L', date: '2026-11-11' }]
-    : queue === 'oil_requests' ? (q.get('oilDown') ? Promise.reject(fail('permission-denied')) : []) : []),
+      .concat(q.get('harvest') ? [mappers.mapReviewItem('pressing_batches', { id: 'hb1', treeId: 'tree_13', millId: 'farm', olivesWeightKg: 120.5, oilYieldLiters: 96, submitter: { displayName: 'Farmer Fadi' }, createdAt: '2026-11-12T08:00:00Z' })] : [])
+    : queue === 'oil_requests' ? (q.get('oilDown') ? Promise.reject(fail('permission-denied'))
+      : q.get('harvest') ? [mappers.mapReviewItem('oil_requests', { id: 'or1', unit: 'kg', litersMl: 12500, kind: 'pickup', contact: { name: 'Pate Paul' }, userId: 'u2', createdAt: '2026-11-12T09:00:00Z' })] : []) : []),
   paymentScreeningState: async () => ({ data: state.screening }),
   recordPaymentScreening: async (p) => { calls.push(['recordPaymentScreening', p]); state.screening = { result: p.result, listsChecked: p.listsChecked, checkedAt: Date.now(), checkedBySelf: true }; return { data: {} }; },
   reviewInvestmentRequest: async (p) => { calls.push(['reviewInvestmentRequest', p]); if (p.decision === 'approve' && (!state.screening || state.screening.result !== 'clear')) throw fail(state.screening ? 'screening-blocked' : 'screening-required'); state.payments = []; return { data: {} }; },
@@ -55,8 +59,8 @@ window.FaseelaBackend = window.FaseelaFirebase = {
       mail: { sent: q.get('calm') ? 9 : 0, pending: 2, failed7d: 0 }, push: { enabled: window.__pushOn === true, activeDevices: 3 }, errors: { last24h: q.get('calm') ? 0 : 2, last7d: 2 },
       operations: { adminCount: q.get('calm') ? 2 : 1, financeAdminCount: 0, paymentAccountsConfigured: !!q.get('calm'), reviewQueues: q.get('calm') ? { payments: 0, roleApplications: 0, farmerUpdates: 0, pressingBatches: 0, oilRequests: 0 } : { payments: 1, roleApplications: 1, farmerUpdates: 1, pressingBatches: 1, oilRequests: 0 } } } }; },
   adminListInvestments: async (p) => { calls.push(['adminListInvestments', p]); const all = Array.from({ length: 30 }, (_, i) => ({ id: String(i).padStart(64, 'e'), createdAt: Date.now() - i * 86400000, status: i % 3 === 0 ? 'approved' : 'under_review', payerName: i === 0 ? ${JSON.stringify(XSS)} : 'Payer ' + i, payerEmail: 'p' + i + '@example.test', treeId: 'tree_01', shareCount: 1, includesLand: i === 1, amountMinor: 3500, currency: 'USD', slaBreached: i === 1, hasProof: i < 2 })).filter((r) => !p.status || r.status === p.status); return { data: { total: all.length, limit: p.limit, offset: p.offset, rows: all.slice(p.offset, p.offset + p.limit) } }; },
-  adminListTrees: async () => ({ data: [{ treeId: 'tree_01', name: 'زيتونة', nameEn: ${JSON.stringify(XSS)} + ' Olive', regionEn: 'Homs', status: window.__treeStatus || 'listed', totalShares: 4, soldShares: 4, reservedShares: 0, availableShares: 0, pricePerShareMinor: 3500, landPriceMinor: 1500, currency: 'USD', holders: 2, farmers: 0, revenueMinor: 14000, updatedAt: Date.now() }] }),
-  adminSetTreeStatus: async (p) => { calls.push(['adminSetTreeStatus', p]); window.__treeStatus = p.status; return { data: { changed: true } }; },
+  adminListTrees: async () => ({ data: [{ treeId: 'tree_01', name: 'زيتونة', nameEn: ${JSON.stringify(XSS)} + ' Olive', regionEn: 'Homs', status: window.__treeStatus || (q.get('countryOff') ? 'unlisted' : 'listed'), totalShares: 4, soldShares: 4, reservedShares: 0, availableShares: 0, pricePerShareMinor: 3500, landPriceMinor: 1500, currency: 'USD', holders: 2, farmers: 0, revenueMinor: 14000, updatedAt: Date.now() }] }),
+  adminSetTreeStatus: async (p) => { calls.push(['adminSetTreeStatus', p]); if (p.status === 'listed' && q.get('countryOff')) throw fail('failed-precondition', 'This country is not open for sales yet.'); window.__treeStatus = p.status; return { data: { changed: true } }; },
   adminListClientErrors: async () => ({ data: q.get('calm') ? [] : [{ fingerprint: 'f1', message: 'TypeError: ' + ${JSON.stringify(XSS)}, source: 'onerror', page: '/', release: 'r1', count: 2, users: 1, firstSeen: Date.now(), lastSeen: Date.now() }] }),
   adminSetPushEnabled: async (p) => { calls.push(['adminSetPushEnabled', p]); window.__pushOn = p.enabled; return { data: p }; },
   signFieldMedia: async (paths) => { calls.push(['signFieldMedia', paths]); return [{ path: paths[0], url: 'https://riyvlhlhzxxerlwqoxsy.supabase.co/storage/v1/object/sign/field-media/a.jpg?token=t' }, { path: paths[1], url: 'https://evil.example/b.jpg' }]; },
@@ -68,7 +72,7 @@ window.FaseelaBackend = window.FaseelaFirebase = {
   adminUpdateTree: async (p) => { calls.push(['adminUpdateTree', p]); if (p.totalShares < 4) throw fail('failed-precondition'); return { data: { updated: true } }; },
   adminUserDetail: async (p) => { calls.push(['adminUserDetail', p]); return { data: { userId: p.userId, email: 'inv@example.test', displayName: ${JSON.stringify(XSS)}, phone: '+963 9', region: 'Homs', role: 'farmer', requestedRole: 'farmer', createdAt: Date.now(), emailConfirmedAt: Date.now(), lastSignInAt: null, suspended: false, marketingOptIn: false,
     requests: [{ id: 'r'.repeat(64), treeId: 'tree_01', shareCount: 1, amountMinor: 3500, currency: 'USD', status: 'approved', createdAt: Date.now() }], shares: [{ id: 'r'.repeat(64), treeId: 'tree_01', shareCount: 1, includesLand: false, status: 'active', createdAt: Date.now() }],
-    assignments: { trees: window.__assigned || ['tree_02'], mills: [] }, counts: { requests: 1, referralsMade: 2, oilAllocatedMl: 7400, pushDevices: 1 } } }; },
+    assignments: { trees: window.__assigned || ['tree_02'], mills: [] }, counts: { requests: 1, referralsMade: 2, oilAllocatedMl: 7400, harvestAllocatedG: 6000, pushDevices: 1 } } }; },
   adminAssign: async (p) => { calls.push(['adminAssign', p]); if (p.targetId === 'tree_99') throw fail('not-found'); const cur = window.__assigned || ['tree_02']; window.__assigned = p.action === 'add' ? cur.concat(p.targetId) : cur.filter((t) => t !== p.targetId); return { data: {} }; },
   adminListAssignments: async () => ({ trees: window.__assigned || ['tree_02'], mills: [] }),
   adminListShares: async (p) => { calls.push(['adminListShares', p]); const all = p.treeId === 'tree_03' ? [] : Array.from({ length: 60 }, (_, i) => ({ id: String(i).padStart(64, 'f'), ownerName: i === 0 ? ${JSON.stringify(XSS)} : 'Owner ' + i, ownerEmail: 'o' + i + '@example.test', userId: 'u' + i, treeId: p.treeId || 'tree_01', shareCount: 1, includesLand: i === 1, purchasePriceMinor: 3500, currency: 'USD', status: 'active', createdAt: Date.now() })); return { data: { total: all.length, limit: p.limit, offset: p.offset, rows: all.slice(p.offset, p.offset + p.limit) } }; },
@@ -77,10 +81,11 @@ window.FaseelaBackend = window.FaseelaFirebase = {
   adminTasks: async () => { if (q.get('statusDown')) throw fail('permission-denied'); const all = [{ key: 'payment_accounts_missing', severity: 'critical', count: 1, oldestAt: null, tab: 'accounts' }, { key: 'payments_review', severity: 'high', count: 2, oldestAt: Date.now() - 3600000, tab: 'payments' }, { key: 'role_applications', severity: 'normal', count: 1, oldestAt: Date.now() - 86400000, tab: 'roles' }, { key: 'trees_sold_out', severity: 'info', count: 1, oldestAt: null, tab: 'trees' }]; return { data: q.get('calm') ? [] : role === 'finance_admin' ? all.filter((t) => ['payments_review', 'trees_sold_out'].includes(t.key)) : all }; },
   adminKpiHistory: async () => ({ data: Array.from({ length: q.get('calm') ? 1 : 9 }, (_, i) => ({ day: '2026-11-' + String(5 + i).padStart(2, '0'), users: 10 + i, confirmedUsers: 8 + i, owners: 3, approvedMinor: 100000 + i * 3500, soldShares: 5 - (i > 6 ? 1 : 0), totalShares: 12, openRequests: 1 })) }),
   adminSearch: async (p) => { calls.push(['adminSearch', p]); if (p.q === 'nichts') return { data: { users: [], requests: [], trees: [] } }; return { data: { users: [{ id: 'u2', name: ${JSON.stringify(XSS)}, email: 'inv@example.test' }], requests: [{ id: 'e'.repeat(64), treeId: 'tree_01', status: 'under_review', amountMinor: 3500, createdAt: Date.now() }], trees: [{ treeId: 'tree_01', name: 'Olive', status: 'listed' }] } }; },
-  adminAutomationState: async () => ({ data: { rules: [{ key: 'review_reminder', enabled: !!window.__ruleOn, days: 2, updatedAt: Date.now(), lastRunAt: window.__ruleOn ? Date.now() : null, lastResult: window.__ruleOn ? { ok: true, done: ['role_applications'] } : null }, { key: 'sold_out_unlist', enabled: false, days: 14, updatedAt: Date.now(), lastRunAt: null, lastResult: null }],
+  adminAutomationState: async () => ({ data: { rules: [{ key: 'review_reminder', enabled: !!window.__ruleOn, days: 2, updatedAt: Date.now(), lastRunAt: window.__ruleOn ? Date.now() : null, lastResult: window.__ruleOn ? { ok: true, done: ['role_applications'] } : null }, { key: 'sold_out_unlist', enabled: false, days: 14, updatedAt: Date.now(), lastRunAt: null, lastResult: null },
+      { key: 'purge_unconfirmed', enabled: false, days: 30, updatedAt: Date.now(), lastRunAt: null, lastResult: null }, { key: 'weekly_digest', enabled: !!window.__digestOn, days: 2, updatedAt: Date.now(), lastRunAt: null, lastResult: null }],
     jobs: [{ name: 'faseela-expire-reservations', schedule: '*/10 * * * *', active: window.__jobOff !== true, lastStatus: 'succeeded', lastStart: Date.now(), lastDurationMs: 12, failures24h: 0 }, { name: 'faseela-send-push', schedule: '* * * * *', active: true, lastStatus: 'failed', lastStart: Date.now(), lastDurationMs: 900, failures24h: 3 }],
     log: window.__ruleOn ? [{ rule: 'review_reminder', subject: 'role_applications', at: Date.now() }] : [] } }),
-  adminSetAutomationRule: async (p) => { calls.push(['adminSetAutomationRule', p]); window.__ruleOn = p.enabled; return { data: p }; },
+  adminSetAutomationRule: async (p) => { calls.push(['adminSetAutomationRule', p]); if (p.key === 'weekly_digest') window.__digestOn = p.enabled; else window.__ruleOn = p.enabled; return { data: p }; },
   adminSetJobActive: async (p) => { calls.push(['adminSetJobActive', p]); window.__jobOff = !p.active; return { data: p }; },
   adminReadiness: async () => ({ data: { auto: ['payment_accounts', 'mail_delivered', 'two_admins', 'finance_admin', 'trees_listed', 'trees_have_farmer', 'trees_have_mill', 'jobs_healthy', 'no_client_errors'].map((key, i) => ({ key, ok: i > 3 })),
     manual: ['legal_opinion', 'legal_texts', 'sanctions_process', 'mail_domain', 'test_purchase', 'restore_test', 'store_accounts', 'support_contact'].map((key) => ({ key, done: key === 'test_purchase' && !!window.__ready, note: key === 'test_purchase' && window.__ready ? window.__ready : null, updatedAt: null })) } }),
@@ -115,10 +120,11 @@ window.FaseelaBackend = window.FaseelaFirebase = {
   adminSetPlatformFee: async (p) => { calls.push(['adminSetPlatformFee', p]); window.__market.fee = p.feeBps; return { data: p }; },
   adminSetShippingRate: async (p) => { calls.push(['adminSetShippingRate', p]); window.__market.rates = [p]; return { data: p }; },
   adminSetFarmMember: async (p) => { calls.push(['adminSetFarmMember', p]); window.__market.members = p.active ? [{ farmId: p.farmId, userId: p.userId, displayName: 'Farmer Fadi', addedAt: Date.now() }] : []; return { data: p }; },
-  adminSetCountryStatus: async (p) => { calls.push(['adminSetCountryStatus', p]); window.__esActive = p.status === 'active'; return { data: p }; },
+  adminSetCountryStatus: async (p) => { calls.push(['adminSetCountryStatus', p]); if (p.status === 'active' && q.get('noAccount')) throw fail('failed-precondition', 'Add a receiving account for this country before activating it.'); window.__esActive = p.status === 'active'; return { data: p }; },
   adminUpsertFarm: async (p) => { calls.push(['adminUpsertFarm', p]); if (p.farmId === 'farm_01') throw fail('failed-precondition'); return { data: p }; },
   adminUpsertMill: async (p) => { calls.push(['adminUpsertMill', p]); return { data: p }; },
   adminSetTreeCrop: async (p) => { calls.push(['adminSetTreeCrop', p]); return { data: p }; },
+  submitHarvestBatch: async (p) => { calls.push(['submitHarvestBatch', p]); if (p.treeId === 'tree_01') throw fail('not-found', 'This tree has no weighed harvest.'); if (p.treeId === 'tree_12') throw fail('already-exists', 'A harvest for this tree and season is already recorded.'); return { data: { batchId: 'hb9', status: 'pending_review' } }; },
   adminListAuditLogs: async () => [{ id: 1, actorUid: 'a6380508-cca1', action: 'role.granted', target: 'user_roles/x', details: { note: ${JSON.stringify(XSS)} }, createdAt: Date.now() }]
 };
 // Second factor: ?mfa=enrolled|none makes every admin* call answer 'mfa-required' until a code was confirmed.
@@ -339,6 +345,26 @@ try {
     assert.deepEqual(await calls(page, 'adminSetTreeCrop'), [{ treeId: 'tree_04', cropCategory: 'date' }], 'a new date tree gets its crop in a second step; refused or locked saves never set one');
     assert.deepEqual(await calls(page, 'adminSetTreeOrigin'), [{ treeId: 'tree_04', countryCode: 'ES', farmId: 'farm_es' }], 'origin is set once, for the new tree only');
     await page.waitForFunction(() => document.getElementById('view').getAttribute('aria-busy') === 'false');
+    // weighed harvest: checked before sending (tree id, decimal comma, net <= gross); server refusals are shown in German
+    await page.getByRole('button', { name: 'Ernte erfassen' }).click();
+    await page.waitForFunction(() => /Ernte erfassen/.test(document.getElementById('dialog-title').textContent));
+    await axe(page, 'dark/harvest-dialog');
+    await page.click('#dialog-ok');
+    assert.match(await page.textContent('#dialog-error'), /gültige Baum-Kennung/);
+    await dlg('Baum-Kennung').fill('tree_13'); await dlg('Erntegewicht brutto (kg)').fill('abc'); await dlg('Nettogewicht nach Sortierung (kg)').fill('24'); await page.click('#dialog-ok');
+    assert.match(await page.textContent('#dialog-error'), /Erntegewicht brutto: bitte eine Zahl/);
+    await dlg('Erntegewicht brutto (kg)').fill('20'); await page.click('#dialog-ok');
+    assert.match(await page.textContent('#dialog-error'), /Nettogewicht darf nicht über/);
+    assert.deepEqual(await calls(page, 'submitHarvestBatch'), [], 'nothing is sent while the form is invalid');
+    await dlg('Baum-Kennung').fill('tree_01'); await dlg('Erntegewicht brutto (kg)').fill('30'); await dlg('Nettogewicht nach Sortierung (kg)').fill('24,5'); await page.click('#dialog-ok');
+    await page.waitForFunction(() => /keine gewogene Ernte/.test(document.getElementById('dialog-error').textContent));
+    await dlg('Baum-Kennung').fill('tree_12'); await page.click('#dialog-ok');
+    await page.waitForFunction(() => /bereits eine Ernte erfasst/.test(document.getElementById('dialog-error').textContent));
+    assert.equal(await page.evaluate(() => document.getElementById('dialog').open), true, 'a refused harvest keeps the dialog open');
+    await dlg('Baum-Kennung').fill('tree_13'); await page.click('#dialog-ok');
+    await page.waitForFunction(() => !document.getElementById('dialog').open);
+    assert.deepEqual((await calls(page, 'submitHarvestBatch')).slice(-1)[0], { treeId: 'tree_13', harvestKg: 30, netKg: 24.5 }, 'weights are sent as numbers, the comma is read as a decimal sign');
+    assert.match(await page.textContent('#toast'), /Ernte eingereicht/);
     // master data: text-only rendering, country activation, farm validation and server refusal
     await tab(page, 'Stammdaten');
     await page.waitForFunction(() => /Finca Prueba/.test(document.getElementById('view').textContent));
@@ -519,6 +545,17 @@ try {
     await page.click('#dialog-ok');
     await page.waitForFunction(() => /1 Aktion\(en\)/.test(document.getElementById('view').textContent));
     assert.deepEqual(await calls(page, 'adminSetAutomationRule'), [{ key: 'review_reminder', enabled: true, days: 3 }]);
+    // weekly digest: nothing to configure, switched on after a confirmation; the rule without an implementation is not offered
+    assert.doesNotMatch(await page.textContent('#view'), /purge_unconfirmed/);
+    const digest = page.locator('#view section.item', { hasText: 'Wochenbericht an die Admins' });
+    assert.equal(await digest.locator('input').count(), 0, 'the digest has no days field');
+    assert.match(await digest.textContent(), /Jeden Montag[\s\S]*Noch nicht gelaufen/);
+    await page.getByRole('button', { name: 'Wochenbericht an die Admins: einschalten' }).click();
+    assert.match(await page.textContent('#dialog-body'), /Wochenbericht an die Admins: wird eingeschaltet\.[\s\S]*kein E-Mail-Anbieter/);
+    await page.click('#dialog-ok');
+    await page.waitForFunction(() => !!document.querySelector('button[aria-label="Wochenbericht an die Admins: ausschalten"]'));
+    assert.deepEqual((await calls(page, 'adminSetAutomationRule')).slice(-1)[0], { key: 'weekly_digest', enabled: true }, 'no days are sent for the digest');
+    assert.equal(await page.getByRole('button', { name: 'Wochenbericht an die Admins: speichern' }).count(), 0, 'an active digest has nothing to save');
     await page.getByRole('button', { name: 'Abgelaufene Reservierungen freigeben pausieren' }).click();
     assert.match(await page.textContent('#dialog-body'), /Achtung: Ohne diesen Job bleiben unbezahlte Reservierungen/);
     await page.click('#dialog-ok');
@@ -643,7 +680,7 @@ try {
     await tab(calm.page, 'Fehler');
     assert.match(await calm.page.textContent('#view'), /Keine Fehler gemeldet/);
     await tab(calm.page, 'Weitere Prüfungen');
-    assert.match(await calm.page.textContent('#view'), /Ölanfragen[\s\S]*fehlt diesem Konto die Berechtigung/, 'one failing queue does not hide the others');
+    assert.match(await calm.page.textContent('#view'), /Öl- und Ernteanfragen[\s\S]*fehlt diesem Konto die Berechtigung/, 'one failing queue does not hide the others');
     assert.match(await calm.page.textContent('#view'), /Feldberichte/);
     await calm.ctx.close();
     const down = await open('?mockRole=admin&statusDown=1');
@@ -687,6 +724,46 @@ try {
     await enrol.page.waitForFunction(() => document.querySelectorAll('.task-list li').length > 0 || /Nichts offen/.test(document.getElementById('view').textContent));
     assert.deepEqual(await calls(enrol.page, 'mfaVerify'), [{ factorId: 'factor-new', code: '123456' }]);
     await enrol.ctx.close();
+
+    // weighed harvest and kg requests in the review queue; country rules answered in German
+    const harvest = await open('?mockRole=admin&harvest=1&countryOff=1&noAccount=1');
+    await harvest.page.waitForSelector('#screen-panel:not([hidden])');
+    await tab(harvest.page, 'Weitere Prüfungen');
+    const queueText = await harvest.page.textContent('#view');
+    assert.match(queueText, /Pressungen und Ernten[\s\S]*Farmer Fadi[\s\S]*Gewogene Ernte[\s\S]*Ernte 120,5 kg brutto → 96 kg netto[\s\S]*Baum tree_13/, 'a harvest row reads as gross and net weight');
+    assert.match(queueText, /Öl- und Ernteanfragen[\s\S]*12\.5 kg • Pate Paul[\s\S]*Menge 12,5 kg/, 'a harvest request shows kilograms, not litres');
+    await axe(harvest.page, 'light/harvest-review');
+    await harvest.page.getByRole('button', { name: 'Ernte freigeben' }).click();
+    assert.match(await harvest.page.textContent('#dialog-body'), /Gewogene Ernte · Farmer Fadi · Ernte 120,5 kg brutto[\s\S]*nach Anteilen/);
+    assert.equal(await harvest.page.locator('#dialog-body').getByLabel('Nummer des Laborzertifikats').count(), 0, 'a harvest has no lab certificate');
+    await harvest.page.locator('#dialog-body').getByLabel('Belegnummer (Wiegeschein oder Prüfprotokoll)').fill('WS 14/2026'); await harvest.page.click('#dialog-ok');
+    assert.match(await harvest.page.textContent('#dialog-error'), /Belegnummer benötigt/);
+    await harvest.page.locator('#dialog-body').getByLabel('Belegnummer (Wiegeschein oder Prüfprotokoll)').fill('WS-2026-014'); await harvest.page.click('#dialog-ok');
+    await harvest.page.waitForFunction(() => !document.getElementById('dialog').open);
+    assert.deepEqual(await calls(harvest.page, 'certifyPressingBatch'), [{ batchId: 'hb1', decision: 'certify', certificateSerial: 'WS-2026-014', note: '' }]);
+    await tab(harvest.page, 'Bäume');
+    await harvest.page.getByRole('button', { name: 'Einblenden', exact: true }).click(); await harvest.page.click('#dialog-ok');
+    await harvest.page.waitForFunction(() => /Herkunftsland dieses Baums ist noch nicht aktiviert/.test(document.getElementById('dialog-error').textContent));
+    await harvest.page.click('#dialog-cancel');
+    assert.match(await harvest.page.textContent('#view tbody'), /ausgeblendet/, 'the tree stays hidden');
+    await tab(harvest.page, 'Stammdaten');
+    await harvest.page.getByRole('button', { name: 'Spanien aktivieren' }).click(); await harvest.page.click('#dialog-ok');
+    await harvest.page.waitForFunction(() => /noch kein Empfangskonto hinterlegt/.test(document.getElementById('dialog-error').textContent));
+    assert.equal(await harvest.page.evaluate(() => document.getElementById('dialog').open), true, 'the refused activation keeps the dialog open');
+    await harvest.page.click('#dialog-cancel');
+    assert.equal(await harvest.page.getByRole('button', { name: 'Spanien aktivieren' }).count(), 1, 'the country stays planned');
+    // receiving accounts: the countries of an account are checked, sent as codes and shown before confirming
+    await tab(harvest.page, 'Empfangskonten');
+    const countriesField = harvest.page.locator('#view fieldset:nth-of-type(1)').getByLabel('Gilt für Länder (Codes mit Komma, leer = alle)');
+    await countriesField.fill('Syrien'); await harvest.page.getByRole('button', { name: 'Speichern' }).click();
+    assert.match(await harvest.page.textContent('#view .alert-error'), /zweibuchstabige Ländercodes/);
+    assert.equal(await harvest.page.evaluate(() => document.getElementById('dialog').open), false);
+    await countriesField.fill('sy, es'); await harvest.page.getByRole('button', { name: 'Speichern' }).click();
+    assert.match(await harvest.page.textContent('#dialog-body'), /nur für SY, ES/);
+    await harvest.page.click('#dialog-ok');
+    await harvest.page.waitForFunction(() => window.FaseelaBackend.calls.some((c) => c[0] === 'adminSetPaymentInstructions'));
+    assert.deepEqual((await calls(harvest.page, 'adminSetPaymentInstructions'))[0].channels[0].countries, ['SY', 'ES']);
+    await harvest.ctx.close();
 
     // land offer off: a new tree cannot be given a parcel option
     const noLand = await open('?mockRole=admin&land=off');
